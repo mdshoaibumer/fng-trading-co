@@ -4,15 +4,18 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Flame, RotateCcw, ArrowRightLeft, Disc3, Cpu, ScanLine, LayoutGrid, Settings, ChevronDown, ChevronUp, MessageCircle } from 'lucide-react';
+import { useWhatsappNumber } from '@/hooks/useWhatsappNumber';
+import LoadingState from '@/components/ui/LoadingState';
+import ErrorState from '@/components/ui/ErrorState';
 
 interface Part { nameEn:string; nameAr:string; models:string; }
 
 const CATEGORY_KEYS = ['fuser','pickup','transfer','drum','formatter','scanner','trays','maintenance'] as const;
 const ICONS: Record<string,React.ReactNode> = {
-  fuser:<Flame size={22} color="#8DB833" strokeWidth={1.5}/>,pickup:<RotateCcw size={22} color="#8DB833" strokeWidth={1.5}/>,
-  transfer:<ArrowRightLeft size={22} color="#8DB833" strokeWidth={1.5}/>,drum:<Disc3 size={22} color="#8DB833" strokeWidth={1.5}/>,
-  formatter:<Cpu size={22} color="#8DB833" strokeWidth={1.5}/>,scanner:<ScanLine size={22} color="#8DB833" strokeWidth={1.5}/>,
-  trays:<LayoutGrid size={22} color="#8DB833" strokeWidth={1.5}/>,maintenance:<Settings size={22} color="#8DB833" strokeWidth={1.5}/>,
+  fuser:<Flame size={22} color="var(--accent)" strokeWidth={1.5}/>,pickup:<RotateCcw size={22} color="var(--accent)" strokeWidth={1.5}/>,
+  transfer:<ArrowRightLeft size={22} color="var(--accent)" strokeWidth={1.5}/>,drum:<Disc3 size={22} color="var(--accent)" strokeWidth={1.5}/>,
+  formatter:<Cpu size={22} color="var(--accent)" strokeWidth={1.5}/>,scanner:<ScanLine size={22} color="var(--accent)" strokeWidth={1.5}/>,
+  trays:<LayoutGrid size={22} color="var(--accent)" strokeWidth={1.5}/>,maintenance:<Settings size={22} color="var(--accent)" strokeWidth={1.5}/>,
 };
 
 export default function PrinterPartsCatalogSection() {
@@ -25,7 +28,7 @@ export default function PrinterPartsCatalogSection() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  const [whatsapp, setWhatsapp] = useState('966593380390');
+  const whatsapp = useWhatsappNumber();
 
   const fetchParts = () => {
     fetch('/api/admin/parts')
@@ -53,15 +56,6 @@ export default function PrinterPartsCatalogSection() {
 
   useEffect(() => {
     fetchParts();
-
-    fetch('/api/admin/settings')
-      .then(res => res.json())
-      .then(data => {
-        if (data.contact?.whatsapp) {
-          setWhatsapp(data.contact.whatsapp.replace(/\s/g, '').replace('+', ''));
-        }
-      })
-      .catch(() => {});
   }, []);
 
   return (
@@ -69,10 +63,10 @@ export default function PrinterPartsCatalogSection() {
       <div style={{position:'absolute',top:'-10%',left:isAr?'auto':'-5%',right:isAr?'-5%':'auto',width:'500px',height:'500px',background:'radial-gradient(circle,rgba(141,184,51,0.04) 0%,transparent 70%)',borderRadius:'50%',pointerEvents:'none'}}/>
       <div className="container">
         <div style={{textAlign:'center',marginBottom:'clamp(40px,6vw,72px)'}}>
-          <span style={{display:'inline-block',color:'#8DB833',background:'rgba(141,184,51,0.1)',padding:'8px 20px',borderRadius:'20px',fontSize:'0.85rem',fontWeight:700,textTransform:'uppercase',letterSpacing:isAr?'0':'1px',marginBottom:'16px',border:'1px solid rgba(141,184,51,0.2)'}}>
+          <span style={{display:'inline-block',color:'var(--accent)',background:'rgba(141,184,51,0.1)',padding:'8px 20px',borderRadius:'20px',fontSize:'0.85rem',fontWeight:700,textTransform:'uppercase',letterSpacing:isAr?'0':'1px',marginBottom:'16px',border:'1px solid rgba(141,184,51,0.2)'}}>
             {isAr?'كتالوج القطع':'Parts Catalog'}
           </span>
-          <h2 style={{fontSize:'clamp(1.5rem,4vw,3rem)',fontWeight:800,color:'#1A3D2B',marginBottom:'16px',fontFamily:isAr?'IBM Plex Sans Arabic, sans-serif':'Inter, sans-serif'}}>
+          <h2 style={{fontSize:'clamp(1.5rem,4vw,3rem)',fontWeight:800,color:'var(--primary)',marginBottom:'16px',fontFamily:isAr?'var(--font-ibm-plex-arabic), sans-serif':'var(--font-inter), sans-serif'}}>
             {isAr?'٨ فئات — ٣٠+ قطعة غيار':'8 Categories — 30+ Parts'}
           </h2>
           <p style={{fontSize:'clamp(0.9rem,2vw,1.1rem)',color:'#555',maxWidth:'600px',margin:'0 auto',lineHeight:1.6}}>
@@ -81,21 +75,14 @@ export default function PrinterPartsCatalogSection() {
         </div>
 
         {loading ? (
-          <div style={{ display: 'flex', justifyContent: 'center', padding: '40px' }}>
-            <div style={{ width: '40px', height: '40px', border: '4px solid #8DB833', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-          </div>
+          <LoadingState />
         ) : error ? (
-          <div style={{ maxWidth: '480px', margin: '0 auto', textAlign: 'center', padding: '32px 24px', background: '#FFF7F5', border: '1px solid #F3D9D3', borderRadius: '16px' }}>
-            <p style={{ color: '#8A3B2E', fontWeight: 700, marginBottom: '8px' }}>
-              {isAr ? 'تعذر تحميل كتالوج القطع' : 'Couldn’t load the parts catalog'}
-            </p>
-            <p style={{ color: '#A15C4E', fontSize: '0.9rem', marginBottom: '20px' }}>
-              {isAr ? 'حدث خطأ أثناء تحميل البيانات. حاول مرة أخرى.' : 'Something went wrong loading this data. Please try again.'}
-            </p>
-            <button onClick={retryLoadParts} style={{ padding: '10px 24px', borderRadius: '10px', background: '#8DB833', color: '#fff', border: 'none', fontWeight: 700, cursor: 'pointer' }}>
-              {isAr ? 'إعادة المحاولة' : 'Retry'}
-            </button>
-          </div>
+          <ErrorState
+            title={isAr ? 'تعذر تحميل كتالوج القطع' : 'Couldn’t load the parts catalog'}
+            description={isAr ? 'حدث خطأ أثناء تحميل البيانات. حاول مرة أخرى.' : 'Something went wrong loading this data. Please try again.'}
+            retryLabel={isAr ? 'إعادة المحاولة' : 'Retry'}
+            onRetry={retryLoadParts}
+          />
         ) : (
           <div style={{maxWidth:'900px',margin:'0 auto',display:'flex',flexDirection:'column',gap:'12px'}}>
             {CATEGORY_KEYS.map(key=>{
@@ -108,11 +95,11 @@ export default function PrinterPartsCatalogSection() {
                     {ICONS[key]}
                   </div>
                   <div style={{flex:1}}>
-                    <h3 style={{color:'#1A3D2B',fontSize:'clamp(1rem,2.5vw,1.2rem)',fontWeight:700,marginBottom:'2px',fontFamily:isAr?'IBM Plex Sans Arabic, sans-serif':'Inter, sans-serif'}}>{t(`categories.${key}.name`)}</h3>
+                    <h3 style={{color:'var(--primary)',fontSize:'clamp(1rem,2.5vw,1.2rem)',fontWeight:700,marginBottom:'2px',fontFamily:isAr?'var(--font-ibm-plex-arabic), sans-serif':'var(--font-inter), sans-serif'}}>{t(`categories.${key}.name`)}</h3>
                     <p style={{color:'#777',fontSize:'0.8rem',lineHeight:1.4}}>{t(`categories.${key}.desc`)}</p>
                   </div>
                   <div style={{width:'32px',height:'32px',borderRadius:'8px',background:'rgba(141,184,51,0.08)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,transition:'transform 200ms ease',transform:isOpen?'rotate(180deg)':'rotate(0)'}}>
-                    {isOpen?<ChevronUp size={18} color="#8DB833"/>:<ChevronDown size={18} color="#8DB833"/>}
+                    {isOpen?<ChevronUp size={18} color="var(--accent)"/>:<ChevronDown size={18} color="var(--accent)"/>}
                   </div>
                 </button>
                 {/* grid-rows trick: animates to the content's real height (no
@@ -120,18 +107,21 @@ export default function PrinterPartsCatalogSection() {
                     range) instead of transitioning max-height. */}
                 <div style={{display:'grid',gridTemplateRows:isOpen?'1fr':'0fr',transition:'grid-template-rows 400ms cubic-bezier(0.22,1,0.36,1)'}}>
                   <div style={{overflow:'hidden',minHeight:0,padding:'0 clamp(16px,3vw,28px) clamp(16px,3vw,24px)',display:'flex',flexDirection:'column',gap:'8px'}}>
+                    {categoryParts.length===0 && (
+                      <p style={{color:'#999',fontSize:'0.85rem',textAlign:isAr?'right':'left',padding:'8px 0'}}>{t('noPartsYet')}</p>
+                    )}
                     {categoryParts.map((p,i)=>(
                       <div key={i} className="part-row" style={{display:'flex',alignItems:'center',gap:'16px',padding:'14px 16px',borderRadius:'12px',background:i%2===0?'#F9FAFB':'#FFFFFF',border:'1px solid #F3F4F6',transition:'all 200ms ease',flexDirection:isAr?'row-reverse':'row',flexWrap:'wrap'}}
                         onMouseEnter={e=>{e.currentTarget.style.borderColor='rgba(141,184,51,0.3)';e.currentTarget.style.background='rgba(141,184,51,0.04)';}}
                         onMouseLeave={e=>{e.currentTarget.style.borderColor='#F3F4F6';e.currentTarget.style.background=i%2===0?'#F9FAFB':'#FFFFFF';}}>
-                        <div style={{width:'8px',height:'8px',borderRadius:'50%',background:'#8DB833',flexShrink:0}}/>
+                        <div style={{width:'8px',height:'8px',borderRadius:'50%',background:'var(--accent)',flexShrink:0}}/>
                         <div style={{flex:1,textAlign:isAr?'right':'left',minWidth:'120px'}}>
-                          <span style={{color:'#1A3D2B',fontWeight:600,fontSize:'0.9rem',fontFamily:isAr?'IBM Plex Sans Arabic, sans-serif':'Inter, sans-serif'}}>{isAr?p.nameAr:p.nameEn}</span>
+                          <span style={{color:'var(--primary)',fontWeight:600,fontSize:'0.9rem',fontFamily:isAr?'var(--font-ibm-plex-arabic), sans-serif':'var(--font-inter), sans-serif'}}>{isAr?p.nameAr:p.nameEn}</span>
                         </div>
-                        <span style={{color:'#666',fontSize:'0.75rem',background:'rgba(141,184,51,0.08)',padding:'3px 10px',borderRadius:'6px',fontFamily:'Inter, sans-serif',flexShrink:0}}>{p.models}</span>
+                        <span style={{color:'#666',fontSize:'0.75rem',background:'rgba(141,184,51,0.08)',padding:'3px 10px',borderRadius:'6px',fontFamily:'var(--font-inter), sans-serif',flexShrink:0}}>{p.models}</span>
                         <a href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(isAr?`مرحباً، أريد الاستفسار عن: ${p.nameAr}`:`Hello, I'd like to inquire about: ${p.nameEn}`)}`} target="_blank" rel="noopener noreferrer"
-                          style={{padding:'6px 14px',borderRadius:'8px',background:'#8DB833',color:'#fff',fontSize:'0.75rem',fontWeight:700,textDecoration:'none',flexShrink:0,transition:'all 200ms ease',whiteSpace:'nowrap'}}
-                          onMouseEnter={e=>{e.currentTarget.style.background='#7AA52D';}} onMouseLeave={e=>{e.currentTarget.style.background='#8DB833';}}>
+                          style={{padding:'6px 14px',borderRadius:'8px',background:'var(--accent)',color:'#fff',fontSize:'0.75rem',fontWeight:700,textDecoration:'none',flexShrink:0,transition:'all 200ms ease',whiteSpace:'nowrap'}}
+                          onMouseEnter={e=>{e.currentTarget.style.background='#7AA52D';}} onMouseLeave={e=>{e.currentTarget.style.background='var(--accent)';}}>
                           {isAr?'استفسار':'Inquire'}
                         </a>
                       </div>

@@ -1,5 +1,7 @@
 import type { Product } from '@/lib/supabase';
 import ProductCard from './ProductCard';
+import ErrorState from '@/components/ui/ErrorState';
+import EmptyState from '@/components/ui/EmptyState';
 
 /**
  * Shared by the homepage printer catalog and the office-equipment catalog —
@@ -10,9 +12,11 @@ import ProductCard from './ProductCard';
  * copy of the card markup to maintain.
  */
 export default function ProductCatalogSection({
-  products, isAr, basePath, tag, title, subtitle,
+  products, error, isAr, basePath, tag, title, subtitle,
 }: {
   products: Product[];
+  /** True when the catalog fetch itself failed — distinct from a successful fetch that found zero rows. */
+  error?: boolean;
   isAr: boolean;
   basePath: string;
   tag: string;
@@ -32,15 +36,15 @@ export default function ProductCatalogSection({
       <div className="container">
         <div style={{ textAlign: 'center', marginBottom: 'clamp(40px, 8vw, 80px)' }}>
           <span style={{
-            display: 'inline-block', color: '#8DB833', background: 'rgba(141, 184, 51, 0.1)',
+            display: 'inline-block', color: 'var(--accent)', background: 'rgba(141, 184, 51, 0.1)',
             padding: '8px 20px', borderRadius: '20px', fontSize: '0.9rem', fontWeight: 700,
             marginBottom: '16px', textTransform: 'uppercase', letterSpacing: isAr ? '0' : '1px',
           }}>
             {tag}
           </span>
           <h2 style={{
-            fontSize: 'clamp(1.8rem, 5vw, 4rem)', fontWeight: 800, color: '#1A3D2B', marginBottom: '24px',
-            fontFamily: isAr ? 'IBM Plex Sans Arabic, sans-serif' : 'Inter, sans-serif',
+            fontSize: 'clamp(1.8rem, 5vw, 4rem)', fontWeight: 800, color: 'var(--primary)', marginBottom: '24px',
+            fontFamily: isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif',
             letterSpacing: isAr ? '0' : '-1px',
           }}>
             {title}
@@ -50,14 +54,28 @@ export default function ProductCatalogSection({
           </p>
         </div>
 
-        <div className="catalog-grid" style={{
-          display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: 'clamp(16px, 3vw, 32px)', alignItems: 'stretch',
-        }}>
-          {products.map(product => (
-            <ProductCard key={product.id} product={product} isAr={isAr} productUrl={`${basePath}/${product.id}`} />
-          ))}
-        </div>
+        {error ? (
+          <ErrorState
+            title={isAr ? 'تعذّر تحميل الكتالوج' : "Couldn't load the catalog"}
+            description={isAr ? 'حدث خطأ أثناء تحميل المنتجات. يرجى المحاولة مرة أخرى.' : 'Something went wrong while loading products. Please try again.'}
+            retryLabel={isAr ? 'إعادة المحاولة' : 'Retry'}
+            retryHref={basePath}
+          />
+        ) : products.length === 0 ? (
+          <EmptyState
+            title={isAr ? 'لا تتوفر أي منتجات حالياً' : 'No products are currently available'}
+            description={isAr ? 'يرجى المراجعة لاحقاً.' : 'Please check back soon.'}
+          />
+        ) : (
+          <div className="catalog-grid" style={{
+            display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: 'clamp(16px, 3vw, 32px)', alignItems: 'stretch',
+          }}>
+            {products.map(product => (
+              <ProductCard key={product.id} product={product} isAr={isAr} productUrl={`${basePath}/${product.id}`} />
+            ))}
+          </div>
+        )}
       </div>
       <style>{`
         @media (max-width: 768px) {
