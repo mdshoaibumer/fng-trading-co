@@ -96,6 +96,11 @@ export default function Navbar() {
           display: 'flex',
           alignItems: 'center',
           padding: '0 32px',
+          // The links group is `flex: 1`, so without a gap its edge sits flush
+          // against the language pill and the last link ("Contact") reads as
+          // part of it. This keeps the three groups apart at every width; the
+          // centred links then always have at least this much breathing room.
+          gap: '24px',
           transition: 'transform 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
           background: 'rgba(255, 255, 255, 0.75)',
           backdropFilter: 'blur(32px) saturate(200%)',
@@ -142,6 +147,13 @@ export default function Navbar() {
           gap: '20px',
           flex: 1,
           justifyContent: 'center',
+          // A flex item defaults to min-width:auto, so this container refused to
+          // shrink below its links and pushed the CTA out past the nav's rounded
+          // edge instead. These let it give way first. The labels are editable
+          // from Admin → Settings, so overly long ones stay contained rather
+          // than breaking the bar apart.
+          minWidth: 0,
+          overflow: 'hidden',
         }}
           className="nav-links-desktop"
         >
@@ -386,7 +398,36 @@ export default function Navbar() {
       </div>
 
       <style jsx>{`
-        @media (max-width: 1024px) {
+        /* Between the hamburger breakpoint and ~1360px the English printers nav
+           — nine links plus a long CTA — is wider than the pill containing it,
+           so the CTA spilled past the rounded edge and the links ran into the
+           language pill. Tighten spacing across this band rather than dropping
+           to the hamburger, which would cost the desktop nav on ordinary
+           1280px laptops. The Arabic nav and the five-link sourcing nav both
+           fit without this, but sharing the rule keeps them consistent. */
+        @media (min-width: 1100px) and (max-width: 1360px) {
+          #main-nav {
+            padding: 0 20px !important;
+            gap: 16px !important;
+          }
+          .nav-links-desktop {
+            gap: 10px !important;
+          }
+          .nav-links-desktop a {
+            font-size: 0.76rem !important;
+          }
+          .nav-lang-desktop {
+            padding: 0 14px !important;
+            font-size: 0.8rem !important;
+          }
+          .nav-cta-desktop {
+            padding: 0 16px !important;
+            font-size: 0.78rem !important;
+          }
+        }
+        /* Hamburger below 1100px, not 1024px: even fully tightened, the nine
+           English printer links plus the CTA do not fit under ~1100. */
+        @media (max-width: 1099px) {
           .nav-links-desktop {
             display: none !important;
           }
