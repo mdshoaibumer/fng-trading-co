@@ -1,7 +1,9 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { safeJsonLd } from '@/lib/safeJsonLd';
+import { cookies } from 'next/headers';
 import EntryGate from '@/components/gate/EntryGate';
+import { GATE_COOKIE } from '@/lib/entryGate';
 import HeroSection from '@/components/sections/HeroSection';
 import FreePrinterSection from '@/components/sections/FreePrinterSection';
 import ProductCatalogSection from '@/components/sections/ProductCatalogSection';
@@ -43,6 +45,12 @@ export default async function HomePage({
   const settings = await getSettings();
   const videos = settings.videos || { divider1: '', divider2: '' };
   const printers = await getProducts('printer');
+
+  // Only greet a visitor who hasn't picked a track yet. Without this the gate
+  // reopened on every arrival at the landing page, so the Navbar's Home link
+  // never actually reached the page it points at — it just put the chooser
+  // back on top of it.
+  const showGate = (await cookies()).get(GATE_COOKIE)?.value !== '1';
 
   const isAr = locale === 'ar';
   const websiteUrl = 'https://fngtradingco.com';
@@ -143,7 +151,7 @@ export default async function HomePage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeJsonLd(websiteSchema) }}
       />
-      <EntryGate />
+      {showGate && <EntryGate />}
       <HeroSection />
       <ProductCatalogSection
         products={printers}

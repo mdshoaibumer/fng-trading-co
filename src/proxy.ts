@@ -30,62 +30,13 @@ function publicUrl(pathname: string, request: NextRequest) {
   return url;
 }
 
-function generateNonce(): string {
-  const bytes = crypto.getRandomValues(new Uint8Array(16));
-  let binary = '';
-  for (const b of bytes) binary += String.fromCharCode(b);
-  return btoa(binary);
-}
-
-// Nonce-based CSP for HTML responses, following Next.js's documented App
-// Router pattern: the nonce goes on both the request (so page rendering can
-// read it via headers() and Next auto-applies it to its own inline/streaming
-// scripts) and the response CSP header. style-src keeps 'unsafe-inline'
-// deliberately — the app uses `style={{}}` props and `<style jsx>` blocks
-// throughout, and CSS injection is a materially lower-severity risk than
-// script injection, which is what strict script-src actually buys us here.
-//
-// Dev-only relaxations, never shipped to production: 'unsafe-eval' (React
-// dev mode uses eval() for debugging — "React will never use eval() in
-// production mode" per React's own warning) and ws:/wss: on connect-src
-// (Turbopack's HMR WebSocket). Verified: with these omitted, dev mode
-// breaks (HMR fails, eval() errors); the strict policy is what actually
-// ships since NODE_ENV is 'production' for both `next build` and the
-// deployed app.
-function cspHeaderValue(nonce: string): string {
-  const isDev = process.env.NODE_ENV !== 'production';
-  return [
-    `default-src 'self'`,
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${isDev ? ` 'unsafe-eval'` : ''}`,
-    `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`,
-    `img-src 'self' data: https://*.supabase.co`,
-    `font-src 'self' https://fonts.gstatic.com data:`,
-    `media-src 'self'`,
-    `connect-src 'self'${isDev ? ` ws://localhost:*` : ''}`,
-    `frame-ancestors 'none'`,
-    `base-uri 'self'`,
-    `form-action 'self'`,
-    `object-src 'none'`,
-  ].join('; ');
-}
-
-function withCsp(response: NextResponse, nonce: string): NextResponse {
-  response.headers.set('Content-Security-Policy', cspHeaderValue(nonce));
-  return response;
-}
-
+// The Content-Security-Policy is set in next.config.ts, not here. It used to
+// be minted per request with a nonce, but a nonce only reaches the HTML of
+// pages Next.js renders per request — the statically prerendered public routes
+// could never carry one, and 'strict-dynamic' then blocked every bundle they
+// loaded. See the comment in next.config.ts for the full reasoning.
 export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const nonce = generateNonce();
-
-  // Mutated in place (not a fresh Headers passed via NextResponse.next()'s
-  // `request` option) because next-intl's middleware is a black box that
-  // constructs its own NextResponse internally — there's no hook to pass
-  // it a header override. Setting it directly on the shared request object
-  // means whatever NextResponse.next()/rewrite() call happens downstream
-  // (ours or next-intl's) forwards it to page rendering, where it's read
-  // back via headers() in src/app/[locale]/layout.tsx and src/app/admin/layout.tsx.
-  request.headers.set('x-nonce', nonce);
 
   if (pathname === '/') {
     return NextResponse.redirect(publicUrl(`/${defaultLocale}`, request));
@@ -95,7 +46,7 @@ export default async function proxy(request: NextRequest) {
   if (pathname.startsWith('/admin') || pathname.startsWith('/api/admin')) {
     // Exclude auth endpoints and login page
     if (pathname === '/admin/login' || pathname.startsWith('/api/admin/auth')) {
-      return withCsp(NextResponse.next(), nonce);
+      return NextResponse.next();
     }
 
     // Allow public GET access to catalog/content data consumed by public pages
@@ -114,11 +65,11 @@ export default async function proxy(request: NextRequest) {
     }
 
     // Allowed admin access
-    return withCsp(NextResponse.next({ request }), nonce);
+    return NextResponse.next();
   }
 
   // 2. Handle Internationalization for all other routes
-  return withCsp(intlMiddleware(request), nonce);
+  return intlMiddleware(request);
 }
 
 export const config = {

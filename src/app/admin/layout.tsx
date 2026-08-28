@@ -1,12 +1,10 @@
 import React from 'react';
 import AdminShell from './AdminShell';
 
-// Required for the nonce-based CSP in src/proxy.ts to work: a nonce is
-// generated fresh per request, but a statically prerendered page (the
-// default here, since every admin page is 'use client') bakes its script
-// tags in once at build time and can never carry a per-request value.
-// Forcing dynamic rendering is what makes the admin section's scripts
-// actually match the CSP header sent with each response.
+// The admin section is session-gated and reads live data on every visit, so
+// there is nothing worth prerendering here. (This also used to be required to
+// make the old nonce-based CSP work; that CSP is now static — see
+// next.config.ts — but dynamic rendering is still the right default.)
 export const dynamic = 'force-dynamic';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
