@@ -27,6 +27,11 @@ export default function VideoDivider({
     return () => document.removeEventListener('touchstart', play);
   }, []);
 
+  // No configured video (e.g. a fresh install before Settings has been
+  // filled in) — skip rendering rather than emit a <source src=""> that
+  // triggers a full unnecessary network re-fetch of the page.
+  if (!src) return null;
+
   return (
     <div style={{
       position: 'relative',
