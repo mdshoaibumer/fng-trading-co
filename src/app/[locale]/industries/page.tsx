@@ -59,7 +59,7 @@ export default async function IndustriesPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
       />
-      <IndustriesPageClient />
+      <IndustriesPageClient locale={locale} />
     </>
   );
 }

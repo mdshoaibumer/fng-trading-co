@@ -89,7 +89,7 @@ export default async function PrinterPartsPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
       />
-      <PrinterPartsHeroSection />
+      <PrinterPartsHeroSection locale={locale} />
       <PrinterPartsCatalogSection />
       <MaintenanceTeaser />
       <ContactSection />

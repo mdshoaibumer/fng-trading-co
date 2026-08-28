@@ -78,7 +78,7 @@ export default async function AboutPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
       />
-      <AboutPageClient />
+      <AboutPageClient locale={locale} />
     </>
   );
 }

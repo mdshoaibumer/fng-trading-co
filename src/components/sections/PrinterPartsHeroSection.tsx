@@ -1,15 +1,10 @@
-'use client';
-
-import { useParams } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 import { Wrench, Cpu } from 'lucide-react';
 import Image from 'next/image';
 
-export default function PrinterPartsHeroSection() {
-  const params = useParams();
-  const locale = params.locale as string;
+export default async function PrinterPartsHeroSection({ locale }: { locale: string }) {
   const isAr = locale === 'ar';
-  const t = useTranslations('printerPartsPage');
+  const t = await getTranslations({ locale, namespace: 'printerPartsPage' });
 
   return (
     <section
@@ -43,13 +38,13 @@ export default function PrinterPartsHeroSection() {
         position: 'absolute', top: '20%', right: isAr ? 'auto' : '15%', left: isAr ? '15%' : 'auto',
         opacity: 0.06, animation: 'float 6s ease-in-out infinite',
       }}>
-        <Wrench size={120} color="#8DB833" strokeWidth={0.8} />
+        <Wrench size={120} color="var(--accent)" strokeWidth={0.8} />
       </div>
       <div style={{
         position: 'absolute', bottom: '15%', left: isAr ? 'auto' : '8%', right: isAr ? '8%' : 'auto',
         opacity: 0.05, animation: 'float 8s ease-in-out infinite 1s',
       }}>
-        <Cpu size={100} color="#8DB833" strokeWidth={0.8} />
+        <Cpu size={100} color="var(--accent)" strokeWidth={0.8} />
       </div>
 
       {/* Grid pattern overlay */}
@@ -119,7 +114,7 @@ export default function PrinterPartsHeroSection() {
           {/* Tag */}
           <span style={{
             display: 'inline-flex', alignItems: 'center', gap: '8px',
-            color: '#8DB833', background: 'rgba(141,184,51,0.1)',
+            color: 'var(--accent)', background: 'rgba(141,184,51,0.1)',
             padding: '8px 20px', borderRadius: '20px',
             fontSize: '0.85rem', fontWeight: 700,
             textTransform: 'uppercase', letterSpacing: isAr ? '0' : '1.5px',
@@ -136,7 +131,7 @@ export default function PrinterPartsHeroSection() {
             color: '#FFFFFF',
             marginBottom: '20px',
             lineHeight: 1.15,
-            fontFamily: isAr ? 'IBM Plex Sans Arabic, sans-serif' : 'Inter, sans-serif',
+            fontFamily: isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif',
             letterSpacing: isAr ? '0' : '-1px',
           }}>
             {t('title')}
@@ -165,7 +160,7 @@ export default function PrinterPartsHeroSection() {
               background: 'linear-gradient(135deg, #0096D6, #0073A8)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontWeight: 900, color: '#fff', fontSize: '0.9rem',
-              fontFamily: 'Inter, sans-serif',
+              fontFamily: 'var(--font-inter), sans-serif',
             }}>
               HP
             </div>
