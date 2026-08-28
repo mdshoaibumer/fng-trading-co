@@ -49,6 +49,7 @@ function StatCard({ title, value, change, icon, color }: any) {
 export default function AdminDashboard() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [dbConnected, setDbConnected] = useState<boolean | null>(null);
   const router = useRouter();
   const { showToast } = useToast();
 
@@ -59,9 +60,13 @@ export default function AdminDashboard() {
       if (res.ok) {
         const json = await res.json();
         setData(json);
+        setDbConnected(true);
+      } else {
+        setDbConnected(false);
       }
     } catch (err) {
       console.error('Failed to load dashboard:', err);
+      setDbConnected(false);
     } finally {
       setLoading(false);
     }
@@ -169,7 +174,8 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* System Status */}
+        {/* System Status — reflects whether /api/admin/dashboard actually
+            succeeded on the last fetch, not a hardcoded "all green" state */}
         <div className="admin-card" style={{ background: '#1E293B', color: '#F8FAFC' }}>
           <h3 style={{ margin: '0 0 24px 0', fontSize: '1.25rem', fontWeight: 800 }}>Platform Status</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -179,23 +185,25 @@ export default function AdminDashboard() {
               <span style={{ color: '#10B981', fontSize: '0.85rem', fontWeight: 700 }}>ONLINE</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#10B981', boxShadow: '0 0 10px #10B981' }} />
+              <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: dbConnected ? '#10B981' : '#EF4444', boxShadow: dbConnected ? '0 0 10px #10B981' : '0 0 10px #EF4444' }} />
               <span style={{ flex: 1, fontWeight: 600 }}>Supabase API</span>
-              <span style={{ color: '#10B981', fontSize: '0.85rem', fontWeight: 700 }}>CONNECTED</span>
+              <span style={{ color: dbConnected ? '#10B981' : '#EF4444', fontSize: '0.85rem', fontWeight: 700 }}>{dbConnected ? 'CONNECTED' : 'UNREACHABLE'}</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#10B981', boxShadow: '0 0 10px #10B981' }} />
+              <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: dbConnected ? '#10B981' : '#EF4444', boxShadow: dbConnected ? '0 0 10px #10B981' : '0 0 10px #EF4444' }} />
               <span style={{ flex: 1, fontWeight: 600 }}>Database Integration</span>
-              <span style={{ color: '#10B981', fontSize: '0.85rem', fontWeight: 700 }}>SYNCED</span>
+              <span style={{ color: dbConnected ? '#10B981' : '#EF4444', fontSize: '0.85rem', fontWeight: 700 }}>{dbConnected ? 'SYNCED' : 'ERROR'}</span>
             </div>
-            
-            <div style={{ marginTop: '20px', padding: '20px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '16px', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px', color: '#10B981' }}>
-                <CheckCircle2 size={18} />
-                <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>System Healthy</span>
+
+            <div style={{ marginTop: '20px', padding: '20px', background: dbConnected ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)', borderRadius: '16px', border: `1px solid ${dbConnected ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)'}` }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px', color: dbConnected ? '#10B981' : '#EF4444' }}>
+                {dbConnected ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
+                <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>{dbConnected ? 'System Healthy' : 'Connection Problem'}</span>
               </div>
               <p style={{ margin: 0, fontSize: '0.8rem', color: '#94A3B8', lineHeight: 1.5 }}>
-                All services are fully operational and responding to requests normally.
+                {dbConnected
+                  ? 'The dashboard successfully loaded live data from Supabase on the last refresh.'
+                  : 'The last refresh could not load data from Supabase. Check your connection or Supabase project status, then hit Refresh.'}
               </p>
             </div>
           </div>

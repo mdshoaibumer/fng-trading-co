@@ -50,12 +50,43 @@ export async function POST(request: Request) {
       throw error;
     }
 
-    const web3Key = process.env.WEB3FORMS_ACCESS_KEY || null;
+    // Forward to Web3Forms for email notification (server-side, matching
+    // /api/printer-request — the access key never reaches the browser).
+    const web3Key = process.env.WEB3FORMS_ACCESS_KEY;
+    if (web3Key) {
+      try {
+        const web3Response = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            access_key: web3Key,
+            subject: `New Contact Lead - ${name} (${company})`,
+            from_name: 'FNG Website',
+            name,
+            company,
+            phone,
+            email: email || 'N/A',
+            industry: industry || 'N/A',
+            message: message || 'N/A',
+            city: city || 'N/A',
+            quantity: quantity || '1'
+          })
+        });
+        if (!web3Response.ok) {
+          const errData = await web3Response.json();
+          console.error('Web3Forms failed:', errData);
+        }
+      } catch (web3Err) {
+        console.error('Web3Forms notification failed:', web3Err);
+      }
+    }
 
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Form submitted successfully',
-      web3Key 
+    return NextResponse.json({
+      success: true,
+      message: 'Form submitted successfully'
     });
   } catch (error) {
     console.error('Contact API error:', error);

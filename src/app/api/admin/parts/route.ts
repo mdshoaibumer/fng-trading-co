@@ -44,20 +44,23 @@ export async function POST(request: Request) {
       });
     });
 
-    // For parts, we'll clear and re-insert for simplicity in this structure, 
-    // or we could do a more complex diff. Let's do clear + insert.
+    // Insert the new rows first, then delete the old ones — if the insert
+    // fails partway through, the table still has the previous data instead
+    // of being left empty (the old delete-then-insert order could do that).
+    const { data: inserted, error: insertError } = await supabaseAdmin
+      .from('parts')
+      .insert(flattened)
+      .select('id');
+
+    if (insertError) throw insertError;
+
+    const newIds = (inserted || []).map(row => row.id);
     const { error: deleteError } = await supabaseAdmin
       .from('parts')
       .delete()
-      .neq('id', 0); // Delete all
+      .not('id', 'in', `(${newIds.join(',') || '0'})`);
 
     if (deleteError) throw deleteError;
-
-    const { error: insertError } = await supabaseAdmin
-      .from('parts')
-      .insert(flattened);
-
-    if (insertError) throw insertError;
 
     return NextResponse.json({ success: true });
   } catch (error) {

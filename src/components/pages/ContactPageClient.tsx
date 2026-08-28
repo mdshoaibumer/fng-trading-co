@@ -24,33 +24,6 @@ export default function ContactPageClient() {
         body: JSON.stringify(form),
       });
       if (res.ok) {
-        const data = await res.json();
-        if (data.web3Key) {
-          try {
-            await fetch('https://api.web3forms.com/submit', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-              },
-              body: JSON.stringify({
-                access_key: data.web3Key,
-                subject: `New Detailed Contact Lead - ${form.name} (${form.company})`,
-                from_name: 'FNG Website',
-                name: form.name,
-                company: form.company,
-                phone: form.phone,
-                email: form.email,
-                city: form.city || 'N/A',
-                industry: form.industry || 'N/A',
-                message: form.message || 'N/A',
-                quantity: form.quantity || '1'
-              })
-            });
-          } catch (web3Err) {
-            console.error('Web3Forms notification failed:', web3Err);
-          }
-        }
         setStatus('success');
       } else {
         setStatus('error');

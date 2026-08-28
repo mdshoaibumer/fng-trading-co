@@ -27,9 +27,7 @@ export default function PrinterPartsCatalogSection() {
 
   const [whatsapp, setWhatsapp] = useState('966593380390');
 
-  const loadParts = () => {
-    setLoading(true);
-    setError(false);
+  const fetchParts = () => {
     fetch('/api/admin/parts')
       .then(res => {
         if (!res.ok) throw new Error('Failed to load parts');
@@ -45,8 +43,16 @@ export default function PrinterPartsCatalogSection() {
       });
   };
 
+  // Used by the Retry button — unlike the initial mount, this needs to
+  // reset loading/error state before re-fetching.
+  const retryLoadParts = () => {
+    setLoading(true);
+    setError(false);
+    fetchParts();
+  };
+
   useEffect(() => {
-    loadParts();
+    fetchParts();
 
     fetch('/api/admin/settings')
       .then(res => res.json())
@@ -86,7 +92,7 @@ export default function PrinterPartsCatalogSection() {
             <p style={{ color: '#A15C4E', fontSize: '0.9rem', marginBottom: '20px' }}>
               {isAr ? 'حدث خطأ أثناء تحميل البيانات. حاول مرة أخرى.' : 'Something went wrong loading this data. Please try again.'}
             </p>
-            <button onClick={loadParts} style={{ padding: '10px 24px', borderRadius: '10px', background: '#8DB833', color: '#fff', border: 'none', fontWeight: 700, cursor: 'pointer' }}>
+            <button onClick={retryLoadParts} style={{ padding: '10px 24px', borderRadius: '10px', background: '#8DB833', color: '#fff', border: 'none', fontWeight: 700, cursor: 'pointer' }}>
               {isAr ? 'إعادة المحاولة' : 'Retry'}
             </button>
           </div>
