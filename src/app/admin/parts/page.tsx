@@ -1,0 +1,211 @@
+'use client';
+
+import React from 'react';
+import { 
+  Plus, 
+  Trash2, 
+  Save, 
+  ChevronDown, 
+  ChevronUp,
+  Settings,
+  Flame,
+  RotateCcw,
+  ArrowRightLeft,
+  Disc3,
+  Cpu,
+  ScanLine,
+  LayoutGrid
+} from 'lucide-react';
+import { useToast } from '@/components/admin/Toast';
+
+const CATEGORY_ICONS: Record<string, any> = {
+  fuser: <Flame size={18} />,
+  pickup: <RotateCcw size={18} />,
+  transfer: <ArrowRightLeft size={18} />,
+  drum: <Disc3 size={18} />,
+  formatter: <Cpu size={18} />,
+  scanner: <ScanLine size={18} />,
+  trays: <LayoutGrid size={18} />,
+  maintenance: <Settings size={18} />,
+};
+
+export default function AdminPartsPage() {
+  const [parts, setParts] = React.useState<Record<string, any[]>>({});
+  const [loading, setLoading] = React.useState(true);
+  const [saving, setSaving] = React.useState(false);
+  const [expandedCategory, setExpandedCategory] = React.useState<string | null>('fuser');
+  const { showToast } = useToast();
+
+  React.useEffect(() => {
+    fetch('/api/admin/parts')
+      .then(res => res.json())
+      .then(data => {
+        setParts(data);
+        setLoading(false);
+      });
+  }, []);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const res = await fetch('/api/admin/parts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(parts)
+      });
+      if (res.ok) showToast('Parts catalog updated successfully!', 'success');
+    } catch (err) {
+      showToast('Error saving parts.', 'error');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const addPart = (category: string) => {
+    const newPart = {
+      nameEn: 'New Part Name',
+      nameAr: 'اسم القطعة الجديدة',
+      models: 'HP M402, M404'
+    };
+    setParts({
+      ...parts,
+      [category]: [...(parts[category] || []), newPart]
+    });
+  };
+
+  const updatePart = (category: string, index: number, field: string, value: string) => {
+    const updatedCategory = [...parts[category]];
+    updatedCategory[index] = { ...updatedCategory[index], [field]: value };
+    setParts({ ...parts, [category]: updatedCategory });
+  };
+
+  const deletePart = (category: string, index: number) => {
+    if (confirm('Remove this part?')) {
+      const updatedCategory = parts[category].filter((_, i) => i !== index);
+      setParts({ ...parts, [category]: updatedCategory });
+    }
+  };
+
+  if (loading) return <div>Loading parts catalog...</div>;
+
+  return (
+    <div style={{ animation: 'fadeIn 0.5s ease-out' }}>
+      <div style={{ marginBottom: '40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <h1 style={{ fontSize: '2rem', fontWeight: 800, color: '#0F172A', marginBottom: '8px' }}>Parts Inventory</h1>
+          <p style={{ color: '#64748B', margin: 0 }}>Manage printer spare parts, categories, and model compatibility.</p>
+        </div>
+        <button onClick={handleSave} disabled={saving} className="btn-admin btn-admin-primary" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Save size={18} />
+          {saving ? 'Saving...' : 'Save All Changes'}
+        </button>
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        {Object.keys(parts).map((category) => {
+          const isOpen = expandedCategory === category;
+          return (
+            <div key={category} className="admin-card" style={{ padding: 0, overflow: 'hidden' }}>
+              <button 
+                onClick={() => setExpandedCategory(isOpen ? null : category)}
+                style={{
+                  width: '100%',
+                  padding: '20px 24px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '16px',
+                  background: isOpen ? '#F8FAFC' : 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  borderBottom: isOpen ? '1px solid #E2E8F0' : 'none'
+                }}
+              >
+                <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(141, 184, 51, 0.1)', color: '#8DB833', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {CATEGORY_ICONS[category]}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, textTransform: 'capitalize' }}>{category}</h3>
+                  <p style={{ margin: 0, fontSize: '0.8rem', color: '#64748B' }}>{parts[category].length} items in category</p>
+                </div>
+                {isOpen ? <ChevronUp size={20} color="#94A3B8" /> : <ChevronDown size={20} color="#94A3B8" />}
+              </button>
+
+              {isOpen && (
+                <div style={{ padding: '24px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px' }}>
+                    {parts[category].map((part, idx) => (
+                      <div key={idx} style={{ 
+                        display: 'grid', 
+                        gridTemplateColumns: '1fr 1fr 1fr 44px', 
+                        gap: '12px', 
+                        alignItems: 'center',
+                        padding: '12px',
+                        background: '#F8FAFC',
+                        borderRadius: '12px'
+                      }}>
+                        <input 
+                          className="admin-input" 
+                          placeholder="Name (EN)" 
+                          value={part.nameEn} 
+                          onChange={(e) => updatePart(category, idx, 'nameEn', e.target.value)} 
+                        />
+                        <input 
+                          className="admin-input" 
+                          placeholder="Name (AR)" 
+                          style={{ fontFamily: 'IBM Plex Sans Arabic, sans-serif', direction: 'rtl' }}
+                          value={part.nameAr} 
+                          onChange={(e) => updatePart(category, idx, 'nameAr', e.target.value)} 
+                        />
+                        <input 
+                          className="admin-input" 
+                          placeholder="Compatible Models" 
+                          value={part.models} 
+                          onChange={(e) => updatePart(category, idx, 'models', e.target.value)} 
+                        />
+                        <button 
+                          onClick={() => deletePart(category, idx)}
+                          style={{ background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer', display: 'flex', justifyContent: 'center' }}
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  <button 
+                    onClick={() => addPart(category)}
+                    style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '8px', 
+                      background: 'none', 
+                      border: '1px dashed #CBD5E1', 
+                      padding: '10px 20px', 
+                      borderRadius: '12px',
+                      color: '#64748B',
+                      fontWeight: 700,
+                      fontSize: '0.85rem',
+                      cursor: 'pointer',
+                      width: '100%',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    <Plus size={16} />
+                    Add Item to {category}
+                  </button>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      <style jsx>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
+    </div>
+  );
+}
