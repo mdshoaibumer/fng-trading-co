@@ -1,18 +1,19 @@
 'use client';
 
 import React from 'react';
-import { 
-  Plus, 
-  Trash2, 
-  Edit3, 
-  CheckCircle2, 
-  XCircle, 
+import Image from 'next/image';
+import {
+  Plus,
+  Trash2,
+  Edit3,
   Image as ImageIcon,
   Save,
   ChevronUp
 } from 'lucide-react';
 import { useToast } from '@/components/admin/Toast';
 import MultiImageUploader from '@/components/admin/MultiImageUploader';
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
+import AvailabilityToggle from '@/components/admin/AvailabilityToggle';
 import type { Product } from '@/lib/supabase';
 
 // The admin form also lets editors set an Arabic name override, which isn't
@@ -73,6 +74,7 @@ export default function AdminEquipmentPage() {
         body: JSON.stringify(printers)
       });
       if (res.ok) showToast('Equipment updated successfully!', 'success');
+      else showToast('Failed to save equipment. Please try again.', 'error');
     } catch {
       showToast('Error saving equipment.', 'error');
     } finally {
@@ -113,30 +115,35 @@ export default function AdminEquipmentPage() {
 
   return (
     <div style={{ animation: 'fadeIn 0.5s ease-out' }}>
-      <div style={{ marginBottom: '40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div>
-          <h1 style={{ fontSize: '2rem', fontWeight: 800, color: '#0F172A', marginBottom: '8px' }}>Office Equipment Catalog</h1>
-          <p style={{ color: '#64748B', margin: 0 }}>Manage refurbished office equipment like chairs, monitors, and more.</p>
-        </div>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <button onClick={addPrinter} className="btn-admin" style={{ background: '#1E293B', color: '#fff', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Plus size={18} />
-            Add New Equipment
-          </button>
-          <button onClick={handleSave} disabled={saving} className="btn-admin btn-admin-primary" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Save size={18} />
-            {saving ? 'Saving...' : 'Save All Changes'}
-          </button>
-        </div>
-      </div>
+      <AdminPageHeader
+        title="Office Equipment Catalog"
+        subtitle="Manage refurbished office equipment like chairs, monitors, and more."
+        actions={
+          <>
+            <button onClick={addPrinter} className="btn-admin" style={{ background: '#1E293B', color: '#fff', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Plus size={18} />
+              Add New Equipment
+            </button>
+            <button onClick={handleSave} disabled={saving} className="btn-admin btn-admin-primary" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Save size={18} />
+              {saving ? 'Saving...' : 'Save All Changes'}
+            </button>
+          </>
+        }
+      />
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        {printers.length === 0 && (
+          <div className="admin-card" style={{ padding: '40px', textAlign: 'center', color: '#64748B' }}>
+            No equipment yet. Click &quot;Add New Equipment&quot; to create your first listing.
+          </div>
+        )}
         {printers.map((printer) => (
           <div key={printer.id} className="admin-card" style={{ padding: '0', overflow: 'hidden' }}>
             {/* Header / Summary */}
             <div style={{ padding: '24px', display: 'flex', alignItems: 'center', gap: '20px', background: editingId === printer.id ? '#F8FAFC' : '#fff' }}>
-              <div style={{ width: '80px', height: '80px', background: '#F1F5F9', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-                {printer.images?.[0] ? <img src={printer.images[0]} alt={printer.name || ''} style={{ width: '100%', height: '100%', objectFit: 'contain' }} /> : <ImageIcon color="#94A3B8" />}
+              <div style={{ position: 'relative', width: '80px', height: '80px', background: '#F1F5F9', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                {printer.images?.[0] ? <Image src={printer.images[0]} alt={printer.name || ''} fill sizes="80px" style={{ objectFit: 'contain' }} /> : <ImageIcon color="#94A3B8" />}
               </div>
               <div style={{ flex: 1 }}>
                 <h3 style={{ margin: '0 0 4px 0', fontSize: '1.1rem', fontWeight: 800 }}>{printer.name}</h3>
@@ -144,24 +151,16 @@ export default function AdminEquipmentPage() {
               </div>
               
               {/* Availability Toggle */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '8px 16px', background: printer.available ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)', borderRadius: '99px' }}>
-                {printer.available ? <CheckCircle2 size={16} color="#10B981" /> : <XCircle size={16} color="#EF4444" />}
-                <span style={{ fontSize: '0.85rem', fontWeight: 700, color: printer.available ? '#10B981' : '#EF4444' }}>
-                  {printer.available ? 'AVAILABLE' : 'OUT OF STOCK'}
-                </span>
-                <button 
-                  onClick={() => updatePrinter(printer.id, 'available', !printer.available)}
-                  style={{ background: 'none', border: 'none', color: '#475569', cursor: 'pointer', fontWeight: 700, fontSize: '0.75rem', textDecoration: 'underline' }}
-                >
-                  Toggle
-                </button>
-              </div>
+              <AvailabilityToggle
+                available={printer.available}
+                onToggle={() => updatePrinter(printer.id, 'available', !printer.available)}
+              />
 
               <div style={{ display: 'flex', gap: '8px' }}>
-                <button onClick={() => setEditingId(editingId === printer.id ? null : printer.id)} className="btn-admin" style={{ background: '#F1F5F9', padding: '8px 12px' }}>
+                <button onClick={() => setEditingId(editingId === printer.id ? null : printer.id)} aria-label={editingId === printer.id ? 'Collapse editor' : 'Edit equipment'} className="btn-admin" style={{ background: '#F1F5F9', padding: '8px 12px' }}>
                   {editingId === printer.id ? <ChevronUp size={18} /> : <Edit3 size={18} />}
                 </button>
-                <button onClick={() => deletePrinter(printer.id)} className="btn-admin" style={{ background: '#FEF2F2', color: '#EF4444', padding: '8px 12px' }}>
+                <button onClick={() => deletePrinter(printer.id)} aria-label="Delete equipment" className="btn-admin" style={{ background: '#FEF2F2', color: '#EF4444', padding: '8px 12px' }}>
                   <Trash2 size={18} />
                 </button>
               </div>
@@ -173,7 +172,7 @@ export default function AdminEquipmentPage() {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
                   {/* English Info */}
                   <div>
-                    <h4 style={{ fontSize: '0.9rem', fontWeight: 800, marginBottom: '16px', color: '#8DB833' }}>ENGLISH CONTENT</h4>
+                    <h4 style={{ fontSize: '0.9rem', fontWeight: 800, marginBottom: '16px', color: 'var(--admin-accent)' }}>ENGLISH CONTENT</h4>
                     <div style={{ display: 'grid', gap: '16px' }}>
                       <div>
                         <label className="admin-label">Product Name</label>
@@ -195,11 +194,11 @@ export default function AdminEquipmentPage() {
                                 newFeats[idx] = e.target.value;
                                 updatePrinter(printer.id, 'featuresEn', newFeats);
                               }} />
-                              <button onClick={() => updatePrinter(printer.id, 'featuresEn', printer.featuresEn.filter((_, i) => i !== idx))} style={{ color: '#EF4444', background: 'none', border: 'none', cursor: 'pointer' }}><Trash2 size={16} /></button>
+                              <button onClick={() => updatePrinter(printer.id, 'featuresEn', printer.featuresEn.filter((_, i) => i !== idx))} aria-label="Remove feature" style={{ color: '#EF4444', background: 'none', border: 'none', cursor: 'pointer' }}><Trash2 size={16} /></button>
                             </div>
                           ))}
                           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                            <button onClick={() => updatePrinter(printer.id, 'featuresEn', [...(printer.featuresEn || []), ''])} style={{ fontSize: '0.8rem', color: '#8DB833', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}>+ Add Custom Feature</button>
+                            <button onClick={() => updatePrinter(printer.id, 'featuresEn', [...(printer.featuresEn || []), ''])} style={{ fontSize: '0.8rem', color: 'var(--admin-accent)', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}>+ Add Custom Feature</button>
                             <span style={{ fontSize: '0.8rem', color: '#CBD5E1' }}>|</span>
                             <select 
                               onChange={(e) => {
@@ -242,10 +241,10 @@ export default function AdminEquipmentPage() {
                                 const newSpecs = { ...printer.specsEn };
                                 delete newSpecs[key];
                                 updatePrinter(printer.id, 'specsEn', newSpecs);
-                              }} style={{ color: '#EF4444', background: 'none', border: 'none', cursor: 'pointer' }}><Trash2 size={16} /></button>
+                              }} aria-label="Remove specification" style={{ color: '#EF4444', background: 'none', border: 'none', cursor: 'pointer' }}><Trash2 size={16} /></button>
                             </div>
                           ))}
-                          <button onClick={() => updatePrinter(printer.id, 'specsEn', { ...(printer.specsEn || {}), [`New Spec ${Date.now()}`]: '' })} style={{ fontSize: '0.8rem', color: '#8DB833', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', width: 'fit-content' }}>+ Add Specification</button>
+                          <button onClick={() => updatePrinter(printer.id, 'specsEn', { ...(printer.specsEn || {}), [`New Spec ${Date.now()}`]: '' })} style={{ fontSize: '0.8rem', color: 'var(--admin-accent)', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', width: 'fit-content' }}>+ Add Specification</button>
                         </div>
                       </div>
                     </div>
@@ -253,7 +252,7 @@ export default function AdminEquipmentPage() {
 
                   {/* Arabic Info */}
                   <div style={{ direction: 'rtl' }}>
-                    <h4 style={{ fontSize: '0.9rem', fontWeight: 800, marginBottom: '16px', color: '#8DB833', textAlign: 'right' }}>المحتوى العربي</h4>
+                    <h4 style={{ fontSize: '0.9rem', fontWeight: 800, marginBottom: '16px', color: 'var(--admin-accent)', textAlign: 'right' }}>المحتوى العربي</h4>
                     <div style={{ display: 'grid', gap: '16px' }}>
                       <div>
                         <label className="admin-label" style={{ textAlign: 'right', display: 'block' }}>اسم المنتج</label>
@@ -261,7 +260,7 @@ export default function AdminEquipmentPage() {
                       </div>
                       <div>
                         <label className="admin-label" style={{ textAlign: 'right', display: 'block' }}>الوصف (AR)</label>
-                        <textarea className="admin-input" style={{ height: '100px', fontFamily: 'IBM Plex Sans Arabic, sans-serif' }} value={printer.descAr} onChange={(e) => updatePrinter(printer.id, 'descAr', e.target.value)} />
+                        <textarea className="admin-input" style={{ height: '100px', fontFamily: 'var(--font-ibm-plex-arabic), sans-serif' }} value={printer.descAr} onChange={(e) => updatePrinter(printer.id, 'descAr', e.target.value)} />
                       </div>
 
                       {/* Features (AR) */}
@@ -270,16 +269,16 @@ export default function AdminEquipmentPage() {
                         <div style={{ display: 'grid', gap: '8px' }}>
                           {(printer.featuresAr || []).map((feat: string, idx: number) => (
                             <div key={idx} style={{ display: 'flex', gap: '8px', flexDirection: 'row-reverse' }}>
-                              <input className="admin-input" style={{ fontFamily: 'IBM Plex Sans Arabic, sans-serif', textAlign: 'right' }} value={feat} onChange={(e) => {
+                              <input className="admin-input" style={{ fontFamily: 'var(--font-ibm-plex-arabic), sans-serif', textAlign: 'right' }} value={feat} onChange={(e) => {
                                 const newFeats = [...(printer.featuresAr || [])];
                                 newFeats[idx] = e.target.value;
                                 updatePrinter(printer.id, 'featuresAr', newFeats);
                               }} />
-                              <button onClick={() => updatePrinter(printer.id, 'featuresAr', printer.featuresAr.filter((_, i) => i !== idx))} style={{ color: '#EF4444', background: 'none', border: 'none', cursor: 'pointer' }}><Trash2 size={16} /></button>
+                              <button onClick={() => updatePrinter(printer.id, 'featuresAr', printer.featuresAr.filter((_, i) => i !== idx))} aria-label="حذف الميزة" style={{ color: '#EF4444', background: 'none', border: 'none', cursor: 'pointer' }}><Trash2 size={16} /></button>
                             </div>
                           ))}
                           <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexDirection: 'row-reverse', marginLeft: 'auto' }}>
-                            <button onClick={() => updatePrinter(printer.id, 'featuresAr', [...(printer.featuresAr || []), ''])} style={{ fontSize: '0.8rem', color: '#8DB833', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'right' }}>+ إضافة ميزة يدوياً</button>
+                            <button onClick={() => updatePrinter(printer.id, 'featuresAr', [...(printer.featuresAr || []), ''])} style={{ fontSize: '0.8rem', color: 'var(--admin-accent)', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'right' }}>+ إضافة ميزة يدوياً</button>
                             <span style={{ fontSize: '0.8rem', color: '#CBD5E1' }}>|</span>
                             <select 
                               onChange={(e) => {
@@ -289,7 +288,7 @@ export default function AdminEquipmentPage() {
                                 }
                               }} 
                               className="admin-input" 
-                              style={{ padding: '6px 12px', fontSize: '0.8rem', width: 'auto', fontFamily: 'IBM Plex Sans Arabic, sans-serif', cursor: 'pointer' }}
+                              style={{ padding: '6px 12px', fontSize: '0.8rem', width: 'auto', fontFamily: 'var(--font-ibm-plex-arabic), sans-serif', cursor: 'pointer' }}
                               dir="rtl"
                             >
                               <option value="">+ اختر ميزة جاهزة...</option>
@@ -307,7 +306,7 @@ export default function AdminEquipmentPage() {
                         <div style={{ display: 'grid', gap: '8px' }}>
                           {Object.entries(printer.specsAr || {}).map(([key, val]) => (
                             <div key={key} style={{ display: 'flex', gap: '8px', flexDirection: 'row-reverse' }}>
-                              <input className="admin-input" style={{ flex: 1, fontFamily: 'IBM Plex Sans Arabic, sans-serif', textAlign: 'right' }} defaultValue={key} onBlur={(e) => {
+                              <input className="admin-input" style={{ flex: 1, fontFamily: 'var(--font-ibm-plex-arabic), sans-serif', textAlign: 'right' }} defaultValue={key} onBlur={(e) => {
                                 const newKey = e.target.value;
                                 if (newKey && newKey !== key) {
                                   const newSpecs = { ...printer.specsAr };
@@ -316,17 +315,17 @@ export default function AdminEquipmentPage() {
                                   updatePrinter(printer.id, 'specsAr', newSpecs);
                                 }
                               }} placeholder="الخاصية (مثل سرعة الطباعة)" />
-                              <input className="admin-input" style={{ flex: 2, fontFamily: 'IBM Plex Sans Arabic, sans-serif', textAlign: 'right' }} value={val as string} onChange={(e) => {
+                              <input className="admin-input" style={{ flex: 2, fontFamily: 'var(--font-ibm-plex-arabic), sans-serif', textAlign: 'right' }} value={val as string} onChange={(e) => {
                                 updatePrinter(printer.id, 'specsAr', { ...printer.specsAr, [key]: e.target.value });
                               }} placeholder="القيمة" />
                               <button onClick={() => {
                                 const newSpecs = { ...printer.specsAr };
                                 delete newSpecs[key];
                                 updatePrinter(printer.id, 'specsAr', newSpecs);
-                              }} style={{ color: '#EF4444', background: 'none', border: 'none', cursor: 'pointer' }}><Trash2 size={16} /></button>
+                              }} aria-label="حذف المواصفة" style={{ color: '#EF4444', background: 'none', border: 'none', cursor: 'pointer' }}><Trash2 size={16} /></button>
                             </div>
                           ))}
-                          <button onClick={() => updatePrinter(printer.id, 'specsAr', { ...(printer.specsAr || {}), [`خاصية جديدة ${Date.now()}`]: '' })} style={{ fontSize: '0.8rem', color: '#8DB833', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'right', width: 'fit-content', marginLeft: 'auto' }}>+ إضافة مواصفة</button>
+                          <button onClick={() => updatePrinter(printer.id, 'specsAr', { ...(printer.specsAr || {}), [`خاصية جديدة ${Date.now()}`]: '' })} style={{ fontSize: '0.8rem', color: 'var(--admin-accent)', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'right', width: 'fit-content', marginLeft: 'auto' }}>+ إضافة مواصفة</button>
                         </div>
                       </div>
                     </div>
