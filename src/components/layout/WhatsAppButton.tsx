@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
+import { DEFAULT_WHATSAPP_NUMBER, sanitizeWhatsappNumber } from '@/lib/whatsapp';
 
 export default function WhatsAppButton({ whatsapp }: { whatsapp?: string }) {
   const t = useTranslations('contact');
@@ -28,7 +29,7 @@ export default function WhatsAppButton({ whatsapp }: { whatsapp?: string }) {
 
   return (
     <a
-      href={`https://wa.me/${(whatsapp || '966593380390').replace(/\s/g, '').replace('+', '')}`}
+      href={`https://wa.me/${sanitizeWhatsappNumber(whatsapp || DEFAULT_WHATSAPP_NUMBER)}`}
       target="_blank"
       rel="noopener noreferrer"
       id="whatsapp-btn"

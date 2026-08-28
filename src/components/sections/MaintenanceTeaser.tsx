@@ -4,25 +4,14 @@ import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Clock, Wrench, MessageCircle } from 'lucide-react';
 
-import { useState, useEffect } from 'react';
+import { useWhatsappNumber } from '@/hooks/useWhatsappNumber';
 
 export default function MaintenanceTeaser() {
   const params = useParams();
   const locale = params.locale as string;
   const isAr = locale === 'ar';
   const t = useTranslations('maintenanceTeaser');
-  const [whatsapp, setWhatsapp] = useState('966593380390');
-
-  useEffect(() => {
-    fetch('/api/admin/settings')
-      .then(res => res.json())
-      .then(data => {
-        if (data.contact?.whatsapp) {
-          setWhatsapp(data.contact.whatsapp.replace(/\s/g, '').replace('+', ''));
-        }
-      })
-      .catch(() => {});
-  }, []);
+  const whatsapp = useWhatsappNumber();
 
   return (
     <section style={{
@@ -51,7 +40,7 @@ export default function MaintenanceTeaser() {
           {/* Pulsing badge */}
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: '8px',
-            background: 'rgba(141,184,51,0.15)', color: '#8DB833',
+            background: 'rgba(141,184,51,0.15)', color: 'var(--accent)',
             padding: '8px 20px', borderRadius: '20px',
             fontSize: '0.8rem', fontWeight: 700,
             textTransform: 'uppercase', letterSpacing: isAr ? '0' : '1.5px',
@@ -70,13 +59,13 @@ export default function MaintenanceTeaser() {
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               margin: '0 auto 20px', border: '1px solid rgba(141,184,51,0.2)',
             }}>
-              <Wrench size={28} color="#8DB833" strokeWidth={1.5} />
+              <Wrench size={28} color="var(--accent)" strokeWidth={1.5} />
             </div>
 
             <h3 style={{
               color: '#FFFFFF', fontSize: 'clamp(1.3rem, 3vw, 2rem)',
               fontWeight: 800, marginBottom: '14px',
-              fontFamily: isAr ? 'IBM Plex Sans Arabic, sans-serif' : 'Inter, sans-serif',
+              fontFamily: isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif',
             }}>
               {t('title')}
             </h3>
@@ -96,7 +85,7 @@ export default function MaintenanceTeaser() {
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: '8px',
                 padding: '14px 28px', borderRadius: '14px',
-                background: 'rgba(141,184,51,0.15)', color: '#8DB833',
+                background: 'rgba(141,184,51,0.15)', color: 'var(--accent)',
                 fontWeight: 700, fontSize: '0.9rem',
                 textDecoration: 'none', border: '1px solid rgba(141,184,51,0.3)',
                 transition: 'all 200ms ease',
