@@ -36,21 +36,30 @@ export async function generateMetadata({
 
 export default async function HomePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ gate?: string }>;
 }) {
   const { locale } = await params;
+  const { gate } = await searchParams;
   setRequestLocale(locale);
 
   const settings = await getSettings();
   const videos = settings.videos || { divider1: '', divider2: '' };
   const printers = await getProducts('printer');
 
-  // Only greet a visitor who hasn't picked a track yet. Without this the gate
-  // reopened on every arrival at the landing page, so the Navbar's Home link
-  // never actually reached the page it points at — it just put the chooser
-  // back on top of it.
-  const showGate = (await cookies()).get(GATE_COOKIE)?.value !== '1';
+  // Greet a visitor who hasn't picked a track yet, and re-open the chooser
+  // whenever it is asked for explicitly with ?gate=1 — which is what the
+  // Navbar's logo and Home link do. Printers and sourcing are run as separate
+  // businesses with no cross-links, so the gate is the only route between
+  // them; without the ?gate=1 escape hatch, picking one track would strand a
+  // visitor there for the rest of the session.
+  //
+  // Arrivals that don't ask for it (a bookmark, an external link) still go
+  // straight to the page once the cookie is set, rather than being made to
+  // re-answer the chooser every time.
+  const showGate = gate === '1' || (await cookies()).get(GATE_COOKIE)?.value !== '1';
 
   const isAr = locale === 'ar';
   const websiteUrl = 'https://fngtradingco.com';

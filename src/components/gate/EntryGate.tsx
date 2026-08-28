@@ -59,6 +59,14 @@ export default function EntryGate() {
   const dismiss = () => {
     markSeen();
     setOpen(false);
+    // Drop the ?gate=1 that asked for this chooser, so the URL matches what is
+    // actually on screen and the Navbar's logo — which links to ?gate=1 — stays
+    // a real URL change that can bring the chooser back. replaceState rather
+    // than router.replace: this must not refetch the route, which would tear
+    // the gate out of the tree mid-fade.
+    if (window.location.search) {
+      window.history.replaceState(null, '', window.location.pathname);
+    }
   };
 
   const dialogRef = useDialogA11y<HTMLDivElement>(open, dismiss);

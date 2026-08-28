@@ -7,12 +7,21 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useDialogA11y } from '@/lib/useDialogA11y';
 
+// Printers and sourcing are run as two separate businesses, so the only way
+// between them is the entry gate on the landing page. `?gate=1` is what asks
+// the landing page to put the chooser back up (see src/app/[locale]/page.tsx);
+// without it the gate stays dismissed for the rest of the session and sourcing
+// would be unreachable once a visitor picked printers.
+export const gateHref = (locale: string) => `/${locale}?gate=1`;
+
 export default function Navbar() {
   const t = useTranslations('nav');
+  const tSourcing = useTranslations('navSourcing');
   const params = useParams();
   const pathname = usePathname();
   const locale = params.locale as string;
   const isAr = locale === 'ar';
+  const isSourcing = pathname.startsWith(`/${locale}/sourcing`);
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
@@ -35,18 +44,31 @@ export default function Navbar() {
     return () => { document.body.style.overflow = ''; };
   }, [mobileOpen]);
 
-  const navLinks = [
-    { href: `/${locale}#hero`, label: t('home') },
+  // Deliberately no cross-links between the two sets: the printers nav does not
+  // offer sourcing, and the sourcing nav does not offer printers. Switching
+  // tracks goes back through the gate, via the logo.
+  const printerLinks = [
+    { href: gateHref(locale), label: t('home') },
     { href: `/${locale}/about`, label: t('about') },
     { href: `/${locale}/sustainability`, label: t('sustainability') },
     { href: `/${locale}/eco-inks`, label: t('ecoInks') },
     { href: `/${locale}/industries`, label: t('industries') },
-    { href: `/${locale}/sourcing`, label: t('sourcing') },
     { href: `/${locale}/printer-parts`, label: t('printerParts') },
     { href: `/${locale}/equipment`, label: t('officeEquipment') },
     { href: `/${locale}/faq`, label: t('faq') },
     { href: `/${locale}/contact`, label: t('contact') },
   ];
+
+  // The sourcing site is a single page, so these are in-page anchors.
+  const sourcingLinks = [
+    { href: `/${locale}/sourcing#sourcing-process`, label: tSourcing('process') },
+    { href: `/${locale}/sourcing#sourcing-categories`, label: tSourcing('categories') },
+    { href: `/${locale}/sourcing#sourcing-services`, label: tSourcing('services') },
+    { href: `/${locale}/sourcing#sourcing-why`, label: tSourcing('why') },
+    { href: `/${locale}/sourcing#contact`, label: tSourcing('contact') },
+  ];
+
+  const navLinks = isSourcing ? sourcingLinks : printerLinks;
 
   const otherLocale = isAr ? 'en' : 'ar';
   
@@ -83,9 +105,14 @@ export default function Navbar() {
           boxShadow: scrolled ? '0 20px 40px rgba(0, 0, 0, 0.08)' : '0 10px 30px rgba(0, 0, 0, 0.04)',
         }}
       >
-        {/* Logo */}
-        <Link
-          href={`/${locale}`}
+        {/* Logo — the way back to the gate, and so the only route between the
+            printers and sourcing sides. A plain <a>, like every other link in
+            this nav: a soft navigation from /{locale} to /{locale}?gate=1 keeps
+            the already-dismissed EntryGate instance mounted, so React preserves
+            its closed state and the chooser never reappears. A full load
+            remounts it. */}
+        <a
+          href={gateHref(locale)}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -106,7 +133,7 @@ export default function Navbar() {
             className="nav-logo-img"
             priority
           />
-        </Link>
+        </a>
 
         {/* Center Nav Links */}
         <div style={{
@@ -180,7 +207,7 @@ export default function Navbar() {
 
           {/* CTA */}
           <a
-            href={`/${locale}/contact`}
+            href={isSourcing ? `/${locale}/sourcing#contact` : `/${locale}/contact`}
             className="nav-cta-desktop"
             style={{
               height: '44px',
@@ -207,7 +234,7 @@ export default function Navbar() {
               e.currentTarget.style.boxShadow = '0 4px 12px rgba(141, 184, 51, 0.3)';
             }}
           >
-            {t('getFreePrinter')}
+            {isSourcing ? tSourcing('cta') : t('getFreePrinter')}
           </a>
 
           {/* Mobile Hamburger */}
@@ -308,9 +335,11 @@ export default function Navbar() {
           </a>
         ))}
 
-        {/* Language toggle in mobile overlay */}
+        {/* Language toggle in mobile overlay. Uses switchPath, like the desktop
+            toggle: sending it to /${otherLocale} instead would drop a sourcing
+            visitor onto the printers landing page just for changing language. */}
         <Link
-          href={`/${otherLocale}`}
+          href={switchPath}
           onClick={() => setMobileOpen(false)}
           style={{
             padding: '12px 32px',
@@ -333,7 +362,7 @@ export default function Navbar() {
 
         {/* CTA in mobile overlay */}
         <a
-          href={`/${locale}/contact`}
+          href={isSourcing ? `/${locale}/sourcing#contact` : `/${locale}/contact`}
           onClick={() => setMobileOpen(false)}
           style={{
             padding: '16px 32px',
@@ -352,7 +381,7 @@ export default function Navbar() {
             boxShadow: '0 4px 12px rgba(141,184,51,0.3)',
           }}
         >
-          {t('getFreePrinter')}
+          {isSourcing ? tSourcing('cta') : t('getFreePrinter')}
         </a>
       </div>
 

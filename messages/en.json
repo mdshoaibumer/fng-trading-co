@@ -17,6 +17,14 @@
     "getFreePrinter": "Get Your Refurbished Printer",
     "lang": "AR"
   },
+  "navSourcing": {
+    "process": "Process",
+    "categories": "Categories",
+    "services": "Services",
+    "why": "Why Us",
+    "contact": "Contact",
+    "cta": "Request a Quote"
+  },
   "hero": {
     "headline": "The Future in Every Print",
     "subtitle": "Your Trusted Partner for Refurbished Office Equipment — Specialized in HP Printers, Eco-Friendly Toners & Genuine Parts.",
