@@ -57,9 +57,9 @@ function cspHeaderValue(nonce: string): string {
   return [
     `default-src 'self'`,
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${isDev ? ` 'unsafe-eval'` : ''}`,
-    `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`,
+    `style-src 'self' 'unsafe-inline'`,
     `img-src 'self' data: https://*.supabase.co`,
-    `font-src 'self' https://fonts.gstatic.com data:`,
+    `font-src 'self' data:`,
     `media-src 'self'`,
     `connect-src 'self'${isDev ? ` ws://localhost:*` : ''}`,
     `frame-ancestors 'none'`,

@@ -15,7 +15,7 @@ export default function TrustSection() {
       <div className="container">
         <div style={{ textAlign: 'center', marginBottom: 'clamp(32px, 6vw, 64px)' }}>
           <span className="section-tag">{t('tag')}</span>
-          <h2 style={{ fontSize: 'clamp(1.5rem,4vw,3.5rem)', fontWeight: 800, color: '#1A3D2B', marginBottom: '12px' }}>{t('title')}</h2>
+          <h2 style={{ fontSize: 'clamp(1.5rem,4vw,3.5rem)', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px' }}>{t('title')}</h2>
         </div>
         <div className="trust-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: 'clamp(16px, 3vw, 24px)', marginBottom: 'clamp(32px, 6vw, 64px)' }}>
           {[0,1,2].map(i => (
@@ -33,7 +33,7 @@ export default function TrustSection() {
                 {t(`testimonials.${i}.quote`)}
               </p>
               <div style={{ borderTop: '1px solid #EEE', paddingTop: '12px' }}>
-                <div style={{ fontWeight: 700, color: '#1A3D2B', fontSize: '0.85rem' }}>{t(`testimonials.${i}.name`)}</div>
+                <div style={{ fontWeight: 700, color: 'var(--primary)', fontSize: '0.85rem' }}>{t(`testimonials.${i}.name`)}</div>
                 <div style={{ color: '#6B7C3F', fontSize: '0.75rem' }}>
                   {t(`testimonials.${i}.role`)} — {t(`testimonials.${i}.company`)}
                 </div>
@@ -45,9 +45,9 @@ export default function TrustSection() {
           {certs.map(c => (
             <div key={c} style={{
               padding: '8px 16px', borderRadius: '999px',
-              background: '#F7F8F5', border: '1px solid rgba(74,144,217,0.2)',
+              background: 'var(--bg-secondary)', border: '1px solid rgba(74,144,217,0.2)',
               color: '#4A90D9', fontSize: '0.75rem', fontWeight: 600,
-              fontFamily: 'IBM Plex Mono, monospace', letterSpacing: '0.05em',
+              fontFamily: 'var(--font-ibm-plex-mono), monospace', letterSpacing: '0.05em',
             }}>
               {c}
             </div>

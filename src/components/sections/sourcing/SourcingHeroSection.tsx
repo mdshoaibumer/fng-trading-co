@@ -28,7 +28,7 @@ export default function SourcingHeroSection() {
             <span className="section-tag">{t('kicker')}</span>
             <h1 style={{
               fontSize: 'clamp(2rem, 5vw, 3.75rem)', fontWeight: 800, color: '#fff', marginBottom: '20px',
-              fontFamily: isAr ? 'IBM Plex Sans Arabic, sans-serif' : 'Inter, sans-serif',
+              fontFamily: isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif',
             }}>
               {t('headline')}
             </h1>
@@ -52,7 +52,7 @@ export default function SourcingHeroSection() {
         }}>
           {STAT_KEYS.map((key) => (
             <div key={key} style={{ textAlign: isAr ? 'right' : 'left' }}>
-              <div style={{ fontSize: 'clamp(1.6rem, 3.5vw, 2.5rem)', fontWeight: 800, color: '#8DB833', lineHeight: 1, marginBottom: '8px', fontFamily: 'IBM Plex Mono, monospace' }}>
+              <div style={{ fontSize: 'clamp(1.6rem, 3.5vw, 2.5rem)', fontWeight: 800, color: 'var(--accent)', lineHeight: 1, marginBottom: '8px', fontFamily: 'var(--font-ibm-plex-mono), monospace' }}>
                 {t(`stats.${key}.value`)}
               </div>
               <div style={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.03em', maxWidth: '18ch' }}>

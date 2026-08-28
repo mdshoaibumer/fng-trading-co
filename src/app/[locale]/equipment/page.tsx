@@ -33,12 +33,13 @@ export default async function EquipmentPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const isAr = locale === 'ar';
-  const equipment = await getProducts('equipment');
+  const { products: equipment, error: equipmentError } = await getProducts('equipment');
 
   return (
     <main>
       <ProductCatalogSection
         products={equipment}
+        error={equipmentError}
         isAr={isAr}
         basePath={`/${locale}/equipment`}
         tag={isAr ? 'تجهيزات مكتبية مُجددة' : 'Refurbished Office Equipment'}

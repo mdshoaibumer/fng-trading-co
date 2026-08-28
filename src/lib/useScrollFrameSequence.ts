@@ -10,6 +10,16 @@ interface UseScrollFrameSequenceOptions {
   /** Defer image loading until the section scrolls near the viewport (for below-the-fold sections). */
   deferUntilNear?: boolean;
   rootMargin?: string;
+  /**
+   * Fires on every rAF-gated scroll tick with the raw progress value, ahead of
+   * (and independent from) the `scrollProgress` state update below. Use this
+   * for continuously-varying visual properties (transform/opacity) you want
+   * to write straight to the DOM via a ref — it skips React's render/diff
+   * entirely, which matters when something re-renders 60x/sec on scroll.
+   * `scrollProgress` state remains the right tool for anything that needs to
+   * affect JSX output (conditional rendering, text content, class names).
+   */
+  onProgress?: (progress: number) => void;
 }
 
 interface UseScrollFrameSequenceResult {
@@ -34,6 +44,7 @@ export function useScrollFrameSequence({
   fit,
   deferUntilNear = false,
   rootMargin = '600px 0px',
+  onProgress,
 }: UseScrollFrameSequenceOptions): UseScrollFrameSequenceResult {
   const sectionRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -42,6 +53,9 @@ export function useScrollFrameSequence({
   const drawRafRef = useRef<number | null>(null);
   const scrollRafRef = useRef<number | null>(null);
   const scrollTickingRef = useRef(false);
+  const lastCanvasSizeRef = useRef({ width: 0, height: 0, dpr: 0 });
+  const onProgressRef = useRef(onProgress);
+  useEffect(() => { onProgressRef.current = onProgress; }, [onProgress]);
 
   const [scrollProgress, setScrollProgress] = useState(0);
   const [imagesLoaded, setImagesLoaded] = useState(false);
@@ -91,8 +105,15 @@ export function useScrollFrameSequence({
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const displayWidth = canvas.clientWidth;
     const displayHeight = canvas.clientHeight;
-    canvas.width = displayWidth * dpr;
-    canvas.height = displayHeight * dpr;
+    // Setting canvas.width/height reallocates the backing store and wipes it,
+    // even to the same size — do it only when the size actually changed
+    // instead of on every single frame swap during a scroll.
+    const last = lastCanvasSizeRef.current;
+    if (last.width !== displayWidth || last.height !== displayHeight || last.dpr !== dpr) {
+      canvas.width = displayWidth * dpr;
+      canvas.height = displayHeight * dpr;
+      lastCanvasSizeRef.current = { width: displayWidth, height: displayHeight, dpr };
+    }
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, displayWidth, displayHeight);
     if (fit === 'stretch') {
@@ -125,6 +146,7 @@ export function useScrollFrameSequence({
     const scrolled = -rect.top;
     const totalScroll = sectionHeight - viewportHeight;
     const progress = Math.max(0, Math.min(1, scrolled / totalScroll));
+    onProgressRef.current?.(progress);
     setScrollProgress(progress);
     const totalSteps = totalFrames * 2 - 2;
     const step = Math.min(totalSteps, Math.floor(progress * (totalSteps + 1)));

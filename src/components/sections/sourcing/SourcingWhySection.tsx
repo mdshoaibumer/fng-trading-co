@@ -6,9 +6,9 @@ import { UserCheck, BadgeCheck, ShieldCheck } from 'lucide-react';
 
 const POINT_KEYS = ['accountability', 'verified', 'compliance'] as const;
 const POINT_ICONS = {
-  accountability: <UserCheck size={24} color="#8DB833" strokeWidth={1.5} />,
-  verified: <BadgeCheck size={24} color="#8DB833" strokeWidth={1.5} />,
-  compliance: <ShieldCheck size={24} color="#8DB833" strokeWidth={1.5} />,
+  accountability: <UserCheck size={24} color="var(--accent)" strokeWidth={1.5} />,
+  verified: <BadgeCheck size={24} color="var(--accent)" strokeWidth={1.5} />,
+  compliance: <ShieldCheck size={24} color="var(--accent)" strokeWidth={1.5} />,
 };
 
 const LICENSE_ROWS = ['saudiCr', 'fng', 'china', 'uscc'] as const;
@@ -25,7 +25,7 @@ export default function SourcingWhySection() {
           <div className="why-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(32px, 6vw, 64px)', alignItems: 'center' }}>
             <div style={{ textAlign: isAr ? 'right' : 'left' }}>
               <span className="section-tag">{t('tag')}</span>
-              <h2 style={{ fontSize: 'clamp(1.6rem,3.5vw,2.75rem)', fontWeight: 800, color: '#1A3D2B', marginBottom: '16px' }}>{t('title')}</h2>
+              <h2 style={{ fontSize: 'clamp(1.6rem,3.5vw,2.75rem)', fontWeight: 800, color: 'var(--primary)', marginBottom: '16px' }}>{t('title')}</h2>
               <p style={{ color: '#555', fontSize: 'clamp(0.9rem, 2vw, 1.05rem)', lineHeight: 1.7 }}>{t('subtitle')}</p>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -35,7 +35,7 @@ export default function SourcingWhySection() {
                     {POINT_ICONS[key]}
                   </div>
                   <div>
-                    <h3 style={{ color: '#1A3D2B', fontSize: '1rem', fontWeight: 700, marginBottom: '4px' }}>{t(`points.${key}.title`)}</h3>
+                    <h3 style={{ color: 'var(--primary)', fontSize: '1rem', fontWeight: 700, marginBottom: '4px' }}>{t(`points.${key}.title`)}</h3>
                     <p style={{ color: '#555', fontSize: '0.85rem', lineHeight: 1.6 }}>{t(`points.${key}.desc`)}</p>
                   </div>
                 </div>

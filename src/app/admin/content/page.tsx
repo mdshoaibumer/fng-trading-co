@@ -148,7 +148,7 @@ export default function AdminContentPage() {
               borderBottom: '1px solid #F1F5F9',
               paddingBottom: '12px'
             }}>
-              Section: <span style={{ color: '#8DB833', fontWeight: 800 }}>{section}</span>
+              Section: <span style={{ color: 'var(--admin-accent)', fontWeight: 800 }}>{section}</span>
             </h3>
             <div style={{ display: 'grid', gap: '20px' }}>
               {Object.keys(data[activeTab][section]).map(key => {
@@ -167,7 +167,7 @@ export default function AdminContentPage() {
                       style={{ 
                         minHeight: '44px', 
                         resize: 'vertical',
-                        fontFamily: activeTab === 'ar' ? 'IBM Plex Sans Arabic, sans-serif' : 'inherit',
+                        fontFamily: activeTab === 'ar' ? 'var(--font-ibm-plex-arabic), sans-serif' : 'inherit',
                         direction: activeTab === 'ar' ? 'rtl' : 'ltr'
                       }}
                       value={value}

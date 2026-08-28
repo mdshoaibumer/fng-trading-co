@@ -87,6 +87,8 @@ export default function AdminLeadsPage() {
       if (res.ok) {
         setLeads(prev => prev.map(l => l.id === id ? { ...l, status } : l));
         showToast(`Lead status updated to "${status}"`, 'success');
+      } else {
+        showToast('Failed to update status', 'error');
       }
     } catch {
       showToast('Failed to update status', 'error');
@@ -104,6 +106,8 @@ export default function AdminLeadsPage() {
       if (res.ok) {
         setLeads(prev => prev.filter(l => l.id !== id));
         showToast('Lead deleted successfully', 'success');
+      } else {
+        showToast('Failed to delete lead', 'error');
       }
     } catch {
       showToast('Failed to delete lead', 'error');
@@ -150,9 +154,9 @@ export default function AdminLeadsPage() {
             <Download size={18} />
             Export CSV
           </button>
-          <button onClick={fetchLeads} className="btn-admin btn-admin-primary" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <button onClick={fetchLeads} disabled={loading} className="btn-admin btn-admin-primary" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <RefreshCw size={18} />
-            Refresh
+            {loading ? 'Refreshing...' : 'Refresh'}
           </button>
         </div>
       </div>
@@ -194,7 +198,7 @@ export default function AdminLeadsPage() {
 
       {/* Leads Table */}
       {loading ? (
-        <div style={{ display: 'flex', height: '30vh', alignItems: 'center', justifyContent: 'center', color: '#8DB833' }}>
+        <div style={{ display: 'flex', height: '30vh', alignItems: 'center', justifyContent: 'center', color: 'var(--admin-accent)' }}>
           <Loader2 size={32} style={{ animation: 'spin 1s linear infinite' }} />
           <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
         </div>
@@ -230,7 +234,7 @@ export default function AdminLeadsPage() {
                       <span style={{
                         fontSize: '0.7rem', fontWeight: 700, padding: '3px 10px', borderRadius: '99px',
                         background: lead.type === 'printer_request' ? 'rgba(99, 102, 241, 0.1)' : 'rgba(141, 184, 51, 0.1)',
-                        color: lead.type === 'printer_request' ? '#6366F1' : '#8DB833'
+                        color: lead.type === 'printer_request' ? '#6366F1' : 'var(--admin-accent)'
                       }}>
                         {typeLabel}
                       </span>
@@ -303,6 +307,7 @@ export default function AdminLeadsPage() {
                     {/* Delete */}
                     <button
                       onClick={() => deleteLead(lead.id)}
+                      aria-label="Delete lead"
                       style={{ background: 'none', border: 'none', color: '#CBD5E1', cursor: 'pointer', padding: '8px', borderRadius: '8px', transition: 'color 0.2s' }}
                       onMouseEnter={(e) => (e.currentTarget.style.color = '#EF4444')}
                       onMouseLeave={(e) => (e.currentTarget.style.color = '#CBD5E1')}

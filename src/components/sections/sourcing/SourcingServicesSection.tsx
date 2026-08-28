@@ -21,11 +21,11 @@ export default function SourcingServicesSection() {
   const isAr = params.locale === 'ar';
 
   return (
-    <section id="sourcing-services" className="section" style={{ background: '#F7F8F5' }}>
+    <section id="sourcing-services" className="section" style={{ background: 'var(--bg-secondary)' }}>
       <div className="container">
         <div style={{ textAlign: 'center', marginBottom: 'clamp(32px, 6vw, 64px)' }}>
           <span className="section-tag">{t('tag')}</span>
-          <h2 style={{ fontSize: 'clamp(1.5rem,4vw,3.5rem)', fontWeight: 800, color: '#1A3D2B', marginBottom: '12px' }}>{t('title')}</h2>
+          <h2 style={{ fontSize: 'clamp(1.5rem,4vw,3.5rem)', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px' }}>{t('title')}</h2>
           <p style={{ color: '#555', fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', maxWidth: '600px', margin: '0 auto' }}>{t('subtitle')}</p>
         </div>
         <div className="ss-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'clamp(16px, 3vw, 24px)' }}>
@@ -42,7 +42,7 @@ export default function SourcingServicesSection() {
               }}>
                 {ICONS[key]}
               </div>
-              <h3 style={{ color: '#1A3D2B', fontSize: '1.05rem', fontWeight: 700, marginBottom: '10px' }}>{t(`items.${key}.name`)}</h3>
+              <h3 style={{ color: 'var(--primary)', fontSize: '1.05rem', fontWeight: 700, marginBottom: '10px' }}>{t(`items.${key}.name`)}</h3>
               <p style={{ color: '#555', fontSize: '0.85rem', lineHeight: 1.7 }}>{t(`items.${key}.desc`)}</p>
             </div>
           ))}

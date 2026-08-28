@@ -82,7 +82,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                 color: c.text,
                 fontWeight: 600,
                 fontSize: '0.9rem',
-                fontFamily: 'Inter, sans-serif',
+                fontFamily: 'var(--font-inter), sans-serif',
                 animation: 'toastSlideIn 0.3s ease-out',
                 minWidth: '300px',
                 maxWidth: '460px',
@@ -92,6 +92,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               <span style={{ flex: 1 }}>{toast.message}</span>
               <button
                 onClick={() => dismiss(toast.id)}
+                aria-label="Dismiss notification"
                 style={{
                   background: 'none',
                   border: 'none',

@@ -36,7 +36,7 @@ export default function ContactPageClient() {
     border: '1px solid #E5E7EB', background: '#F9FAFB',
     color: '#111827', fontSize: '1rem', outline: 'none',
     transition: 'all 200ms ease',
-    fontFamily: isAr ? 'IBM Plex Sans Arabic, sans-serif' : 'Inter, sans-serif',
+    fontFamily: isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif',
   };
 
   return (
@@ -45,7 +45,7 @@ export default function ContactPageClient() {
       {/* Page Header */}
       <div className="container" style={{ textAlign: 'center', marginBottom: '80px' }}>
         <span className="section-tag" style={{ margin: '0 auto 16px' }}>{tp('title')}</span>
-        <h1 style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', fontWeight: 900, color: '#1A3D2B', marginBottom: '24px', letterSpacing: '-0.02em' }}>
+        <h1 style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', fontWeight: 900, color: 'var(--primary)', marginBottom: '24px', letterSpacing: '-0.02em' }}>
           {t('title')}
         </h1>
         <p style={{ color: '#4B5563', fontSize: '1.2rem', maxWidth: '600px', margin: '0 auto', lineHeight: 1.6 }}>
@@ -61,15 +61,15 @@ export default function ContactPageClient() {
             
             {/* Benefits Section */}
             <div>
-              <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#1A3D2B', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <Zap color="#8DB833" />
+              <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <Zap color="var(--accent)" />
                 {tp('benefits.title')}
               </h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {[1, 2, 3, 4].map((num) => (
-                  <div key={num} style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px', background: '#F7F8F5', borderRadius: '16px', border: '1px solid rgba(141,184,51,0.1)' }}>
-                    <CheckCircle2 color="#8DB833" size={20} />
-                    <span style={{ fontWeight: 600, color: '#1A3D2B', fontSize: '1.05rem' }}>
+                  <div key={num} style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px', background: 'var(--bg-secondary)', borderRadius: '16px', border: '1px solid rgba(141,184,51,0.1)' }}>
+                    <CheckCircle2 color="var(--accent)" size={20} />
+                    <span style={{ fontWeight: 600, color: 'var(--primary)', fontSize: '1.05rem' }}>
                       {tp(`benefits.item${num}` as Parameters<typeof tp>[0])}
                     </span>
                   </div>
@@ -79,17 +79,17 @@ export default function ContactPageClient() {
 
             {/* Locations */}
             <div>
-              <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#1A3D2B', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <MapPin color="#8DB833" />
+              <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <MapPin color="var(--accent)" />
                 {tp('locations')}
               </h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                <div style={{ padding: '24px', background: '#F7F8F5', borderRadius: '20px', border: '1px solid #EEEEEE' }}>
-                  <h4 style={{ fontWeight: 700, color: '#1A3D2B', fontSize: '1.1rem', marginBottom: '8px' }}>{tp('hq')}</h4>
+                <div style={{ padding: '24px', background: 'var(--bg-secondary)', borderRadius: '20px', border: '1px solid #EEEEEE' }}>
+                  <h4 style={{ fontWeight: 700, color: 'var(--primary)', fontSize: '1.1rem', marginBottom: '8px' }}>{tp('hq')}</h4>
                   <p style={{ color: '#555', lineHeight: 1.6 }}>{tp('hqAddress')}</p>
                 </div>
-                <div style={{ padding: '24px', background: '#F7F8F5', borderRadius: '20px', border: '1px solid #EEEEEE' }}>
-                  <h4 style={{ fontWeight: 700, color: '#1A3D2B', fontSize: '1.1rem', marginBottom: '8px' }}>{tp('uae')}</h4>
+                <div style={{ padding: '24px', background: 'var(--bg-secondary)', borderRadius: '20px', border: '1px solid #EEEEEE' }}>
+                  <h4 style={{ fontWeight: 700, color: 'var(--primary)', fontSize: '1.1rem', marginBottom: '8px' }}>{tp('uae')}</h4>
                   <p style={{ color: '#555', lineHeight: 1.6 }}>{tp('uaeAddress')}</p>
                 </div>
               </div>
@@ -97,36 +97,36 @@ export default function ContactPageClient() {
 
             {/* Direct Contact */}
             <div>
-              <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#1A3D2B', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <Phone color="#8DB833" />
+              <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <Phone color="var(--accent)" />
                 {tp('contactInfo')}
               </h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                   <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(141,184,51,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Mail color="#8DB833" size={24} />
+                    <Mail color="var(--accent)" size={24} />
                   </div>
                   <div>
                     <p style={{ color: '#555', fontSize: '0.9rem', marginBottom: '4px' }}>{tp('emailLabel')}</p>
-                    <p style={{ color: '#1A3D2B', fontWeight: 700, fontSize: '1.1rem' }}>{tp('emailValue')}</p>
+                    <p style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '1.1rem' }}>{tp('emailValue')}</p>
                   </div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                   <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(141,184,51,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Phone color="#8DB833" size={24} />
+                    <Phone color="var(--accent)" size={24} />
                   </div>
                   <div>
                     <p style={{ color: '#555', fontSize: '0.9rem', marginBottom: '4px' }}>{tp('phoneLabel')}</p>
-                    <p style={{ color: '#1A3D2B', fontWeight: 700, fontSize: '1.1rem' }}>{tp('phoneValue')}</p>
+                    <p style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '1.1rem' }}>{tp('phoneValue')}</p>
                   </div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                   <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(141,184,51,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Clock color="#8DB833" size={24} />
+                    <Clock color="var(--accent)" size={24} />
                   </div>
                   <div>
                     <p style={{ color: '#555', fontSize: '0.9rem', marginBottom: '4px' }}>{tp('hoursLabel')}</p>
-                    <p style={{ color: '#1A3D2B', fontWeight: 700, fontSize: '1.1rem' }}>{tp('hoursValue')}</p>
+                    <p style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '1.1rem' }}>{tp('hoursValue')}</p>
                   </div>
                 </div>
               </div>
@@ -146,62 +146,86 @@ export default function ContactPageClient() {
             {status === 'success' ? (
               <div style={{ textAlign: 'center', padding: '60px 0', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 <div style={{ fontSize: '3rem', marginBottom: '24px', display: 'flex', justifyContent: 'center' }}>
-                  <CheckCircle2 size={64} color="#8DB833" strokeWidth={1.5} />
+                  <CheckCircle2 size={64} color="var(--accent)" strokeWidth={1.5} />
                 </div>
-                <h3 style={{ fontSize: '1.8rem', fontWeight: 800, color: '#1A3D2B', marginBottom: '12px' }}>Request Received</h3>
+                <h3 style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px' }}>Request Received</h3>
                 <p style={{ color: '#555', fontSize: '1.1rem', lineHeight: 1.6 }}>{t('form.success')}</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                {/* Honeypot: hidden from real visitors, tempting to bots that auto-fill every field */}
+                {/* Honeypot: hidden from real visitors, tempting to bots that auto-fill every field.
+                    Clipped to 1x1px in place rather than pushed off-canvas with a huge negative
+                    offset — that older technique still contributes to the page's scrollable area,
+                    and under RTL a mobile browser can expand the whole layout viewport to reach it. */}
                 <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true"
-                  style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', opacity: 0 }}
+                  style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0, opacity: 0 }}
                   value={form.website}
                   onChange={e => setForm(f => ({ ...f, website: e.target.value }))} />
-                <h3 style={{ fontSize: '1.8rem', fontWeight: 800, color: '#1A3D2B', marginBottom: '8px' }}>Send a Message</h3>
+                <h3 style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '8px' }}>Send a Message</h3>
                 <p style={{ color: '#555', marginBottom: '24px' }}>Fill out the form below and we will get back to you shortly.</p>
                 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                  <input style={inputStyle} placeholder={t('form.name')} required value={form.name}
-                    onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                    onFocus={e => { e.target.style.borderColor = '#8DB833'; e.target.style.background = '#fff'; }}
-                    onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.background = '#F9FAFB'; }} />
-                  <input style={inputStyle} placeholder={t('form.company')} required value={form.company}
-                    onChange={e => setForm(f => ({ ...f, company: e.target.value }))}
-                    onFocus={e => { e.target.style.borderColor = '#8DB833'; e.target.style.background = '#fff'; }}
-                    onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.background = '#F9FAFB'; }} />
+                <div className="form-row" style={{ gap: '20px' }}>
+                  <div>
+                    <label htmlFor="contact-page-name" className="sr-only">{t('form.name')}</label>
+                    <input id="contact-page-name" style={inputStyle} placeholder={t('form.name')} required value={form.name}
+                      onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                      onFocus={e => { e.target.style.borderColor = 'var(--accent)'; e.target.style.background = '#fff'; }}
+                      onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.background = '#F9FAFB'; }} />
+                  </div>
+                  <div>
+                    <label htmlFor="contact-page-company" className="sr-only">{t('form.company')}</label>
+                    <input id="contact-page-company" style={inputStyle} placeholder={t('form.company')} required value={form.company}
+                      onChange={e => setForm(f => ({ ...f, company: e.target.value }))}
+                      onFocus={e => { e.target.style.borderColor = 'var(--accent)'; e.target.style.background = '#fff'; }}
+                      onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.background = '#F9FAFB'; }} />
+                  </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                  <input style={inputStyle} placeholder={t('form.email')} type="email" required value={form.email}
-                    onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                    onFocus={e => { e.target.style.borderColor = '#8DB833'; e.target.style.background = '#fff'; }}
-                    onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.background = '#F9FAFB'; }} />
-                  <input style={inputStyle} placeholder={t('form.phone')} type="tel" required value={form.phone}
-                    onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
-                    onFocus={e => { e.target.style.borderColor = '#8DB833'; e.target.style.background = '#fff'; }}
-                    onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.background = '#F9FAFB'; }} />
+                <div className="form-row" style={{ gap: '20px' }}>
+                  <div>
+                    <label htmlFor="contact-page-email" className="sr-only">{t('form.email')}</label>
+                    <input id="contact-page-email" style={inputStyle} placeholder={t('form.email')} type="email" required value={form.email}
+                      onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
+                      onFocus={e => { e.target.style.borderColor = 'var(--accent)'; e.target.style.background = '#fff'; }}
+                      onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.background = '#F9FAFB'; }} />
+                  </div>
+                  <div>
+                    <label htmlFor="contact-page-phone" className="sr-only">{t('form.phone')}</label>
+                    <input id="contact-page-phone" style={inputStyle} placeholder={t('form.phone')} type="tel" required value={form.phone}
+                      onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
+                      onFocus={e => { e.target.style.borderColor = 'var(--accent)'; e.target.style.background = '#fff'; }}
+                      onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.background = '#F9FAFB'; }} />
+                  </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                  <input style={inputStyle} placeholder={t('form.city')} value={form.city} required
-                    onChange={e => setForm(f => ({ ...f, city: e.target.value }))}
-                    onFocus={e => { e.target.style.borderColor = '#8DB833'; e.target.style.background = '#fff'; }}
-                    onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.background = '#F9FAFB'; }} />
-                  <input style={inputStyle} placeholder={t('form.industry')} value={form.industry} required
-                    onChange={e => setForm(f => ({ ...f, industry: e.target.value }))}
-                    onFocus={e => { e.target.style.borderColor = '#8DB833'; e.target.style.background = '#fff'; }}
-                    onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.background = '#F9FAFB'; }} />
+                <div className="form-row" style={{ gap: '20px' }}>
+                  <div>
+                    <label htmlFor="contact-page-city" className="sr-only">{t('form.city')}</label>
+                    <input id="contact-page-city" style={inputStyle} placeholder={t('form.city')} value={form.city} required
+                      onChange={e => setForm(f => ({ ...f, city: e.target.value }))}
+                      onFocus={e => { e.target.style.borderColor = 'var(--accent)'; e.target.style.background = '#fff'; }}
+                      onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.background = '#F9FAFB'; }} />
+                  </div>
+                  <div>
+                    <label htmlFor="contact-page-industry" className="sr-only">{t('form.industry')}</label>
+                    <input id="contact-page-industry" style={inputStyle} placeholder={t('form.industry')} value={form.industry} required
+                      onChange={e => setForm(f => ({ ...f, industry: e.target.value }))}
+                      onFocus={e => { e.target.style.borderColor = 'var(--accent)'; e.target.style.background = '#fff'; }}
+                      onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.background = '#F9FAFB'; }} />
+                  </div>
                 </div>
 
-                <textarea style={{ ...inputStyle, minHeight: '120px', resize: 'vertical' }} placeholder={t('form.message')} value={form.message}
-                  onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
-                  onFocus={e => { e.target.style.borderColor = '#8DB833'; e.target.style.background = '#fff'; }}
-                  onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.background = '#F9FAFB'; }} />
+                <div>
+                  <label htmlFor="contact-page-message" className="sr-only">{t('form.message')}</label>
+                  <textarea id="contact-page-message" style={{ ...inputStyle, minHeight: '120px', resize: 'vertical' }} placeholder={t('form.message')} value={form.message}
+                    onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
+                    onFocus={e => { e.target.style.borderColor = 'var(--accent)'; e.target.style.background = '#fff'; }}
+                    onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.background = '#F9FAFB'; }} />
+                </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label style={{ fontSize: '0.9rem', color: '#555', fontWeight: 600 }}>{t('form.quantity')}</label>
-                  <select style={{ ...inputStyle, cursor: 'pointer' }} value={form.quantity}
+                  <label htmlFor="contact-page-quantity" style={{ fontSize: '0.9rem', color: '#555', fontWeight: 600 }}>{t('form.quantity')}</label>
+                  <select id="contact-page-quantity" style={{ ...inputStyle, cursor: 'pointer' }} value={form.quantity}
                     onChange={e => setForm(f => ({ ...f, quantity: e.target.value }))}>
                     {[1, 2, 3, 5, 10, 20, '50+'].map(n => <option key={n} value={n} style={{ color: '#000' }}>{n}</option>)}
                   </select>
@@ -212,10 +236,10 @@ export default function ContactPageClient() {
                   {status === 'loading' ? '...' : t('form.submit')}
                 </button>
                 
-                {status === 'error' && <p style={{ color: '#C0392B', fontSize: '0.9rem', textAlign: 'center', marginTop: '8px' }}>{t('form.error')}</p>}
+                {status === 'error' && <p role="alert" style={{ color: '#C0392B', fontSize: '0.9rem', textAlign: 'center', marginTop: '8px' }}>{t('form.error')}</p>}
                 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center', marginTop: '16px' }}>
-                  <ShieldCheck size={16} color="#8DB833" />
+                  <ShieldCheck size={16} color="var(--accent)" />
                   <span style={{ fontSize: '0.85rem', color: '#9CA3AF' }}>{t('form.privacy')}</span>
                 </div>
               </form>
@@ -223,6 +247,12 @@ export default function ContactPageClient() {
           </div>
         </div>
       </div>
+      <style jsx>{`
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; }
+        @media (max-width: 480px) {
+          .form-row { grid-template-columns: 1fr; }
+        }
+      `}</style>
     </main>
   );
 }

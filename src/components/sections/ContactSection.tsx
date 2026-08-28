@@ -35,7 +35,7 @@ export default function ContactSection() {
     border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.06)',
     color: '#fff', fontSize: '0.95rem', outline: 'none',
     transition: 'border-color 200ms ease',
-    fontFamily: isAr ? 'IBM Plex Sans Arabic, sans-serif' : 'Inter, sans-serif',
+    fontFamily: isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif',
     minHeight: '48px',
   };
 
@@ -54,11 +54,11 @@ export default function ContactSection() {
             <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 'clamp(1rem, 2.5vw, 1.2rem)', marginBottom: '32px' }}>{t('subtitle')}</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexDirection: isAr ? 'row-reverse' : 'row' }}>
-                <span style={{ display: 'flex' }}><Lock size={18} color="#8DB833" /></span>
+                <span style={{ display: 'flex' }}><Lock size={18} color="var(--accent)" /></span>
                 <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.85rem' }}>{t('form.privacy')}</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexDirection: isAr ? 'row-reverse' : 'row' }}>
-                <span style={{ display: 'flex' }}><Clock size={18} color="#8DB833" /></span>
+                <span style={{ display: 'flex' }}><Clock size={18} color="var(--accent)" /></span>
                 <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.85rem' }}>{t('form.response')}</span>
               </div>
             </div>
@@ -69,38 +69,41 @@ export default function ContactSection() {
             {status === 'success' ? (
               <div style={{ textAlign: 'center', padding: '40px 0' }}>
                 <div style={{ fontSize: '3rem', marginBottom: '16px', display: 'flex', justifyContent: 'center' }}>
-                  <CheckCircle2 size={48} color="#8DB833" strokeWidth={1.5} />
+                  <CheckCircle2 size={48} color="var(--accent)" strokeWidth={1.5} />
                 </div>
-                <p style={{ color: '#8DB833', fontSize: '1.1rem', fontWeight: 600 }}>{t('form.success')}</p>
+                <p style={{ color: 'var(--accent)', fontSize: '1.1rem', fontWeight: 600 }}>{t('form.success')}</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                {/* Honeypot: hidden from real visitors, tempting to bots that auto-fill every field */}
+                {/* Honeypot: hidden from real visitors, tempting to bots that auto-fill every field.
+                    Clipped to 1x1px in place rather than pushed off-canvas with a huge negative
+                    offset — that older technique still contributes to the page's scrollable area,
+                    and under RTL a mobile browser can expand the whole layout viewport to reach it. */}
                 <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true"
-                  style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', opacity: 0 }}
+                  style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0, opacity: 0 }}
                   value={form.website}
                   onChange={e => setForm(f => ({ ...f, website: e.target.value }))} />
                 <label htmlFor="contact-name" className="sr-only">{t('form.name')}</label>
                 <input id="contact-name" style={inputStyle} placeholder={t('form.name')} required value={form.name}
                   onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                  onFocus={e => (e.target.style.borderColor = '#8DB833')}
+                  onFocus={e => (e.target.style.borderColor = 'var(--accent)')}
                   onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.15)')} />
                 <label htmlFor="contact-company" className="sr-only">{t('form.company')}</label>
                 <input id="contact-company" style={inputStyle} placeholder={t('form.company')} required value={form.company}
                   onChange={e => setForm(f => ({ ...f, company: e.target.value }))}
-                  onFocus={e => (e.target.style.borderColor = '#8DB833')}
+                  onFocus={e => (e.target.style.borderColor = 'var(--accent)')}
                   onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.15)')} />
                 <label htmlFor="contact-phone" className="sr-only">{t('form.phone')}</label>
                 <input id="contact-phone" style={inputStyle} placeholder={t('form.phone')} type="tel" required value={form.phone}
                   onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
-                  onFocus={e => (e.target.style.borderColor = '#8DB833')}
+                  onFocus={e => (e.target.style.borderColor = 'var(--accent)')}
                   onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.15)')} />
                 <div className="contact-form-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                   <div>
                     <label htmlFor="contact-city" className="sr-only">{t('form.city')}</label>
                     <input id="contact-city" style={inputStyle} placeholder={t('form.city')} value={form.city}
                       onChange={e => setForm(f => ({ ...f, city: e.target.value }))}
-                      onFocus={e => (e.target.style.borderColor = '#8DB833')}
+                      onFocus={e => (e.target.style.borderColor = 'var(--accent)')}
                       onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.15)')} />
                   </div>
                   <div>

@@ -75,7 +75,7 @@ export default function EntryGate() {
           color: '#fff', fontSize: '0.85rem', fontWeight: 700, letterSpacing: '0.05em',
           textDecoration: 'none', transition: 'all 200ms ease',
         }}
-        onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#8DB833'; e.currentTarget.style.color = '#8DB833'; }}
+        onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--accent)'; e.currentTarget.style.color = 'var(--accent)'; }}
         onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.25)'; e.currentTarget.style.color = '#fff'; }}
       >
         {tNav('lang')}
@@ -84,7 +84,7 @@ export default function EntryGate() {
       <div style={{ position: 'relative', width: '100%', maxWidth: '1100px', margin: 'auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 'clamp(28px, 5vw, 48px)' }}>
           <span style={{
-            display: 'inline-block', color: '#8DB833', fontFamily: 'IBM Plex Mono, monospace',
+            display: 'inline-block', color: 'var(--accent)', fontFamily: 'var(--font-ibm-plex-mono), monospace',
             fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase',
             marginBottom: '14px',
           }}>
@@ -92,7 +92,7 @@ export default function EntryGate() {
           </span>
           <h1 style={{
             fontSize: 'clamp(1.6rem, 4vw, 2.75rem)', fontWeight: 800, color: '#fff', margin: 0,
-            fontFamily: isAr ? 'IBM Plex Sans Arabic, sans-serif' : 'Inter, sans-serif',
+            fontFamily: isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif',
           }}>
             {t('title')}
           </h1>
@@ -103,6 +103,7 @@ export default function EntryGate() {
           <a
             href={`/${locale}`}
             onClick={(e) => { e.preventDefault(); setOpen(false); }}
+            aria-label={`${t('printers.title')} — ${t('printers.cta')}`}
             className="glass-dark gate-card"
             style={{
               display: 'flex', flexDirection: 'column', textDecoration: 'none', cursor: 'pointer',
@@ -146,6 +147,7 @@ export default function EntryGate() {
           {/* Sourcing panel */}
           <a
             href={`/${locale}/sourcing`}
+            aria-label={`${t('sourcing.title')} — ${t('sourcing.cta')}`}
             className="glass-dark gate-card"
             style={{
               display: 'flex', flexDirection: 'column', textDecoration: 'none', cursor: 'pointer',

@@ -59,6 +59,7 @@ export default function AdminPartsPage() {
         body: JSON.stringify(parts)
       });
       if (res.ok) showToast('Parts catalog updated successfully!', 'success');
+      else showToast('Failed to save parts catalog. Please try again.', 'error');
     } catch {
       showToast('Error saving parts.', 'error');
     } finally {
@@ -126,7 +127,7 @@ export default function AdminPartsPage() {
                   borderBottom: isOpen ? '1px solid #E2E8F0' : 'none'
                 }}
               >
-                <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(141, 184, 51, 0.1)', color: '#8DB833', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(141, 184, 51, 0.1)', color: 'var(--admin-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   {CATEGORY_ICONS[category]}
                 </div>
                 <div style={{ flex: 1 }}>
@@ -158,7 +159,7 @@ export default function AdminPartsPage() {
                         <input 
                           className="admin-input" 
                           placeholder="Name (AR)" 
-                          style={{ fontFamily: 'IBM Plex Sans Arabic, sans-serif', direction: 'rtl' }}
+                          style={{ fontFamily: 'var(--font-ibm-plex-arabic), sans-serif', direction: 'rtl' }}
                           value={part.nameAr} 
                           onChange={(e) => updatePart(category, idx, 'nameAr', e.target.value)} 
                         />
@@ -168,8 +169,9 @@ export default function AdminPartsPage() {
                           value={part.models} 
                           onChange={(e) => updatePart(category, idx, 'models', e.target.value)} 
                         />
-                        <button 
+                        <button
                           onClick={() => deletePart(category, idx)}
+                          aria-label="Delete part"
                           style={{ background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer', display: 'flex', justifyContent: 'center' }}
                         >
                           <Trash2 size={18} />

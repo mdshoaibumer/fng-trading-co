@@ -56,15 +56,20 @@ export interface Product {
 
 // Shared by both the printer and office-equipment catalogs — both live in
 // the same `printers` table, distinguished only by an `eq-` id prefix.
-export async function getProducts(kind: 'printer' | 'equipment'): Promise<Product[]> {
+//
+// Returns `error: true` when the fetch itself failed, distinct from a
+// successful fetch that simply found zero matching rows — callers need to
+// tell "nothing to show" apart from "something broke" instead of collapsing
+// both into an empty array.
+export async function getProducts(kind: 'printer' | 'equipment'): Promise<{ products: Product[]; error: boolean }> {
   const { data, error } = await supabaseAdmin
     .from('printers')
     .select('*')
     .order('created_at', { ascending: true });
 
-  if (error || !data) return [];
+  if (error || !data) return { products: [], error: true };
 
-  return data
+  const products = data
     .filter((p) => (kind === 'equipment' ? p.id.startsWith('eq-') : !p.id.startsWith('eq-')))
     .map((p) => ({
       id: p.id,
@@ -78,4 +83,6 @@ export async function getProducts(kind: 'printer' | 'equipment'): Promise<Produc
       specsAr: p.specs_ar || {},
       available: p.available,
     }));
+
+  return { products, error: false };
 }

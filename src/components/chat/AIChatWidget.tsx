@@ -79,6 +79,9 @@ export default function AIChatWidget({ welcomeMessage }: { welcomeMessage?: stri
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: isOpen ? 0 : 1, y: isOpen ? 20 : 0 }}
         style={{ pointerEvents: isOpen ? 'none' : 'auto' }}
+        aria-label="Open chat"
+        aria-hidden={isOpen}
+        tabIndex={isOpen ? -1 : 0}
       >
         <MessageSquare size={24} />
       </motion.button>
@@ -108,8 +111,9 @@ export default function AIChatWidget({ welcomeMessage }: { welcomeMessage?: stri
                   <p className="text-xs text-slate-400 m-0">FNG AI Assistant</p>
                 </div>
               </div>
-              <button 
+              <button
                 onClick={() => setIsOpen(false)}
+                aria-label="Close chat"
                 className="text-slate-400 hover:text-white transition-colors"
               >
                 <X size={20} />
@@ -164,6 +168,7 @@ export default function AIChatWidget({ welcomeMessage }: { welcomeMessage?: stri
                 <button
                   type="submit"
                   disabled={!input.trim() || isLoading}
+                  aria-label="Send message"
                   className="absolute right-2 w-8 h-8 flex items-center justify-center bg-[#8DB833] text-white rounded-full hover:bg-[#7aa02a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <Send size={14} style={{ marginLeft: '2px' }} />

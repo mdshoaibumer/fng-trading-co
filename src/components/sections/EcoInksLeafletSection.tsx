@@ -9,10 +9,10 @@ export default function EcoInksLeafletSection() {
   const isAr = locale === 'ar';
 
   const features = [
-    { title: isAr ? 'مواد قابلة للتحلل' : 'Biodegradable Materials', description: isAr ? 'أحبارنا مصنوعة من مواد عضوية متقدمة تتحلل طبيعياً ولا تترك أي أثر ضار على البيئة.' : 'Our inks are formulated from advanced organic compounds that break down naturally without harming the environment.', icon: <Leaf className="w-7 h-7" color="#8DB833" strokeWidth={1.5} /> },
-    { title: isAr ? 'جودة طباعة استثنائية' : 'Exceptional Print Quality', description: isAr ? 'لا مساومة على الجودة. تضمن تقنيتنا ألواناً زاهية ونصوصاً فائقة الدقة في كل صفحة.' : 'No compromises on quality. Our technology ensures vibrant colors and razor-sharp text on every page.', icon: <Printer className="w-7 h-7" color="#8DB833" strokeWidth={1.5} /> },
-    { title: isAr ? 'خالية من الانبعاثات السامة' : 'Zero Toxic Emissions', description: isAr ? 'بيئة عمل أكثر أماناً بفضل التركيبة الخالية تماماً من المركبات العضوية المتطايرة (VOCs).' : 'A safer workspace thanks to a formula that is 100% free of Volatile Organic Compounds (VOCs).', icon: <ShieldCheck className="w-7 h-7" color="#8DB833" strokeWidth={1.5} /> },
-    { title: isAr ? 'فعالية في التكلفة' : 'Cost Effective', description: isAr ? 'إنتاجية أعلى وتكلفة أقل للصفحة الواحدة، مما يجعل الاستدامة خياراً ذكياً لأعمالك.' : 'Higher yield and lower cost per page makes sustainability the smartest choice for your business.', icon: <TrendingUp className="w-7 h-7" color="#8DB833" strokeWidth={1.5} /> },
+    { title: isAr ? 'مواد قابلة للتحلل' : 'Biodegradable Materials', description: isAr ? 'أحبارنا مصنوعة من مواد عضوية متقدمة تتحلل طبيعياً ولا تترك أي أثر ضار على البيئة.' : 'Our inks are formulated from advanced organic compounds that break down naturally without harming the environment.', icon: <Leaf className="w-7 h-7" color="var(--accent)" strokeWidth={1.5} /> },
+    { title: isAr ? 'جودة طباعة استثنائية' : 'Exceptional Print Quality', description: isAr ? 'لا مساومة على الجودة. تضمن تقنيتنا ألواناً زاهية ونصوصاً فائقة الدقة في كل صفحة.' : 'No compromises on quality. Our technology ensures vibrant colors and razor-sharp text on every page.', icon: <Printer className="w-7 h-7" color="var(--accent)" strokeWidth={1.5} /> },
+    { title: isAr ? 'خالية من الانبعاثات السامة' : 'Zero Toxic Emissions', description: isAr ? 'بيئة عمل أكثر أماناً بفضل التركيبة الخالية تماماً من المركبات العضوية المتطايرة (VOCs).' : 'A safer workspace thanks to a formula that is 100% free of Volatile Organic Compounds (VOCs).', icon: <ShieldCheck className="w-7 h-7" color="var(--accent)" strokeWidth={1.5} /> },
+    { title: isAr ? 'فعالية في التكلفة' : 'Cost Effective', description: isAr ? 'إنتاجية أعلى وتكلفة أقل للصفحة الواحدة، مما يجعل الاستدامة خياراً ذكياً لأعمالك.' : 'Higher yield and lower cost per page makes sustainability the smartest choice for your business.', icon: <TrendingUp className="w-7 h-7" color="var(--accent)" strokeWidth={1.5} /> },
   ];
 
   return (
@@ -24,10 +24,10 @@ export default function EcoInksLeafletSection() {
       }} />
       <div className="container" style={{ position: 'relative', zIndex: 2 }}>
         <div style={{ textAlign: 'center', marginBottom: 'clamp(32px, 6vw, 80px)' }}>
-          <span style={{ color: '#8DB833', fontSize: 'clamp(0.7rem, 2vw, 0.9rem)', fontWeight: 600, letterSpacing: isAr ? '0' : '0.1em', textTransform: 'uppercase', display: 'block', marginBottom: '16px' }}>
+          <span style={{ color: 'var(--accent)', fontSize: 'clamp(0.7rem, 2vw, 0.9rem)', fontWeight: 600, letterSpacing: isAr ? '0' : '0.1em', textTransform: 'uppercase', display: 'block', marginBottom: '16px' }}>
             {isAr ? 'كتيب المواصفات' : 'Product Specifications'}
           </span>
-          <h2 style={{ color: '#111827', fontSize: 'clamp(1.5rem, 5vw, 3.5rem)', fontWeight: 800, fontFamily: isAr ? 'IBM Plex Sans Arabic, sans-serif' : 'Inter, sans-serif', marginBottom: '20px' }}>
+          <h2 style={{ color: '#111827', fontSize: 'clamp(1.5rem, 5vw, 3.5rem)', fontWeight: 800, fontFamily: isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif', marginBottom: '20px' }}>
             {isAr ? 'لماذا تختار حبر إيكو؟' : 'Why Choose Eco Inks?'}
           </h2>
           <p style={{ color: '#4B5563', fontSize: 'clamp(0.85rem, 2vw, 1.1rem)', maxWidth: '600px', margin: '0 auto', lineHeight: 1.6 }}>
@@ -47,7 +47,7 @@ export default function EcoInksLeafletSection() {
               <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'rgba(141,184,51,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px', border: '1px solid rgba(141,184,51,0.2)' }}>
                 {feat.icon}
               </div>
-              <h3 style={{ color: '#111827', fontSize: 'clamp(1rem, 2.5vw, 1.25rem)', fontWeight: 700, marginBottom: '10px', fontFamily: isAr ? 'IBM Plex Sans Arabic, sans-serif' : 'Inter, sans-serif' }}>
+              <h3 style={{ color: '#111827', fontSize: 'clamp(1rem, 2.5vw, 1.25rem)', fontWeight: 700, marginBottom: '10px', fontFamily: isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif' }}>
                 {feat.title}
               </h3>
               <p style={{ color: '#4B5563', lineHeight: 1.6, fontSize: '0.9rem' }}>{feat.description}</p>

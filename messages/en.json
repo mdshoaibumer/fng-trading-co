@@ -326,6 +326,7 @@
     "ctaInquiry": "Inquire About This Part",
     "ctaWhatsapp": "Quick Order via WhatsApp",
     "compatibleWith": "Compatible With",
+    "noPartsYet": "No parts listed in this category yet — contact us on WhatsApp and we'll help you find what you need.",
     "categories": {
       "fuser": {
         "name": "Fuser Assemblies",

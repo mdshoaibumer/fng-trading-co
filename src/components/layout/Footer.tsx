@@ -95,7 +95,7 @@ export default function Footer() {
                     justifyContent: isAr ? 'flex-end' : 'flex-start',
                     flexDirection: isAr ? 'row-reverse' : 'row',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = '#8DB833')}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--accent)')}
                   onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255,255,255,0.5)')}
                 >
                   {link.label}
@@ -118,13 +118,13 @@ export default function Footer() {
             </h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.85rem', display: 'flex', alignItems: 'flex-start', gap: '8px', lineHeight: 1.5, flexDirection: isAr ? 'row-reverse' : 'row', textAlign: isAr ? 'right' : 'left' }}>
-                <MapPin size={16} color="#8DB833" style={{ flexShrink: 0, marginTop: '2px' }} /> {isAr ? 'نخدم مناطق: الرياض، جدة، الدمام، والمدينة المنورة' : 'Serving: Riyadh, Jeddah, Dammam, & Al Madinah'}
+                <MapPin size={16} color="var(--accent)" style={{ flexShrink: 0, marginTop: '2px' }} /> {isAr ? 'نخدم مناطق: الرياض، جدة، الدمام، والمدينة المنورة' : 'Serving: Riyadh, Jeddah, Dammam, & Al Madinah'}
               </span>
               <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', wordBreak: 'break-all', flexDirection: isAr ? 'row-reverse' : 'row', textAlign: isAr ? 'right' : 'left' }}>
-                <Globe size={16} color="#8DB833" style={{ flexShrink: 0 }} /> www.fngtradingco.com
+                <Globe size={16} color="var(--accent)" style={{ flexShrink: 0 }} /> www.fngtradingco.com
               </span>
               <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', wordBreak: 'break-all', flexDirection: isAr ? 'row-reverse' : 'row', textAlign: isAr ? 'right' : 'left' }}>
-                <Mail size={16} color="#8DB833" style={{ flexShrink: 0 }} /> Support@fngtradingco.com
+                <Mail size={16} color="var(--accent)" style={{ flexShrink: 0 }} /> Support@fngtradingco.com
               </span>
             </div>
           </div>

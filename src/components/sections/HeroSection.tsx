@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { useScrollFrameSequence } from '@/lib/useScrollFrameSequence';
@@ -16,13 +16,37 @@ export default function HeroSection() {
   const locale = params.locale as string;
   const isAr = locale === 'ar';
   const [headlineVisible, setHeadlineVisible] = useState(false);
-  const { sectionRef, canvasRef, scrollProgress, imagesLoaded, isMobile, prefersReducedMotion } =
-    useScrollFrameSequence({ totalFrames: TOTAL_FRAMES, desktopFramePath, mobileFramePath, fit: 'contain' });
 
-  // Scroll-linked parallax (scale/translateY) is skipped for reduced-motion users; the
-  // frame swap itself stays (it's a 1:1 reflection of the user's own scroll, not an
-  // independent animation), only the extra movement layered on top is removed.
-  const parallax = prefersReducedMotion ? 0 : scrollProgress;
+  // These four elements' transform/opacity are driven straight from scroll
+  // position on every single rAF tick while scrolling. Writing them via
+  // refs below (instead of through scrollProgress state -> JSX -> React's
+  // reconciler) skips a render+diff pass for the whole hero subtree 60x/sec.
+  const canvasWrapperRef = useRef<HTMLDivElement>(null);
+  const headlineRef = useRef<HTMLHeadingElement>(null);
+  const subtitleRef = useRef<HTMLParagraphElement>(null);
+  const ctaRef = useRef<HTMLAnchorElement>(null);
+  // Kept in sync with the `prefersReducedMotion` state below on every render
+  // (a plain assignment, not an effect) so the rAF callback — created once —
+  // always reads the latest value without needing to be in its own deps.
+  const prefersReducedMotionRef = useRef(false);
+
+  const applyScrollTransforms = useCallback((progress: number) => {
+    const p = prefersReducedMotionRef.current ? 0 : progress;
+    if (canvasWrapperRef.current) {
+      canvasWrapperRef.current.style.opacity = progress < 0.85 ? '1' : String(1 - (progress - 0.85) / 0.15);
+      canvasWrapperRef.current.style.transform = `scale(${1 + p * 0.05})`;
+    }
+    if (headlineRef.current) headlineRef.current.style.transform = `translateY(${p * -50}px)`;
+    if (subtitleRef.current) subtitleRef.current.style.transform = `translateY(${p * -80}px)`;
+    if (ctaRef.current) ctaRef.current.style.transform = `translateY(${p * -110}px)`;
+  }, []);
+
+  const { sectionRef, canvasRef, scrollProgress, imagesLoaded, isMobile, prefersReducedMotion } =
+    useScrollFrameSequence({
+      totalFrames: TOTAL_FRAMES, desktopFramePath, mobileFramePath, fit: 'contain',
+      onProgress: applyScrollTransforms,
+    });
+  useEffect(() => { prefersReducedMotionRef.current = prefersReducedMotion; }, [prefersReducedMotion]);
 
   // The hero's decorative loops (background pan, glow pulse, scanline) keep
   // running via CSS animation timers even while scrolled far out of view unless
@@ -82,12 +106,13 @@ export default function HeroSection() {
           position: 'relative', zIndex: 2,
         }}>
           {/* Canvas */}
-          <div style={{
+          <div ref={canvasWrapperRef} style={{
             position: 'relative', marginBottom: isMobile ? '8px' : '12px', width: '100%',
             maxWidth: isMobile ? '100%' : '600px', flex: '1 1 auto', minHeight: '100px', maxHeight: isMobile ? '25vh' : '35vh',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            opacity: scrollProgress < 0.85 ? 1 : 1 - (scrollProgress - 0.85) / 0.15,
-            transform: `scale(${1 + parallax * 0.05})`,
+            // Mutated directly on scroll by applyScrollTransforms — these are just the
+            // pre-first-scroll defaults (progress 0), not kept in sync by React.
+            opacity: 1, transform: 'scale(1)', willChange: 'transform',
           }}>
             {!imagesLoaded && (
               <div style={{
@@ -95,7 +120,7 @@ export default function HeroSection() {
                 background: 'rgba(255,255,255,0.04)', borderRadius: '16px', border: '1px solid rgba(141,184,51,0.15)',
               }}>
                 <div style={{
-                  width: '40px', height: '40px', border: '3px solid rgba(141,184,51,0.2)', borderTopColor: '#8DB833',
+                  width: '40px', height: '40px', border: '3px solid rgba(141,184,51,0.2)', borderTopColor: 'var(--accent)',
                   borderRadius: '50%', animation: 'spin 800ms linear infinite',
                 }} />
               </div>
@@ -124,7 +149,7 @@ export default function HeroSection() {
                   pointerEvents: 'none', flexDirection: isAr ? 'row-reverse' : 'row',
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px', animation: runDecorativeLoops ? 'floatLabel 3s ease-in-out infinite' : 'none', flexDirection: isAr ? 'row-reverse' : 'row' }}>
-                    <span style={{ color: '#8DB833', fontWeight: 600, fontSize: 'clamp(0.85rem, 1.5vw, 1.1rem)', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
+                    <span style={{ color: 'var(--accent)', fontWeight: 600, fontSize: 'clamp(0.85rem, 1.5vw, 1.1rem)', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
                       {isAr ? 'الغطاء العلوي' : 'Top Cover Unit'}
                     </span>
                     <div style={{ width: 'clamp(40px, 8vw, 80px)', height: '2px', background: `linear-gradient(${isAr ? '270deg' : '90deg'}, #8DB833, transparent)` }} />
@@ -138,7 +163,7 @@ export default function HeroSection() {
                   pointerEvents: 'none', flexDirection: isAr ? 'row' : 'row-reverse',
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px', animation: runDecorativeLoops ? 'floatLabel 3.5s ease-in-out infinite' : 'none', flexDirection: isAr ? 'row' : 'row-reverse' }}>
-                    <span style={{ color: '#8DB833', fontWeight: 600, fontSize: 'clamp(0.85rem, 1.5vw, 1.1rem)', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
+                    <span style={{ color: 'var(--accent)', fontWeight: 600, fontSize: 'clamp(0.85rem, 1.5vw, 1.1rem)', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
                       {isAr ? 'لوحة التحكم والمحرك' : 'Mainboard & Engine'}
                     </span>
                     <div style={{ width: 'clamp(40px, 8vw, 80px)', height: '2px', background: `linear-gradient(${isAr ? '90deg' : '270deg'}, #8DB833, transparent)` }} />
@@ -152,7 +177,7 @@ export default function HeroSection() {
                   pointerEvents: 'none', flexDirection: isAr ? 'row-reverse' : 'row',
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px', animation: runDecorativeLoops ? 'floatLabel 4s ease-in-out infinite' : 'none', flexDirection: isAr ? 'row-reverse' : 'row' }}>
-                    <span style={{ color: '#8DB833', fontWeight: 600, fontSize: 'clamp(0.85rem, 1.5vw, 1.1rem)', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
+                    <span style={{ color: 'var(--accent)', fontWeight: 600, fontSize: 'clamp(0.85rem, 1.5vw, 1.1rem)', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
                       {isAr ? 'وحدة الحبر الصديق للبيئة' : 'Eco Toner Cartridge'}
                     </span>
                     <div style={{ width: 'clamp(40px, 8vw, 80px)', height: '2px', background: `linear-gradient(${isAr ? '270deg' : '90deg'}, #8DB833, transparent)` }} />
@@ -173,10 +198,10 @@ export default function HeroSection() {
                   padding: isMobile ? '4px 12px' : '6px 16px', whiteSpace: 'nowrap',
                   display: 'flex', alignItems: 'center', gap: '8px', animation: runDecorativeLoops ? 'pulseBorder 3s infinite' : 'none',
                 }}>
-                  <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#8DB833', boxShadow: '0 0 8px rgba(141,184,51,0.6)' }} />
+                  <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent)', boxShadow: '0 0 8px rgba(141,184,51,0.6)' }} />
                   <span style={{
                     color: 'rgba(255,255,255,0.7)', fontSize: isMobile ? '0.65rem' : '0.75rem', fontWeight: 600,
-                    fontFamily: isAr ? 'IBM Plex Sans Arabic, sans-serif' : 'Inter, sans-serif',
+                    fontFamily: isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif',
                     letterSpacing: isAr ? '0' : '0.05em',
                   }}>{getPhaseLabel()}</span>
                 </div>
@@ -203,7 +228,7 @@ export default function HeroSection() {
               animation: ecoGlow > 0.3 && runDecorativeLoops ? 'pulseBorder 2s infinite' : 'none',
             }}>
               <span style={{
-                color: '#8DB833', fontSize: isMobile ? 'clamp(0.7rem, 3vw, 0.85rem)' : 'clamp(0.85rem, 1.5vw, 1.1rem)',
+                color: 'var(--accent)', fontSize: isMobile ? 'clamp(0.7rem, 3vw, 0.85rem)' : 'clamp(0.85rem, 1.5vw, 1.1rem)',
                 fontWeight: 600, display: 'inline-block',
                 animation: ecoGlow > 0.3 && runDecorativeLoops ? 'floatLabel 3s ease-in-out infinite' : 'none',
               }}>
@@ -211,33 +236,33 @@ export default function HeroSection() {
               </span>
             </div>
 
-            <h1 style={{
+            <h1 ref={headlineRef} style={{
               fontSize: isMobile ? 'clamp(1.6rem, 7vw, 2.5rem)' : 'clamp(2.2rem, 6vw, 5rem)',
               fontWeight: 800, color: 'transparent',
               backgroundImage: 'linear-gradient(to right, #FFFFFF, #E8F5D6, #FFFFFF)',
               backgroundSize: '200% auto', backgroundClip: 'text', WebkitBackgroundClip: 'text',
               lineHeight: 1.1, letterSpacing: isAr ? '0' : '-2px',
-              fontFamily: isAr ? 'IBM Plex Sans Arabic, sans-serif' : 'Inter, sans-serif',
+              fontFamily: isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif',
               margin: 0, animation: headlineVisible ? `textReveal 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards${prefersReducedMotion ? '' : ', gradientText 6s linear infinite, letterSpacingIn 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards'}` : 'none',
-              opacity: 0, transform: `translateY(${parallax * -50}px)`,
+              opacity: 0, transform: 'translateY(0)',
             }}>
               {t('headline')}
             </h1>
-            <p style={{
+            <p ref={subtitleRef} style={{
               fontSize: isMobile ? 'clamp(0.85rem, 3.5vw, 1rem)' : 'clamp(1rem, 2vw, 1.35rem)',
               color: 'rgba(255,255,255,0.6)', maxWidth: isMobile ? '100%' : '600px', margin: '0 auto', lineHeight: 1.6,
               animation: headlineVisible ? 'textReveal 1s cubic-bezier(0.22, 1, 0.36, 1) 0.2s forwards' : 'none',
-              opacity: 0, transform: `translateY(${parallax * -80}px)`,
+              opacity: 0, transform: 'translateY(0)',
             }}>
               {t('subtitle')}
             </p>
-            <a href={`/${locale}#contact`} className="btn-primary hero-cta" style={{
+            <a ref={ctaRef} href={`/${locale}#contact`} className="btn-primary hero-cta" style={{
               fontSize: isMobile ? '0.95rem' : '1.05rem',
               padding: isMobile ? '14px 28px' : '16px 40px',
               height: 'auto', marginTop: isMobile ? '8px' : '10px',
               animation: headlineVisible ? `textReveal 1s cubic-bezier(0.22, 1, 0.36, 1) 0.4s forwards${runDecorativeLoops ? ', borderGlow 3s infinite 1.4s' : ''}` : 'none',
               opacity: 0, position: 'relative', overflow: 'hidden',
-              transform: `translateY(${parallax * -110}px)`,
+              transform: 'translateY(0)',
               boxShadow: '0 8px 32px rgba(141, 184, 51, 0.2)', backdropFilter: 'blur(10px)',
               border: '1px solid rgba(255,255,255,0.1)', maxWidth: isMobile ? '280px' : 'none',
             }}>
@@ -259,7 +284,7 @@ export default function HeroSection() {
               <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: isMobile ? '0.65rem' : '0.75rem', letterSpacing: '0.1em' }}>
                 {t('scrollHint')}
               </span>
-              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#8DB833', animation: runDecorativeLoops ? 'float 2s ease-in-out infinite' : 'none' }} />
+              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent)', animation: runDecorativeLoops ? 'float 2s ease-in-out infinite' : 'none' }} />
             </div>
           )}
         </div>

@@ -84,6 +84,8 @@ export default function AdminSettingsPage() {
         setPasswordInput('');
         setConfirmPassword('');
         setPwdStrength(0);
+      } else {
+        showToast('Failed to save settings. Please try again.', 'error');
       }
     } catch {
       showToast('Error saving settings.', 'error');
@@ -112,7 +114,7 @@ export default function AdminSettingsPage() {
         
         {/* Security & Access - ENHANCED */}
         <div className="admin-card border-l-4 border-[#8DB833]">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px', color: '#8DB833' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px', color: 'var(--admin-accent)' }}>
             <Shield size={24} />
             <div>
               <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0F172A', margin: 0 }}>Security & Credentials</h2>
@@ -132,8 +134,9 @@ export default function AdminSettingsPage() {
                   value={passwordInput} 
                   onChange={handlePasswordChange} 
                 />
-                <button 
+                <button
                   onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                   style={{ position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#94A3B8' }}
                 >
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -190,7 +193,7 @@ export default function AdminSettingsPage() {
 
         {/* Nexia AI Assistant Settings */}
         <div className="admin-card">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px', color: '#8DB833' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px', color: 'var(--admin-accent)' }}>
             <Bot size={24} />
             <div>
               <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0F172A', margin: 0 }}>Nexia AI Assistant</h2>
@@ -224,7 +227,7 @@ export default function AdminSettingsPage() {
 
         {/* Social Media */}
         <div className="admin-card">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px', color: '#8DB833' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px', color: 'var(--admin-accent)' }}>
             <Globe size={24} />
             <div>
               <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0F172A', margin: 0 }}>Social Media Links</h2>
@@ -284,7 +287,7 @@ export default function AdminSettingsPage() {
 
         {/* Video Settings */}
         <div className="admin-card">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px', color: '#8DB833' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px', color: 'var(--admin-accent)' }}>
             <Video size={24} />
             <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0F172A', margin: 0 }}>Video Backgrounds</h2>
           </div>
@@ -310,7 +313,7 @@ export default function AdminSettingsPage() {
 
         {/* Contact Info */}
         <div className="admin-card">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px', color: '#8DB833' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px', color: 'var(--admin-accent)' }}>
             <Phone size={24} />
             <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0F172A', margin: 0 }}>Contact Information</h2>
           </div>

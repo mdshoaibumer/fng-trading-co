@@ -21,12 +21,12 @@ export default function FaqPageClient() {
   ];
 
   return (
-    <main style={{ background: '#F7F8F5', minHeight: '100vh', paddingTop: 'clamp(120px, 15vh, 160px)', paddingBottom: 'clamp(60px, 10vh, 120px)' }}>
+    <main style={{ background: 'var(--bg-secondary)', minHeight: '100vh', paddingTop: 'clamp(120px, 15vh, 160px)', paddingBottom: 'clamp(60px, 10vh, 120px)' }}>
       
       {/* Page Header */}
       <div className="container" style={{ textAlign: 'center', marginBottom: '80px' }}>
         <span className="section-tag" style={{ margin: '0 auto 16px' }}>{t('title')}</span>
-        <h1 style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', fontWeight: 900, color: '#1A3D2B', marginBottom: '24px', letterSpacing: '-0.02em' }}>
+        <h1 style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', fontWeight: 900, color: 'var(--primary)', marginBottom: '24px', letterSpacing: '-0.02em' }}>
           {t('title')}
         </h1>
         <p style={{ color: '#4B5563', fontSize: '1.2rem', maxWidth: '700px', margin: '0 auto', lineHeight: 1.6 }}>
@@ -63,7 +63,7 @@ export default function FaqPageClient() {
                   textAlign: isAr ? 'right' : 'left'
                 }}
               >
-                <span style={{ fontSize: '1.15rem', fontWeight: 700, color: '#1A3D2B' }}>
+                <span style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--primary)' }}>
                   {faq.q}
                 </span>
                 <div style={{ 
@@ -72,8 +72,8 @@ export default function FaqPageClient() {
                   width: '32px',
                   height: '32px',
                   borderRadius: '50%',
-                  background: openIndex === i ? '#8DB833' : 'rgba(141,184,51,0.1)',
-                  color: openIndex === i ? '#fff' : '#8DB833',
+                  background: openIndex === i ? 'var(--accent)' : 'rgba(141,184,51,0.1)',
+                  color: openIndex === i ? '#fff' : 'var(--accent)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',

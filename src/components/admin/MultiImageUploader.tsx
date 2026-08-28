@@ -199,7 +199,7 @@ export default function MultiImageUploader({
             disabled={uploading}
             style={{
               display: 'flex', alignItems: 'center', gap: '6px',
-              background: '#8DB833', border: 'none', borderRadius: '10px',
+              background: 'var(--admin-accent)', border: 'none', borderRadius: '10px',
               padding: '8px 14px', fontSize: '0.8rem', fontWeight: 700,
               color: '#0F172A', cursor: uploading ? 'wait' : 'pointer',
               opacity: uploading ? 0.7 : 1, transition: 'all 0.2s',
@@ -228,7 +228,7 @@ export default function MultiImageUploader({
           <button
             onClick={addUrl}
             style={{
-              background: '#8DB833', border: 'none', borderRadius: '10px',
+              background: 'var(--admin-accent)', border: 'none', borderRadius: '10px',
               padding: '8px 16px', fontWeight: 700, fontSize: '0.85rem',
               color: '#0F172A', cursor: 'pointer',
             }}
@@ -237,6 +237,7 @@ export default function MultiImageUploader({
           </button>
           <button
             onClick={() => { setShowUrlInput(false); setUrlValue(''); }}
+            aria-label="Cancel"
             style={{
               background: '#F1F5F9', border: '1px solid #E2E8F0', borderRadius: '10px',
               padding: '8px 12px', cursor: 'pointer', color: '#64748B',
@@ -258,7 +259,7 @@ export default function MultiImageUploader({
             <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#475569' }}>
               Uploading {uploadProgress.done} of {uploadProgress.total} images...
             </span>
-            <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#8DB833' }}>
+            <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--admin-accent)' }}>
               {uploadProgress.total > 0 ? Math.round((uploadProgress.done / uploadProgress.total) * 100) : 0}%
             </span>
           </div>
@@ -305,7 +306,7 @@ export default function MultiImageUploader({
               {idx === 0 && (
                 <div style={{
                   position: 'absolute', top: '8px', left: '8px', zIndex: 3,
-                  background: '#8DB833', color: '#0F172A', padding: '3px 10px',
+                  background: 'var(--admin-accent)', color: '#0F172A', padding: '3px 10px',
                   borderRadius: '6px', fontSize: '0.65rem', fontWeight: 800,
                   textTransform: 'uppercase', letterSpacing: '0.5px',
                 }}>
@@ -357,7 +358,7 @@ export default function MultiImageUploader({
                     title="Set as primary"
                     style={{
                       background: 'none', border: 'none', cursor: 'pointer',
-                      fontSize: '0.65rem', fontWeight: 700, color: '#8DB833',
+                      fontSize: '0.65rem', fontWeight: 700, color: 'var(--admin-accent)',
                       padding: '2px 6px', borderRadius: '4px',
                       transition: 'background 0.2s',
                     }}
@@ -367,13 +368,14 @@ export default function MultiImageUploader({
                     Set Primary
                   </button>
                 ) : (
-                  <span style={{ fontSize: '0.65rem', color: '#8DB833', fontWeight: 700 }}>
+                  <span style={{ fontSize: '0.65rem', color: 'var(--admin-accent)', fontWeight: 700 }}>
                     ✓ Primary
                   </span>
                 )}
                 <button
                   onClick={() => removeImage(idx)}
                   title="Remove image"
+                  aria-label="Remove image"
                   style={{
                     background: 'none', border: 'none', cursor: 'pointer',
                     color: '#EF4444', padding: '4px', borderRadius: '6px',
@@ -397,7 +399,7 @@ export default function MultiImageUploader({
         onDrop={handleDropZone}
         onClick={() => fileInputRef.current?.click()}
         style={{
-          border: `2px dashed ${isDragOverZone ? '#8DB833' : '#CBD5E1'}`,
+          border: `2px dashed ${isDragOverZone ? 'var(--admin-accent)' : '#CBD5E1'}`,
           borderRadius: '16px', padding: '32px',
           display: 'flex', flexDirection: 'column',
           alignItems: 'center', justifyContent: 'center', gap: '12px',
@@ -413,7 +415,7 @@ export default function MultiImageUploader({
           transition: 'all 0.3s ease',
         }}>
           {isDragOverZone ? (
-            <Plus size={24} color="#8DB833" />
+            <Plus size={24} color="var(--admin-accent)" />
           ) : (
             <ImageIcon size={24} color="#94A3B8" />
           )}
@@ -421,7 +423,7 @@ export default function MultiImageUploader({
         <div style={{ textAlign: 'center' }}>
           <p style={{
             margin: 0, fontSize: '0.9rem', fontWeight: 700,
-            color: isDragOverZone ? '#8DB833' : '#475569',
+            color: isDragOverZone ? 'var(--admin-accent)' : '#475569',
           }}>
             {isDragOverZone ? 'Drop images here' : 'Drag & drop images here'}
           </p>

@@ -7,14 +7,14 @@ import { Laptop, Smartphone, BatteryCharging, Headphones, Watch, Router, Home, G
 const CATEGORY_KEYS = ['computers', 'mobileAccessories', 'chargers', 'audio', 'wearables', 'networking', 'smartHome', 'gaming'] as const;
 
 const ICONS: Record<typeof CATEGORY_KEYS[number], React.ReactNode> = {
-  computers: <Laptop size={26} color="#8DB833" strokeWidth={1.5} />,
-  mobileAccessories: <Smartphone size={26} color="#8DB833" strokeWidth={1.5} />,
-  chargers: <BatteryCharging size={26} color="#8DB833" strokeWidth={1.5} />,
-  audio: <Headphones size={26} color="#8DB833" strokeWidth={1.5} />,
-  wearables: <Watch size={26} color="#8DB833" strokeWidth={1.5} />,
-  networking: <Router size={26} color="#8DB833" strokeWidth={1.5} />,
-  smartHome: <Home size={26} color="#8DB833" strokeWidth={1.5} />,
-  gaming: <Gamepad2 size={26} color="#8DB833" strokeWidth={1.5} />,
+  computers: <Laptop size={26} color="var(--accent)" strokeWidth={1.5} />,
+  mobileAccessories: <Smartphone size={26} color="var(--accent)" strokeWidth={1.5} />,
+  chargers: <BatteryCharging size={26} color="var(--accent)" strokeWidth={1.5} />,
+  audio: <Headphones size={26} color="var(--accent)" strokeWidth={1.5} />,
+  wearables: <Watch size={26} color="var(--accent)" strokeWidth={1.5} />,
+  networking: <Router size={26} color="var(--accent)" strokeWidth={1.5} />,
+  smartHome: <Home size={26} color="var(--accent)" strokeWidth={1.5} />,
+  gaming: <Gamepad2 size={26} color="var(--accent)" strokeWidth={1.5} />,
 };
 
 export default function SourcingCategoriesSection() {
@@ -27,7 +27,7 @@ export default function SourcingCategoriesSection() {
       <div className="container">
         <div style={{ textAlign: 'center', marginBottom: 'clamp(32px, 6vw, 64px)' }}>
           <span className="section-tag">{t('tag')}</span>
-          <h2 style={{ fontSize: 'clamp(1.5rem,4vw,3.5rem)', fontWeight: 800, color: '#1A3D2B', marginBottom: '12px' }}>{t('title')}</h2>
+          <h2 style={{ fontSize: 'clamp(1.5rem,4vw,3.5rem)', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px' }}>{t('title')}</h2>
           <p style={{ color: '#555', fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', maxWidth: '600px', margin: '0 auto' }}>{t('subtitle')}</p>
         </div>
         <div className="sc-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
@@ -44,13 +44,13 @@ export default function SourcingCategoriesSection() {
               }}>
                 {ICONS[key]}
               </div>
-              <h3 style={{ color: '#1A3D2B', fontSize: '0.95rem', fontWeight: 700, marginBottom: '6px' }}>{t(`items.${key}.name`)}</h3>
+              <h3 style={{ color: 'var(--primary)', fontSize: '0.95rem', fontWeight: 700, marginBottom: '6px' }}>{t(`items.${key}.name`)}</h3>
               <p style={{ color: '#555', fontSize: '0.8rem', lineHeight: 1.6, marginBottom: '14px' }}>{t(`items.${key}.desc`)}</p>
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                <span style={{ padding: '4px 10px', borderRadius: '999px', background: '#F7F8F5', color: '#4A5E2A', fontSize: '0.7rem', fontWeight: 600, fontFamily: 'IBM Plex Mono, monospace' }}>
+                <span style={{ padding: '4px 10px', borderRadius: '999px', background: 'var(--bg-secondary)', color: '#4A5E2A', fontSize: '0.7rem', fontWeight: 600, fontFamily: 'var(--font-ibm-plex-mono), monospace' }}>
                   {t(`items.${key}.moq`)}
                 </span>
-                <span style={{ padding: '4px 10px', borderRadius: '999px', background: '#F7F8F5', color: '#4A5E2A', fontSize: '0.7rem', fontWeight: 600, fontFamily: 'IBM Plex Mono, monospace' }}>
+                <span style={{ padding: '4px 10px', borderRadius: '999px', background: 'var(--bg-secondary)', color: '#4A5E2A', fontSize: '0.7rem', fontWeight: 600, fontFamily: 'var(--font-ibm-plex-mono), monospace' }}>
                   {t(`items.${key}.lead`)}
                 </span>
               </div>

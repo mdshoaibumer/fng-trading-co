@@ -6,10 +6,13 @@ import { Printer, Lock, User } from 'lucide-react';
 export default function AdminLoginPage() {
   const [password, setPassword] = React.useState('');
   const [error, setError] = React.useState('');
+  const [loggingIn, setLoggingIn] = React.useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    if (loggingIn) return;
+    setLoggingIn(true);
+
     try {
       const res = await fetch('/api/admin/auth/login', {
         method: 'POST',
@@ -21,9 +24,11 @@ export default function AdminLoginPage() {
         window.location.href = '/admin';
       } else {
         setError('Invalid administrative credentials');
+        setLoggingIn(false);
       }
     } catch {
       setError('An error occurred during authentication');
+      setLoggingIn(false);
     }
   };
 
@@ -35,7 +40,7 @@ export default function AdminLoginPage() {
       alignItems: 'center',
       justifyContent: 'center',
       background: '#0F172A',
-      fontFamily: 'Inter, sans-serif'
+      fontFamily: 'var(--font-inter), sans-serif'
     }}>
       <div style={{
         width: '100%',
@@ -51,7 +56,7 @@ export default function AdminLoginPage() {
         <div style={{
           width: '64px',
           height: '64px',
-          background: '#8DB833',
+          background: 'var(--admin-accent)',
           borderRadius: '16px',
           display: 'flex',
           alignItems: 'center',
@@ -63,7 +68,7 @@ export default function AdminLoginPage() {
         </div>
 
         <h1 style={{ color: '#F8FAFC', fontSize: '1.75rem', fontWeight: 800, marginBottom: '8px' }}>
-          FNG <span style={{ color: '#8DB833' }}>Admin</span>
+          FNG <span style={{ color: 'var(--admin-accent)' }}>Admin</span>
         </h1>
         <p style={{ color: '#94A3B8', fontSize: '0.95rem', marginBottom: '32px' }}>
           Secure access to platform controls
@@ -71,12 +76,13 @@ export default function AdminLoginPage() {
 
         <form onSubmit={handleLogin} style={{ textAlign: 'left' }}>
           <div style={{ marginBottom: '20px' }}>
-            <label style={{ display: 'block', color: '#CBD5E1', fontSize: '0.85rem', fontWeight: 600, marginBottom: '8px', marginLeft: '4px' }}>
+            <label htmlFor="admin-username" style={{ display: 'block', color: '#CBD5E1', fontSize: '0.85rem', fontWeight: 600, marginBottom: '8px', marginLeft: '4px' }}>
               Username
             </label>
             <div style={{ position: 'relative' }}>
               <User size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#64748B' }} />
               <input
+                id="admin-username"
                 type="text"
                 defaultValue="admin"
                 disabled
@@ -96,18 +102,20 @@ export default function AdminLoginPage() {
           </div>
 
           <div style={{ marginBottom: '24px' }}>
-            <label style={{ display: 'block', color: '#CBD5E1', fontSize: '0.85rem', fontWeight: 600, marginBottom: '8px', marginLeft: '4px' }}>
+            <label htmlFor="admin-password" style={{ display: 'block', color: '#CBD5E1', fontSize: '0.85rem', fontWeight: 600, marginBottom: '8px', marginLeft: '4px' }}>
               Password
             </label>
             <div style={{ position: 'relative' }}>
               <Lock size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#64748B' }} />
               <input
+                id="admin-password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
                 autoFocus
+                aria-describedby={error ? 'admin-password-error' : undefined}
                 style={{
                   width: '100%',
                   padding: '14px 16px 14px 48px',
@@ -122,26 +130,28 @@ export default function AdminLoginPage() {
                 }}
               />
             </div>
-            {error && <p style={{ color: '#EF4444', fontSize: '0.8rem', marginTop: '8px', marginLeft: '4px' }}>{error}</p>}
+            {error && <p id="admin-password-error" role="alert" style={{ color: '#EF4444', fontSize: '0.8rem', marginTop: '8px', marginLeft: '4px' }}>{error}</p>}
           </div>
 
           <button
             type="submit"
+            disabled={loggingIn}
             style={{
               width: '100%',
               padding: '16px',
-              background: '#8DB833',
+              background: 'var(--admin-accent)',
               color: '#0F172A',
               border: 'none',
               borderRadius: '16px',
               fontSize: '1rem',
               fontWeight: 800,
-              cursor: 'pointer',
+              cursor: loggingIn ? 'not-allowed' : 'pointer',
+              opacity: loggingIn ? 0.7 : 1,
               transition: 'all 0.2s',
               boxShadow: '0 8px 24px rgba(141, 184, 51, 0.2)'
             }}
           >
-            Access Dashboard
+            {loggingIn ? 'Signing in...' : 'Access Dashboard'}
           </button>
         </form>
 

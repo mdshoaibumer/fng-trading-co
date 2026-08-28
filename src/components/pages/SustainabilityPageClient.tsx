@@ -36,10 +36,10 @@ function AnimatedStat({ target, suffix, label }: { target: number; suffix: strin
 
   return (
     <div ref={ref} style={{ background: '#fff', padding: 'clamp(24px, 4vw, 40px)', borderRadius: '24px', border: '1px solid #EEEEEE', textAlign: 'center', boxShadow: '0 10px 30px rgba(0,0,0,0.02)' }}>
-      <div style={{ fontSize: 'clamp(2rem, 6vw, 3.5rem)', fontWeight: 900, color: '#8DB833', lineHeight: 1, marginBottom: '12px', fontFamily: 'Inter, sans-serif' }}>
+      <div style={{ fontSize: 'clamp(2rem, 6vw, 3.5rem)', fontWeight: 900, color: 'var(--accent)', lineHeight: 1, marginBottom: '12px', fontFamily: 'var(--font-inter), sans-serif' }}>
         {displayedCount.toLocaleString()}{suffix}
       </div>
-      <div style={{ fontSize: 'clamp(0.9rem, 2vw, 1.2rem)', fontWeight: 700, color: '#1A3D2B' }}>{label}</div>
+      <div style={{ fontSize: 'clamp(0.9rem, 2vw, 1.2rem)', fontWeight: 700, color: 'var(--primary)' }}>{label}</div>
     </div>
   );
 }
@@ -47,10 +47,10 @@ function AnimatedStat({ target, suffix, label }: { target: number; suffix: strin
 export default function SustainabilityPageClient() {
   const t = useTranslations('sustainability');
   return (
-    <main style={{ background: '#F7F8F5', minHeight: '100vh', paddingTop: 'clamp(100px, 14vh, 160px)', paddingBottom: 'clamp(48px, 8vh, 120px)' }}>
+    <main style={{ background: 'var(--bg-secondary)', minHeight: '100vh', paddingTop: 'clamp(100px, 14vh, 160px)', paddingBottom: 'clamp(48px, 8vh, 120px)' }}>
       <div className="container" style={{ textAlign: 'center', marginBottom: 'clamp(40px, 8vw, 80px)' }}>
         <span className="section-tag" style={{ margin: '0 auto 16px' }}>{t('tag')}</span>
-        <h1 style={{ fontSize: 'clamp(2rem, 6vw, 4.5rem)', fontWeight: 900, color: '#1A3D2B', marginBottom: '24px', letterSpacing: '-0.02em' }}>{t('title')}</h1>
+        <h1 style={{ fontSize: 'clamp(2rem, 6vw, 4.5rem)', fontWeight: 900, color: 'var(--primary)', marginBottom: '24px', letterSpacing: '-0.02em' }}>{t('title')}</h1>
         <p style={{ color: '#4B5563', fontSize: 'clamp(0.95rem, 2vw, 1.2rem)', maxWidth: '700px', margin: '0 auto', lineHeight: 1.6 }}>{t('subtitle')}</p>
       </div>
       <div className="container" style={{ marginBottom: 'clamp(40px, 8vw, 80px)' }}>
@@ -67,21 +67,21 @@ export default function SustainabilityPageClient() {
           <div className="sp-cycle" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 'clamp(20px, 4vw, 40px)', position: 'relative', zIndex: 2 }}>
             <div style={{ textAlign: 'center' }}>
               <div style={{ width: 'clamp(56px, 8vw, 80px)', height: 'clamp(56px, 8vw, 80px)', borderRadius: '20px', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', border: '1px solid rgba(255,255,255,0.2)' }}>
-                <Leaf size={32} color="#8DB833" />
+                <Leaf size={32} color="var(--accent)" />
               </div>
               <h3 style={{ color: '#fff', fontSize: 'clamp(1rem, 2vw, 1.2rem)', fontWeight: 700, marginBottom: '12px' }}>Bio-Derived</h3>
               <p style={{ color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, fontSize: '0.9rem' }}>We use plant-based resins and sustainable sourcing instead of petroleum bases for all our toner powders.</p>
             </div>
             <div style={{ textAlign: 'center' }}>
               <div style={{ width: 'clamp(56px, 8vw, 80px)', height: 'clamp(56px, 8vw, 80px)', borderRadius: '20px', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', border: '1px solid rgba(255,255,255,0.2)' }}>
-                <Wind size={32} color="#8DB833" />
+                <Wind size={32} color="var(--accent)" />
               </div>
               <h3 style={{ color: '#fff', fontSize: 'clamp(1rem, 2vw, 1.2rem)', fontWeight: 700, marginBottom: '12px' }}>Zero VOC</h3>
               <p style={{ color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, fontSize: '0.9rem' }}>Our toners emit zero Volatile Organic Compounds, ensuring safe and clean air quality in your office.</p>
             </div>
             <div style={{ textAlign: 'center' }}>
               <div style={{ width: 'clamp(56px, 8vw, 80px)', height: 'clamp(56px, 8vw, 80px)', borderRadius: '20px', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', border: '1px solid rgba(255,255,255,0.2)' }}>
-                <RefreshCcw size={32} color="#8DB833" />
+                <RefreshCcw size={32} color="var(--accent)" />
               </div>
               <h3 style={{ color: '#fff', fontSize: 'clamp(1rem, 2vw, 1.2rem)', fontWeight: 700, marginBottom: '12px' }}>Closed-Loop</h3>
               <p style={{ color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, fontSize: '0.9rem' }}>We collect all empty cartridges directly from your office. Plastics are melted down and reused for new supplies.</p>

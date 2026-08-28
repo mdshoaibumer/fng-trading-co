@@ -99,7 +99,7 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', height: '50vh', alignItems: 'center', justifyContent: 'center', color: '#8DB833' }}>
+      <div style={{ display: 'flex', height: '50vh', alignItems: 'center', justifyContent: 'center', color: 'var(--admin-accent)' }}>
         <Loader2 size={40} style={{ animation: 'spin 1s linear infinite' }} />
         <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
@@ -147,7 +147,7 @@ export default function AdminDashboard() {
 
       {/* Stats Grid */}
       <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '24px', marginBottom: '40px' }}>
-        <StatCard title="Total Leads" value={stats.totalLeads} change="Live Data" icon={<MessageCircle size={24} />} color="#8DB833" />
+        <StatCard title="Total Leads" value={stats.totalLeads} change="Live Data" icon={<MessageCircle size={24} />} color="var(--admin-accent)" />
         <StatCard title="Printer Inventory" value={stats.printers} change="Live Data" icon={<Printer size={24} />} color="#3B82F6" />
         <StatCard title="Parts Available" value={stats.parts} change="Live Data" icon={<Package size={24} />} color="#F59E0B" />
         <StatCard title="Active Status" value="Online" icon={<Clock size={24} />} color="#6366F1" />
@@ -158,7 +158,7 @@ export default function AdminDashboard() {
         <div className="admin-card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
             <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800 }}>Recent Leads</h3>
-            <button onClick={() => router.push('/admin/leads')} style={{ color: '#8DB833', background: 'none', border: 'none', fontWeight: 700, cursor: 'pointer' }}>View All</button>
+            <button onClick={() => router.push('/admin/leads')} style={{ color: 'var(--admin-accent)', background: 'none', border: 'none', fontWeight: 700, cursor: 'pointer' }}>View All</button>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {recentLeads.length === 0 ? (

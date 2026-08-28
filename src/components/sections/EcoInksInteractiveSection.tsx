@@ -51,7 +51,7 @@ export default function EcoInksInteractiveSection() {
             }}>
               <div style={{
                 width: '32px', height: '32px', border: '3px solid rgba(141,184,51,0.2)',
-                borderTopColor: '#8DB833', borderRadius: '50%', animation: 'spin 1s linear infinite',
+                borderTopColor: 'var(--accent)', borderRadius: '50%', animation: 'spin 1s linear infinite',
               }} />
             </div>
           )}
@@ -107,7 +107,7 @@ export default function EcoInksInteractiveSection() {
         <div style={{ textAlign: 'center', maxWidth: '90%', padding: '0 16px', opacity: Math.min(1, scrollProgress * 4) }}>
           <h2 style={{
             color: '#111827', fontSize: 'clamp(1.1rem, 4vw, 2.5rem)', fontWeight: 800, marginBottom: '8px',
-            fontFamily: isAr ? 'IBM Plex Sans Arabic, sans-serif' : 'Inter, sans-serif',
+            fontFamily: isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif',
           }}>
             {isAr ? 'هندسة فائقة الدقة' : 'Precision Engineering'}
           </h2>

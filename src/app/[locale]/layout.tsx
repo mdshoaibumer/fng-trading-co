@@ -9,6 +9,7 @@ import Footer from '@/components/layout/Footer';
 import WhatsAppButton from '@/components/layout/WhatsAppButton';
 import ChatWidgetLoader from '@/components/chat/ChatWidgetLoader';
 import { getSettings } from '@/lib/supabase';
+import { inter, ibmPlexSansArabic, ibmPlexMono } from '@/lib/fonts';
 import '../globals.css';
 
 // Not force-dynamic here: only the routes that actually hit Supabase per
@@ -23,7 +24,7 @@ export function generateStaticParams() {
 import type { Metadata, Viewport } from 'next';
 
 export const viewport: Viewport = {
-  themeColor: '#1A3D2B',
+  themeColor: 'var(--primary)',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
@@ -80,7 +81,12 @@ export default async function LocaleLayout({
   const settings = await getSettings();
 
   return (
-    <html lang={locale} dir={dir} suppressHydrationWarning>
+    <html
+      lang={locale}
+      dir={dir}
+      className={`${inter.variable} ${ibmPlexSansArabic.variable} ${ibmPlexMono.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         <link rel="icon" href="/favicon.ico" />
       </head>

@@ -10,14 +10,14 @@ const INDUSTRIES = ['healthcare', 'education', 'realEstate', 'legal', 'retail', 
 type Industry = typeof INDUSTRIES[number];
 
 const ICONS = {
-  healthcare: <HeartPulse size={32} color="#8DB833" strokeWidth={1.5} />,
-  education: <GraduationCap size={32} color="#8DB833" strokeWidth={1.5} />,
-  realEstate: <Building size={32} color="#8DB833" strokeWidth={1.5} />,
-  legal: <Scale size={32} color="#8DB833" strokeWidth={1.5} />,
-  retail: <ShoppingCart size={32} color="#8DB833" strokeWidth={1.5} />,
-  government: <Landmark size={32} color="#8DB833" strokeWidth={1.5} />,
-  architecture: <Ruler size={32} color="#8DB833" strokeWidth={1.5} />,
-  logistics: <Truck size={32} color="#8DB833" strokeWidth={1.5} />
+  healthcare: <HeartPulse size={32} color="var(--accent)" strokeWidth={1.5} />,
+  education: <GraduationCap size={32} color="var(--accent)" strokeWidth={1.5} />,
+  realEstate: <Building size={32} color="var(--accent)" strokeWidth={1.5} />,
+  legal: <Scale size={32} color="var(--accent)" strokeWidth={1.5} />,
+  retail: <ShoppingCart size={32} color="var(--accent)" strokeWidth={1.5} />,
+  government: <Landmark size={32} color="var(--accent)" strokeWidth={1.5} />,
+  architecture: <Ruler size={32} color="var(--accent)" strokeWidth={1.5} />,
+  logistics: <Truck size={32} color="var(--accent)" strokeWidth={1.5} />
 };
 
 export default function IndustriesSection() {
@@ -42,7 +42,7 @@ export default function IndustriesSection() {
       <div className="container">
         <div style={{ textAlign: 'center', marginBottom: 'clamp(32px, 6vw, 64px)' }}>
           <span className="section-tag">{t('tag')}</span>
-          <h2 style={{ fontSize: 'clamp(1.5rem,4vw,3.5rem)', fontWeight: 800, color: '#1A3D2B', marginBottom: '12px' }}>{t('title')}</h2>
+          <h2 style={{ fontSize: 'clamp(1.5rem,4vw,3.5rem)', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px' }}>{t('title')}</h2>
           <p style={{ color: '#555', fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', maxWidth: '550px', margin: '0 auto' }}>{t('subtitle')}</p>
         </div>
         <div className="industries-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(260px,1fr))', gap: '24px' }}>
@@ -69,7 +69,7 @@ export default function IndustriesSection() {
               }}>
                 {ICONS[ind]}
               </div>
-              <h3 style={{ color: '#1A3D2B', fontSize: 'clamp(0.95rem, 2vw, 1.05rem)', fontWeight: 700, marginBottom: '6px' }}>{t(`items.${ind}.name`)}</h3>
+              <h3 style={{ color: 'var(--primary)', fontSize: 'clamp(0.95rem, 2vw, 1.05rem)', fontWeight: 700, marginBottom: '6px' }}>{t(`items.${ind}.name`)}</h3>
               <p style={{ color: '#555', fontSize: '0.85rem', lineHeight: 1.6 }}>{t(`items.${ind}.desc`)}</p>
             </div>
           ))}
@@ -134,17 +134,17 @@ export default function IndustriesSection() {
                 </p>
               </div>
 
-              <div className="modal-body" style={{ padding: 'clamp(24px, 5vw, 48px)', background: '#F7F8F5' }}>
+              <div className="modal-body" style={{ padding: 'clamp(24px, 5vw, 48px)', background: 'var(--bg-secondary)' }}>
                 <div className="modal-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '24px' }}>
                   <div style={{
                     background: '#fff', padding: 'clamp(20px, 4vw, 32px)', borderRadius: '24px',
                     boxShadow: '0 10px 30px rgba(0,0,0,0.03)', border: '1px solid #EEEEEE',
                     textAlign: isAr ? 'right' : 'left'
                   }}>
-                    <div style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 900, color: '#8DB833', lineHeight: 1, marginBottom: '12px' }}>
+                    <div style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 900, color: 'var(--accent)', lineHeight: 1, marginBottom: '12px' }}>
                       {t(`items.${selectedIndustry}.details.stat`)}
                     </div>
-                    <div style={{ fontSize: '1rem', fontWeight: 600, color: '#1A3D2B' }}>
+                    <div style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--primary)' }}>
                       {t(`items.${selectedIndustry}.details.statLabel`)}
                     </div>
                   </div>
@@ -155,13 +155,13 @@ export default function IndustriesSection() {
                     textAlign: isAr ? 'right' : 'left'
                   }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexDirection: isAr ? 'row-reverse' : 'row' }}>
-                      <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#8DB833', flexShrink: 0 }} />
+                      <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent)', flexShrink: 0 }} />
                       <span style={{ fontSize: '0.95rem', color: '#4B5563', fontWeight: 500 }}>
                         {t(`items.${selectedIndustry}.details.benefit1`)}
                       </span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexDirection: isAr ? 'row-reverse' : 'row' }}>
-                      <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#8DB833', flexShrink: 0 }} />
+                      <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent)', flexShrink: 0 }} />
                       <span style={{ fontSize: '0.95rem', color: '#4B5563', fontWeight: 500 }}>
                         {t(`items.${selectedIndustry}.details.benefit2`)}
                       </span>
@@ -171,7 +171,7 @@ export default function IndustriesSection() {
                 <div className="modal-cta" style={{ marginTop: 'clamp(24px, 5vw, 48px)', display: 'flex', justifyContent: isAr ? 'flex-start' : 'flex-end' }}>
                   <a href={isAr ? '/ar/contact' : '/en/contact'} onClick={() => setSelectedIndustry(null)} className="modal-cta-btn" style={{
                     display: 'flex', alignItems: 'center', gap: '12px',
-                    background: '#8DB833', color: '#fff', padding: '16px 32px',
+                    background: 'var(--accent)', color: '#fff', padding: '16px 32px',
                     borderRadius: '999px', fontWeight: 700, textDecoration: 'none',
                     transition: 'transform 200ms ease, box-shadow 200ms ease',
                     boxShadow: '0 8px 24px rgba(141,184,51,0.3)', minHeight: '52px',

@@ -52,7 +52,7 @@ export default async function TermsPage({
   };
 
   return (
-    <main style={{ background: '#F7F8F5', minHeight: '100vh', paddingTop: 'clamp(120px, 15vh, 160px)', paddingBottom: '80px' }}>
+    <main style={{ background: 'var(--bg-secondary)', minHeight: '100vh', paddingTop: 'clamp(120px, 15vh, 160px)', paddingBottom: '80px' }}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
@@ -61,7 +61,7 @@ export default async function TermsPage({
         
         {/* Header */}
         <div style={{ marginBottom: '48px', borderBottom: '1px solid #E5E7EB', paddingBottom: '24px' }}>
-          <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', fontWeight: 900, color: '#1A3D2B', marginBottom: '16px' }}>
+          <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', fontWeight: 900, color: 'var(--primary)', marginBottom: '16px' }}>
             {t('title')}
           </h1>
           <p style={{ color: '#9CA3AF', fontSize: '0.95rem' }}>
@@ -76,28 +76,28 @@ export default async function TermsPage({
           </p>
 
           <div>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#1A3D2B', marginBottom: '12px' }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px' }}>
               {t('section1Title')}
             </h2>
             <p>{t('section1Desc')}</p>
           </div>
 
           <div>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#1A3D2B', marginBottom: '12px' }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px' }}>
               {t('section2Title')}
             </h2>
             <p>{t('section2Desc')}</p>
           </div>
 
           <div>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#1A3D2B', marginBottom: '12px' }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px' }}>
               {t('section3Title')}
             </h2>
             <p>{t('section3Desc')}</p>
           </div>
 
           <div>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#1A3D2B', marginBottom: '12px' }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px' }}>
               {t('section4Title')}
             </h2>
             <p>{t('section4Desc')}</p>

@@ -22,11 +22,11 @@ export default function HowItWorksSection() {
   }, []);
 
   return (
-    <section id="how-it-works" className="section" style={{ background: '#F7F8F5' }}>
+    <section id="how-it-works" className="section" style={{ background: 'var(--bg-secondary)' }}>
       <div className="container" ref={ref}>
         <div style={{ textAlign: 'center', marginBottom: 'clamp(32px, 6vw, 64px)' }}>
           <span className="section-tag">{t('tag')}</span>
-          <h2 style={{ fontSize: 'clamp(1.5rem,4vw,3.5rem)', fontWeight: 800, color: '#1A3D2B', marginBottom: '12px' }}>{t('title')}</h2>
+          <h2 style={{ fontSize: 'clamp(1.5rem,4vw,3.5rem)', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px' }}>{t('title')}</h2>
         </div>
         <div className="hiw-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: 'clamp(16px, 3vw, 32px)', position: 'relative' }}>
           {STEPS.map((s,i) => (
@@ -36,13 +36,13 @@ export default function HowItWorksSection() {
               opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(30px)',
               transition: `all 600ms cubic-bezier(0.22,1,0.36,1) ${i * 150}ms`,
             }}>
-              <div style={{ fontSize: 'clamp(2rem,5vw,4rem)', fontWeight: 900, color: 'rgba(141,184,51,0.15)', fontFamily: 'Inter,sans-serif', lineHeight: 1, marginBottom: '12px' }}>
+              <div style={{ fontSize: 'clamp(2rem,5vw,4rem)', fontWeight: 900, color: 'rgba(141,184,51,0.15)', fontFamily: 'var(--font-inter),sans-serif', lineHeight: 1, marginBottom: '12px' }}>
                 {t(`steps.${s}.number`)}
               </div>
               <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'linear-gradient(135deg,#1A3D2B,#4A5E2A)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
                 {ICONS[i]}
               </div>
-              <h3 style={{ color: '#1A3D2B', fontSize: 'clamp(1.05rem, 2.5vw, 1.3rem)', fontWeight: 700, marginBottom: '10px' }}>{t(`steps.${s}.title`)}</h3>
+              <h3 style={{ color: 'var(--primary)', fontSize: 'clamp(1.05rem, 2.5vw, 1.3rem)', fontWeight: 700, marginBottom: '10px' }}>{t(`steps.${s}.title`)}</h3>
               <p style={{ color: '#555', fontSize: '0.85rem', lineHeight: 1.7, maxWidth: '300px', margin: '0 auto' }}>{t(`steps.${s}.desc`)}</p>
             </div>
           ))}

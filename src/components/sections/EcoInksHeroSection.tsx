@@ -40,7 +40,7 @@ export default function EcoInksHeroSection() {
         <h1 style={{
           fontSize: 'clamp(1.8rem, 6vw, 5.5rem)', fontWeight: 800, color: '#111827', lineHeight: 1.1,
           marginBottom: 'clamp(12px, 3vw, 24px)', letterSpacing: isAr ? '0' : '-2px',
-          fontFamily: isAr ? 'IBM Plex Sans Arabic, sans-serif' : 'Inter, sans-serif',
+          fontFamily: isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif',
         }}>
           {headline}
         </h1>

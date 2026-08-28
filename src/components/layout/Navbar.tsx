@@ -75,6 +75,7 @@ export default function Navbar() {
           alignItems: 'center',
           padding: '0 32px',
           transition: 'transform 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+          willChange: 'transform',
           background: 'rgba(255, 255, 255, 0.75)',
           backdropFilter: 'blur(32px) saturate(200%)',
           WebkitBackdropFilter: 'blur(32px) saturate(200%)',
@@ -131,7 +132,7 @@ export default function Navbar() {
                 position: 'relative',
                 whiteSpace: 'nowrap',
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = '#8DB833')}
+              onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--accent)')}
               onMouseLeave={(e) => (e.currentTarget.style.color = '#4B5563')}
             >
               {link.label}
@@ -167,8 +168,8 @@ export default function Navbar() {
               letterSpacing: '0.05em',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = '#8DB833';
-              e.currentTarget.style.color = '#8DB833';
+              e.currentTarget.style.borderColor = 'var(--accent)';
+              e.currentTarget.style.color = 'var(--accent)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.borderColor = 'rgba(17, 24, 39, 0.1)';
@@ -189,7 +190,7 @@ export default function Navbar() {
               justifyContent: 'center',
               padding: '0 28px',
               borderRadius: '999px',
-              background: '#8DB833',
+              background: 'var(--accent)',
               color: '#FFFFFF',
               fontSize: '0.9rem',
               fontWeight: 700,
@@ -338,7 +339,7 @@ export default function Navbar() {
           style={{
             padding: '16px 32px',
             borderRadius: '999px',
-            background: '#8DB833',
+            background: 'var(--accent)',
             color: '#FFFFFF',
             fontWeight: 700,
             textDecoration: 'none',

@@ -42,7 +42,7 @@ export default async function HomePage({
 
   const settings = await getSettings();
   const videos = settings.videos || { divider1: '', divider2: '' };
-  const printers = await getProducts('printer');
+  const { products: printers, error: printersError } = await getProducts('printer');
 
   const isAr = locale === 'ar';
   const websiteUrl = 'https://fngtradingco.com';
@@ -147,6 +147,7 @@ export default async function HomePage({
       <HeroSection />
       <ProductCatalogSection
         products={printers}
+        error={printersError}
         isAr={isAr}
         basePath={`/${locale}/printers`}
         tag={isAr ? 'طابعاتنا المُجددة' : 'Refurbished Printers'}
