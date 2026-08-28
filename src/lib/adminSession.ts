@@ -4,13 +4,13 @@
 const SESSION_MAX_AGE_MS = 60 * 60 * 24 * 7 * 1000; // 7 days
 const PBKDF2_ITERATIONS = 100_000;
 
-function toBase64Url(bytes: Uint8Array): string {
+function toBase64Url(bytes: Uint8Array<ArrayBuffer>): string {
   let binary = '';
   for (const b of bytes) binary += String.fromCharCode(b);
   return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
-function fromBase64Url(value: string): Uint8Array {
+function fromBase64Url(value: string): Uint8Array<ArrayBuffer> {
   const padded = value.replace(/-/g, '+').replace(/_/g, '/').padEnd(Math.ceil(value.length / 4) * 4, '=');
   const binary = atob(padded);
   const bytes = new Uint8Array(binary.length);
