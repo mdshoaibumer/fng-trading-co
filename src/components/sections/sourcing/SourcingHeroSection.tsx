@@ -36,7 +36,10 @@ export default function SourcingHeroSection() {
               {t('subtitle')}
             </p>
             <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-              <a href={`/${locale}/contact`} className="btn-primary">{t('cta1')}</a>
+              {/* This page carries its own ContactSection, so the quote request
+                  stays here rather than handing a sourcing lead off to the
+                  printers contact page. */}
+              <a href="#contact" className="btn-primary">{t('cta1')}</a>
               <a href="#sourcing-categories" className="btn-secondary">{t('cta2')}</a>
             </div>
           </div>
