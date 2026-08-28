@@ -545,9 +545,11 @@
       "fngLabel": "FNG Trading Licence",
       "fngValue": "Kingdom of Saudi Arabia",
       "chinaLabel": "China Business License",
-      "chinaValue": "Guangzhou Marco Information Technology Co., Ltd. — Tianhe District Market Supervision Administration",
+      "chinaValue": "Guangzhou Tianhe District Market Supervision Administration",
+      "chinaEntity": "Guangzhou Marco Information Technology Co., Ltd.",
       "usccLabel": "Unified Social Credit Code",
-      "usccValue": "91440106MAKXCFHN7X"
+      "usccValue": "91440106MAKXCFHN7X",
+      "viewDocument": "View document"
     }
   },
   "seo": {
