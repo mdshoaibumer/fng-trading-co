@@ -1,21 +1,13 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { Leaf, Recycle, ShieldCheck, Award, Target, Sparkles, DollarSign, Zap, BarChart3, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useCarousel } from '@/hooks/useCarousel';
 
 function ImageCarousel({ images, alt }: { images: string[]; alt: string }) {
-  const [current, setCurrent] = useState(0);
-
-  const next = useCallback(() => setCurrent(c => (c + 1) % images.length), [images.length]);
-
-  useEffect(() => {
-    if (images.length <= 1) return;
-    const timer = setInterval(next, 4000);
-    return () => clearInterval(timer);
-  }, [images.length, next]);
+  const { current, goTo: setCurrent, next, prev } = useCarousel({ length: images.length, autoplayMs: 4000 });
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
@@ -31,7 +23,7 @@ function ImageCarousel({ images, alt }: { images: string[]; alt: string }) {
       ))}
       {images.length > 1 && (
         <>
-          <button onClick={() => setCurrent(c => (c - 1 + images.length) % images.length)}
+          <button onClick={prev}
             aria-label="Previous image"
             style={{
               position: 'absolute', left: '8px', top: '50%', transform: 'translateY(-50%)',
@@ -129,7 +121,7 @@ export default function TonerProductsSection() {
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: 'clamp(40px, 6vw, 72px)' }}>
           <span style={{
-            display: 'inline-block', color: '#8DB833', background: 'rgba(141,184,51,0.1)',
+            display: 'inline-block', color: 'var(--accent)', background: 'rgba(141,184,51,0.1)',
             padding: '8px 20px', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 700,
             textTransform: 'uppercase', letterSpacing: isAr ? '0' : '1px',
             marginBottom: '16px', border: '1px solid rgba(141,184,51,0.2)',
@@ -137,9 +129,9 @@ export default function TonerProductsSection() {
             {t('tag')}
           </span>
           <h2 style={{
-            fontSize: 'clamp(1.5rem, 4vw, 3rem)', fontWeight: 800, color: '#1A3D2B',
+            fontSize: 'clamp(1.5rem, 4vw, 3rem)', fontWeight: 800, color: 'var(--primary)',
             marginBottom: '16px',
-            fontFamily: isAr ? 'IBM Plex Sans Arabic, sans-serif' : 'Inter, sans-serif',
+            fontFamily: isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif',
           }}>
             {t('title')}
           </h2>
@@ -192,9 +184,9 @@ export default function TonerProductsSection() {
                 </span>
               </div>
               <h3 style={{
-                color: '#1A3D2B', fontSize: 'clamp(1.2rem, 3vw, 1.5rem)', fontWeight: 800,
+                color: 'var(--primary)', fontSize: 'clamp(1.2rem, 3vw, 1.5rem)', fontWeight: 800,
                 marginBottom: '12px',
-                fontFamily: isAr ? 'IBM Plex Sans Arabic, sans-serif' : 'Inter, sans-serif',
+                fontFamily: isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif',
               }}>
                 {t('green.name')}
               </h3>
@@ -253,9 +245,9 @@ export default function TonerProductsSection() {
                 </span>
               </div>
               <h3 style={{
-                color: '#1A3D2B', fontSize: 'clamp(1.2rem, 3vw, 1.5rem)', fontWeight: 800,
+                color: 'var(--primary)', fontSize: 'clamp(1.2rem, 3vw, 1.5rem)', fontWeight: 800,
                 marginBottom: '12px',
-                fontFamily: isAr ? 'IBM Plex Sans Arabic, sans-serif' : 'Inter, sans-serif',
+                fontFamily: isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif',
               }}>
                 {t('premium.name')}
               </h3>

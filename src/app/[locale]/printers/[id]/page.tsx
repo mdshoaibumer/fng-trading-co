@@ -1,9 +1,10 @@
 import { notFound } from 'next/navigation';
-import PrinterProductPageClient from '@/components/pages/PrinterProductPageClient';
+import ProductPageClient from '@/components/pages/ProductPageClient';
 import { supabaseAdmin, getSettings } from '@/lib/supabase';
 import type { Metadata } from 'next';
 import { safeJsonLd } from '@/lib/safeJsonLd';
 import { buildAlternates } from '@/lib/metadata';
+import { DEFAULT_WHATSAPP_NUMBER, sanitizeWhatsappNumber } from '@/lib/whatsapp';
 
 // Reads live product data from Supabase per request.
 export const dynamic = 'force-dynamic';
@@ -80,9 +81,9 @@ export default async function PrinterProductPage({
 
   // Fetch WhatsApp number from settings
   const settings = await getSettings();
-  const whatsapp = settings.contact?.whatsapp 
-    ? settings.contact.whatsapp.replace(/\s/g, '').replace('+', '')
-    : '966593380390';
+  const whatsapp = settings.contact?.whatsapp
+    ? sanitizeWhatsappNumber(settings.contact.whatsapp)
+    : DEFAULT_WHATSAPP_NUMBER;
 
   const isAr = locale === 'ar';
   const websiteUrl = 'https://fngtradingco.com';
@@ -153,7 +154,7 @@ export default async function PrinterProductPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
       />
-      <PrinterProductPageClient printer={printer} whatsapp={whatsapp} locale={locale} />
+      <ProductPageClient product={printer} whatsapp={whatsapp} locale={locale} itemType="printer" />
     </>
   );
 }
