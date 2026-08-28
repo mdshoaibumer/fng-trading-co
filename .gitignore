@@ -55,3 +55,6 @@ next-env.d.ts
 /Toner Images/
 /Videos/
 /Printer Parts.jpeg
+
+# generated knowledge-graph output (regenerate with the graphify skill)
+/graphify-out/
