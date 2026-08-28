@@ -17,8 +17,9 @@ import {
   LayoutGrid
 } from 'lucide-react';
 import { useToast } from '@/components/admin/Toast';
+import type { PartsData } from '@/lib/supabase';
 
-const CATEGORY_ICONS: Record<string, any> = {
+const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   fuser: <Flame size={18} />,
   pickup: <RotateCcw size={18} />,
   transfer: <ArrowRightLeft size={18} />,
@@ -30,7 +31,7 @@ const CATEGORY_ICONS: Record<string, any> = {
 };
 
 export default function AdminPartsPage() {
-  const [parts, setParts] = React.useState<Record<string, any[]>>({});
+  const [parts, setParts] = React.useState<PartsData>({});
   const [loading, setLoading] = React.useState(true);
   const [saving, setSaving] = React.useState(false);
   const [expandedCategory, setExpandedCategory] = React.useState<string | null>('fuser');
@@ -42,8 +43,12 @@ export default function AdminPartsPage() {
       .then(data => {
         setParts(data);
         setLoading(false);
+      })
+      .catch(() => {
+        showToast('Failed to load parts. Check your connection and refresh.', 'error');
+        setLoading(false);
       });
-  }, []);
+  }, [showToast]);
 
   const handleSave = async () => {
     setSaving(true);
@@ -54,7 +59,7 @@ export default function AdminPartsPage() {
         body: JSON.stringify(parts)
       });
       if (res.ok) showToast('Parts catalog updated successfully!', 'success');
-    } catch (err) {
+    } catch {
       showToast('Error saving parts.', 'error');
     } finally {
       setSaving(false);

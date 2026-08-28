@@ -21,12 +21,27 @@ export default function EcoInksInteractiveSection() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [imagesLoaded, setImagesLoaded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [shouldLoad, setShouldLoad] = useState(false);
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth <= 768);
     check();
     window.addEventListener('resize', check, { passive: true });
     return () => window.removeEventListener('resize', check);
+  }, []);
+
+  // This section sits below the fold on /eco-inks — defer the ~4.3MB frame
+  // sequence until it's actually about to scroll into view instead of
+  // loading it eagerly the moment the page mounts.
+  useEffect(() => {
+    const node = sectionRef.current;
+    if (!node) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setShouldLoad(true); observer.disconnect(); } },
+      { rootMargin: '600px 0px' }
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
   }, []);
 
   const drawFrame = (frameIndex: number, images?: HTMLImageElement[]) => {
@@ -67,6 +82,7 @@ export default function EcoInksInteractiveSection() {
   };
 
   useEffect(() => {
+    if (!shouldLoad) return;
     let loadedCount = 0;
     const images: HTMLImageElement[] = [];
     FRAME_PATHS.forEach((src, index) => {
@@ -77,7 +93,7 @@ export default function EcoInksInteractiveSection() {
       images[index] = img;
     });
     imagesRef.current = images;
-  }, []);
+  }, [shouldLoad]);
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll, { passive: true });

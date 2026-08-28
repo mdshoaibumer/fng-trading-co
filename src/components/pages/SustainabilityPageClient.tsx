@@ -3,17 +3,13 @@
 import { useTranslations } from 'next-intl';
 import { Leaf, RefreshCcw, Wind } from 'lucide-react';
 import { useRef, useEffect, useState } from 'react';
+import { useIsClient } from '@/lib/useIsClient';
 
 function AnimatedStat({ target, suffix, label }: { target: number; suffix: string; label: string }) {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
   const [started, setStarted] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    // Set mounted to true on client mount
-    setIsMounted(true);
-  }, []);
+  const isMounted = useIsClient();
 
   useEffect(() => {
     const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setStarted(true); }, { threshold: 0.5 });

@@ -1,0 +1,58 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
+import { useParams } from 'next/navigation';
+import { ShieldCheck, ClipboardCheck, Search, Layers, Ship, FileCheck } from 'lucide-react';
+
+const SERVICE_KEYS = ['verification', 'audit', 'qc', 'consolidation', 'freight', 'customs'] as const;
+
+const ICONS: Record<typeof SERVICE_KEYS[number], React.ReactNode> = {
+  verification: <ShieldCheck size={26} color="#fff" strokeWidth={1.5} />,
+  audit: <Search size={26} color="#fff" strokeWidth={1.5} />,
+  qc: <ClipboardCheck size={26} color="#fff" strokeWidth={1.5} />,
+  consolidation: <Layers size={26} color="#fff" strokeWidth={1.5} />,
+  freight: <Ship size={26} color="#fff" strokeWidth={1.5} />,
+  customs: <FileCheck size={26} color="#fff" strokeWidth={1.5} />,
+};
+
+export default function SourcingServicesSection() {
+  const t = useTranslations('sourcingServices');
+  const params = useParams();
+  const isAr = params.locale === 'ar';
+
+  return (
+    <section id="sourcing-services" className="section" style={{ background: '#F7F8F5' }}>
+      <div className="container">
+        <div style={{ textAlign: 'center', marginBottom: 'clamp(32px, 6vw, 64px)' }}>
+          <span className="section-tag">{t('tag')}</span>
+          <h2 style={{ fontSize: 'clamp(1.5rem,4vw,3.5rem)', fontWeight: 800, color: '#1A3D2B', marginBottom: '12px' }}>{t('title')}</h2>
+          <p style={{ color: '#555', fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', maxWidth: '600px', margin: '0 auto' }}>{t('subtitle')}</p>
+        </div>
+        <div className="ss-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'clamp(16px, 3vw, 24px)' }}>
+          {SERVICE_KEYS.map((key) => (
+            <div key={key} style={{
+              padding: 'clamp(20px, 4vw, 28px)', borderRadius: '20px', background: '#fff',
+              boxShadow: '0 4px 24px rgba(26,61,43,0.06)', border: '1px solid rgba(141,184,51,0.1)',
+              textAlign: isAr ? 'right' : 'left',
+            }}>
+              <div style={{
+                width: '48px', height: '48px', borderRadius: '14px', background: 'linear-gradient(135deg,#1A3D2B,#4A5E2A)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px',
+                marginLeft: isAr ? 'auto' : '0', marginRight: isAr ? '0' : 'auto',
+              }}>
+                {ICONS[key]}
+              </div>
+              <h3 style={{ color: '#1A3D2B', fontSize: '1.05rem', fontWeight: 700, marginBottom: '10px' }}>{t(`items.${key}.name`)}</h3>
+              <p style={{ color: '#555', fontSize: '0.85rem', lineHeight: 1.7 }}>{t(`items.${key}.desc`)}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+      <style jsx>{`
+        @media (max-width: 768px) {
+          .ss-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
+    </section>
+  );
+}

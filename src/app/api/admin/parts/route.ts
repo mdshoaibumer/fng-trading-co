@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin, type PartsData } from '@/lib/supabase';
 
 export async function GET() {
   try {
@@ -10,7 +10,7 @@ export async function GET() {
     if (error) throw error;
 
     // Reconstruct the category-based object
-    const result: Record<string, any[]> = {};
+    const result: PartsData = {};
     data.forEach(item => {
       if (!result[item.category]) result[item.category] = [];
       result[item.category].push({
@@ -29,12 +29,12 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const partsData = await request.json();
-    
+    const partsData: PartsData = await request.json();
+
     // Flatten and map for Supabase
-    const flattened: any[] = [];
-    Object.entries(partsData).forEach(([category, items]: [string, any]) => {
-      items.forEach((item: any) => {
+    const flattened: { category: string; name_en: string; name_ar: string; models: string }[] = [];
+    Object.entries(partsData).forEach(([category, items]) => {
+      items.forEach((item) => {
         flattened.push({
           category,
           name_en: item.nameEn,

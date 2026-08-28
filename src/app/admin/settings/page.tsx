@@ -4,8 +4,17 @@ import React, { useState, useEffect } from 'react';
 import { Save, Video, Phone, Mail, MessageSquare, Lock, Shield, Eye, EyeOff, Bot, Globe, Link, AtSign, CheckCircle2 } from 'lucide-react';
 import { useToast } from '@/components/admin/Toast';
 
+interface AdminSettings {
+  admin_password?: string;
+  ai_settings: { welcome_message: string; system_prompt: string };
+  social_media: { facebook: string; instagram: string; linkedin: string; twitter: string };
+  seo: { title: string; description: string };
+  videos?: { divider1?: string; divider2?: string };
+  contact?: { whatsapp?: string; phone?: string; email?: string };
+}
+
 export default function AdminSettingsPage() {
-  const [settings, setSettings] = useState<any>(null);
+  const [settings, setSettings] = useState<AdminSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   
@@ -28,8 +37,12 @@ export default function AdminSettingsPage() {
           seo: data.seo || { title: '', description: '' }
         });
         setLoading(false);
+      })
+      .catch(() => {
+        showToast('Failed to load settings. Check your connection and refresh.', 'error');
+        setLoading(false);
       });
-  }, []);
+  }, [showToast]);
 
   const calculateStrength = (pwd: string) => {
     let strength = 0;
@@ -45,7 +58,7 @@ export default function AdminSettingsPage() {
     const val = e.target.value;
     setPasswordInput(val);
     setPwdStrength(calculateStrength(val));
-    setSettings({ ...settings, admin_password: val });
+    setSettings((prev) => prev && { ...prev, admin_password: val });
   };
 
   const handleSave = async () => {
@@ -72,7 +85,7 @@ export default function AdminSettingsPage() {
         setConfirmPassword('');
         setPwdStrength(0);
       }
-    } catch (err) {
+    } catch {
       showToast('Error saving settings.', 'error');
     } finally {
       setSaving(false);
@@ -80,6 +93,7 @@ export default function AdminSettingsPage() {
   };
 
   if (loading) return <div>Loading site settings...</div>;
+  if (!settings) return <div>Failed to load settings. Refresh to try again.</div>;
 
   return (
     <div style={{ animation: 'fadeIn 0.5s ease-out' }}>

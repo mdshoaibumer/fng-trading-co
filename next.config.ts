@@ -13,6 +13,10 @@ const nextConfig: NextConfig = {
           { key: 'X-Frame-Options', value: 'DENY' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+          // includeSubDomains omitted deliberately — this only applies to
+          // fngtradingco.com itself, and blanket-forcing HTTPS on every
+          // subdomain isn't this app's call to make.
+          { key: 'Strict-Transport-Security', value: 'max-age=63072000' },
         ],
       },
     ];

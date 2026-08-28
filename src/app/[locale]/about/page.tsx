@@ -1,6 +1,8 @@
 import AboutPageClient from '@/components/pages/AboutPageClient';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
+import { safeJsonLd } from '@/lib/safeJsonLd';
+import { buildAlternates } from '@/lib/metadata';
 
 export async function generateMetadata({
   params,
@@ -15,9 +17,7 @@ export async function generateMetadata({
       absolute: seo('title'),
     },
     description: seo('description'),
-    alternates: {
-      canonical: `/${locale}/about`,
-    },
+    alternates: buildAlternates(locale, '/about'),
   };
 }
 
@@ -72,11 +72,11 @@ export default async function AboutPage({
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutSchema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(aboutSchema) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
       />
       <AboutPageClient />
     </>

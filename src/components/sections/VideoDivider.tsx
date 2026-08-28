@@ -20,11 +20,22 @@ export default function VideoDivider({
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-    // Ensure autoplay on mobile via interaction fallback
     const play = () => { video.play().catch(() => {}); };
-    play();
+
+    // Defer both the real buffering and playback until the divider is
+    // actually about to scroll into view, rather than the moment it mounts —
+    // there are two of these on the homepage, stacked with other eager media.
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { play(); observer.disconnect(); } },
+      { rootMargin: '400px 0px' }
+    );
+    observer.observe(video);
+
     document.addEventListener('touchstart', play, { once: true });
-    return () => document.removeEventListener('touchstart', play);
+    return () => {
+      observer.disconnect();
+      document.removeEventListener('touchstart', play);
+    };
   }, []);
 
   // No configured video (e.g. a fresh install before Settings has been
@@ -41,11 +52,10 @@ export default function VideoDivider({
     }}>
       <video
         ref={videoRef}
-        autoPlay
         loop
         muted
         playsInline
-        preload="auto"
+        preload="metadata"
         style={{
           position: 'absolute',
           top: '50%',

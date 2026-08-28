@@ -1,14 +1,20 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
+import { safeJsonLd } from '@/lib/safeJsonLd';
+import EntryGate from '@/components/gate/EntryGate';
 import HeroSection from '@/components/sections/HeroSection';
 import FreePrinterSection from '@/components/sections/FreePrinterSection';
-import FreePrintersCatalogSection from '@/components/sections/FreePrintersCatalogSection';
+import ProductCatalogSection from '@/components/sections/ProductCatalogSection';
 import HowItWorksSection from '@/components/sections/HowItWorksSection';
 import IndustriesSection from '@/components/sections/IndustriesSection';
 import TrustSection from '@/components/sections/TrustSection';
 import ContactSection from '@/components/sections/ContactSection';
 import VideoDivider from '@/components/sections/VideoDivider';
-import { getSettings } from '@/lib/supabase';
+import { getSettings, getProducts } from '@/lib/supabase';
+import { buildAlternates } from '@/lib/metadata';
+
+// Reads live settings (videos, contact info) from Supabase on every request.
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
   params,
@@ -22,9 +28,7 @@ export async function generateMetadata({
       absolute: t('title'),
     },
     description: t('description'),
-    alternates: {
-      canonical: `/${locale}`,
-    },
+    alternates: buildAlternates(locale),
   };
 }
 
@@ -38,6 +42,7 @@ export default async function HomePage({
 
   const settings = await getSettings();
   const videos = settings.videos || { divider1: '', divider2: '' };
+  const printers = await getProducts('printer');
 
   const isAr = locale === 'ar';
   const websiteUrl = 'https://fngtradingco.com';
@@ -128,23 +133,33 @@ export default async function HomePage({
     <main>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(organizationSchema) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(localBusinessSchema) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(websiteSchema) }}
       />
+      <EntryGate />
       <HeroSection />
-      <FreePrintersCatalogSection />
+      <ProductCatalogSection
+        products={printers}
+        isAr={isAr}
+        basePath={`/${locale}/printers`}
+        tag={isAr ? 'طابعاتنا المُجددة' : 'Refurbished Printers'}
+        title={isAr ? 'طابعات HP مُجددة باحترافية' : 'Professionally Refurbished HP Printers'}
+        subtitle={isAr
+          ? 'كل طابعة يتم فحصها وتنظيفها وتجديدها باحترافية واختبارها لتعمل بمعايير المصنع. جودة HP بجزء بسيط من تكلفة الجديدة.'
+          : 'Every printer is professionally inspected, cleaned, refurbished, and tested to factory standards. HP quality at a fraction of the new price.'}
+      />
       <FreePrinterSection />
       <HowItWorksSection />
-      <VideoDivider src={videos.divider1} />
+      <VideoDivider src={videos.divider1 || ''} />
       <IndustriesSection />
-      <VideoDivider src={videos.divider2} />
+      <VideoDivider src={videos.divider2 || ''} />
       <TrustSection />
       <ContactSection />
     </main>

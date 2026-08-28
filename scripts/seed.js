@@ -12,16 +12,30 @@ if (!supabaseUrl) {
     process.exit(1);
 }
 
+// This writes straight to whatever Supabase project .env.local points at —
+// which, for most contributors, is the same project the live site reads
+// from. Dry-run by default; pass --confirm to actually write.
+const CONFIRMED = process.argv.includes('--confirm');
+
 const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey || supabaseAnonKey);
 
 async function main() {
     try {
         const enPath = path.join(process.cwd(), 'messages', 'en.json');
         const arPath = path.join(process.cwd(), 'messages', 'ar.json');
-        
+
         const enContent = JSON.parse(await fs.readFile(enPath, 'utf-8'));
         const arContent = JSON.parse(await fs.readFile(arPath, 'utf-8'));
-        
+
+        if (!CONFIRMED) {
+            console.log(`[dry run] Would overwrite Supabase 'settings' rows on project:\n  ${supabaseUrl}`);
+            console.log(`  content_en <- messages/en.json (${Object.keys(enContent).length} top-level keys)`);
+            console.log(`  content_ar <- messages/ar.json (${Object.keys(arContent).length} top-level keys)`);
+            console.log('\nNo changes were made. Re-run with --confirm to actually write:');
+            console.log('  node scripts/seed.js --confirm');
+            return;
+        }
+
         const { error: enError } = await supabaseAdmin.from('settings').upsert({
             key: 'content_en',
             value: enContent

@@ -1,9 +1,11 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
+import { safeJsonLd } from '@/lib/safeJsonLd';
 import PrinterPartsHeroSection from '@/components/sections/PrinterPartsHeroSection';
 import PrinterPartsCatalogSection from '@/components/sections/PrinterPartsCatalogSection';
 import MaintenanceTeaser from '@/components/sections/MaintenanceTeaser';
 import ContactSection from '@/components/sections/ContactSection';
+import { buildAlternates } from '@/lib/metadata';
 
 export async function generateMetadata({
   params,
@@ -18,9 +20,7 @@ export async function generateMetadata({
       absolute: seo('title'),
     },
     description: seo('description'),
-    alternates: {
-      canonical: `/${locale}/printer-parts`,
-    },
+    alternates: buildAlternates(locale, '/printer-parts'),
   };
 }
 
@@ -83,11 +83,11 @@ export default async function PrinterPartsPage({
     <main>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(partsCatalogSchema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(partsCatalogSchema) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
       />
       <PrinterPartsHeroSection />
       <PrinterPartsCatalogSection />

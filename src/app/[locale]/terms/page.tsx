@@ -1,5 +1,7 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
+import { safeJsonLd } from '@/lib/safeJsonLd';
+import { buildAlternates } from '@/lib/metadata';
 
 export async function generateMetadata({
   params,
@@ -14,9 +16,7 @@ export async function generateMetadata({
       absolute: seo('title'),
     },
     description: seo('description'),
-    alternates: {
-      canonical: `/${locale}/terms`,
-    },
+    alternates: buildAlternates(locale, '/terms'),
   };
 }
 
@@ -55,7 +55,7 @@ export default async function TermsPage({
     <main style={{ background: '#F7F8F5', minHeight: '100vh', paddingTop: 'clamp(120px, 15vh, 160px)', paddingBottom: '80px' }}>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
       />
       <div className="container" style={{ maxWidth: '800px', margin: '0 auto', padding: '0 20px', textAlign: isAr ? 'right' : 'left' }}>
         

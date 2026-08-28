@@ -141,16 +141,16 @@ export default function Footer() {
           gap: '16px',
         }}>
           <span style={{
-            color: 'rgba(255,255,255,0.35)',
+            color: 'rgba(255,255,255,0.6)',
             fontSize: '0.8rem',
           }}>
             {t('copyright')}
           </span>
           <div style={{ display: 'flex', gap: '24px' }}>
-            <a href={`/${locale}/privacy-policy`} style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.8rem', textDecoration: 'none' }}>
+            <a href={`/${locale}/privacy-policy`} style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.8rem', textDecoration: 'none' }}>
               {t('links.privacy')}
             </a>
-            <a href={`/${locale}/terms`} style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.8rem', textDecoration: 'none' }}>
+            <a href={`/${locale}/terms`} style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.8rem', textDecoration: 'none' }}>
               {t('links.terms')}
             </a>
           </div>

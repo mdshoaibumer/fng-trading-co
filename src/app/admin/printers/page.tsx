@@ -1,19 +1,24 @@
 'use client';
 
 import React from 'react';
-import { 
-  Plus, 
-  Trash2, 
-  Edit3, 
-  CheckCircle2, 
-  XCircle, 
+import {
+  Plus,
+  Trash2,
+  Edit3,
+  CheckCircle2,
+  XCircle,
   Image as ImageIcon,
   Save,
-  ChevronDown,
   ChevronUp
 } from 'lucide-react';
 import { useToast } from '@/components/admin/Toast';
 import MultiImageUploader from '@/components/admin/MultiImageUploader';
+import type { Product } from '@/lib/supabase';
+
+// The admin form also lets editors set an Arabic name override, which isn't
+// part of the Product type consumed by the public site (nothing currently
+// reads it back out) — kept here as-is rather than scope-creeping into that.
+type AdminProduct = Product & { nameAr?: string };
 
 const COMMON_FEATURES_EN = [
   "Fully inspected & tested",
@@ -40,7 +45,7 @@ const COMMON_FEATURES_AR = [
 ];
 
 export default function AdminPrintersPage() {
-  const [printers, setPrinters] = React.useState<any[]>([]);
+  const [printers, setPrinters] = React.useState<AdminProduct[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [saving, setSaving] = React.useState(false);
   const [editingId, setEditingId] = React.useState<string | null>(null);
@@ -52,8 +57,12 @@ export default function AdminPrintersPage() {
       .then(data => {
         setPrinters(data);
         setLoading(false);
+      })
+      .catch(() => {
+        showToast('Failed to load printers. Check your connection and refresh.', 'error');
+        setLoading(false);
       });
-  }, []);
+  }, [showToast]);
 
   const handleSave = async () => {
     setSaving(true);
@@ -64,7 +73,7 @@ export default function AdminPrintersPage() {
         body: JSON.stringify(printers)
       });
       if (res.ok) showToast('Printers updated successfully!', 'success');
-    } catch (err) {
+    } catch {
       showToast('Error saving printers.', 'error');
     } finally {
       setSaving(false);
@@ -96,7 +105,7 @@ export default function AdminPrintersPage() {
     }
   };
 
-  const updatePrinter = (id: string, field: string, value: any) => {
+  const updatePrinter = (id: string, field: string, value: unknown) => {
     setPrinters(printers.map(p => p.id === id ? { ...p, [field]: value } : p));
   };
 
@@ -127,7 +136,7 @@ export default function AdminPrintersPage() {
             {/* Header / Summary */}
             <div className="printer-card-header" style={{ padding: '20px 24px', display: 'flex', alignItems: 'center', gap: '16px', background: editingId === printer.id ? '#F8FAFC' : '#fff' }}>
               <div style={{ width: '72px', height: '72px', background: '#F1F5F9', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
-                {printer.images?.[0] ? <img src={printer.images[0]} style={{ width: '100%', height: '100%', objectFit: 'contain' }} /> : <ImageIcon color="#94A3B8" />}
+                {printer.images?.[0] ? <img src={printer.images[0]} alt={printer.name || ''} style={{ width: '100%', height: '100%', objectFit: 'contain' }} /> : <ImageIcon color="#94A3B8" />}
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <h3 style={{ margin: '0 0 4px 0', fontSize: '1.1rem', fontWeight: 800, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{printer.name}</h3>
@@ -186,7 +195,7 @@ export default function AdminPrintersPage() {
                                 newFeats[idx] = e.target.value;
                                 updatePrinter(printer.id, 'featuresEn', newFeats);
                               }} />
-                              <button onClick={() => updatePrinter(printer.id, 'featuresEn', printer.featuresEn.filter((_:any, i:any) => i !== idx))} style={{ color: '#EF4444', background: 'none', border: 'none', cursor: 'pointer' }}><Trash2 size={16} /></button>
+                              <button onClick={() => updatePrinter(printer.id, 'featuresEn', printer.featuresEn.filter((_, i) => i !== idx))} style={{ color: '#EF4444', background: 'none', border: 'none', cursor: 'pointer' }}><Trash2 size={16} /></button>
                             </div>
                           ))}
                           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
@@ -266,7 +275,7 @@ export default function AdminPrintersPage() {
                                 newFeats[idx] = e.target.value;
                                 updatePrinter(printer.id, 'featuresAr', newFeats);
                               }} />
-                              <button onClick={() => updatePrinter(printer.id, 'featuresAr', printer.featuresAr.filter((_:any, i:any) => i !== idx))} style={{ color: '#EF4444', background: 'none', border: 'none', cursor: 'pointer' }}><Trash2 size={16} /></button>
+                              <button onClick={() => updatePrinter(printer.id, 'featuresAr', printer.featuresAr.filter((_, i) => i !== idx))} style={{ color: '#EF4444', background: 'none', border: 'none', cursor: 'pointer' }}><Trash2 size={16} /></button>
                             </div>
                           ))}
                           <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexDirection: 'row-reverse', marginLeft: 'auto' }}>

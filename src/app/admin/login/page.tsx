@@ -22,7 +22,7 @@ export default function AdminLoginPage() {
       } else {
         setError('Invalid administrative credentials');
       }
-    } catch (err) {
+    } catch {
       setError('An error occurred during authentication');
     }
   };

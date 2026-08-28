@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -24,10 +24,14 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Close mobile menu when navigating
-  useEffect(() => {
+  // Close the mobile menu when navigating. Comparing against the previous
+  // pathname during render (React's documented pattern for "adjust state
+  // when a prop changes") instead of an effect avoids an extra render pass.
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
     setIsMobileMenuOpen(false);
-  }, [pathname]);
+  }
 
   const menuItems = [
     { name: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/admin' },
@@ -114,7 +118,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                   try {
                     await fetch('/api/admin/auth/logout', { method: 'POST' });
                     window.location.href = '/admin/login';
-                  } catch (err) {
+                  } catch {
                     console.error('Logout failed');
                   }
                 }}

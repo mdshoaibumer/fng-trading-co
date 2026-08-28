@@ -1,7 +1,12 @@
 import ContactPageClient from '@/components/pages/ContactPageClient';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
+import { safeJsonLd } from '@/lib/safeJsonLd';
 import { getSettings } from '@/lib/supabase';
+import { buildAlternates } from '@/lib/metadata';
+
+// Reads live contact settings from Supabase on every request.
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
   params,
@@ -16,9 +21,7 @@ export async function generateMetadata({
       absolute: seo('title'),
     },
     description: seo('description'),
-    alternates: {
-      canonical: `/${locale}/contact`,
-    },
+    alternates: buildAlternates(locale, '/contact'),
   };
 }
 
@@ -99,11 +102,11 @@ export default async function ContactPage({
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(localBusinessSchema) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
       />
       <ContactPageClient />
     </>

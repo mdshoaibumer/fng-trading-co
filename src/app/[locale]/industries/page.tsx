@@ -1,6 +1,8 @@
 import IndustriesPageClient from '@/components/pages/IndustriesPageClient';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
+import { safeJsonLd } from '@/lib/safeJsonLd';
+import { buildAlternates } from '@/lib/metadata';
 
 export async function generateMetadata({
   params,
@@ -15,9 +17,7 @@ export async function generateMetadata({
       absolute: seo('title'),
     },
     description: seo('description'),
-    alternates: {
-      canonical: `/${locale}/industries`,
-    },
+    alternates: buildAlternates(locale, '/industries'),
   };
 }
 
@@ -57,7 +57,7 @@ export default async function IndustriesPage({
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
       />
       <IndustriesPageClient />
     </>

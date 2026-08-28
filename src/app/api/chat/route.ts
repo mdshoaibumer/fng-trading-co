@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getSettings } from '@/lib/supabase';
-import { rateLimit, getClientIp, tooManyRequests } from '@/lib/rateLimit';
+import { rateLimit, globalRateLimit, getClientIp, tooManyRequests } from '@/lib/rateLimit';
 
 const SYSTEM_PROMPT = `You are Nexia, the official AI assistant for Future Next Gen (FNG).
 FNG specializes in providing premium refurbished HP enterprise printers, high-quality eco-friendly inks, and printer parts to businesses. FNG is based in Saudi Arabia (HQ in Riyadh, serving Jeddah, Dammam, and Al Madinah) with a branch in Dubai, UAE.
@@ -17,6 +17,12 @@ export async function POST(req: Request) {
   try {
     const { allowed, retryAfterSeconds } = rateLimit(`chat:${getClientIp(req)}`, 20, 5 * 60 * 1000);
     if (!allowed) return tooManyRequests(retryAfterSeconds);
+
+    // Backstop against X-Forwarded-For spoofing — this endpoint calls a
+    // paid AI API per request, so an attacker resetting the per-IP bucket
+    // with a fresh header on every call is a real cost risk, not just spam.
+    const global = globalRateLimit('chat', 100, 5 * 60 * 1000);
+    if (!global.allowed) return tooManyRequests(global.retryAfterSeconds);
 
     const { messages } = await req.json();
 

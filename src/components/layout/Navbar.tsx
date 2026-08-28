@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { usePathname, useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useDialogA11y } from '@/lib/useDialogA11y';
 
 export default function Navbar() {
   const t = useTranslations('nav');
@@ -15,6 +16,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
+  const mobileOverlayRef = useDialogA11y<HTMLDivElement>(mobileOpen, () => setMobileOpen(false));
 
   useEffect(() => {
     const handleScroll = () => {
@@ -39,6 +41,7 @@ export default function Navbar() {
     { href: `/${locale}/sustainability`, label: t('sustainability') },
     { href: `/${locale}/eco-inks`, label: t('ecoInks') },
     { href: `/${locale}/industries`, label: t('industries') },
+    { href: `/${locale}/sourcing`, label: t('sourcing') },
     { href: `/${locale}/printer-parts`, label: t('printerParts') },
     { href: `/${locale}/equipment`, label: t('officeEquipment') },
     { href: `/${locale}/faq`, label: t('faq') },
@@ -210,6 +213,8 @@ export default function Navbar() {
             className="mobile-menu-btn"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle menu"
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-nav-overlay"
             style={{
               display: 'none',
               flexDirection: 'column',
@@ -251,6 +256,12 @@ export default function Navbar() {
 
       {/* Mobile Menu Overlay */}
       <div
+        ref={mobileOverlayRef}
+        id="mobile-nav-overlay"
+        role="dialog"
+        aria-modal="true"
+        aria-label={isAr ? 'قائمة التنقل' : 'Navigation menu'}
+        tabIndex={-1}
         className="mobile-overlay"
         style={{
           position: 'fixed',

@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { HeartPulse, GraduationCap, Building, Scale, ShoppingCart, Landmark, Ruler, Truck, X, ArrowRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import { useDialogA11y } from '@/lib/useDialogA11y';
 
 const INDUSTRIES = ['healthcare', 'education', 'realEstate', 'legal', 'retail', 'government', 'architecture', 'logistics'] as const;
 type Industry = typeof INDUSTRIES[number];
@@ -24,6 +25,8 @@ export default function IndustriesSection() {
   const params = useParams();
   const isAr = params.locale === 'ar';
   const [selectedIndustry, setSelectedIndustry] = useState<Industry | null>(null);
+  const closeModal = () => setSelectedIndustry(null);
+  const modalRef = useDialogA11y<HTMLDivElement>(selectedIndustry !== null, closeModal);
 
   useEffect(() => {
     if (selectedIndustry) {
@@ -44,12 +47,15 @@ export default function IndustriesSection() {
         </div>
         <div className="industries-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(260px,1fr))', gap: '24px' }}>
           {INDUSTRIES.map((ind) => (
-            <div key={ind} style={{
+            <div key={ind} role="button" tabIndex={0} aria-haspopup="dialog"
+              aria-label={t(`items.${ind}.name`)}
+              style={{
               padding: 'clamp(20px, 4vw, 32px) clamp(16px, 3vw, 24px)', borderRadius: '16px', background: '#fff', border: '1px solid #EEEEEE',
               transition: 'all 350ms cubic-bezier(0.34,1.56,0.64,1)', cursor: 'pointer',
               textAlign: isAr ? 'right' : 'left',
             }}
               onClick={() => setSelectedIndustry(ind)}
+              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedIndustry(ind); } }}
               onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-6px)'; e.currentTarget.style.boxShadow = '0 12px 40px rgba(26,61,43,0.1)'; e.currentTarget.style.borderColor = 'rgba(141,184,51,0.3)'; }}
               onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = '#EEEEEE'; }}
             >
@@ -78,9 +84,9 @@ export default function IndustriesSection() {
         opacity: selectedIndustry ? 1 : 0, pointerEvents: selectedIndustry ? 'auto' : 'none',
         transition: 'opacity 400ms ease', padding: '16px',
       }}
-      onClick={() => setSelectedIndustry(null)}
+      onClick={closeModal}
       >
-        <div className="modal-content" style={{
+        <div ref={modalRef} role="dialog" aria-modal="true" aria-labelledby="industry-modal-title" tabIndex={-1} className="modal-content" style={{
           width: '100%', maxWidth: '800px', maxHeight: '90vh', overflowY: 'auto',
           background: '#fff', borderRadius: '24px',
           boxShadow: '0 40px 100px rgba(26, 61, 43, 0.15)', overflow: 'hidden', position: 'relative',
@@ -98,7 +104,7 @@ export default function IndustriesSection() {
                 padding: 'clamp(24px, 5vw, 40px) clamp(24px, 5vw, 48px)', color: '#fff', position: 'relative',
                 textAlign: isAr ? 'right' : 'left'
               }}>
-                <button onClick={() => setSelectedIndustry(null)} style={{
+                <button onClick={closeModal} aria-label={isAr ? 'إغلاق' : 'Close'} style={{
                   position: 'absolute', top: '16px', [isAr ? 'left' : 'right']: '16px',
                   background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)',
                   color: '#fff', width: '44px', height: '44px', borderRadius: '50%',
@@ -120,7 +126,7 @@ export default function IndustriesSection() {
                 }}>
                   {(() => { const icon = ICONS[selectedIndustry]; return <icon.type {...icon.props} color="#fff" size={28} />; })()}
                 </div>
-                <h3 style={{ fontSize: 'clamp(1.4rem, 4vw, 2rem)', fontWeight: 800, marginBottom: '8px' }}>
+                <h3 id="industry-modal-title" style={{ fontSize: 'clamp(1.4rem, 4vw, 2rem)', fontWeight: 800, marginBottom: '8px' }}>
                   {t(`items.${selectedIndustry}.name`)}
                 </h3>
                 <p style={{ fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', opacity: 0.9, maxWidth: '80%', marginLeft: isAr ? 'auto' : '0', marginRight: isAr ? '0' : 'auto' }}>

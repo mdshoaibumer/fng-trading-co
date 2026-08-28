@@ -2,6 +2,11 @@ import { notFound } from 'next/navigation';
 import PrinterProductPageClient from '@/components/pages/PrinterProductPageClient';
 import { supabaseAdmin, getSettings } from '@/lib/supabase';
 import type { Metadata } from 'next';
+import { safeJsonLd } from '@/lib/safeJsonLd';
+import { buildAlternates } from '@/lib/metadata';
+
+// Reads live product data from Supabase per request.
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
   params,
@@ -31,9 +36,7 @@ export async function generateMetadata({
       absolute: `${name} | ${locale === 'ar' ? 'طابعات HP المجددة معاً مع الحبر' : 'Certified Refurbished HP LaserJet'} | FNG`,
     },
     description: desc || '',
-    alternates: {
-      canonical: `/${locale}/printers/${id}`,
-    },
+    alternates: buildAlternates(locale, `/printers/${id}`),
     openGraph: {
       title: `${name} | ${locale === 'ar' ? 'طابعة HP مجددة' : 'Certified Refurbished HP LaserJet'}`,
       description: desc || '',
@@ -144,11 +147,11 @@ export default async function PrinterProductPage({
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(productSchema) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
       />
       <PrinterProductPageClient printer={printer} whatsapp={whatsapp} locale={locale} />
     </>

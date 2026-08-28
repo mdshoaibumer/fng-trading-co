@@ -152,9 +152,11 @@ export default function EquipmentProductPageClient({ equipment, whatsapp, locale
                 flexDirection: isAr ? 'row-reverse' : 'row'
               }}>
                 {equipment.images.map((img: string, idx: number) => (
-                  <button 
+                  <button
                     key={idx}
                     onClick={() => setCurrentImage(idx)}
+                    aria-label={`${equipment.name} — ${isAr ? 'صورة' : 'image'} ${idx + 1}`}
+                    aria-current={currentImage === idx}
                     style={{
                       width: '80px', height: '80px', borderRadius: '16px', overflow: 'hidden',
                       border: currentImage === idx ? '2px solid #8DB833' : '1px solid #E0E7DE',
@@ -162,7 +164,7 @@ export default function EquipmentProductPageClient({ equipment, whatsapp, locale
                       flexShrink: 0
                     }}
                   >
-                    <img src={img} alt="Thumbnail" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                    <img src={img} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                   </button>
                 ))}
               </div>

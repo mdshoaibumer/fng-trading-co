@@ -2,17 +2,17 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, X, Send, Bot, User, Loader2 } from 'lucide-react';
+import { MessageSquare, X, Send, Bot, Loader2 } from 'lucide-react';
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
 }
 
-export default function AIChatWidget() {
+export default function AIChatWidget({ welcomeMessage }: { welcomeMessage?: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', content: 'Hi! I am Nexia, your FNG Assistant. How can I help you find the right printer or eco-ink today?' }
+    { role: 'assistant', content: welcomeMessage?.trim() || 'Hi! I am Nexia, your FNG Assistant. How can I help you find the right printer or eco-ink today?' }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -25,23 +25,6 @@ export default function AIChatWidget() {
   useEffect(() => {
     scrollToBottom();
   }, [messages, isLoading]);
-
-  // Pick up an admin-configured welcome message, if one has been set,
-  // as long as the visitor hasn't started chatting yet.
-  useEffect(() => {
-    fetch('/api/admin/settings')
-      .then(res => res.json())
-      .then(data => {
-        const welcomeMessage = data.ai_settings?.welcome_message?.trim();
-        if (!welcomeMessage) return;
-        setMessages(prev =>
-          prev.length === 1 && prev[0].role === 'assistant'
-            ? [{ role: 'assistant', content: welcomeMessage }]
-            : prev
-        );
-      })
-      .catch(() => {});
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

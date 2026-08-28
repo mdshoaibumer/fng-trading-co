@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { z } from 'zod';
-import { rateLimit, getClientIp, tooManyRequests } from '@/lib/rateLimit';
+import { rateLimit, globalRateLimit, getClientIp, tooManyRequests } from '@/lib/rateLimit';
 
 const printerRequestSchema = z.object({
   name: z.string().min(2),
@@ -17,6 +17,13 @@ export async function POST(request: Request) {
   try {
     const { allowed, retryAfterSeconds } = rateLimit(`printer-request:${getClientIp(request)}`, 5, 10 * 60 * 1000);
     if (!allowed) return tooManyRequests(retryAfterSeconds);
+
+    // Backstop against X-Forwarded-For spoofing (a fresh header value on
+    // every request resets the per-IP bucket above) — ignores the claimed
+    // IP entirely and caps total submissions across everyone, same pattern
+    // as the admin login route.
+    const global = globalRateLimit('printer-request', 50, 10 * 60 * 1000);
+    if (!global.allowed) return tooManyRequests(global.retryAfterSeconds);
 
     const body = await request.json();
 

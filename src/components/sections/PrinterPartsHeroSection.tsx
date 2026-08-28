@@ -3,6 +3,7 @@
 import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Wrench, Cpu } from 'lucide-react';
+import Image from 'next/image';
 
 export default function PrinterPartsHeroSection() {
   const params = useParams();
@@ -92,9 +93,13 @@ export default function PrinterPartsHeroSection() {
                 filter: 'blur(40px)',
                 pointerEvents: 'none',
               }} />
-              <img
+              <Image
                 src="/printer-parts-hero.jpeg"
                 alt={isAr ? 'قطع غيار طابعات HP أصلية' : 'Genuine HP Printer Parts'}
+                width={2752}
+                height={1536}
+                priority
+                sizes="(max-width: 900px) 100vw, 600px"
                 style={{
                   width: '100%',
                   height: 'auto',

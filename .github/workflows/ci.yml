@@ -31,10 +31,12 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: placeholder
           ADMIN_SESSION_SECRET: placeholder-ci-secret-not-used-in-production
 
-      # Informational only for now: the codebase has pre-existing lint
-      # findings unrelated to this workflow's changes. Not blocking CI on
-      # them yet avoids failing every PR on unrelated debt; they're worth
-      # a dedicated cleanup pass later.
-      - name: Lint (non-blocking)
+      # Blocking: the codebase's lint errors were cleared out (dead code
+      # removed, `any` types replaced with real types, missing dependency
+      # arrays fixed). Only 6 pre-existing, individually-reviewed
+      # no-img-element warnings remain, which don't fail the build.
+      - name: Lint
         run: npm run lint
-        continue-on-error: true
+
+      - name: Test
+        run: npm test

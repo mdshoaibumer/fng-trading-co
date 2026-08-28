@@ -1,15 +1,6 @@
-import { getTranslations } from 'next-intl/server';
-import type { Metadata } from 'next';
-
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
-  const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: 'seo.contact' });
-  return {
-    title: t('title'),
-    description: t('description'),
-  };
-}
-
+// Metadata for this route is set by the sibling page.tsx's own generateMetadata,
+// which Next always uses over a layout's — a layout-level generateMetadata here
+// would be silently discarded, so this stays a pure passthrough.
 export default function ContactLayout({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }

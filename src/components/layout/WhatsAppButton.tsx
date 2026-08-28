@@ -3,24 +3,17 @@
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 
-export default function WhatsAppButton() {
+export default function WhatsAppButton({ whatsapp }: { whatsapp?: string }) {
   const t = useTranslations('contact');
   const [visible, setVisible] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-
-  const [contact, setContact] = useState<any>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setVisible(true), 3000);
     const checkMobile = () => setIsMobile(window.innerWidth <= 768);
     checkMobile();
     window.addEventListener('resize', checkMobile, { passive: true });
-    
-    fetch('/api/admin/settings')
-      .then(res => res.json())
-      .then(data => setContact(data.contact))
-      .catch(() => {});
 
     return () => {
       clearTimeout(timer);
@@ -35,7 +28,7 @@ export default function WhatsAppButton() {
 
   return (
     <a
-      href={`https://wa.me/${(contact?.whatsapp || '966593380390').replace(/\s/g, '').replace('+', '')}`}
+      href={`https://wa.me/${(whatsapp || '966593380390').replace(/\s/g, '').replace('+', '')}`}
       target="_blank"
       rel="noopener noreferrer"
       id="whatsapp-btn"

@@ -2,6 +2,11 @@ import { notFound } from 'next/navigation';
 import EquipmentProductPageClient from '@/components/pages/EquipmentProductPageClient';
 import { supabaseAdmin, getSettings } from '@/lib/supabase';
 import type { Metadata } from 'next';
+import { safeJsonLd } from '@/lib/safeJsonLd';
+import { buildAlternates } from '@/lib/metadata';
+
+// Reads live product data from Supabase per request.
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
   params,
@@ -31,9 +36,7 @@ export async function generateMetadata({
       absolute: `${name} | ${locale === 'ar' ? 'أجهزة مكتبية مجددة معتمدة' : 'Certified Refurbished Office Equipment'} | FNG`,
     },
     description: desc || '',
-    alternates: {
-      canonical: `/${locale}/equipment/${id}`,
-    },
+    alternates: buildAlternates(locale, `/equipment/${id}`),
     openGraph: {
       title: `${name} | ${locale === 'ar' ? 'أجهزة مكتبية مجددة' : 'Certified Refurbished Office Equipment'}`,
       description: desc || '',
@@ -144,11 +147,11 @@ export default async function EquipmentProductPage({
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(productSchema) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
       />
       <EquipmentProductPageClient equipment={equipment} whatsapp={whatsapp} locale={locale} />
     </>

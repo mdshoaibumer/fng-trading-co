@@ -1,11 +1,13 @@
 'use client';
 
 import React from 'react';
-import { Save, Search, Languages, Globe } from 'lucide-react';
+import { Save, Search } from 'lucide-react';
 import { useToast } from '@/components/admin/Toast';
 
+type ContentData = Record<string, Record<string, Record<string, unknown>>>;
+
 export default function AdminContentPage() {
-  const [data, setData] = React.useState<any>(null);
+  const [data, setData] = React.useState<ContentData | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [saving, setSaving] = React.useState(false);
   const [search, setSearch] = React.useState('');
@@ -18,8 +20,12 @@ export default function AdminContentPage() {
       .then(res => {
         setData(res);
         setLoading(false);
+      })
+      .catch(() => {
+        showToast('Failed to load content. Check your connection and refresh.', 'error');
+        setLoading(false);
       });
-  }, []);
+  }, [showToast]);
 
   const handleSave = async () => {
     setSaving(true);
@@ -31,7 +37,7 @@ export default function AdminContentPage() {
       });
       if (res.ok) showToast('Content updated successfully!', 'success');
       else showToast('Failed to update content.', 'error');
-    } catch (err) {
+    } catch {
       showToast('Error saving content.', 'error');
     } finally {
       setSaving(false);
@@ -39,19 +45,23 @@ export default function AdminContentPage() {
   };
 
   const updateValue = (lang: string, section: string, key: string, value: string) => {
-    setData((prev: any) => ({
-      ...prev,
-      [lang]: {
-        ...prev[lang],
-        [section]: {
-          ...prev[lang][section],
-          [key]: value
+    setData((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        [lang]: {
+          ...prev[lang],
+          [section]: {
+            ...prev[lang][section],
+            [key]: value
+          }
         }
-      }
-    }));
+      };
+    });
   };
 
   if (loading) return <div>Loading translations...</div>;
+  if (!data) return <div>Failed to load content. Refresh to try again.</div>;
 
   const sections = Object.keys(data.en).filter(s => s !== 'meta'); // Exclude meta for simpler UI for now
 

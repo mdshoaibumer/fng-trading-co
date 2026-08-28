@@ -10,8 +10,6 @@ import {
   Image as ImageIcon,
   Loader2,
   Link as LinkIcon,
-  CheckCircle2,
-  AlertCircle,
 } from 'lucide-react';
 
 interface MultiImageUploaderProps {
@@ -39,7 +37,7 @@ export default function MultiImageUploader({
   // Filter out placeholders
   const activeImages = images.filter((img) => img && img !== '/placeholder.png');
 
-  const uploadFiles = async (files: File[]) => {
+  const uploadFiles = useCallback(async (files: File[]) => {
     if (files.length === 0) return;
     setUploading(true);
     setUploadProgress({ total: files.length, done: 0 });
@@ -63,7 +61,7 @@ export default function MultiImageUploader({
         } else {
           showToast(`Failed to upload ${file.name}: ${data.error || 'Unknown error'}`, 'error');
         }
-      } catch (err) {
+      } catch {
         showToast(`Error uploading ${file.name}`, 'error');
       }
       completed++;
@@ -81,7 +79,7 @@ export default function MultiImageUploader({
 
     setUploading(false);
     setUploadProgress({ total: 0, done: 0 });
-  };
+  }, [activeImages, onImagesChange, showToast]);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -109,7 +107,7 @@ export default function MultiImageUploader({
         }
       }
     },
-    [activeImages]
+    [uploadFiles, showToast]
   );
 
   const removeImage = (index: number) => {

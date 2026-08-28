@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin, type Product } from '@/lib/supabase';
 
 export async function GET() {
   try {
@@ -35,10 +35,10 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const equipment = await request.json();
-    
+    const equipment: Product[] = await request.json();
+
     // Map back to snake_case for Supabase
-    const formatted = equipment.map((p: any) => ({
+    const formatted = equipment.map((p) => ({
       id: p.id,
       name: p.name,
       desc_en: p.descEn,
@@ -55,7 +55,7 @@ export async function POST(request: Request) {
     const { data: existing } = await supabaseAdmin.from('printers').select('id');
     const existingIds = existing?.map(e => e.id) || [];
     const existingEquipmentIds = existingIds.filter(id => id.startsWith('eq-'));
-    const newIds = formatted.map((p: any) => p.id);
+    const newIds = formatted.map((p) => p.id);
     const idsToDelete = existingEquipmentIds.filter(id => !newIds.includes(id));
 
     if (idsToDelete.length > 0) {

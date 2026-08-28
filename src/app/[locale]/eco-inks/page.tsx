@@ -1,5 +1,6 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
+import { safeJsonLd } from '@/lib/safeJsonLd';
 import EcoInksHeroSection from '@/components/sections/EcoInksHeroSection';
 import EcoInksInteractiveSection from '@/components/sections/EcoInksInteractiveSection';
 import EcoInksLeafletSection from '@/components/sections/EcoInksLeafletSection';
@@ -7,6 +8,7 @@ import EcoInksSection from '@/components/sections/EcoInksSection';
 import EcoInksSustainabilitySection from '@/components/sections/EcoInksSustainabilitySection';
 import TonerProductsSection from '@/components/sections/TonerProductsSection';
 import ContactSection from '@/components/sections/ContactSection';
+import { buildAlternates } from '@/lib/metadata';
 
 export async function generateMetadata({
   params,
@@ -21,9 +23,7 @@ export async function generateMetadata({
       absolute: seo('title'),
     },
     description: seo('description'),
-    alternates: {
-      canonical: `/${locale}/eco-inks`,
-    },
+    alternates: buildAlternates(locale, '/eco-inks'),
   };
 }
 
@@ -111,15 +111,15 @@ export default async function EcoInksPage({
     <main>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productGreenSchema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(productGreenSchema) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productPremiumSchema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(productPremiumSchema) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
       />
       <EcoInksHeroSection />
       <EcoInksInteractiveSection />

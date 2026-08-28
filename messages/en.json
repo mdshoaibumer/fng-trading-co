@@ -9,6 +9,7 @@
     "sustainability": "Sustainability",
     "ecoInks": "Eco Inks",
     "industries": "Industries",
+    "sourcing": "Sourcing",
     "faq": "FAQ",
     "contact": "Contact",
     "printerParts": "Printer Parts",
@@ -446,7 +447,106 @@
     "desc": "Our dedicated maintenance team is being assembled to provide on-site printer servicing across Saudi Arabia. Stay tuned for professional repair, preventive maintenance, and emergency support.",
     "cta": "Register Your Interest"
   },
+  "gate": {
+    "eyebrow": "What are you looking for?",
+    "title": "Two ways we help your business run",
+    "printers": {
+      "tag": "Refurbished Hardware",
+      "title": "Printers & Ink",
+      "desc": "Certified refurbished HP printers, eco-friendly toner subscriptions, and genuine parts — delivered and installed in 48 hours across Saudi Arabia.",
+      "cta": "Explore Printers"
+    },
+    "sourcing": {
+      "tag": "Import & Procurement",
+      "title": "Electronics Sourcing",
+      "desc": "Verified factory sourcing from China to Saudi Arabia — computers, mobile accessories and consumer electronics, inspected and customs-cleared end to end.",
+      "cta": "Explore Sourcing"
+    }
+  },
+  "sourcingHero": {
+    "kicker": "Electronics Sourcing — China to Saudi Arabia",
+    "headline": "What you source, that's what you get.",
+    "subtitle": "A Saudi-based sourcing operation with a verified supplier network across China, specializing in computers, mobile accessories and consumer electronics. Every order is inspected before it ships and cleared before it lands.",
+    "cta1": "Request a Quote",
+    "cta2": "Explore Categories",
+    "stats": {
+      "moq": { "value": "500", "label": "Minimum Order Quantity, pcs" },
+      "lead": { "value": "15–30", "label": "Days Typical Lead Time" },
+      "factories": { "value": "100+", "label": "Verified Factories in Network" },
+      "compliance": { "value": "SABER", "label": "Compliant Customs Clearance" }
+    }
+  },
+  "sourcingProcess": {
+    "tag": "The Process",
+    "title": "From inquiry to your door",
+    "subtitle": "Seven stages, one point of contact — from your first message to a cleared shipment at your door.",
+    "steps": {
+      "s1": { "number": "01", "title": "Inquiry", "desc": "Send your product, target spec and quantity over WhatsApp or the contact form. We confirm feasibility and typical pricing within one business day." },
+      "s2": { "number": "02", "title": "Sourcing & Quotation", "desc": "We shortlist verified factories from our China network, negotiate pricing at your volume, and return a formal quotation with unit cost, MOQ and lead time." },
+      "s3": { "number": "03", "title": "Sample Approval", "desc": "A physical sample ships for your sign-off before production begins — no bulk order is placed against an unapproved sample." },
+      "s4": { "number": "04", "title": "Factory QC Inspection", "desc": "Our team inspects the production run on-site against your approved sample and spec sheet before it leaves the factory floor." },
+      "s5": { "number": "05", "title": "Shipping", "desc": "Consolidated sea or air freight from the origin port, tracked door to port, with documentation prepared in parallel." },
+      "s6": { "number": "06", "title": "SABER & Customs Clearance", "desc": "SABER certificates and customs clearance at the Saudi border are handled end to end — you never deal with the paperwork." },
+      "s7": { "number": "07", "title": "Delivery to Your Door", "desc": "Final-mile delivery to your warehouse or office anywhere in the Kingdom, with a signed proof of delivery." }
+    }
+  },
+  "sourcingCategories": {
+    "tag": "What We Source",
+    "title": "Categories",
+    "subtitle": "Electronics sourced from audited factories across China, with standard specs, minimum order quantities and lead times set up front.",
+    "footnote": "Specs, MOQ and lead time shown are standard starting points — every quotation is confirmed against your target specification, branding and destination port before an order is placed.",
+    "items": {
+      "computers": { "name": "Computers & Laptops", "desc": "Notebooks, mini PCs, all-in-ones and monitors — Windows-ready, custom branding available.", "moq": "500 pcs", "lead": "20–30 days" },
+      "mobileAccessories": { "name": "Mobile Phone Accessories", "desc": "Cases, tempered-glass protectors, grips and car mounts.", "moq": "500 pcs", "lead": "15–20 days" },
+      "chargers": { "name": "Chargers & Power Banks", "desc": "PD fast chargers, cables and power banks, CE/FCC/SABER-ready documentation.", "moq": "500 pcs", "lead": "18–25 days" },
+      "audio": { "name": "Audio & Headphones", "desc": "TWS earbuds, over-ear headphones and Bluetooth speakers.", "moq": "500 pcs", "lead": "20–28 days" },
+      "wearables": { "name": "Smart Wearables", "desc": "Smartwatches and fitness bands with app integration options.", "moq": "500 pcs", "lead": "25–35 days" },
+      "networking": { "name": "Networking Equipment", "desc": "Routers, extenders and switches for home and small office use.", "moq": "500 pcs", "lead": "20–30 days" },
+      "smartHome": { "name": "Smart Home Devices", "desc": "Smart plugs, cameras, lighting and sensors on Wi-Fi and Zigbee.", "moq": "500 pcs", "lead": "25–35 days" },
+      "gaming": { "name": "Gaming Accessories", "desc": "Controllers, headsets, keyboards and mice for PC and console.", "moq": "500 pcs", "lead": "18–25 days" }
+    }
+  },
+  "sourcingServices": {
+    "tag": "What We Handle",
+    "title": "Services",
+    "subtitle": "Everything between a factory in China and a warehouse in Saudi Arabia — handled by one team, on one invoice.",
+    "items": {
+      "verification": { "name": "Supplier Verification", "desc": "Business license checks, factory background and reference orders, so you only quote against suppliers we would use ourselves." },
+      "audit": { "name": "Factory Audit", "desc": "On-site visits assessing production capacity, working conditions and quality systems before an order is placed." },
+      "qc": { "name": "QC Inspection", "desc": "Pre-shipment inspection against your approved sample — AQL sampling, function tests and packaging checks, with a photo report." },
+      "consolidation": { "name": "Consolidation", "desc": "Goods from multiple factories combined into a single shipment at our China warehouse, cutting freight cost and paperwork." },
+      "freight": { "name": "Freight", "desc": "Sea and air freight booked and tracked door to port, with customs-ready documentation prepared in parallel." },
+      "customs": { "name": "Customs Clearance", "desc": "SABER certification and Saudi customs clearance managed end to end, so shipments move straight to delivery." }
+    }
+  },
+  "sourcingWhy": {
+    "tag": "Why Source With Us",
+    "title": "A Saudi office. A China network. One point of contact.",
+    "subtitle": "Built on years of factory relationships across Guangdong and Zhejiang, we stand between you and the supplier — verifying, inspecting and shipping so you never have to.",
+    "points": {
+      "accountability": { "title": "Direct accountability", "desc": "One team handles sourcing, QC and clearance — no handoffs, no finger-pointing when something needs fixing." },
+      "verified": { "title": "Verified, not assumed", "desc": "Every supplier is audited before we work with them, and every shipment is inspected before it ships." },
+      "compliance": { "title": "Compliance first", "desc": "SABER certification and Saudi customs requirements are built into our process from day one, not handled as an afterthought." }
+    },
+    "licensing": {
+      "tag": "Registered on Both Ends",
+      "title": "Licensed in the Kingdom and in China",
+      "subtitle": "A registered Saudi trading entity and a wholly-owned company in Guangzhou — the same team on both sides of the shipment.",
+      "saudiCrLabel": "Saudi Commercial Registration",
+      "saudiCrValue": "Ministry of Commerce, Saudi Arabia",
+      "fngLabel": "FNG Trading Licence",
+      "fngValue": "Kingdom of Saudi Arabia",
+      "chinaLabel": "China Business License",
+      "chinaValue": "Guangzhou Marco Information Technology Co., Ltd. — Tianhe District Market Supervision Administration",
+      "usccLabel": "Unified Social Credit Code",
+      "usccValue": "91440106MAKXCFHN7X"
+    }
+  },
   "seo": {
+    "sourcing": {
+      "title": "Electronics Sourcing from China to Saudi Arabia | FNG",
+      "description": "FNG sources computers, mobile accessories and consumer electronics from verified factories in China — factory audits, QC inspection, freight and SABER customs clearance handled end to end for Saudi businesses."
+    },
     "about": {
       "title": "About Us | Future Next Gen",
       "description": "Learn about Future Next Gen, Saudi Arabia's leading provider of refurbished HP printers, sustainable toners, and enterprise IT solutions."

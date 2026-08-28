@@ -11,7 +11,7 @@ export async function GET() {
     if (error) throw error;
 
     // Convert array back to object
-    const result: Record<string, any> = {};
+    const result: Record<string, unknown> = {};
     data.forEach(item => {
       // Don't send the password back to the frontend for security!
       if (item.key !== 'admin_password') {

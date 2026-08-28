@@ -80,27 +80,36 @@ export default function ContactSection() {
                   style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', opacity: 0 }}
                   value={form.website}
                   onChange={e => setForm(f => ({ ...f, website: e.target.value }))} />
-                <input style={inputStyle} placeholder={t('form.name')} required value={form.name}
+                <label htmlFor="contact-name" className="sr-only">{t('form.name')}</label>
+                <input id="contact-name" style={inputStyle} placeholder={t('form.name')} required value={form.name}
                   onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                   onFocus={e => (e.target.style.borderColor = '#8DB833')}
                   onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.15)')} />
-                <input style={inputStyle} placeholder={t('form.company')} required value={form.company}
+                <label htmlFor="contact-company" className="sr-only">{t('form.company')}</label>
+                <input id="contact-company" style={inputStyle} placeholder={t('form.company')} required value={form.company}
                   onChange={e => setForm(f => ({ ...f, company: e.target.value }))}
                   onFocus={e => (e.target.style.borderColor = '#8DB833')}
                   onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.15)')} />
-                <input style={inputStyle} placeholder={t('form.phone')} type="tel" required value={form.phone}
+                <label htmlFor="contact-phone" className="sr-only">{t('form.phone')}</label>
+                <input id="contact-phone" style={inputStyle} placeholder={t('form.phone')} type="tel" required value={form.phone}
                   onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
                   onFocus={e => (e.target.style.borderColor = '#8DB833')}
                   onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.15)')} />
                 <div className="contact-form-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                  <input style={inputStyle} placeholder={t('form.city')} value={form.city}
-                    onChange={e => setForm(f => ({ ...f, city: e.target.value }))}
-                    onFocus={e => (e.target.style.borderColor = '#8DB833')}
-                    onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.15)')} />
-                  <select style={{ ...inputStyle, cursor: 'pointer' }} value={form.quantity}
-                    onChange={e => setForm(f => ({ ...f, quantity: e.target.value }))}>
-                    {[1,2,3,5,10,20].map(n => <option key={n} value={n} style={{ color: '#000' }}>{n}</option>)}
-                  </select>
+                  <div>
+                    <label htmlFor="contact-city" className="sr-only">{t('form.city')}</label>
+                    <input id="contact-city" style={inputStyle} placeholder={t('form.city')} value={form.city}
+                      onChange={e => setForm(f => ({ ...f, city: e.target.value }))}
+                      onFocus={e => (e.target.style.borderColor = '#8DB833')}
+                      onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.15)')} />
+                  </div>
+                  <div>
+                    <label htmlFor="contact-quantity" className="sr-only">{t('form.quantity')}</label>
+                    <select id="contact-quantity" style={{ ...inputStyle, cursor: 'pointer' }} value={form.quantity}
+                      onChange={e => setForm(f => ({ ...f, quantity: e.target.value }))}>
+                      {[1,2,3,5,10,20].map(n => <option key={n} value={n} style={{ color: '#000' }}>{n}</option>)}
+                    </select>
+                  </div>
                 </div>
                 <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '8px', minHeight: '48px' }}
                   disabled={status === 'loading'}>

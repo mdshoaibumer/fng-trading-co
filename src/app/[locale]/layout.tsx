@@ -7,11 +7,15 @@ import { isRTL } from '@/i18n/config';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import WhatsAppButton from '@/components/layout/WhatsAppButton';
-import AIChatWidget from '@/components/chat/AIChatWidget';
+import ChatWidgetLoader from '@/components/chat/ChatWidgetLoader';
+import { getSettings } from '@/lib/supabase';
 import '../globals.css';
 
-export const dynamic = 'force-dynamic';
-
+// Not force-dynamic here: only the routes that actually hit Supabase per
+// request (home, contact, and the two product [id] pages) set that flag
+// themselves. Setting it at this shared layout previously disabled static
+// generation/ISR for every other route nested under it — FAQ, Terms, Privacy,
+// About, etc. — for zero benefit, since none of them read live data.
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
@@ -73,6 +77,7 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
   const dir = isRTL(locale) ? 'rtl' : 'ltr';
   const messages = await getMessages();
+  const settings = await getSettings();
 
   return (
     <html lang={locale} dir={dir} suppressHydrationWarning>
@@ -84,8 +89,8 @@ export default async function LocaleLayout({
           <Navbar />
           {children}
           <Footer />
-          <WhatsAppButton />
-          <AIChatWidget />
+          <WhatsAppButton whatsapp={settings.contact?.whatsapp} />
+          <ChatWidgetLoader welcomeMessage={settings.ai_settings?.welcome_message} />
         </NextIntlClientProvider>
       </body>
     </html>
