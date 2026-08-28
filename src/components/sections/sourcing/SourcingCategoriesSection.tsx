@@ -34,8 +34,12 @@ export default function SourcingCategoriesSection() {
           {CATEGORY_KEYS.map((key) => (
             <div key={key} style={{
               padding: 'clamp(18px, 3vw, 24px)', borderRadius: '16px', background: '#fff', border: '1px solid #EEEEEE',
-              transition: 'all 300ms ease', textAlign: isAr ? 'right' : 'left',
-            }}>
+              transition: 'all 350ms cubic-bezier(0.34,1.56,0.64,1)', textAlign: isAr ? 'right' : 'left',
+              cursor: 'default',
+            }}
+              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-6px)'; e.currentTarget.style.boxShadow = '0 12px 40px rgba(26,61,43,0.1)'; e.currentTarget.style.borderColor = 'rgba(141,184,51,0.3)'; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = '#EEEEEE'; }}
+            >
               <div style={{
                 width: '44px', height: '44px', borderRadius: '12px',
                 background: 'linear-gradient(135deg,rgba(26,61,43,0.08),rgba(141,184,51,0.08))',
