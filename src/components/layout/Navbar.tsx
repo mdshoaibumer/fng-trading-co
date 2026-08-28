@@ -59,8 +59,11 @@ export default function Navbar() {
     { href: `/${locale}/contact`, label: t('contact') },
   ];
 
-  // The sourcing site is a single page, so these are in-page anchors.
+  // The sourcing site is a single page, so these are in-page anchors — apart
+  // from Home, which goes back to the gate, mirroring the printers nav. Without
+  // it the only way back on mobile is the logo, which is easy to miss.
   const sourcingLinks = [
+    { href: gateHref(locale), label: t('home') },
     { href: `/${locale}/sourcing#sourcing-process`, label: tSourcing('process') },
     { href: `/${locale}/sourcing#sourcing-categories`, label: tSourcing('categories') },
     { href: `/${locale}/sourcing#sourcing-services`, label: tSourcing('services') },
@@ -416,7 +419,8 @@ export default function Navbar() {
           .nav-links-desktop a {
             font-size: 0.76rem !important;
           }
-          .nav-lang-desktop {
+          /* :global() — see the note on the mobile rule below. */
+          #main-nav :global(.nav-lang-desktop) {
             padding: 0 14px !important;
             font-size: 0.8rem !important;
           }
@@ -424,6 +428,19 @@ export default function Navbar() {
             padding: 0 16px !important;
             font-size: 0.78rem !important;
           }
+        }
+        /* The overlay centres its items, but once they are taller than the
+           screen — nine printer links plus the language toggle and CTA come to
+           870px against an 812px phone — centring overflows both ends equally:
+           the first link slid up behind the floating nav bar and the CTA fell
+           below the fold, with neither reachable by scrolling. "safe" falls
+           back to flex-start exactly when that happens, so the list starts
+           below the bar and the rest scrolls normally. Browsers without it drop
+           the declaration and keep the plain centring set inline, which is fine
+           on the shorter sourcing menu. */
+        #mobile-nav-overlay {
+          justify-content: safe center !important;
+          gap: 18px !important;
         }
         /* Hamburger below 1100px, not 1024px: even fully tightened, the nine
            English printer links plus the CTA do not fit under ~1100. */
@@ -434,7 +451,12 @@ export default function Navbar() {
           .nav-cta-desktop {
             display: none !important;
           }
-          .nav-lang-desktop {
+          /* :global() because this class sits on a next/link <Link>, not on an
+             element styled-jsx compiles — without it the rule is emitted as
+             .nav-lang-desktop.jsx-xxx, the <Link> never receives the jsx-xxx
+             scope class, and the language pill stayed visible on mobile
+             alongside the copy of it already in the overlay menu. */
+          #main-nav :global(.nav-lang-desktop) {
             display: none !important;
           }
           .mobile-menu-btn {
@@ -444,8 +466,17 @@ export default function Navbar() {
             width: calc(100% - 32px) !important;
             padding: 0 20px !important;
             height: 68px !important;
+            /* The centre links group is the flex-1 spacer holding the two ends
+               apart; hidden, it stops laying out at all and the hamburger
+               collapses back against the logo, leaving the bar's whole right
+               half empty. space-between restores the split, and stays correct
+               under RTL. */
+            justify-content: space-between !important;
           }
-          .nav-logo-img {
+          /* :global() for the same reason — this class is on a next/image
+             <Image>. Unscoped, the logo kept its 56px desktop height inside a
+             56px bar. */
+          #main-nav :global(.nav-logo-img) {
             height: 44px !important;
           }
         }
@@ -456,7 +487,7 @@ export default function Navbar() {
             height: 60px !important;
             top: 12px !important;
           }
-          .nav-logo-img {
+          #main-nav :global(.nav-logo-img) {
             height: 38px !important;
           }
         }
@@ -468,7 +499,7 @@ export default function Navbar() {
             top: 8px !important;
             border-radius: 20px !important;
           }
-          .nav-logo-img {
+          #main-nav :global(.nav-logo-img) {
             height: 32px !important;
           }
         }
