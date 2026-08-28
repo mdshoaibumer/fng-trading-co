@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { z } from 'zod';
+import { rateLimit, getClientIp, tooManyRequests } from '@/lib/rateLimit';
 
 const contactSchema = z.object({
   name: z.string().min(2),
@@ -15,8 +16,11 @@ const contactSchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    const { allowed, retryAfterSeconds } = rateLimit(`contact:${getClientIp(request)}`, 5, 10 * 60 * 1000);
+    if (!allowed) return tooManyRequests(retryAfterSeconds);
+
     const body = await request.json();
-    
+
     // Validate request body
     const result = contactSchema.safeParse(body);
     if (!result.success) {

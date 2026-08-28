@@ -31,20 +31,27 @@ CREATE TABLE IF NOT EXISTS settings (
 );
 
 -- Enable Row Level Security (RLS)
--- For now, we allow public read and authenticated write (or just public for this simple setup)
+--
+-- Design: the Next.js app never talks to Supabase directly from the browser.
+-- Every read and write goes through server-side API routes using the
+-- service-role key (supabaseAdmin in src/lib/supabase.ts), which bypasses
+-- RLS entirely. These policies exist only to define what the PUBLIC anon
+-- key — embedded in every visitor's browser bundle — is allowed to do if
+-- it were ever used directly:
+--   - printers / parts: public catalog data, safe to read directly. No
+--     insert/update/delete for anon; only service_role can write.
+--   - settings / inquiries: no anon policies at all. settings holds the
+--     admin password and site config; inquiries holds customer PII. Both
+--     are written exclusively via the service-role API routes, so anon
+--     gets zero access — not even insert.
 ALTER TABLE printers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE parts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE settings ENABLE ROW LEVEL SECURITY;
 
--- Create Policies (Allow all for simplicity, or restrict if needed)
-CREATE POLICY "Public Read" ON printers FOR SELECT USING (true);
-CREATE POLICY "Public Read" ON parts FOR SELECT USING (true);
-CREATE POLICY "Public Read" ON settings FOR SELECT USING (true);
-
--- For admin updates (In a real app, use auth.uid() checks)
-CREATE POLICY "Allow All" ON printers FOR ALL USING (true);
-CREATE POLICY "Allow All" ON parts FOR ALL USING (true);
-CREATE POLICY "Allow All" ON settings FOR ALL USING (true);
+CREATE POLICY "Public read: printers" ON printers FOR SELECT USING (true);
+CREATE POLICY "Public read: parts" ON parts FOR SELECT USING (true);
+-- Intentionally no policies on settings: anon/authenticated get no access
+-- at all (SELECT, INSERT, UPDATE, DELETE all denied by default under RLS).
 
 -- 4. Create Inquiries Table
 CREATE TABLE IF NOT EXISTS inquiries (
@@ -60,5 +67,6 @@ CREATE TABLE IF NOT EXISTS inquiries (
 );
 
 ALTER TABLE inquiries ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Public Insert" ON inquiries FOR INSERT WITH CHECK (true);
-CREATE POLICY "Allow All" ON inquiries FOR ALL USING (true);
+-- Intentionally no policies here either: lead forms POST to /api/contact
+-- and /api/printer-request, which insert via the service-role client.
+-- The anon key has no direct access to this table.

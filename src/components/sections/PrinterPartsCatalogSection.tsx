@@ -23,17 +23,30 @@ export default function PrinterPartsCatalogSection() {
   const [expanded, setExpanded] = useState<string|null>('fuser');
   const [parts, setParts] = useState<Record<string, Part[]>>({});
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   const [whatsapp, setWhatsapp] = useState('966593380390');
 
-  useEffect(() => {
+  const loadParts = () => {
+    setLoading(true);
+    setError(false);
     fetch('/api/admin/parts')
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to load parts');
+        return res.json();
+      })
       .then(data => {
         setParts(data);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(() => {
+        setError(true);
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    loadParts();
 
     fetch('/api/admin/settings')
       .then(res => res.json())
@@ -64,6 +77,18 @@ export default function PrinterPartsCatalogSection() {
         {loading ? (
           <div style={{ display: 'flex', justifyContent: 'center', padding: '40px' }}>
             <div style={{ width: '40px', height: '40px', border: '4px solid #8DB833', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+          </div>
+        ) : error ? (
+          <div style={{ maxWidth: '480px', margin: '0 auto', textAlign: 'center', padding: '32px 24px', background: '#FFF7F5', border: '1px solid #F3D9D3', borderRadius: '16px' }}>
+            <p style={{ color: '#8A3B2E', fontWeight: 700, marginBottom: '8px' }}>
+              {isAr ? 'تعذر تحميل كتالوج القطع' : 'Couldn’t load the parts catalog'}
+            </p>
+            <p style={{ color: '#A15C4E', fontSize: '0.9rem', marginBottom: '20px' }}>
+              {isAr ? 'حدث خطأ أثناء تحميل البيانات. حاول مرة أخرى.' : 'Something went wrong loading this data. Please try again.'}
+            </p>
+            <button onClick={loadParts} style={{ padding: '10px 24px', borderRadius: '10px', background: '#8DB833', color: '#fff', border: 'none', fontWeight: 700, cursor: 'pointer' }}>
+              {isAr ? 'إعادة المحاولة' : 'Retry'}
+            </button>
           </div>
         ) : (
           <div style={{maxWidth:'900px',margin:'0 auto',display:'flex',flexDirection:'column',gap:'12px'}}>

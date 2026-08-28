@@ -26,6 +26,23 @@ export default function AIChatWidget() {
     scrollToBottom();
   }, [messages, isLoading]);
 
+  // Pick up an admin-configured welcome message, if one has been set,
+  // as long as the visitor hasn't started chatting yet.
+  useEffect(() => {
+    fetch('/api/admin/settings')
+      .then(res => res.json())
+      .then(data => {
+        const welcomeMessage = data.ai_settings?.welcome_message?.trim();
+        if (!welcomeMessage) return;
+        setMessages(prev =>
+          prev.length === 1 && prev[0].role === 'assistant'
+            ? [{ role: 'assistant', content: welcomeMessage }]
+            : prev
+        );
+      })
+      .catch(() => {});
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;

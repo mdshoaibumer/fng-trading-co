@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { z } from 'zod';
+import { rateLimit, getClientIp, tooManyRequests } from '@/lib/rateLimit';
 
 const printerRequestSchema = z.object({
   name: z.string().min(2),
@@ -14,8 +15,11 @@ const printerRequestSchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    const { allowed, retryAfterSeconds } = rateLimit(`printer-request:${getClientIp(request)}`, 5, 10 * 60 * 1000);
+    if (!allowed) return tooManyRequests(retryAfterSeconds);
+
     const body = await request.json();
-    
+
     // Validate request body
     const result = printerRequestSchema.safeParse(body);
     if (!result.success) {

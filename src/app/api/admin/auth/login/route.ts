@@ -1,9 +1,13 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { createSessionToken, hashPassword, verifyPassword } from '@/lib/adminSession';
+import { rateLimit, getClientIp, tooManyRequests } from '@/lib/rateLimit';
 
 export async function POST(request: Request) {
   try {
+    const { allowed, retryAfterSeconds } = rateLimit(`login:${getClientIp(request)}`, 5, 5 * 60 * 1000);
+    if (!allowed) return tooManyRequests(retryAfterSeconds);
+
     const body = await request.json();
     const { password } = body;
 
