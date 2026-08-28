@@ -655,9 +655,11 @@
       "fngLabel": "رخصة FNG التجارية",
       "fngValue": "المملكة العربية السعودية",
       "chinaLabel": "الرخصة التجارية الصينية",
-      "chinaValue": "شركة Guangzhou Marco Information Technology المحدودة — إدارة الإشراف على السوق بمقاطعة تيانخه، قوانغتشو",
+      "chinaValue": "إدارة الإشراف على السوق بمقاطعة تيانخه، قوانغتشو",
+      "chinaEntity": "شركة Guangzhou Marco Information Technology المحدودة",
       "usccLabel": "الرمز الموحّد للائتمان الاجتماعي",
-      "usccValue": "91440106MAKXCFHN7X"
+      "usccValue": "91440106MAKXCFHN7X",
+      "viewDocument": "عرض المستند"
     }
   },
   "seo": {

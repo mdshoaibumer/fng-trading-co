@@ -350,30 +350,10 @@ export default function Navbar() {
           </a>
         ))}
 
-        {/* Language toggle in mobile overlay. Uses switchPath, like the desktop
-            toggle: sending it to /${otherLocale} instead would drop a sourcing
-            visitor onto the printers landing page just for changing language. */}
-        <Link
-          href={switchPath}
-          onClick={() => setMobileOpen(false)}
-          style={{
-            padding: '12px 32px',
-            borderRadius: '999px',
-            border: '2px solid rgba(17, 24, 39, 0.15)',
-            background: 'transparent',
-            color: '#111827',
-            fontSize: '1rem',
-            fontWeight: 700,
-            textDecoration: 'none',
-            marginTop: '8px',
-            minHeight: '48px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          {t('lang')}
-        </Link>
+        {/* No language toggle here: it lives in the bar itself at every size,
+            the way it does on desktop, so changing language does not require
+            opening the menu first. Removing the duplicate also shortens this
+            list, which has to fit a phone screen. */}
 
         {/* CTA in mobile overlay */}
         <a
@@ -451,13 +431,16 @@ export default function Navbar() {
           .nav-cta-desktop {
             display: none !important;
           }
-          /* :global() because this class sits on a next/link <Link>, not on an
-             element styled-jsx compiles — without it the rule is emitted as
-             .nav-lang-desktop.jsx-xxx, the <Link> never receives the jsx-xxx
-             scope class, and the language pill stayed visible on mobile
-             alongside the copy of it already in the overlay menu. */
+          /* The language pill stays in the bar at every size, so switching
+             language never costs a trip through the menu. It is deliberately
+             not repeated inside the overlay. :global() because this class sits
+             on a next/link <Link> rather than an element styled-jsx compiles,
+             so a plain selector is emitted as .nav-lang-desktop.jsx-xxx and
+             never matches. */
           #main-nav :global(.nav-lang-desktop) {
-            display: none !important;
+            height: 38px !important;
+            padding: 0 16px !important;
+            font-size: 0.8rem !important;
           }
           .mobile-menu-btn {
             display: flex !important;
