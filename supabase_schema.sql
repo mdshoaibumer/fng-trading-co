@@ -60,11 +60,23 @@ CREATE TABLE IF NOT EXISTS inquiries (
     name TEXT NOT NULL,
     company TEXT NOT NULL,
     phone TEXT NOT NULL,
+    email TEXT,
+    industry TEXT,
+    message TEXT,
     city TEXT,
     quantity TEXT,
     status TEXT DEFAULT 'new',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
+
+-- Safe to re-run against an existing production table: the contact and
+-- printer-request forms have always collected email/industry/message,
+-- but these were never persisted (missing columns) — only forwarded to
+-- Web3Forms as an email notification — and email specifically was also
+-- unsearchable (the admin leads search already filtered on it).
+ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS email TEXT;
+ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS industry TEXT;
+ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS message TEXT;
 
 ALTER TABLE inquiries ENABLE ROW LEVEL SECURITY;
 -- Intentionally no policies here either: lead forms POST to /api/contact

@@ -36,6 +36,8 @@ export async function POST(request: Request) {
         name,
         company,
         phone,
+        email: email || null,
+        message: message || null,
         city,
         quantity,
         status: 'new'

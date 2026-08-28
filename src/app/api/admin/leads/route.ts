@@ -1,10 +1,19 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 
+// PostgREST's .or() filter syntax treats `,`, `.`, `:`, `(` and `)` as
+// structural characters. Wrapping a value in double quotes tells it to
+// treat the contents as a literal instead — but the quoting itself must
+// escape any backslash/double-quote the value contains, or a crafted
+// search string could break out and inject additional filter clauses.
+function escapePostgrestLiteral(value: string): string {
+  return value.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+}
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const search = searchParams.get('search') || '';
+    const search = (searchParams.get('search') || '').slice(0, 200);
     const status = searchParams.get('status') || '';
 
     let query = supabaseAdmin
@@ -17,7 +26,10 @@ export async function GET(request: Request) {
     }
 
     if (search) {
-      query = query.or(`name.ilike.%${search}%,email.ilike.%${search}%,company.ilike.%${search}%,phone.ilike.%${search}%`);
+      const safeSearch = escapePostgrestLiteral(search);
+      query = query.or(
+        `name.ilike."%${safeSearch}%",email.ilike."%${safeSearch}%",company.ilike."%${safeSearch}%",phone.ilike."%${safeSearch}%"`
+      );
     }
 
     const { data, error } = await query;

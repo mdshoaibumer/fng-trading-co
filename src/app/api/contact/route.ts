@@ -37,6 +37,9 @@ export async function POST(request: Request) {
         name,
         company,
         phone,
+        email: email || null,
+        industry: industry || null,
+        message: message || null,
         city,
         quantity,
         status: 'new'
