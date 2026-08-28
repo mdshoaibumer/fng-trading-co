@@ -1,109 +1,27 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import { useScrollFrameSequence } from '@/lib/useScrollFrameSequence';
 
 const TOTAL_FRAMES = 10;
-const FRAME_PATHS = Array.from({ length: TOTAL_FRAMES }, (_, i) => {
-  const num = String(i + 1).padStart(2, '0');
-  return `/eco-inks-frames/${num}.png`;
-});
+const framePath = (dir: string) => (index: number) => `/${dir}/${String(index + 1).padStart(2, '0')}.webp`;
+const desktopFramePath = framePath('eco-inks-frames');
+const mobileFramePath = framePath('eco-inks-frames-mobile');
 
 export default function EcoInksInteractiveSection() {
   const params = useParams();
   const locale = params.locale as string;
   const isAr = locale === 'ar';
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const imagesRef = useRef<HTMLImageElement[]>([]);
-  const currentFrameRef = useRef(0);
-  const rafRef = useRef<number | null>(null);
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const [imagesLoaded, setImagesLoaded] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const [shouldLoad, setShouldLoad] = useState(false);
-
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth <= 768);
-    check();
-    window.addEventListener('resize', check, { passive: true });
-    return () => window.removeEventListener('resize', check);
-  }, []);
-
-  // This section sits below the fold on /eco-inks — defer the ~4.3MB frame
-  // sequence until it's actually about to scroll into view instead of
-  // loading it eagerly the moment the page mounts.
-  useEffect(() => {
-    const node = sectionRef.current;
-    if (!node) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setShouldLoad(true); observer.disconnect(); } },
-      { rootMargin: '600px 0px' }
-    );
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, []);
-
-  const drawFrame = (frameIndex: number, images?: HTMLImageElement[]) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    const imgs = images || imagesRef.current;
-    const img = imgs[frameIndex];
-    if (!img || !img.complete) return;
-    const dpr = window.devicePixelRatio || 1;
-    const displayWidth = canvas.clientWidth;
-    const displayHeight = canvas.clientHeight;
-    canvas.width = displayWidth * dpr;
-    canvas.height = displayHeight * dpr;
-    ctx.scale(dpr, dpr);
-    ctx.clearRect(0, 0, displayWidth, displayHeight);
-    ctx.drawImage(img, 0, 0, displayWidth, displayHeight);
-  };
-
-  const handleScroll = () => {
-    if (!sectionRef.current) return;
-    const rect = sectionRef.current.getBoundingClientRect();
-    const sectionHeight = sectionRef.current.offsetHeight;
-    const viewportHeight = window.innerHeight;
-    const scrolled = -rect.top;
-    const totalScroll = sectionHeight - viewportHeight;
-    const progress = Math.max(0, Math.min(1, scrolled / totalScroll));
-    setScrollProgress(progress);
-    const totalSteps = TOTAL_FRAMES * 2 - 2;
-    const step = Math.min(totalSteps, Math.floor(progress * (totalSteps + 1)));
-    const frameIndex = step < TOTAL_FRAMES ? step : totalSteps - step;
-    if (frameIndex !== currentFrameRef.current) {
-      currentFrameRef.current = frameIndex;
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = requestAnimationFrame(() => drawFrame(frameIndex));
-    }
-  };
-
-  useEffect(() => {
-    if (!shouldLoad) return;
-    let loadedCount = 0;
-    const images: HTMLImageElement[] = [];
-    FRAME_PATHS.forEach((src, index) => {
-      const img = new Image();
-      img.src = src;
-      img.onload = () => { loadedCount++; if (loadedCount === TOTAL_FRAMES) { setImagesLoaded(true); drawFrame(0, images); } };
-      img.onerror = () => { loadedCount++; if (loadedCount === TOTAL_FRAMES) setImagesLoaded(true); };
-      images[index] = img;
+  // This section sits below the fold on /eco-inks — the hook defers loading the
+  // frame sequence until it's actually about to scroll into view.
+  const { sectionRef, canvasRef, scrollProgress, imagesLoaded, isMobile, prefersReducedMotion } =
+    useScrollFrameSequence({
+      totalFrames: TOTAL_FRAMES, desktopFramePath, mobileFramePath, fit: 'stretch',
+      deferUntilNear: true, rootMargin: '600px 0px',
     });
-    imagesRef.current = images;
-  }, [shouldLoad]);
-
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', () => drawFrame(currentFrameRef.current), { passive: true });
-    return () => { window.removeEventListener('scroll', handleScroll); if (rafRef.current) cancelAnimationFrame(rafRef.current); };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const distanceToCenter = Math.abs(scrollProgress - 0.5);
   const glowIntensity = Math.max(0, 1 - (distanceToCenter / 0.3));
+  const slideDistance = prefersReducedMotion ? 0 : 10;
 
   return (
     <section ref={sectionRef} style={{
@@ -148,7 +66,7 @@ export default function EcoInksInteractiveSection() {
               <div style={{
                 position: 'absolute', top: '20%', [isAr ? 'right' : 'left']: '0%',
                 opacity: scrollProgress >= 0.05 && scrollProgress < 0.2 ? 1 : 0,
-                transform: `translateX(${scrollProgress >= 0.05 && scrollProgress < 0.2 ? '0' : (isAr ? '-10px' : '10px')})`,
+                transform: `translateX(${scrollProgress >= 0.05 && scrollProgress < 0.2 ? '0' : (isAr ? -slideDistance : slideDistance)}px)`,
                 transition: 'all 150ms ease-out', display: 'flex', alignItems: 'center', gap: '8px',
                 pointerEvents: 'none', flexDirection: isAr ? 'row-reverse' : 'row',
               }}>
@@ -160,7 +78,7 @@ export default function EcoInksInteractiveSection() {
               <div style={{
                 position: 'absolute', top: '45%', [isAr ? 'left' : 'right']: '-5%',
                 opacity: scrollProgress >= 0.2 && scrollProgress < 0.35 ? 1 : 0,
-                transform: `translateX(${scrollProgress >= 0.2 && scrollProgress < 0.35 ? '0' : (isAr ? '10px' : '-10px')})`,
+                transform: `translateX(${scrollProgress >= 0.2 && scrollProgress < 0.35 ? '0' : (isAr ? slideDistance : -slideDistance)}px)`,
                 transition: 'all 150ms ease-out', display: 'flex', alignItems: 'center', gap: '8px',
                 pointerEvents: 'none', flexDirection: isAr ? 'row' : 'row-reverse',
               }}>
@@ -172,7 +90,7 @@ export default function EcoInksInteractiveSection() {
               <div style={{
                 position: 'absolute', bottom: '20%', [isAr ? 'right' : 'left']: '-5%',
                 opacity: scrollProgress >= 0.35 && scrollProgress < 0.5 ? 1 : 0,
-                transform: `translateX(${scrollProgress >= 0.35 && scrollProgress < 0.5 ? '0' : (isAr ? '-10px' : '10px')})`,
+                transform: `translateX(${scrollProgress >= 0.35 && scrollProgress < 0.5 ? '0' : (isAr ? -slideDistance : slideDistance)}px)`,
                 transition: 'all 150ms ease-out', display: 'flex', alignItems: 'center', gap: '8px',
                 pointerEvents: 'none', flexDirection: isAr ? 'row-reverse' : 'row',
               }}>

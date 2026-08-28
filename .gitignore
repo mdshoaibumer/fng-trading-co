@@ -13,6 +13,10 @@
 # testing
 /coverage
 
+# impeccable skill's own review-report output (design/perf critique notes,
+# not application source)
+/.impeccable/
+
 # next.js
 /.next/
 /out/

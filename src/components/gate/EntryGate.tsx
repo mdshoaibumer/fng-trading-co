@@ -20,12 +20,26 @@ export default function EntryGate() {
   const otherLocale = isAr ? 'en' : 'ar';
   const Arrow = isAr ? ArrowLeft : ArrowRight;
   const [open, setOpen] = useState(true);
+  const [mounted, setMounted] = useState(true);
   const dialogRef = useDialogA11y<HTMLDivElement>(open, () => setOpen(false));
 
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [open]);
+
+  // Closing only fades the gate out (opacity/pointerEvents) so the 500ms
+  // transition can play — but the sourcing panel embeds SourcingGlobe, a
+  // WebGL canvas with its own requestAnimationFrame loop, which otherwise
+  // keeps rendering invisibly for the rest of the visit. Unmount for real
+  // once the fade finishes.
+  useEffect(() => {
+    if (open) return;
+    const timer = setTimeout(() => setMounted(false), 550);
+    return () => clearTimeout(timer);
+  }, [open]);
+
+  if (!mounted) return null;
 
   return (
     <div

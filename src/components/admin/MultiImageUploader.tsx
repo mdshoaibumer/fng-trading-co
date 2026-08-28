@@ -266,9 +266,9 @@ export default function MultiImageUploader({
             height: '6px', background: '#E2E8F0', borderRadius: '3px', overflow: 'hidden',
           }}>
             <div style={{
-              height: '100%', background: 'linear-gradient(90deg, #8DB833, #6B7C3F)',
-              borderRadius: '3px', transition: 'width 0.3s ease',
-              width: uploadProgress.total > 0 ? `${(uploadProgress.done / uploadProgress.total) * 100}%` : '0%',
+              height: '100%', width: '100%', background: 'linear-gradient(90deg, #8DB833, #6B7C3F)',
+              borderRadius: '3px', transformOrigin: 'left', transition: 'transform 0.3s ease',
+              transform: `scaleX(${uploadProgress.total > 0 ? uploadProgress.done / uploadProgress.total : 0})`,
             }} />
           </div>
         </div>

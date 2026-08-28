@@ -45,6 +45,7 @@ export default function SourcingGlobe({ className = '', maxWidth = '480px', inte
   const phiOffsetRef = useRef(0);
   const isPausedRef = useRef(false);
   const reducedMotionRef = useRef(false);
+  const offscreenRef = useRef(false);
 
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
     if (!interactive) return;
@@ -60,9 +61,9 @@ export default function SourcingGlobe({ className = '', maxWidth = '480px', inte
     }
     pointerInteracting.current = null;
     if (canvasRef.current) canvasRef.current.style.cursor = 'grab';
-    // Dragging is user-initiated, so it's fine even under reduced motion —
-    // only the automatic idle spin is paused for prefers-reduced-motion.
-    isPausedRef.current = reducedMotionRef.current;
+    // Idle spin resumes based on reduced-motion/offscreen state — a drag just
+    // ended, so there's no need to re-check whether one is still in progress.
+    isPausedRef.current = reducedMotionRef.current || offscreenRef.current;
   }, []);
 
   useEffect(() => {
@@ -85,10 +86,39 @@ export default function SourcingGlobe({ className = '', maxWidth = '480px', inte
     if (!canvas) return;
     let globe: ReturnType<typeof createGlobe> | null = null;
     let animationId: number;
+    let renderLoopStopped = false;
     let phi = 0;
 
     reducedMotionRef.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    isPausedRef.current = reducedMotionRef.current;
+    isPausedRef.current = reducedMotionRef.current || offscreenRef.current;
+
+    function animate() {
+      if (!globe) return;
+      if (offscreenRef.current) { renderLoopStopped = true; return; }
+      if (!isPausedRef.current) phi += 0.005;
+      globe.update({
+        phi: phi + phiOffsetRef.current + dragOffset.current.phi,
+      });
+      animationId = requestAnimationFrame(animate);
+    }
+
+    // Fully stop requesting frames (not just the phi increment) once the globe
+    // scrolls well out of view — a running rAF loop keeps costing GPU/CPU even
+    // while every frame it draws is invisible.
+    const visibilityObserver = new IntersectionObserver(
+      ([entry]) => {
+        offscreenRef.current = !entry.isIntersecting;
+        if (pointerInteracting.current === null) {
+          isPausedRef.current = reducedMotionRef.current || offscreenRef.current;
+        }
+        if (!offscreenRef.current && renderLoopStopped) {
+          renderLoopStopped = false;
+          animate();
+        }
+      },
+      { rootMargin: '100px 0px' }
+    );
+    visibilityObserver.observe(canvas);
 
     function init() {
       const width = canvas!.offsetWidth;
@@ -110,13 +140,6 @@ export default function SourcingGlobe({ className = '', maxWidth = '480px', inte
         opacity: 0.9,
       });
 
-      function animate() {
-        if (!isPausedRef.current) phi += 0.005;
-        globe!.update({
-          phi: phi + phiOffsetRef.current + dragOffset.current.phi,
-        });
-        animationId = requestAnimationFrame(animate);
-      }
       animate();
 
       setTimeout(() => { if (canvas) canvas.style.opacity = '1'; });
@@ -135,6 +158,7 @@ export default function SourcingGlobe({ className = '', maxWidth = '480px', inte
     }
 
     return () => {
+      visibilityObserver.disconnect();
       if (animationId) cancelAnimationFrame(animationId);
       if (globe) globe.destroy();
     };

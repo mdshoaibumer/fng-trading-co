@@ -62,9 +62,11 @@ export default function Navbar() {
         id="main-nav"
         style={{
           position: 'fixed',
-          top: scrolled ? '16px' : '24px',
+          // Was `top: 16px/24px` (a reflow on every scroll-threshold crossing) —
+          // pinned at top:0 and moved via transform, which is compositor-only.
+          top: 0,
           left: '50%',
-          transform: 'translateX(-50%)',
+          transform: `translate(-50%, ${scrolled ? '16px' : '24px'})`,
           width: 'calc(100% - 48px)',
           maxWidth: '1400px',
           zIndex: 1000,
@@ -72,7 +74,7 @@ export default function Navbar() {
           display: 'flex',
           alignItems: 'center',
           padding: '0 32px',
-          transition: 'all 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+          transition: 'transform 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
           background: 'rgba(255, 255, 255, 0.75)',
           backdropFilter: 'blur(32px) saturate(200%)',
           WebkitBackdropFilter: 'blur(32px) saturate(200%)',

@@ -115,8 +115,11 @@ export default function PrinterPartsCatalogSection() {
                     {isOpen?<ChevronUp size={18} color="#8DB833"/>:<ChevronDown size={18} color="#8DB833"/>}
                   </div>
                 </button>
-                <div style={{maxHeight:isOpen?'800px':'0',overflow:'hidden',transition:'max-height 400ms cubic-bezier(0.22,1,0.36,1)'}}>
-                  <div style={{padding:'0 clamp(16px,3vw,28px) clamp(16px,3vw,24px)',display:'flex',flexDirection:'column',gap:'8px'}}>
+                {/* grid-rows trick: animates to the content's real height (no
+                    magic max-height cap, no reflow proportional to an unused
+                    range) instead of transitioning max-height. */}
+                <div style={{display:'grid',gridTemplateRows:isOpen?'1fr':'0fr',transition:'grid-template-rows 400ms cubic-bezier(0.22,1,0.36,1)'}}>
+                  <div style={{overflow:'hidden',minHeight:0,padding:'0 clamp(16px,3vw,28px) clamp(16px,3vw,24px)',display:'flex',flexDirection:'column',gap:'8px'}}>
                     {categoryParts.map((p,i)=>(
                       <div key={i} className="part-row" style={{display:'flex',alignItems:'center',gap:'16px',padding:'14px 16px',borderRadius:'12px',background:i%2===0?'#F9FAFB':'#FFFFFF',border:'1px solid #F3F4F6',transition:'all 200ms ease',flexDirection:isAr?'row-reverse':'row',flexWrap:'wrap'}}
                         onMouseEnter={e=>{e.currentTarget.style.borderColor='rgba(141,184,51,0.3)';e.currentTarget.style.background='rgba(141,184,51,0.04)';}}

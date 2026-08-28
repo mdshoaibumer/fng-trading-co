@@ -41,12 +41,30 @@ export default function EquipmentProductPageClient({ equipment, whatsapp, locale
   const [isZoomed, setIsZoomed] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
+  const setZoomOriginFromPoint = (clientX: number, clientY: number, target: HTMLElement) => {
+    const { left, top, width, height } = target.getBoundingClientRect();
+    const x = Math.max(0, Math.min(100, ((clientX - left) / width) * 100));
+    const y = Math.max(0, Math.min(100, ((clientY - top) / height) * 100));
+    setMousePos({ x, y });
+  };
+
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!isZoomed) return;
-    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
-    const x = ((e.pageX - left - window.scrollX) / width) * 100;
-    const y = ((e.pageY - top - window.scrollY) / height) * 100;
-    setMousePos({ x, y });
+    setZoomOriginFromPoint(e.clientX, e.clientY, e.currentTarget);
+  };
+
+  // Touch has no hover/mousemove, so tapping to zoom used to leave the zoom
+  // origin at its stale default (0,0) — always the top-left corner, with no
+  // way to pan. Seed the origin on touchstart and let touchmove drag it.
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    const touch = e.touches[0];
+    if (touch) setZoomOriginFromPoint(touch.clientX, touch.clientY, e.currentTarget);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (!isZoomed) return;
+    const touch = e.touches[0];
+    if (touch) setZoomOriginFromPoint(touch.clientX, touch.clientY, e.currentTarget);
   };
 
   const whatsappLink = `https://wa.me/${whatsapp}?text=${encodeURIComponent(
@@ -94,11 +112,14 @@ export default function EquipmentProductPageClient({ equipment, whatsapp, locale
                 position: 'relative', overflow: 'hidden', height: 'clamp(400px, 50vh, 600px)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px',
                 cursor: isZoomed ? 'zoom-out' : 'zoom-in',
-                boxShadow: '0 20px 40px rgba(0,0,0,0.03)'
+                boxShadow: '0 20px 40px rgba(0,0,0,0.03)',
+                touchAction: isZoomed ? 'none' : 'pan-y'
               }}
               onClick={() => setIsZoomed(!isZoomed)}
               onMouseMove={handleMouseMove}
               onMouseLeave={() => setIsZoomed(false)}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
             >
               <img 
                 src={equipment.images[currentImage]} 

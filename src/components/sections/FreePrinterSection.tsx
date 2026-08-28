@@ -20,17 +20,17 @@ function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: str
 
   useEffect(() => {
     if (!started) return;
-    let cur = 0; const inc = target / 60;
-    const iv = setInterval(() => { 
-      cur += inc; 
-      if (cur >= target) { 
-        setCount(target); 
-        clearInterval(iv); 
-      } else {
-        setCount(Math.floor(cur)); 
-      }
-    }, 33);
-    return () => clearInterval(iv);
+    const duration = 2000;
+    let startTime: number | null = null;
+    let rafId: number;
+    const tick = (now: number) => {
+      if (startTime === null) startTime = now;
+      const progress = Math.min(1, (now - startTime) / duration);
+      setCount(Math.floor(progress * target));
+      if (progress < 1) rafId = requestAnimationFrame(tick);
+    };
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
   }, [started, target]);
 
   const displayedCount = isMounted ? count : target;

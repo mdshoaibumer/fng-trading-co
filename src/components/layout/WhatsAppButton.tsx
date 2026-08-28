@@ -52,7 +52,10 @@ export default function WhatsAppButton({ whatsapp }: { whatsapp?: string }) {
         padding: showLabel ? '0 20px 0 16px' : '0',
         boxShadow: '0 4px 20px rgba(37, 211, 102, 0.4)',
         textDecoration: 'none',
-        transition: 'all 300ms cubic-bezier(0.34, 1.56, 0.64, 1)',
+        // Hover-triggered only (not scroll/frame-driven), so the residual
+        // width/padding layout cost here is negligible — narrowed from `all`
+        // to the properties that actually change.
+        transition: 'width 300ms cubic-bezier(0.34, 1.56, 0.64, 1), padding 300ms cubic-bezier(0.34, 1.56, 0.64, 1), gap 300ms cubic-bezier(0.34, 1.56, 0.64, 1), transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1)',
         animation: 'fadeInUp 600ms cubic-bezier(0.22, 1, 0.36, 1)',
         transform: hovered && !isMobile ? 'scale(1.05)' : 'scale(1)',
       }}
