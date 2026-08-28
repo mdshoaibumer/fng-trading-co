@@ -3,6 +3,14 @@ import { routing } from '@/i18n/routing';
 import { defaultLocale } from '@/i18n/config';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { verifySessionToken } from '@/lib/adminSession';
+
+const PUBLIC_GET_ROUTES = new Set([
+  '/api/admin/printers',
+  '/api/admin/equipment',
+  '/api/admin/parts',
+  '/api/admin/settings',
+]);
 
 const intlMiddleware = createMiddleware(routing);
 
@@ -22,7 +30,7 @@ function publicUrl(pathname: string, request: NextRequest) {
   return url;
 }
 
-export default function proxy(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (pathname === '/') {
@@ -36,20 +44,21 @@ export default function proxy(request: NextRequest) {
       return NextResponse.next();
     }
 
-    // Allow public GET access to catalogs
-    if ((pathname === '/api/admin/printers' || pathname === '/api/admin/equipment') && request.method === 'GET') {
+    // Allow public GET access to catalog/content data consumed by public pages
+    if (PUBLIC_GET_ROUTES.has(pathname) && request.method === 'GET') {
       return NextResponse.next();
     }
 
     const sessionCookie = request.cookies.get('fng_session');
+    const isAuthenticated = await verifySessionToken(sessionCookie?.value);
 
-    if (!sessionCookie || sessionCookie.value !== 'authenticated') {
+    if (!isAuthenticated) {
       if (pathname.startsWith('/api/')) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
       }
       return NextResponse.redirect(publicUrl('/admin/login', request));
     }
-    
+
     // Allowed admin access
     return NextResponse.next();
   }

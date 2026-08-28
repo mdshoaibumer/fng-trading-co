@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { hashPassword } from '@/lib/adminSession';
 
 export async function GET() {
   try {
@@ -32,8 +33,10 @@ export async function POST(request: Request) {
     // Filter out empty password
     if (settings.admin_password === '') {
       delete settings.admin_password;
+    } else if (typeof settings.admin_password === 'string') {
+      settings.admin_password = await hashPassword(settings.admin_password);
     }
-    
+
     const formatted = Object.entries(settings).map(([key, value]) => ({
       key,
       value
