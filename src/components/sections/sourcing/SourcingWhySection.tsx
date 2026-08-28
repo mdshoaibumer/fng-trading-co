@@ -50,7 +50,16 @@ export default function SourcingWhySection() {
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {POINT_KEYS.map((key) => (
-                <div key={key} className="glass" style={{ padding: '20px 24px', display: 'flex', gap: '16px', alignItems: 'flex-start', flexDirection: isAr ? 'row-reverse' : 'row', textAlign: isAr ? 'right' : 'left', background: 'rgba(247,248,245,0.9)' }}>
+                <div
+                  key={key}
+                  className="glass"
+                  style={{ padding: '20px 24px', display: 'flex', gap: '16px', alignItems: 'flex-start', flexDirection: isAr ? 'row-reverse' : 'row', textAlign: isAr ? 'right' : 'left', background: 'rgba(247,248,245,0.9)', transition: 'all 350ms cubic-bezier(0.34,1.56,0.64,1)', cursor: 'default' }}
+                  // These are full-width rows rather than tiles, so they nudge
+                  // along the reading direction instead of lifting — a vertical
+                  // hop on a stacked list reads as the row coming loose.
+                  onMouseEnter={e => { e.currentTarget.style.transform = isAr ? 'translateX(-6px)' : 'translateX(6px)'; e.currentTarget.style.boxShadow = '0 10px 30px rgba(26,61,43,0.09)'; e.currentTarget.style.background = '#fff'; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.background = 'rgba(247,248,245,0.9)'; }}
+                >
                   <div style={{ flexShrink: 0, width: '44px', height: '44px', borderRadius: '12px', background: 'rgba(141,184,51,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     {POINT_ICONS[key]}
                   </div>
