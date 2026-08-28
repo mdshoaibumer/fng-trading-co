@@ -44,6 +44,22 @@ export function getClientIp(request: Request): string {
   return 'unknown';
 }
 
+// Per-IP limiting alone is bypassable by sending a different
+// X-Forwarded-For value on every request — there's no way to verify a
+// trusted-proxy chain from inside the app. globalRateLimit ignores the
+// claimed IP entirely and caps total attempts across everyone, which
+// can't be defeated by header spoofing. Intended for endpoints with a
+// small number of legitimate callers (e.g. the single shared admin
+// login) where a generous global ceiling won't bother real users but
+// still hard-stops a brute-force run.
+export function globalRateLimit(
+  key: string,
+  limit: number,
+  windowMs: number
+): { allowed: boolean; retryAfterSeconds?: number } {
+  return rateLimit(`global:${key}`, limit, windowMs);
+}
+
 export function tooManyRequests(retryAfterSeconds?: number) {
   return Response.json(
     { error: 'Too many requests. Please try again shortly.' },

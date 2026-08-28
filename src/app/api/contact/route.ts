@@ -12,6 +12,9 @@ const contactSchema = z.object({
   email: z.string().optional().or(z.string().length(0)),
   industry: z.string().optional(),
   message: z.string().optional(),
+  // Honeypot: a field real visitors never see or fill, styled off-screen
+  // in the form. Bots that auto-fill every input tend to fill this one.
+  website: z.string().optional(),
 });
 
 export async function POST(request: Request) {
@@ -25,6 +28,12 @@ export async function POST(request: Request) {
     const result = contactSchema.safeParse(body);
     if (!result.success) {
       return NextResponse.json({ error: 'Invalid or missing required fields' }, { status: 400 });
+    }
+
+    // Honeypot tripped: report success (don't tip off the bot) but skip
+    // the DB write and email — this is not a real submission.
+    if (result.data.website) {
+      return NextResponse.json({ success: true, message: 'Form submitted successfully' });
     }
 
     const { name, company, phone, city, quantity, email, industry, message } = result.data;

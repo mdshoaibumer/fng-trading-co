@@ -1,12 +1,20 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { createSessionToken, hashPassword, verifyPassword } from '@/lib/adminSession';
-import { rateLimit, getClientIp, tooManyRequests } from '@/lib/rateLimit';
+import { rateLimit, globalRateLimit, getClientIp, tooManyRequests } from '@/lib/rateLimit';
 
 export async function POST(request: Request) {
   try {
-    const { allowed, retryAfterSeconds } = rateLimit(`login:${getClientIp(request)}`, 5, 5 * 60 * 1000);
-    if (!allowed) return tooManyRequests(retryAfterSeconds);
+    // Per-IP limit (useful when the client isn't spoofing headers) plus a
+    // global cap that ignores the claimed IP entirely — there's only one
+    // legitimate admin, so a generous global ceiling stops a brute-force
+    // run even from an attacker sending a fresh X-Forwarded-For value on
+    // every request, which would otherwise reset the per-IP bucket each time.
+    const perIp = rateLimit(`login:${getClientIp(request)}`, 5, 5 * 60 * 1000);
+    if (!perIp.allowed) return tooManyRequests(perIp.retryAfterSeconds);
+
+    const global = globalRateLimit('login', 20, 15 * 60 * 1000);
+    if (!global.allowed) return tooManyRequests(global.retryAfterSeconds);
 
     const body = await request.json();
     const { password } = body;

@@ -18,6 +18,24 @@ function fromBase64Url(value: string): Uint8Array<ArrayBuffer> {
   return bytes;
 }
 
+// Plain === short-circuits on the first differing byte, which leaks how
+// many leading characters matched via response timing. This walks the
+// full length of both strings regardless of where they diverge. Not a
+// cryptographic guarantee (JS engines can still introduce timing
+// variance elsewhere), but it removes the obvious, cheap leak — and
+// avoids Node's crypto.timingSafeEqual, which isn't available in the
+// Edge middleware runtime this file also runs in.
+function constantTimeEqual(a: string, b: string): boolean {
+  const aBytes = new TextEncoder().encode(a);
+  const bBytes = new TextEncoder().encode(b);
+  const maxLen = Math.max(aBytes.length, bBytes.length);
+  let diff = aBytes.length ^ bBytes.length;
+  for (let i = 0; i < maxLen; i++) {
+    diff |= (aBytes[i] ?? 0) ^ (bBytes[i] ?? 0);
+  }
+  return diff === 0;
+}
+
 function getSessionSecret(): string {
   const secret = process.env.ADMIN_SESSION_SECRET;
   if (!secret) {
@@ -83,7 +101,7 @@ export async function verifyPassword(
   stored: string
 ): Promise<{ valid: boolean; isLegacyPlaintext: boolean }> {
   if (!stored.startsWith(HASH_PREFIX)) {
-    return { valid: password === stored, isLegacyPlaintext: true };
+    return { valid: constantTimeEqual(password, stored), isLegacyPlaintext: true };
   }
 
   const [, iterationsStr, saltB64, hashB64] = stored.split('$');
@@ -95,5 +113,5 @@ export async function verifyPassword(
     256
   );
   const candidate = toBase64Url(new Uint8Array(bits));
-  return { valid: candidate === hashB64, isLegacyPlaintext: false };
+  return { valid: constantTimeEqual(candidate, hashB64), isLegacyPlaintext: false };
 }

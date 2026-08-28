@@ -11,7 +11,7 @@ export default function ContactSection() {
   const locale = params.locale as string;
   const isAr = locale === 'ar';
   const [status, setStatus] = useState<'idle'|'loading'|'success'|'error'>('idle');
-  const [form, setForm] = useState({ name: '', company: '', phone: '', city: '', quantity: '1' });
+  const [form, setForm] = useState({ name: '', company: '', phone: '', city: '', quantity: '1', website: '' });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,6 +75,11 @@ export default function ContactSection() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {/* Honeypot: hidden from real visitors, tempting to bots that auto-fill every field */}
+                <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true"
+                  style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', opacity: 0 }}
+                  value={form.website}
+                  onChange={e => setForm(f => ({ ...f, website: e.target.value }))} />
                 <input style={inputStyle} placeholder={t('form.name')} required value={form.name}
                   onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                   onFocus={e => (e.target.style.borderColor = '#8DB833')}

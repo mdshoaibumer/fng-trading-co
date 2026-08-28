@@ -8,32 +8,15 @@ dotenv.config({ path: '.env.local' });
 async function migrate() {
   console.log('Starting migration to Supabase...');
 
-  // 1. Migrate Printers
-  try {
-    const printersPath = path.join(process.cwd(), 'src', 'lib', 'printers.json');
-    const printersData = JSON.parse(await fs.readFile(printersPath, 'utf-8'));
-    
-    const formattedPrinters = printersData.map((p: any) => ({
-      id: p.id,
-      name: p.name,
-      desc_en: p.descEn,
-      desc_ar: p.descAr,
-      images: p.images,
-      features_en: p.featuresEn,
-      features_ar: p.featuresAr,
-      specs_en: p.specsEn,
-      specs_ar: p.specsAr,
-      available: p.available ?? true
-    }));
+  // Printer migration removed: this ran once during the original
+  // pre-Supabase -> Supabase cutover, reading from src/lib/printers.json.
+  // That file (and the unused printers.ts module it backed) was deleted
+  // as dead code once the migration was long complete and nothing in the
+  // app imported it anymore. Parts/settings migration below still work
+  // against their own JSON sources, which remain useful as a seed
+  // reference.
 
-    const { error: pError } = await supabase.from('printers').upsert(formattedPrinters);
-    if (pError) throw pError;
-    console.log('✅ Printers migrated.');
-  } catch (err) {
-    console.error('❌ Printer migration failed:', err);
-  }
-
-  // 2. Migrate Parts
+  // 1. Migrate Parts
   try {
     const partsPath = path.join(process.cwd(), 'src', 'lib', 'parts.json');
     const partsData = JSON.parse(await fs.readFile(partsPath, 'utf-8'));
@@ -57,7 +40,7 @@ async function migrate() {
     console.error('❌ Parts migration failed:', err);
   }
 
-  // 3. Migrate Settings/Config
+  // 2. Migrate Settings/Config
   try {
     const configPath = path.join(process.cwd(), 'src', 'lib', 'config.json');
     const configData = JSON.parse(await fs.readFile(configPath, 'utf-8'));

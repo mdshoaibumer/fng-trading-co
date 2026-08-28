@@ -12,7 +12,7 @@ export default function ContactPageClient() {
   const locale = params.locale as string;
   const isAr = locale === 'ar';
   const [status, setStatus] = useState<'idle'|'loading'|'success'|'error'>('idle');
-  const [form, setForm] = useState({ name: '', company: '', phone: '', email: '', industry: '', city: '', message: '', quantity: '1' });
+  const [form, setForm] = useState({ name: '', company: '', phone: '', email: '', industry: '', city: '', message: '', quantity: '1', website: '' });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -153,6 +153,11 @@ export default function ContactPageClient() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                {/* Honeypot: hidden from real visitors, tempting to bots that auto-fill every field */}
+                <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true"
+                  style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', opacity: 0 }}
+                  value={form.website}
+                  onChange={e => setForm(f => ({ ...f, website: e.target.value }))} />
                 <h3 style={{ fontSize: '1.8rem', fontWeight: 800, color: '#1A3D2B', marginBottom: '8px' }}>Send a Message</h3>
                 <p style={{ color: '#555', marginBottom: '24px' }}>Fill out the form below and we will get back to you shortly.</p>
                 

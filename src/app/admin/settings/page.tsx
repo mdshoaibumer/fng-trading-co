@@ -203,7 +203,7 @@ export default function AdminSettingsPage() {
                 value={settings.ai_settings?.system_prompt || ''} 
                 onChange={(e) => setSettings({ ...settings, ai_settings: { ...settings.ai_settings, system_prompt: e.target.value } })} 
               />
-              <p style={{ fontSize: '0.8rem', color: '#94A3B8', marginTop: '6px' }}>Instructions on how Nexia should behave, tone of voice, and what it should not say. (Note: Modifying this requires backend sync in future update).</p>
+              <p style={{ fontSize: '0.8rem', color: '#94A3B8', marginTop: '6px' }}>Instructions on how Nexia should behave, tone of voice, and what it should not say. Takes effect immediately after saving.</p>
             </div>
           </div>
         </div>
