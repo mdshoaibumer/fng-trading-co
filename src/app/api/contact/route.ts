@@ -75,7 +75,13 @@ export async function POST(request: Request) {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json'
+            'Accept': 'application/json',
+            // api.web3forms.com sits behind Cloudflare, which serves a 403
+            // "Just a moment..." bot-challenge (HTML, not JSON) to server-side
+            // requests that arrive without a browser-like User-Agent — Node's
+            // default undici UA gets challenged, silently dropping every lead
+            // notification email. A real UA string clears the challenge.
+            'User-Agent': 'Mozilla/5.0 (compatible; FNG-Website/1.0; +https://www.fngtradingco.com)'
           },
           body: JSON.stringify({
             access_key: web3Key,
