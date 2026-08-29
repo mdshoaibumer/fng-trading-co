@@ -2,6 +2,13 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+/**
+ * Builds a frame-path getter for a scroll frame sequence: given a directory of
+ * zero-padded webp frames (`01.webp`, `02.webp`, …), returns `(index) => path`
+ * for a 0-based frame index. Shared by the Hero and Eco-Inks scroll sequences.
+ */
+export const framePath = (dir: string) => (index: number) => `/${dir}/${String(index + 1).padStart(2, '0')}.webp`;
+
 interface UseScrollFrameSequenceOptions {
   totalFrames: number;
   desktopFramePath: (index: number) => string;

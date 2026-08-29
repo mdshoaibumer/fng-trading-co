@@ -16,6 +16,7 @@ import {
   Maximize2
 } from 'lucide-react';
 import { useCarousel } from '@/hooks/useCarousel';
+import IconButton from '@/components/ui/IconButton';
 
 export interface ProductPageProduct {
   id: string;
@@ -166,24 +167,24 @@ export default function ProductPageClient({ product, whatsapp, locale, itemType 
               {/* Navigation Arrows */}
               {product.images.length > 1 && !isZoomed && (
                 <>
-                  <button
+                  <IconButton
                     onClick={(e) => { e.stopPropagation(); prevImage(); }}
-                    aria-label={isAr ? 'الصورة السابقة' : 'Previous image'}
-                    style={{
-                      position: 'absolute', left: '20px', background: 'white', border: 'none',
-                      borderRadius: '50%', width: '48px', height: '48px', display: 'flex', alignItems: 'center',
-                      justifyContent: 'center', cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', color: 'var(--primary)'
-                    }}
-                  ><ChevronLeft size={24} /></button>
-                  <button
+                    label={isAr ? 'الصورة السابقة' : 'Previous image'}
+                    icon={<ChevronLeft size={24} />}
+                    size={48}
+                    background="white"
+                    color="var(--primary)"
+                    style={{ position: 'absolute', left: '20px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                  />
+                  <IconButton
                     onClick={(e) => { e.stopPropagation(); nextImage(); }}
-                    aria-label={isAr ? 'الصورة التالية' : 'Next image'}
-                    style={{
-                      position: 'absolute', right: '20px', background: 'white', border: 'none',
-                      borderRadius: '50%', width: '48px', height: '48px', display: 'flex', alignItems: 'center',
-                      justifyContent: 'center', cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', color: 'var(--primary)'
-                    }}
-                  ><ChevronRight size={24} /></button>
+                    label={isAr ? 'الصورة التالية' : 'Next image'}
+                    icon={<ChevronRight size={24} />}
+                    size={48}
+                    background="white"
+                    color="var(--primary)"
+                    style={{ position: 'absolute', right: '20px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                  />
                 </>
               )}
             </div>

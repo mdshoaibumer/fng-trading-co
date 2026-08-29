@@ -3,10 +3,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
-import { useScrollFrameSequence } from '@/lib/useScrollFrameSequence';
+import { useScrollFrameSequence, framePath } from '@/lib/useScrollFrameSequence';
 
 const TOTAL_FRAMES = 10;
-const framePath = (dir: string) => (index: number) => `/${dir}/${String(index + 1).padStart(2, '0')}.webp`;
 const desktopFramePath = framePath('video-frames');
 const mobileFramePath = framePath('video-frames-mobile');
 
