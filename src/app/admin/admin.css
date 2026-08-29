@@ -18,6 +18,19 @@
   --admin-danger: #EF4444;
 }
 
+/* Admin routes don't load the public site's globals.css, which carries the
+   `box-sizing: border-box` reset. Without it here, any element with an explicit
+   width plus padding (every .admin-input is width:100% + padding, and the
+   Security card's password box is a fixed 500px) grows past its container by
+   the padding amount — the fields visibly spilled out of the Security &
+   Credentials box. This mirrors the public reset and is scoped to admin since
+   this stylesheet only loads under the admin layout. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   font-family: var(--font-inter), sans-serif;
