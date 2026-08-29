@@ -1,5 +1,6 @@
 
 import { NextIntlClientProvider } from 'next-intl';
+import { SITE_URL } from '@/lib/siteContact';
 import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
@@ -44,7 +45,7 @@ export async function generateMetadata({
       default: t('title'),
     },
     description: t('description'),
-    metadataBase: new URL('https://fngtradingco.com'),
+    metadataBase: new URL(SITE_URL),
     alternates: {
       canonical: `/${locale}`,
       languages: {

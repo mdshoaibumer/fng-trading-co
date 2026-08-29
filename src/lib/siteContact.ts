@@ -10,3 +10,9 @@
 // src/lib/config.json carries the same address as a plain string (JSON can't
 // import this constant); keep the two in sync if it ever changes.
 export const SITE_EMAIL = 'Support@fngtradingco.com';
+
+// Canonical public origin, used for canonical URLs, hreflang alternates,
+// JSON-LD `url`/`image` fields, the sitemap, and robots. Single source of
+// truth — previously this literal was copy-pasted into ~16 files. No trailing
+// slash; callers build paths as `${SITE_URL}/...`.
+export const SITE_URL = 'https://fngtradingco.com';

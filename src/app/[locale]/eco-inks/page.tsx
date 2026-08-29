@@ -1,4 +1,5 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
+import { SITE_URL } from '@/lib/siteContact';
 import type { Metadata } from 'next';
 import { safeJsonLd } from '@/lib/safeJsonLd';
 import EcoInksHeroSection from '@/components/sections/EcoInksHeroSection';
@@ -36,7 +37,7 @@ export default async function EcoInksPage({
   setRequestLocale(locale);
 
   const isAr = locale === 'ar';
-  const websiteUrl = 'https://fngtradingco.com';
+  const websiteUrl = SITE_URL;
 
   const productGreenSchema = {
     '@context': 'https://schema.org',

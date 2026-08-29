@@ -2,7 +2,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { safeJsonLd } from '@/lib/safeJsonLd';
 import { buildAlternates } from '@/lib/metadata';
-import { SITE_EMAIL } from '@/lib/siteContact';
+import { SITE_EMAIL, SITE_URL } from '@/lib/siteContact';
 
 export async function generateMetadata({
   params,
@@ -31,7 +31,7 @@ export default async function PrivacyPolicyPage({
 
   const t = await getTranslations({ locale, namespace: 'privacyPage' });
   const isAr = locale === 'ar';
-  const websiteUrl = 'https://fngtradingco.com';
+  const websiteUrl = SITE_URL;
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',

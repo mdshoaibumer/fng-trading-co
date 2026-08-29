@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 import { safeJsonLd } from '@/lib/safeJsonLd';
 import { getSettings } from '@/lib/supabase';
 import { buildAlternates } from '@/lib/metadata';
-import { SITE_EMAIL } from '@/lib/siteContact';
+import { SITE_EMAIL, SITE_URL } from '@/lib/siteContact';
 
 // Reads live contact settings from Supabase on every request.
 export const dynamic = 'force-dynamic';
@@ -38,7 +38,7 @@ export default async function ContactPage({
   const isAr = locale === 'ar';
   
   // Structured Data (JSON-LD)
-  const websiteUrl = 'https://fngtradingco.com';
+  const websiteUrl = SITE_URL;
   
   const localBusinessSchema = {
     '@context': 'https://schema.org',

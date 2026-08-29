@@ -1,4 +1,5 @@
 import FaqPageClient from '@/components/pages/FaqPageClient';
+import { SITE_URL } from '@/lib/siteContact';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { safeJsonLd } from '@/lib/safeJsonLd';
@@ -33,7 +34,7 @@ export default async function FaqPage({
   const t = await getTranslations({ locale, namespace: 'faqPage' });
 
   // Structured Data (JSON-LD)
-  const websiteUrl = 'https://fngtradingco.com';
+  const websiteUrl = SITE_URL;
 
   const faqSchema = {
     '@context': 'https://schema.org',

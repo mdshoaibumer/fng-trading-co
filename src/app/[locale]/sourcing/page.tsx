@@ -1,4 +1,5 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
+import { SITE_URL } from '@/lib/siteContact';
 import type { Metadata } from 'next';
 import SourcingHeroSection from '@/components/sections/sourcing/SourcingHeroSection';
 import SourcingProcessSection from '@/components/sections/sourcing/SourcingProcessSection';
@@ -34,7 +35,7 @@ export default async function SourcingPage({
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: 'sourcingHero' });
   const isAr = locale === 'ar';
-  const websiteUrl = 'https://fngtradingco.com';
+  const websiteUrl = SITE_URL;
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',

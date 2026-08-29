@@ -1,4 +1,5 @@
 import SustainabilityPageClient from '@/components/pages/SustainabilityPageClient';
+import { SITE_URL } from '@/lib/siteContact';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { safeJsonLd } from '@/lib/safeJsonLd';
@@ -32,7 +33,7 @@ export default async function SustainabilityPage({
   const isAr = locale === 'ar';
   
   // Structured Data (JSON-LD)
-  const websiteUrl = 'https://fngtradingco.com';
+  const websiteUrl = SITE_URL;
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',

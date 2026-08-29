@@ -1,4 +1,5 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
+import { SITE_URL } from '@/lib/siteContact';
 import type { Metadata } from 'next';
 import { safeJsonLd } from '@/lib/safeJsonLd';
 import PrinterPartsHeroSection from '@/components/sections/PrinterPartsHeroSection';
@@ -33,7 +34,7 @@ export default async function PrinterPartsPage({
   setRequestLocale(locale);
 
   const isAr = locale === 'ar';
-  const websiteUrl = 'https://fngtradingco.com';
+  const websiteUrl = SITE_URL;
 
   const partsCatalogSchema = {
     '@context': 'https://schema.org',

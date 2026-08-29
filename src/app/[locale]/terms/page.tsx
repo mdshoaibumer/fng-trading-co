@@ -1,4 +1,5 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { SITE_URL } from '@/lib/siteContact';
 import type { Metadata } from 'next';
 import { safeJsonLd } from '@/lib/safeJsonLd';
 import { buildAlternates } from '@/lib/metadata';
@@ -30,7 +31,7 @@ export default async function TermsPage({
 
   const t = await getTranslations({ locale, namespace: 'termsPage' });
   const isAr = locale === 'ar';
-  const websiteUrl = 'https://fngtradingco.com';
+  const websiteUrl = SITE_URL;
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',

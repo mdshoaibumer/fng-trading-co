@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import { SITE_URL } from '@/lib/siteContact';
 import ProductPageClient from '@/components/pages/ProductPageClient';
 import { supabaseAdmin, getSettings } from '@/lib/supabase';
 import type { Metadata } from 'next';
@@ -86,7 +87,7 @@ export default async function PrinterProductPage({
     : DEFAULT_WHATSAPP_NUMBER;
 
   const isAr = locale === 'ar';
-  const websiteUrl = 'https://fngtradingco.com';
+  const websiteUrl = SITE_URL;
 
   // Schemas
   const productSchema = {

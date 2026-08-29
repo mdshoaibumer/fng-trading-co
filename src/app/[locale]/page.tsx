@@ -14,7 +14,7 @@ import ContactSection from '@/components/sections/ContactSection';
 import VideoDivider from '@/components/sections/VideoDivider';
 import { getSettings, getProducts } from '@/lib/supabase';
 import { buildAlternates } from '@/lib/metadata';
-import { SITE_EMAIL } from '@/lib/siteContact';
+import { SITE_EMAIL, SITE_URL } from '@/lib/siteContact';
 
 // Reads live settings (videos, contact info) from Supabase on every request.
 export const dynamic = 'force-dynamic';
@@ -63,7 +63,7 @@ export default async function HomePage({
   const showGate = gate === '1' || (await cookies()).get(GATE_COOKIE)?.value !== '1';
 
   const isAr = locale === 'ar';
-  const websiteUrl = 'https://fngtradingco.com';
+  const websiteUrl = SITE_URL;
 
   // Structured Data (JSON-LD)
   const organizationSchema = {

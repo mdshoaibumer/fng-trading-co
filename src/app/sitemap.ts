@@ -1,8 +1,9 @@
 import type { MetadataRoute } from 'next';
+import { SITE_URL } from '@/lib/siteContact';
 import { supabaseAdmin } from '@/lib/supabase';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://fngtradingco.com';
+  const baseUrl = SITE_URL;
   
   // Static pages in both languages
   const staticPages = [
