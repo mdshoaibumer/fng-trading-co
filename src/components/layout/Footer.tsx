@@ -1,15 +1,41 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useParams } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { MapPin, Globe, Mail } from 'lucide-react';
+import { gateHref } from './Navbar';
 
 export default function Footer() {
   const t = useTranslations('footer');
   const params = useParams();
+  const pathname = usePathname();
   const locale = params.locale as string;
   const isAr = locale === 'ar';
+  const isSourcing = pathname.startsWith(`/${locale}/sourcing`);
+
+  // Mirrors the Navbar's split: the sourcing side never links into the printers
+  // business and vice versa, so the footer cannot quietly reintroduce the
+  // cross-links the nav deliberately drops. Home goes back to the gate.
+  const quickLinks = isSourcing
+    ? [
+        { href: gateHref(locale), label: isAr ? 'الرئيسية' : 'Home' },
+        { href: `/${locale}/sourcing#sourcing-process`, label: isAr ? 'آلية العمل' : 'Process' },
+        { href: `/${locale}/sourcing#sourcing-categories`, label: isAr ? 'الفئات' : 'Categories' },
+        { href: `/${locale}/sourcing#sourcing-services`, label: isAr ? 'الخدمات' : 'Services' },
+        { href: `/${locale}/sourcing#sourcing-why`, label: isAr ? 'لماذا نحن' : 'Why Us' },
+        { href: `/${locale}/sourcing#contact`, label: isAr ? 'تواصل معنا' : 'Contact' },
+      ]
+    : [
+        { href: gateHref(locale), label: isAr ? 'الرئيسية' : 'Home' },
+        { href: `/${locale}/about`, label: isAr ? 'من نحن' : 'About' },
+        { href: `/${locale}/sustainability`, label: isAr ? 'الاستدامة' : 'Sustainability' },
+        { href: `/${locale}/eco-inks`, label: isAr ? 'أحبار إيكو' : 'Eco Inks' },
+        { href: `/${locale}/industries`, label: isAr ? 'القطاعات' : 'Industries' },
+        { href: `/${locale}/printer-parts`, label: isAr ? 'قطع الطابعات' : 'Printer Parts' },
+        { href: `/${locale}/faq`, label: isAr ? 'الأسئلة الشائعة' : 'FAQ' },
+        { href: `/${locale}/contact`, label: isAr ? 'تواصل معنا' : 'Contact' },
+      ];
 
   return (
     <footer
@@ -70,16 +96,7 @@ export default function Footer() {
               {isAr ? 'روابط سريعة' : 'Quick Links'}
             </h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {[
-                { href: `/${locale}#hero`, label: isAr ? 'الرئيسية' : 'Home' },
-                { href: `/${locale}/about`, label: isAr ? 'من نحن' : 'About' },
-                { href: `/${locale}/sustainability`, label: isAr ? 'الاستدامة' : 'Sustainability' },
-                { href: `/${locale}/eco-inks`, label: isAr ? 'أحبار إيكو' : 'Eco Inks' },
-                { href: `/${locale}/industries`, label: isAr ? 'القطاعات' : 'Industries' },
-                { href: `/${locale}/printer-parts`, label: isAr ? 'قطع الطابعات' : 'Printer Parts' },
-                { href: `/${locale}/faq`, label: isAr ? 'الأسئلة الشائعة' : 'FAQ' },
-                { href: `/${locale}/contact`, label: isAr ? 'تواصل معنا' : 'Contact' },
-              ].map((link) => (
+              {quickLinks.map((link) => (
                 <a
                   key={link.href}
                   href={link.href}

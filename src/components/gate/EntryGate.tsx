@@ -6,10 +6,41 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
-import SourcingGlobe from '@/components/sections/sourcing/SourcingGlobe';
 import { useDialogA11y } from '@/lib/useDialogA11y';
+import { GATE_COOKIE } from '@/lib/entryGate';
 
-const PRINTER_IMAGE = '/printers/HP%20LaserJet%20Pro%20MFP%20M428fdw/HP%20LaserJet%20Pro%20MFP%20M428fdw.png';
+// Gate-only photography. The catalog keeps its own cutout of the M428fdw
+// under /printers/... for the product pages — these two exist just to give
+// the gate a matched pair of full-bleed shots.
+const PRINTER_IMAGE = '/gate-printer.webp';
+const SOURCING_IMAGE = '/sourcing-ship.webp';
+
+// Both panels frame their photo identically: fill the square, then grade the
+// lower edge into the card so the shot reads as part of the panel rather than
+// a rectangle pasted onto it.
+function PanelPhoto({ src }: { src: string }) {
+  return (
+    <div style={{
+      position: 'relative', width: '100%', aspectRatio: '1 / 1', borderRadius: '12px',
+      overflow: 'hidden', background: 'linear-gradient(135deg, rgba(141,184,51,0.18), rgba(74,144,217,0.12))',
+      marginBottom: '20px', border: '1px solid rgba(255,255,255,0.08)',
+    }}>
+      <Image
+        src={src}
+        alt=""
+        width={1000}
+        height={1333}
+        priority
+        sizes="(max-width: 768px) 90vw, 45vw"
+        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+      />
+      <div style={{
+        position: 'absolute', inset: 0, pointerEvents: 'none',
+        background: 'linear-gradient(to top, rgba(15,42,28,0.55) 0%, rgba(15,42,28,0.12) 30%, transparent 60%)',
+      }} />
+    </div>
+  );
+}
 
 export default function EntryGate() {
   const t = useTranslations('gate');
@@ -21,7 +52,24 @@ export default function EntryGate() {
   const Arrow = isAr ? ArrowLeft : ArrowRight;
   const [open, setOpen] = useState(true);
   const [mounted, setMounted] = useState(true);
-  const dialogRef = useDialogA11y<HTMLDivElement>(open, () => setOpen(false));
+  const markSeen = () => {
+    document.cookie = `${GATE_COOKIE}=1; path=/; SameSite=Lax`;
+  };
+
+  const dismiss = () => {
+    markSeen();
+    setOpen(false);
+    // Drop the ?gate=1 that asked for this chooser, so the URL matches what is
+    // actually on screen and the Navbar's logo — which links to ?gate=1 — stays
+    // a real URL change that can bring the chooser back. replaceState rather
+    // than router.replace: this must not refetch the route, which would tear
+    // the gate out of the tree mid-fade.
+    if (window.location.search) {
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+  };
+
+  const dialogRef = useDialogA11y<HTMLDivElement>(open, dismiss);
 
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : '';
@@ -29,10 +77,9 @@ export default function EntryGate() {
   }, [open]);
 
   // Closing only fades the gate out (opacity/pointerEvents) so the 500ms
-  // transition can play — but the sourcing panel embeds SourcingGlobe, a
-  // WebGL canvas with its own requestAnimationFrame loop, which otherwise
-  // keeps rendering invisibly for the rest of the visit. Unmount for real
-  // once the fade finishes.
+  // transition can play. Unmount for real once the fade finishes, so a
+  // full-screen fixed overlay isn't left sitting in the DOM — invisible but
+  // still laid out — for the rest of the visit.
   useEffect(() => {
     if (open) return;
     const timer = setTimeout(() => setMounted(false), 550);
@@ -102,7 +149,7 @@ export default function EntryGate() {
           {/* Printers panel */}
           <a
             href={`/${locale}`}
-            onClick={(e) => { e.preventDefault(); setOpen(false); }}
+            onClick={(e) => { e.preventDefault(); dismiss(); }}
             aria-label={`${t('printers.title')} — ${t('printers.cta')}`}
             className="glass-dark gate-card"
             style={{
@@ -110,27 +157,7 @@ export default function EntryGate() {
               padding: 'clamp(20px, 3vw, 28px)', textAlign: isAr ? 'right' : 'left',
             }}
           >
-            <div style={{
-              position: 'relative', width: '100%', aspectRatio: '1 / 1', borderRadius: '12px',
-              overflow: 'hidden',
-              background: 'radial-gradient(circle, rgba(141,184,51,0.22) 0%, rgba(141,184,51,0.06) 50%, transparent 75%)',
-              marginBottom: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              border: '1px solid rgba(255,255,255,0.08)',
-            }}>
-              <div style={{
-                position: 'absolute', bottom: '14%', width: '58%', height: '10%',
-                background: 'radial-gradient(ellipse, rgba(0,0,0,0.4) 0%, transparent 75%)',
-              }} />
-              <Image
-                src={PRINTER_IMAGE}
-                alt=""
-                width={1659}
-                height={1246}
-                priority
-                sizes="(max-width: 768px) 90vw, 45vw"
-                style={{ position: 'relative', width: '88%', height: '88%', objectFit: 'contain', filter: 'drop-shadow(0 20px 24px rgba(0,0,0,0.35))' }}
-              />
-            </div>
+            <PanelPhoto src={PRINTER_IMAGE} />
             <span className="section-tag" style={{ marginBottom: '10px' }}>{t('printers.tag')}</span>
             <h2 style={{ fontSize: 'clamp(1.3rem, 2.5vw, 1.8rem)', fontWeight: 800, color: '#fff', marginBottom: '10px' }}>
               {t('printers.title')}
@@ -147,6 +174,7 @@ export default function EntryGate() {
           {/* Sourcing panel */}
           <a
             href={`/${locale}/sourcing`}
+            onClick={markSeen}
             aria-label={`${t('sourcing.title')} — ${t('sourcing.cta')}`}
             className="glass-dark gate-card"
             style={{
@@ -154,14 +182,7 @@ export default function EntryGate() {
               padding: 'clamp(20px, 3vw, 28px)', textAlign: isAr ? 'right' : 'left',
             }}
           >
-            <div style={{
-              position: 'relative', width: '100%', aspectRatio: '1 / 1', borderRadius: '12px',
-              overflow: 'hidden', background: 'linear-gradient(135deg, rgba(141,184,51,0.18), rgba(74,144,217,0.12))',
-              marginBottom: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              border: '1px solid rgba(255,255,255,0.08)',
-            }}>
-              <SourcingGlobe maxWidth="70%" interactive={false} />
-            </div>
+            <PanelPhoto src={SOURCING_IMAGE} />
             <span className="section-tag" style={{ marginBottom: '10px' }}>{t('sourcing.tag')}</span>
             <h2 style={{ fontSize: 'clamp(1.3rem, 2.5vw, 1.8rem)', fontWeight: 800, color: '#fff', marginBottom: '10px' }}>
               {t('sourcing.title')}

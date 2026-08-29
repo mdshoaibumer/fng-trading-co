@@ -34,7 +34,11 @@ export default function SourcingServicesSection() {
               padding: 'clamp(20px, 4vw, 28px)', borderRadius: '20px', background: '#fff',
               boxShadow: '0 4px 24px rgba(26,61,43,0.06)', border: '1px solid rgba(141,184,51,0.1)',
               textAlign: isAr ? 'right' : 'left',
-            }}>
+              transition: 'all 350ms cubic-bezier(0.34,1.56,0.64,1)', cursor: 'default',
+            }}
+              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-6px)'; e.currentTarget.style.boxShadow = '0 16px 40px rgba(26,61,43,0.12)'; e.currentTarget.style.borderColor = 'rgba(141,184,51,0.35)'; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 24px rgba(26,61,43,0.06)'; e.currentTarget.style.borderColor = 'rgba(141,184,51,0.1)'; }}
+            >
               <div style={{
                 width: '48px', height: '48px', borderRadius: '14px', background: 'linear-gradient(135deg,#1A3D2B,#4A5E2A)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px',

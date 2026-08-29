@@ -24,8 +24,16 @@ export default function SourcingProcessSection() {
               padding: 'clamp(18px, 3vw, 24px) clamp(16px, 2.5vw, 20px)', borderRadius: '16px', background: '#fff',
               border: '1px solid #EEEEEE', borderTop: '3px solid #8DB833',
               textAlign: isAr ? 'right' : 'left',
-            }}>
+              transition: 'all 350ms cubic-bezier(0.34,1.56,0.64,1)', cursor: 'default',
+            }}
+              // Deliberately no borderColor change here: these cards carry a
+              // green top rule as their identity, and setting borderColor would
+              // repaint all four sides and wipe it out.
+              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-6px)'; e.currentTarget.style.boxShadow = '0 12px 40px rgba(26,61,43,0.1)'; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}
+            >
               <div style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--accent)', fontFamily: 'var(--font-ibm-plex-mono), monospace', marginBottom: '10px' }}>
+
                 {t(`steps.${key}.number`)}
               </div>
               <h3 style={{ color: 'var(--primary)', fontSize: '1rem', fontWeight: 700, marginBottom: '8px' }}>{t(`steps.${key}.title`)}</h3>

@@ -1,7 +1,9 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { safeJsonLd } from '@/lib/safeJsonLd';
+import { cookies } from 'next/headers';
 import EntryGate from '@/components/gate/EntryGate';
+import { GATE_COOKIE } from '@/lib/entryGate';
 import HeroSection from '@/components/sections/HeroSection';
 import FreePrinterSection from '@/components/sections/FreePrinterSection';
 import ProductCatalogSection from '@/components/sections/ProductCatalogSection';
@@ -34,15 +36,30 @@ export async function generateMetadata({
 
 export default async function HomePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ gate?: string }>;
 }) {
   const { locale } = await params;
+  const { gate } = await searchParams;
   setRequestLocale(locale);
 
   const settings = await getSettings();
   const videos = settings.videos || { divider1: '', divider2: '' };
   const { products: printers, error: printersError } = await getProducts('printer');
+
+  // Greet a visitor who hasn't picked a track yet, and re-open the chooser
+  // whenever it is asked for explicitly with ?gate=1 — which is what the
+  // Navbar's logo and Home link do. Printers and sourcing are run as separate
+  // businesses with no cross-links, so the gate is the only route between
+  // them; without the ?gate=1 escape hatch, picking one track would strand a
+  // visitor there for the rest of the session.
+  //
+  // Arrivals that don't ask for it (a bookmark, an external link) still go
+  // straight to the page once the cookie is set, rather than being made to
+  // re-answer the chooser every time.
+  const showGate = gate === '1' || (await cookies()).get(GATE_COOKIE)?.value !== '1';
 
   const isAr = locale === 'ar';
   const websiteUrl = 'https://fngtradingco.com';
@@ -143,7 +160,7 @@ export default async function HomePage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeJsonLd(websiteSchema) }}
       />
-      <EntryGate />
+      {showGate && <EntryGate />}
       <HeroSection />
       <ProductCatalogSection
         products={printers}
