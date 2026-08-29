@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin, type PartsData } from '@/lib/supabase';
+import { revalidatePublicSite } from '@/lib/revalidate';
 
 export async function GET() {
   try {
@@ -62,6 +63,7 @@ export async function POST(request: Request) {
 
     if (deleteError) throw deleteError;
 
+    revalidatePublicSite();
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Parts POST error:', error);

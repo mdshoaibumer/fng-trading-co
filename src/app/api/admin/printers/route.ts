@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin, type Product } from '@/lib/supabase';
+import { revalidatePublicSite } from '@/lib/revalidate';
 
 export async function GET() {
   try {
@@ -68,6 +69,7 @@ export async function POST(request: Request) {
       .upsert(formatted);
 
     if (error) throw error;
+    revalidatePublicSite();
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Printers POST error:', error);

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { revalidatePublicSite } from '@/lib/revalidate';
 
 export async function GET() {
   try {
@@ -33,7 +34,11 @@ export async function POST(request: Request) {
         value: ar
       });
     }
-    
+
+    // Content lives in the static prerendered pages' translations, so refresh
+    // them (and the layout) or edits would only show after a redeploy.
+    revalidatePublicSite();
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Failed to update translations to DB:', error);

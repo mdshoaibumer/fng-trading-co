@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { hashPassword } from '@/lib/adminSession';
+import { revalidatePublicSite } from '@/lib/revalidate';
 
 export async function GET() {
   try {
@@ -47,6 +48,11 @@ export async function POST(request: Request) {
       .upsert(formatted);
 
     if (error) throw error;
+
+    // Contact email/phone/whatsapp, social links, videos and AI copy all feed
+    // the layout + static pages — refresh them so changes show without redeploy.
+    revalidatePublicSite();
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Settings POST error:', error);
