@@ -283,7 +283,6 @@
     "uaeAddress": "Dubai Design District (d3), Building 3, Dubai",
     "contactInfo": "Contact Information",
     "emailLabel": "Email Us",
-    "emailValue": "Support@fngtradingco.com",
     "phoneLabel": "Call Us",
     "phoneValue": "+966 59 338 0390",
     "hoursLabel": "Business Hours",
@@ -614,7 +613,7 @@
     "section3Title": "3. Data Sharing & Security",
     "section3Desc": "We do not sell your personal data. Your data is stored securely and processed in accordance with the security standards set out by the KSA authorities. We only share data with service providers who assist in delivery, technical maintenance, or payment processing.",
     "section4Title": "4. Your Rights",
-    "section4Desc": "Under the Saudi PDPL, you have the right to access, correct, destroy, or restrict the processing of your personal data. You may contact us at Support@fngtradingco.com to exercise these rights at any time."
+    "section4Desc": "Under the Saudi PDPL, you have the right to access, correct, destroy, or restrict the processing of your personal data. You may contact us at {email} to exercise these rights at any time."
   },
   "termsPage": {
     "title": "Terms & Conditions",

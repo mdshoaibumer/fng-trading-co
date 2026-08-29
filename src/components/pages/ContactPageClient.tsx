@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import { CheckCircle2, MapPin, Mail, Phone, Clock, ShieldCheck, Zap } from 'lucide-react';
+import { SITE_EMAIL } from '@/lib/siteContact';
 
 export default function ContactPageClient() {
   const t = useTranslations('contact');
@@ -108,7 +109,7 @@ export default function ContactPageClient() {
                   </div>
                   <div>
                     <p style={{ color: '#555', fontSize: '0.9rem', marginBottom: '4px' }}>{tp('emailLabel')}</p>
-                    <p style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '1.1rem' }}>{tp('emailValue')}</p>
+                    <p style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '1.1rem' }}>{SITE_EMAIL}</p>
                   </div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>

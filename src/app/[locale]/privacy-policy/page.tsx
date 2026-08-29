@@ -2,6 +2,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { safeJsonLd } from '@/lib/safeJsonLd';
 import { buildAlternates } from '@/lib/metadata';
+import { SITE_EMAIL } from '@/lib/siteContact';
 
 export async function generateMetadata({
   params,
@@ -100,7 +101,7 @@ export default async function PrivacyPolicyPage({
             <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px' }}>
               {t('section4Title')}
             </h2>
-            <p>{t('section4Desc')}</p>
+            <p>{t('section4Desc', { email: SITE_EMAIL })}</p>
           </div>
         </div>
 

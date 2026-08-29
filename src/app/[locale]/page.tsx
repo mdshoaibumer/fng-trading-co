@@ -14,6 +14,7 @@ import ContactSection from '@/components/sections/ContactSection';
 import VideoDivider from '@/components/sections/VideoDivider';
 import { getSettings, getProducts } from '@/lib/supabase';
 import { buildAlternates } from '@/lib/metadata';
+import { SITE_EMAIL } from '@/lib/siteContact';
 
 // Reads live settings (videos, contact info) from Supabase on every request.
 export const dynamic = 'force-dynamic';
@@ -103,7 +104,7 @@ export default async function HomePage({
     'image': `${websiteUrl}/FNG_LOGO.png`,
     'url': websiteUrl,
     'telephone': settings.contact?.phone || '+966-59-338-0390',
-    'email': 'Support@fngtradingco.com',
+    'email': SITE_EMAIL,
     'address': {
       '@type': 'PostalAddress',
       'streetAddress': isAr ? 'طريق مكة المكرمة الفرعي، حي السليمانية' : 'Makkah Al Mukarramah Branch Rd, Al Sulaimaniyah',
