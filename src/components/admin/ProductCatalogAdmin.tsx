@@ -169,15 +169,15 @@ export default function ProductCatalogAdmin({ config }: { config: ProductCatalog
                 <div className="admin-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '28px' }}>
                   {/* English Info */}
                   <div>
-                    <h4 style={{ fontSize: '0.9rem', fontWeight: 800, marginBottom: '16px', color: 'var(--admin-accent)' }}>ENGLISH CONTENT</h4>
+                    <h4 style={{ fontSize: '0.9rem', fontWeight: 800, marginBottom: '16px', color: 'var(--admin-accent-text)' }}>ENGLISH CONTENT</h4>
                     <div style={{ display: 'grid', gap: '16px' }}>
                       <div>
                         <label className="admin-label">Product Name</label>
-                        <input className="admin-input" value={item.name} onChange={(e) => updateItem(item.id, 'name', e.target.value)} />
+                        <input className="admin-input" aria-label="Product name (English)" value={item.name} onChange={(e) => updateItem(item.id, 'name', e.target.value)} />
                       </div>
                       <div>
                         <label className="admin-label">Description (EN)</label>
-                        <textarea className="admin-input" style={{ height: '100px' }} value={item.descEn} onChange={(e) => updateItem(item.id, 'descEn', e.target.value)} />
+                        <textarea className="admin-input" aria-label="Description (English)" style={{ height: '100px' }} value={item.descEn} onChange={(e) => updateItem(item.id, 'descEn', e.target.value)} />
                       </div>
 
                       {/* Features (EN) */}
@@ -195,7 +195,7 @@ export default function ProductCatalogAdmin({ config }: { config: ProductCatalog
                             </div>
                           ))}
                           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                            <button onClick={() => updateItem(item.id, 'featuresEn', [...(item.featuresEn || []), ''])} style={{ fontSize: '0.8rem', color: 'var(--admin-accent)', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}>+ Add Custom Feature</button>
+                            <button onClick={() => updateItem(item.id, 'featuresEn', [...(item.featuresEn || []), ''])} style={{ fontSize: '0.8rem', color: 'var(--admin-accent-text)', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}>+ Add Custom Feature</button>
                             <span style={{ fontSize: '0.8rem', color: '#CBD5E1' }}>|</span>
                             <select
                               onChange={(e) => {
@@ -241,7 +241,7 @@ export default function ProductCatalogAdmin({ config }: { config: ProductCatalog
                               }} aria-label="Remove specification" style={{ color: '#EF4444', background: 'none', border: 'none', cursor: 'pointer' }}><Trash2 size={16} /></button>
                             </div>
                           ))}
-                          <button onClick={() => updateItem(item.id, 'specsEn', { ...(item.specsEn || {}), [`New Spec ${Date.now()}`]: '' })} style={{ fontSize: '0.8rem', color: 'var(--admin-accent)', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', width: 'fit-content' }}>+ Add Specification</button>
+                          <button onClick={() => updateItem(item.id, 'specsEn', { ...(item.specsEn || {}), [`New Spec ${Date.now()}`]: '' })} style={{ fontSize: '0.8rem', color: 'var(--admin-accent-text)', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', width: 'fit-content' }}>+ Add Specification</button>
                         </div>
                       </div>
                     </div>
@@ -249,15 +249,15 @@ export default function ProductCatalogAdmin({ config }: { config: ProductCatalog
 
                   {/* Arabic Info */}
                   <div style={{ direction: 'rtl' }}>
-                    <h4 style={{ fontSize: '0.9rem', fontWeight: 800, marginBottom: '16px', color: 'var(--admin-accent)', textAlign: 'right' }}>المحتوى العربي</h4>
+                    <h4 style={{ fontSize: '0.9rem', fontWeight: 800, marginBottom: '16px', color: 'var(--admin-accent-text)', textAlign: 'right' }}>المحتوى العربي</h4>
                     <div style={{ display: 'grid', gap: '16px' }}>
                       <div>
                         <label className="admin-label" style={{ textAlign: 'right', display: 'block' }}>اسم المنتج</label>
-                        <input className="admin-input" value={item.nameAr || item.name} onChange={(e) => updateItem(item.id, 'nameAr', e.target.value)} />
+                        <input className="admin-input" aria-label="Product name (Arabic)" value={item.nameAr || item.name} onChange={(e) => updateItem(item.id, 'nameAr', e.target.value)} />
                       </div>
                       <div>
                         <label className="admin-label" style={{ textAlign: 'right', display: 'block' }}>الوصف (AR)</label>
-                        <textarea className="admin-input" style={{ height: '100px', fontFamily: 'var(--font-ibm-plex-arabic), sans-serif' }} value={item.descAr} onChange={(e) => updateItem(item.id, 'descAr', e.target.value)} />
+                        <textarea className="admin-input" aria-label="Description (Arabic)" style={{ height: '100px', fontFamily: 'var(--font-ibm-plex-arabic), sans-serif' }} value={item.descAr} onChange={(e) => updateItem(item.id, 'descAr', e.target.value)} />
                       </div>
 
                       {/* Features (AR) */}
@@ -275,7 +275,7 @@ export default function ProductCatalogAdmin({ config }: { config: ProductCatalog
                             </div>
                           ))}
                           <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexDirection: 'row-reverse', marginLeft: 'auto' }}>
-                            <button onClick={() => updateItem(item.id, 'featuresAr', [...(item.featuresAr || []), ''])} style={{ fontSize: '0.8rem', color: 'var(--admin-accent)', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'right' }}>+ إضافة ميزة يدوياً</button>
+                            <button onClick={() => updateItem(item.id, 'featuresAr', [...(item.featuresAr || []), ''])} style={{ fontSize: '0.8rem', color: 'var(--admin-accent-text)', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'right' }}>+ إضافة ميزة يدوياً</button>
                             <span style={{ fontSize: '0.8rem', color: '#CBD5E1' }}>|</span>
                             <select
                               onChange={(e) => {
@@ -322,7 +322,7 @@ export default function ProductCatalogAdmin({ config }: { config: ProductCatalog
                               }} aria-label="حذف المواصفة" style={{ color: '#EF4444', background: 'none', border: 'none', cursor: 'pointer' }}><Trash2 size={16} /></button>
                             </div>
                           ))}
-                          <button onClick={() => updateItem(item.id, 'specsAr', { ...(item.specsAr || {}), [`خاصية جديدة ${Date.now()}`]: '' })} style={{ fontSize: '0.8rem', color: 'var(--admin-accent)', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'right', width: 'fit-content', marginLeft: 'auto' }}>+ إضافة مواصفة</button>
+                          <button onClick={() => updateItem(item.id, 'specsAr', { ...(item.specsAr || {}), [`خاصية جديدة ${Date.now()}`]: '' })} style={{ fontSize: '0.8rem', color: 'var(--admin-accent-text)', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'right', width: 'fit-content', marginLeft: 'auto' }}>+ إضافة مواصفة</button>
                         </div>
                       </div>
                     </div>

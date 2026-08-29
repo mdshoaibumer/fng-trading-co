@@ -145,11 +145,11 @@ export default function ContactPageClient({ email }: { email?: string }) {
             position: 'relative'
           }}>
             {status === 'success' ? (
-              <div style={{ textAlign: 'center', padding: '60px 0', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <div role="status" style={{ textAlign: 'center', padding: '60px 0', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 <div style={{ fontSize: '3rem', marginBottom: '24px', display: 'flex', justifyContent: 'center' }}>
                   <CheckCircle2 size={64} color="var(--accent)" strokeWidth={1.5} />
                 </div>
-                <h3 style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px' }}>Request Received</h3>
+                <h3 style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px' }}>{isAr ? 'تم استلام طلبك' : 'Request Received'}</h3>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', lineHeight: 1.6 }}>{t('form.success')}</p>
               </div>
             ) : (
@@ -162,8 +162,8 @@ export default function ContactPageClient({ email }: { email?: string }) {
                   style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0, opacity: 0 }}
                   value={form.website}
                   onChange={e => setForm(f => ({ ...f, website: e.target.value }))} />
-                <h3 style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '8px' }}>Send a Message</h3>
-                <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>Fill out the form below and we will get back to you shortly.</p>
+                <h3 style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '8px' }}>{isAr ? 'أرسل رسالة' : 'Send a Message'}</h3>
+                <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>{isAr ? 'املأ النموذج أدناه وسنعاود التواصل معك قريباً.' : 'Fill out the form below and we will get back to you shortly.'}</p>
                 
                 <div className="form-row" style={{ gap: '20px' }}>
                   <div>

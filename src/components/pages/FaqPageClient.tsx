@@ -49,10 +49,12 @@ export default function FaqPageClient() {
                 transition: 'all 300ms ease'
               }}
             >
-              <button 
+              <button
                 onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                style={{ 
-                  width: '100%', 
+                aria-expanded={openIndex === i}
+                aria-controls={`faq-answer-${i}`}
+                style={{
+                  width: '100%',
                   padding: 'clamp(16px, 4vw, 24px) clamp(20px, 4vw, 32px)', 
                   display: 'flex', 
                   alignItems: 'center', 
@@ -83,7 +85,10 @@ export default function FaqPageClient() {
                 </div>
               </button>
               
-              <div style={{ 
+              <div
+                id={`faq-answer-${i}`}
+                role="region"
+                style={{
                 maxHeight: openIndex === i ? '500px' : '0',
                 opacity: openIndex === i ? 1 : 0,
                 transition: 'all 300ms ease',

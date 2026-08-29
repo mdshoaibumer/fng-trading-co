@@ -24,11 +24,6 @@ export default function LoadingState({ size = 40, color = 'var(--accent)', paddi
           animation: 'ui-loading-spin 1s linear infinite',
         }}
       />
-      <style jsx>{`
-        @keyframes ui-loading-spin {
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
     </div>
   );
 }

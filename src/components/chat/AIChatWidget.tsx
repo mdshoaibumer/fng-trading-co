@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
+import { useParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageSquare, X, Send, Bot, Loader2 } from 'lucide-react';
 
@@ -10,13 +11,32 @@ interface Message {
 }
 
 export default function AIChatWidget({ welcomeMessage }: { welcomeMessage?: string }) {
+  const params = useParams();
+  const isAr = params?.locale === 'ar';
+  const copy = {
+    open: isAr ? 'افتح المحادثة' : 'Open chat',
+    close: isAr ? 'إغلاق المحادثة' : 'Close chat',
+    assistant: isAr ? 'مساعد FNG الذكي' : 'FNG AI Assistant',
+    typing: isAr ? 'نيكسيا تكتب...' : 'Nexia is typing...',
+    placeholder: isAr ? 'اكتب رسالة...' : 'Type a message...',
+    send: isAr ? 'إرسال' : 'Send message',
+    welcomeDefault: isAr
+      ? 'مرحباً! أنا نيكسيا، مساعد FNG. كيف يمكنني مساعدتك في اختيار الطابعة أو الحبر المناسب اليوم؟'
+      : 'Hi! I am Nexia, your FNG Assistant. How can I help you find the right printer or eco-ink today?',
+    connError: isAr
+      ? 'عذراً، أواجه مشكلة في الاتصال حالياً. حاول مرة أخرى لاحقاً أو تواصل معنا عبر واتساب!'
+      : 'Sorry, I am having trouble connecting right now. Please try again later or contact us on WhatsApp!',
+    netError: isAr ? 'حدث خطأ في الشبكة. يرجى المحاولة مرة أخرى.' : 'I encountered a network error. Please try again.',
+  };
+
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', content: welcomeMessage?.trim() || 'Hi! I am Nexia, your FNG Assistant. How can I help you find the right printer or eco-ink today?' }
+    { role: 'assistant', content: welcomeMessage?.trim() || copy.welcomeDefault }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -25,6 +45,18 @@ export default function AIChatWidget({ welcomeMessage }: { welcomeMessage?: stri
   useEffect(() => {
     scrollToBottom();
   }, [messages, isLoading]);
+
+  // Move focus into the panel on open, and close on Escape (non-modal dialog
+  // semantics — the rest of the page stays interactive).
+  useEffect(() => {
+    if (!isOpen) return;
+    inputRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isOpen]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,17 +84,11 @@ export default function AIChatWidget({ welcomeMessage }: { welcomeMessage?: stri
         }]);
       } else {
         console.error('Chat error data:', data);
-        setMessages(prev => [...prev, { 
-          role: 'assistant', 
-          content: 'Sorry, I am having trouble connecting right now. Please try again later or contact us on WhatsApp!' 
-        }]);
+        setMessages(prev => [...prev, { role: 'assistant', content: copy.connError }]);
       }
     } catch (err) {
       console.error('Chat error:', err);
-      setMessages(prev => [...prev, { 
-        role: 'assistant', 
-        content: 'I encountered a network error. Please try again.' 
-      }]);
+      setMessages(prev => [...prev, { role: 'assistant', content: copy.netError }]);
     } finally {
       setIsLoading(false);
     }
@@ -79,7 +105,7 @@ export default function AIChatWidget({ welcomeMessage }: { welcomeMessage?: stri
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: isOpen ? 0 : 1, y: isOpen ? 20 : 0 }}
         style={{ pointerEvents: isOpen ? 'none' : 'auto' }}
-        aria-label="Open chat"
+        aria-label={copy.open}
         aria-hidden={isOpen}
         tabIndex={isOpen ? -1 : 0}
       >
@@ -95,7 +121,11 @@ export default function AIChatWidget({ welcomeMessage }: { welcomeMessage?: stri
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
             className="fixed bottom-6 left-6 w-[350px] h-[500px] bg-white rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden border border-slate-100"
-            style={{ 
+            role="dialog"
+            aria-modal="false"
+            aria-label="Nexia — FNG AI Assistant"
+            dir={isAr ? 'rtl' : 'ltr'}
+            style={{
               boxShadow: '0 20px 40px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.05)'
             }}
           >
@@ -108,12 +138,12 @@ export default function AIChatWidget({ welcomeMessage }: { welcomeMessage?: stri
                 <div>
                   {/* Changed to div to prevent globals.css h3 overriding the size */}
                   <div className="font-bold text-white m-0 leading-tight" style={{ fontSize: '16px' }}>Nexia</div>
-                  <p className="text-xs text-slate-400 m-0">FNG AI Assistant</p>
+                  <p className="text-xs text-slate-400 m-0">{copy.assistant}</p>
                 </div>
               </div>
               <button
                 onClick={() => setIsOpen(false)}
-                aria-label="Close chat"
+                aria-label={copy.close}
                 className="text-slate-400 hover:text-white transition-colors"
               >
                 <X size={20} />
@@ -121,7 +151,7 @@ export default function AIChatWidget({ welcomeMessage }: { welcomeMessage?: stri
             </div>
 
             {/* Messages Area - Added explicit inline padding to override any CSS issues */}
-            <div className="flex-1 overflow-y-auto bg-slate-50" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div className="flex-1 overflow-y-auto bg-slate-50" aria-live="polite" aria-atomic="false" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {messages.map((msg, idx) => (
                 <motion.div 
                   key={idx}
@@ -147,7 +177,7 @@ export default function AIChatWidget({ welcomeMessage }: { welcomeMessage?: stri
                 >
                   <div className="bg-white p-3 rounded-2xl rounded-tl-sm shadow-sm border border-slate-100 flex items-center gap-2" style={{ padding: '12px' }}>
                     <Loader2 size={16} className="animate-spin text-[var(--accent)]" />
-                    <span className="text-xs text-slate-500 m-0">Nexia is typing...</span>
+                    <span className="text-xs text-slate-500 m-0">{copy.typing}</span>
                   </div>
                 </motion.div>
               )}
@@ -158,17 +188,19 @@ export default function AIChatWidget({ welcomeMessage }: { welcomeMessage?: stri
             <form onSubmit={handleSubmit} className="bg-white border-t border-slate-100" style={{ padding: '12px' }}>
               <div className="relative flex items-center">
                 <input
+                  ref={inputRef}
                   type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="Type a message..."
+                  placeholder={copy.placeholder}
+                  aria-label={copy.placeholder}
                   className="w-full bg-slate-50 border border-slate-200 rounded-full focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] text-slate-800 transition-all"
                   style={{ padding: '12px 48px 12px 16px', fontSize: '14px' }}
                 />
                 <button
                   type="submit"
                   disabled={!input.trim() || isLoading}
-                  aria-label="Send message"
+                  aria-label={copy.send}
                   className="absolute right-2 w-8 h-8 flex items-center justify-center bg-[var(--accent)] text-white rounded-full hover:bg-[#7aa02a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <Send size={14} style={{ marginLeft: '2px' }} />

@@ -8,6 +8,10 @@
 :root {
   --admin-accent: #8DB833;
   --admin-accent-hover: #7DA62D;
+  /* Darker green for accent-colored TEXT on light admin surfaces. #8DB833 as
+     text on white is only ~2.3:1 (fails WCAG AA); this clears 4.5:1 while
+     staying on-brand. Use --admin-accent for fills/borders, this for text. */
+  --admin-accent-text: #5C7A1E;
   --admin-ink: #0F172A;
   --admin-light: #F8FAFC;
   --admin-text: #1E293B;

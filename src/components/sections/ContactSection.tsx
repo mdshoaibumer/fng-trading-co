@@ -67,7 +67,7 @@ export default function ContactSection() {
           {/* Right */}
           <div className="glass-dark" style={{ padding: 'clamp(24px, 5vw, 40px) clamp(20px, 4vw, 32px)' }}>
             {status === 'success' ? (
-              <div style={{ textAlign: 'center', padding: '40px 0' }}>
+              <div role="status" style={{ textAlign: 'center', padding: '40px 0' }}>
                 <div style={{ fontSize: '3rem', marginBottom: '16px', display: 'flex', justifyContent: 'center' }}>
                   <CheckCircle2 size={48} color="var(--accent)" strokeWidth={1.5} />
                 </div>
@@ -118,7 +118,7 @@ export default function ContactSection() {
                   disabled={status === 'loading'}>
                   {status === 'loading' ? '...' : t('form.submit')}
                 </button>
-                {status === 'error' && <p style={{ color: '#C0392B', fontSize: '0.85rem', textAlign: 'center' }}>{t('form.error')}</p>}
+                {status === 'error' && <p role="alert" style={{ color: '#C0392B', fontSize: '0.85rem', textAlign: 'center' }}>{t('form.error')}</p>}
               </form>
             )}
           </div>

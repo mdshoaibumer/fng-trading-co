@@ -44,6 +44,8 @@ export default function AvailabilityToggle({
       </span>
       <button
         onClick={onToggle}
+        aria-pressed={available}
+        aria-label={`${toggleLabel} — ${available ? availableLabel : unavailableLabel}`}
         style={{ background: 'none', border: 'none', color: '#475569', cursor: 'pointer', fontWeight: 700, fontSize: '0.75rem', textDecoration: 'underline', flexShrink: size === 'sm' ? 0 : undefined }}
       >
         {toggleLabel}

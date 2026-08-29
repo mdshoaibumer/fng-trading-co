@@ -103,9 +103,9 @@ export default async function EquipmentProductPage({
     'offers': {
       '@type': 'Offer',
       'url': `${websiteUrl}/${locale}/equipment/${id}`,
+      // Quote-based pricing — no public price. A literal 0.00 renders as "Free"
+      // in rich results, so price/priceValidUntil are intentionally omitted.
       'priceCurrency': 'SAR',
-      'price': '0.00',
-      'priceValidUntil': '2030-12-31',
       'itemCondition': 'https://schema.org/RefurbishedCondition',
       'availability': equipment.available 
         ? 'https://schema.org/InStock' 

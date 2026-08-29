@@ -167,6 +167,7 @@ export default function AdminLeadsPage() {
           <Search size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#64748B' }} />
           <input
             type="text"
+            aria-label="Search leads by name, email, phone, or company"
             placeholder="Search by name, email, phone, or company..."
             className="admin-input"
             style={{ paddingLeft: '48px', width: '100%' }}
@@ -178,6 +179,7 @@ export default function AdminLeadsPage() {
           <Filter size={16} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#64748B', pointerEvents: 'none' }} />
           <select
             className="admin-input"
+            aria-label="Filter leads by status"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             style={{ paddingLeft: '40px', paddingRight: '40px', minWidth: '160px', cursor: 'pointer', appearance: 'none' }}
@@ -271,6 +273,7 @@ export default function AdminLeadsPage() {
                     {/* Status Dropdown */}
                     <div style={{ position: 'relative' }}>
                       <select
+                        aria-label="Update lead status"
                         value={lead.status || 'new'}
                         onChange={(e) => updateStatus(lead.id, e.target.value)}
                         style={{
