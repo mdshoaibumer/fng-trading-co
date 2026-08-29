@@ -67,6 +67,41 @@ describe('globalRateLimit', () => {
   });
 });
 
+describe('rateLimit peek/consume (consume flag)', () => {
+  it('does not consume an attempt when consume=false', () => {
+    const key = uniqueKey('peek');
+    // Peek many times without consuming — should never trip the limit.
+    for (let i = 0; i < 20; i++) {
+      expect(rateLimit(key, 3, 60_000, false).allowed).toBe(true);
+    }
+    // The bucket was never created, so 3 real attempts still all pass.
+    for (let i = 0; i < 3; i++) {
+      expect(rateLimit(key, 3, 60_000, true).allowed).toBe(true);
+    }
+    expect(rateLimit(key, 3, 60_000, true).allowed).toBe(false);
+  });
+
+  it('peek reports blocked once the limit is reached via consumed attempts', () => {
+    const key = uniqueKey('peek-block');
+    for (let i = 0; i < 3; i++) rateLimit(key, 3, 60_000, true);
+    // Peek should now report blocked without consuming further.
+    expect(rateLimit(key, 3, 60_000, false).allowed).toBe(false);
+    expect(rateLimit(key, 3, 60_000, false).allowed).toBe(false);
+  });
+
+  it('models the login "count only failures" flow', () => {
+    const key = uniqueKey('login');
+    const peek = () => globalRateLimit(key, 2, 60_000, false).allowed;
+    const recordFailure = () => globalRateLimit(key, 2, 60_000, true);
+    // Successful logins peek but never consume — unlimited.
+    for (let i = 0; i < 10; i++) expect(peek()).toBe(true);
+    // Two failures consume the cap; the third peek is blocked.
+    recordFailure();
+    recordFailure();
+    expect(peek()).toBe(false);
+  });
+});
+
 describe('getClientIp', () => {
   it('reads the first IP from a comma-separated X-Forwarded-For header', () => {
     const req = new Request('https://example.com', {
