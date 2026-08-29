@@ -45,6 +45,14 @@ export async function POST(request: Request) {
       });
     });
 
+    // An empty payload almost always means the client saved before parts
+    // finished loading (a failed GET leaves an empty object). Never wipe every
+    // part on it — bail out as a no-op. (insert([]) semantics vary across
+    // PostgREST versions, so this also avoids the "id not in (0)" delete-all.)
+    if (flattened.length === 0) {
+      return NextResponse.json({ success: true, skipped: 'empty payload' });
+    }
+
     // Insert the new rows first, then delete the old ones — if the insert
     // fails partway through, the table still has the previous data instead
     // of being left empty (the old delete-then-insert order could do that).

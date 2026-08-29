@@ -25,10 +25,10 @@ export function generateStaticParams() {
 import type { Metadata, Viewport } from 'next';
 
 export const viewport: Viewport = {
-  themeColor: 'var(--primary)',
+  themeColor: '#1A3D2B',
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
+  // No maximumScale/userScalable cap — blocking pinch-zoom fails WCAG 1.4.4.
 };
 
 export async function generateMetadata({
@@ -58,6 +58,15 @@ export async function generateMetadata({
       description: t('description'),
       locale: locale === 'ar' ? 'ar_SA' : 'en_US',
       type: 'website',
+      url: `${SITE_URL}/${locale}`,
+      siteName: 'Future Next Gen',
+      images: [{ url: '/FNG_LOGO.png', width: 1200, height: 630, alt: 'Future Next Gen' }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: t('title'),
+      description: t('description'),
+      images: ['/FNG_LOGO.png'],
     },
   };
 }
@@ -93,8 +102,11 @@ export default async function LocaleLayout({
       </head>
       <body suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>
+          <a href="#main-content" className="skip-link">
+            {isRTL(locale) ? 'تخطَّ إلى المحتوى' : 'Skip to content'}
+          </a>
           <Navbar />
-          {children}
+          <div id="main-content">{children}</div>
           <Footer email={settings.contact?.email} />
           <WhatsAppButton whatsapp={settings.contact?.whatsapp} />
           <ChatWidgetLoader welcomeMessage={settings.ai_settings?.welcome_message} />

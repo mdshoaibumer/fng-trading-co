@@ -36,6 +36,21 @@ const csp = [
 ].join('; ');
 
 const nextConfig: NextConfig = {
+  // Self-contained server output for a small, production-only Docker image
+  // (see the multi-stage Dockerfile) instead of shipping the full source tree
+  // and devDependencies.
+  output: 'standalone',
+  // Product images uploaded via the admin panel are stored in Supabase Storage
+  // and served from *.supabase.co; next/image refuses remote hosts that aren't
+  // allowlisted here (matches the CSP img-src). Without this, admin-uploaded
+  // images fail to render on the public site.
+  images: {
+    remotePatterns: [{ protocol: 'https', hostname: '*.supabase.co' }],
+  },
+  // Drop console.* from client bundles in production (keep warn/error).
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production' ? { exclude: ['error', 'warn'] } : false,
+  },
   async headers() {
     return [
       {

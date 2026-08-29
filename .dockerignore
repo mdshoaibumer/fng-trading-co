@@ -2,5 +2,9 @@ node_modules
 .next
 .git
 npm-debug.log
-# Keep real secrets out of the image; runtime values come from --env-file.
-.env.local
+# Keep ALL real secrets out of the image; runtime values come from --env-file.
+# (Previously only .env.local was excluded, so .env.development.local — which
+# holds the service-role key, session secret, and OpenRouter key — was baked
+# into an image layer.)
+.env*
+!.env.example

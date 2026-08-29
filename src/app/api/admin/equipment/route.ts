@@ -38,6 +38,17 @@ export async function POST(request: Request) {
   try {
     const equipment: Product[] = await request.json();
 
+    if (!Array.isArray(equipment)) {
+      return NextResponse.json({ error: 'Expected an array of equipment' }, { status: 400 });
+    }
+
+    // An empty payload almost always means the client saved before the catalog
+    // finished loading (a failed GET leaves the list empty). Never mass-delete
+    // the catalog on it — bail out as a no-op rather than wiping every row.
+    if (equipment.length === 0) {
+      return NextResponse.json({ success: true, skipped: 'empty payload' });
+    }
+
     // Map back to snake_case for Supabase
     const formatted = equipment.map((p) => ({
       id: p.id,
@@ -52,10 +63,14 @@ export async function POST(request: Request) {
       available: p.available
     }));
 
+    // Upsert FIRST, then delete removed rows — if the upsert fails, the old
+    // rows are still intact instead of being deleted against a failed write.
+    const { error: upsertError } = await supabaseAdmin.from('printers').upsert(formatted);
+    if (upsertError) throw upsertError;
+
     // Delete equipment that were removed from the UI. Do not delete printer IDs.
     const { data: existing } = await supabaseAdmin.from('printers').select('id');
-    const existingIds = existing?.map(e => e.id) || [];
-    const existingEquipmentIds = existingIds.filter(id => id.startsWith('eq-'));
+    const existingEquipmentIds = (existing?.map(e => e.id) || []).filter(id => id.startsWith('eq-'));
     const newIds = formatted.map((p) => p.id);
     const idsToDelete = existingEquipmentIds.filter(id => !newIds.includes(id));
 
@@ -64,11 +79,6 @@ export async function POST(request: Request) {
       if (deleteError) throw deleteError;
     }
 
-    const { error } = await supabaseAdmin
-      .from('printers')
-      .upsert(formatted);
-
-    if (error) throw error;
     revalidatePublicSite();
     return NextResponse.json({ success: true });
   } catch (error) {
