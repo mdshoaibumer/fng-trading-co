@@ -9,7 +9,7 @@ const contactSchema = z.object({
   phone: z.string().min(5),
   city: z.string().optional(),
   quantity: z.string().optional(),
-  email: z.string().optional().or(z.string().length(0)),
+  email: z.union([z.string().email(), z.literal('')]).optional(),
   industry: z.string().optional(),
   message: z.string().optional(),
   // Honeypot: a field real visitors never see or fill, styled off-screen

@@ -45,7 +45,7 @@ const config: ProductCatalogConfig = {
   presetFeaturesEn: COMMON_FEATURES_EN,
   presetFeaturesAr: COMMON_FEATURES_AR,
   makeNewItem: () => ({
-    id: `eq-${Date.now()}`,
+    id: `eq-${crypto.randomUUID()}`,
     name: 'New Office Equipment',
     descEn: 'Product description goes here...',
     descAr: 'وصف المنتج هنا...',

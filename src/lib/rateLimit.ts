@@ -14,27 +14,39 @@ function sweepExpired(now: number) {
   for (const [key, bucket] of buckets) {
     if (now > bucket.resetAt) buckets.delete(key);
   }
+  // If still at the cap after freeing expired buckets — e.g. an attacker
+  // rotating X-Forwarded-For creates thousands of live buckets within one
+  // window — evict oldest-first (Map preserves insertion order) so memory
+  // can't grow without bound.
+  while (buckets.size >= MAX_TRACKED_KEYS) {
+    const oldest = buckets.keys().next().value;
+    if (oldest === undefined) break;
+    buckets.delete(oldest);
+  }
 }
 
 export function rateLimit(
   key: string,
   limit: number,
-  windowMs: number
+  windowMs: number,
+  /** When false, only checks the current count without consuming an attempt. */
+  consume: boolean = true
 ): { allowed: boolean; retryAfterSeconds?: number } {
   const now = Date.now();
   sweepExpired(now);
 
   const bucket = buckets.get(key);
-  if (!bucket || now > bucket.resetAt) {
-    buckets.set(key, { count: 1, resetAt: now + windowMs });
-    return { allowed: true };
+  const active = bucket && now <= bucket.resetAt ? bucket : undefined;
+  const count = active ? active.count : 0;
+
+  if (count >= limit) {
+    return { allowed: false, retryAfterSeconds: Math.ceil(((active?.resetAt ?? now) - now) / 1000) };
   }
 
-  if (bucket.count >= limit) {
-    return { allowed: false, retryAfterSeconds: Math.ceil((bucket.resetAt - now) / 1000) };
+  if (consume) {
+    if (active) active.count++;
+    else buckets.set(key, { count: 1, resetAt: now + windowMs });
   }
-
-  bucket.count++;
   return { allowed: true };
 }
 
@@ -55,9 +67,10 @@ export function getClientIp(request: Request): string {
 export function globalRateLimit(
   key: string,
   limit: number,
-  windowMs: number
+  windowMs: number,
+  consume: boolean = true
 ): { allowed: boolean; retryAfterSeconds?: number } {
-  return rateLimit(`global:${key}`, limit, windowMs);
+  return rateLimit(`global:${key}`, limit, windowMs, consume);
 }
 
 export function tooManyRequests(retryAfterSeconds?: number) {

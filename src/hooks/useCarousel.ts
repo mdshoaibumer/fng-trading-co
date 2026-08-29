@@ -14,6 +14,14 @@ export function useCarousel({ length, autoplayMs, lazyMount = false }: UseCarous
   const [current, setCurrent] = useState(0);
   const [loadedIndices, setLoadedIndices] = useState<Set<number>>(() => new Set([0]));
 
+  // Re-clamp during render (React's recommended "adjust state when a prop
+  // changes" pattern) if the slide count shrinks below the current index —
+  // otherwise a direct render of items[current] would be undefined until the
+  // user navigates. Guarded, so it converges in one extra render.
+  if (length > 0 && current >= length) {
+    setCurrent(length - 1);
+  }
+
   const goTo = useCallback((idx: number) => {
     setCurrent(idx);
     if (lazyMount) {

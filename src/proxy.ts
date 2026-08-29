@@ -21,13 +21,28 @@ function publicUrl(pathname: string, request: NextRequest) {
     return new URL(pathname, configuredSiteUrl);
   }
 
+  // Fall back to the request's own resolved origin rather than trusting a
+  // client-supplied X-Forwarded-Host, which could otherwise steer these
+  // redirects to an attacker host. Production should always set
+  // NEXT_PUBLIC_SITE_URL (above) to make the target explicit.
   const url = request.nextUrl.clone();
-  url.protocol = 'https:';
-  url.host = request.headers.get('x-forwarded-host') || request.headers.get('host') || url.host;
-  url.port = '';
   url.pathname = pathname;
   url.search = '';
   return url;
+}
+
+// Same-origin check for state-changing admin API requests. Browsers always
+// send Origin on cross-origin POST/PATCH/DELETE; combined with the session
+// cookie's SameSite=Lax, this is defense-in-depth against CSRF.
+function isSameOrigin(request: NextRequest): boolean {
+  const origin = request.headers.get('origin');
+  if (!origin) return false;
+  const host = request.headers.get('x-forwarded-host') || request.headers.get('host');
+  try {
+    return new URL(origin).host === host;
+  } catch {
+    return false;
+  }
 }
 
 // The Content-Security-Policy is set in next.config.ts, not here. It used to
@@ -44,6 +59,17 @@ export default async function proxy(request: NextRequest) {
 
   // 1. Handle Admin Security
   if (pathname.startsWith('/admin') || pathname.startsWith('/api/admin')) {
+    // CSRF defense-in-depth: any state-changing admin API request (including
+    // login) must originate from our own site.
+    if (
+      pathname.startsWith('/api/admin') &&
+      request.method !== 'GET' &&
+      request.method !== 'HEAD' &&
+      !isSameOrigin(request)
+    ) {
+      return NextResponse.json({ error: 'Invalid origin' }, { status: 403 });
+    }
+
     // Exclude auth endpoints and login page
     if (pathname === '/admin/login' || pathname.startsWith('/api/admin/auth')) {
       return NextResponse.next();

@@ -1,6 +1,20 @@
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 import { getSettings } from '@/lib/supabase';
 import { rateLimit, globalRateLimit, getClientIp, tooManyRequests } from '@/lib/rateLimit';
+
+// Bound the payload forwarded to the paid LLM: whitelist roles, cap message
+// length and count so the endpoint can't be abused as a free LLM proxy on our
+// key with arbitrary injected conversation turns.
+const messagesSchema = z
+  .array(
+    z.object({
+      role: z.enum(['user', 'assistant', 'system']),
+      content: z.string().max(4000),
+    })
+  )
+  .min(1)
+  .max(30);
 
 const SYSTEM_PROMPT = `You are Nexia, the official AI assistant for Future Next Gen (FNG).
 FNG specializes in providing premium refurbished HP enterprise printers, high-quality eco-friendly inks, and printer parts to businesses. FNG is based in Saudi Arabia (HQ in Riyadh, serving Jeddah, Dammam, and Al Madinah) with a branch in Dubai, UAE.
@@ -24,11 +38,12 @@ export async function POST(req: Request) {
     const global = globalRateLimit('chat', 100, 5 * 60 * 1000);
     if (!global.allowed) return tooManyRequests(global.retryAfterSeconds);
 
-    const { messages } = await req.json();
-
-    if (!messages || !Array.isArray(messages)) {
+    const body = await req.json();
+    const parsed = messagesSchema.safeParse(body?.messages);
+    if (!parsed.success) {
       return NextResponse.json({ error: 'Invalid messages array' }, { status: 400 });
     }
+    const messages = parsed.data;
 
     const apiKey = process.env.OPENROUTER_API_KEY;
 

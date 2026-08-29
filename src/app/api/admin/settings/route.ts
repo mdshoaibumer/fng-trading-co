@@ -11,11 +11,15 @@ export async function GET() {
 
     if (error) throw error;
 
-    // Convert array back to object
+    // Allowlist (not denylist) the keys this endpoint returns. It's reachable
+    // unauthenticated (PUBLIC_GET_ROUTES in proxy.ts) and is what the admin
+    // Settings UI loads to edit, so it must expose exactly the editable config
+    // keys and nothing else — this way any future secret ever stored in
+    // `settings` (e.g. a third-party API key) can never auto-leak.
+    const PUBLIC_KEYS = new Set(['contact', 'ai_settings', 'social_media', 'videos', 'seo']);
     const result: Record<string, unknown> = {};
     data.forEach(item => {
-      // Don't send the password back to the frontend for security!
-      if (item.key !== 'admin_password') {
+      if (PUBLIC_KEYS.has(item.key)) {
         result[item.key] = item.value;
       }
     });
@@ -31,8 +35,9 @@ export async function POST(request: Request) {
   try {
     const settings = await request.json();
     
-    // Filter out empty password
-    if (settings.admin_password === '') {
+    // Filter out an empty/whitespace-only password ("leave blank to keep
+    // current"). Only a real, non-blank value replaces the credential.
+    if (typeof settings.admin_password === 'string' && settings.admin_password.trim() === '') {
       delete settings.admin_password;
     } else if (typeof settings.admin_password === 'string') {
       settings.admin_password = await hashPassword(settings.admin_password);

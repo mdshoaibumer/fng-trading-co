@@ -45,7 +45,7 @@ const config: ProductCatalogConfig = {
   presetFeaturesEn: COMMON_FEATURES_EN,
   presetFeaturesAr: COMMON_FEATURES_AR,
   makeNewItem: () => ({
-    id: `hp-${Date.now()}`,
+    id: `hp-${crypto.randomUUID()}`,
     name: 'New HP Printer',
     descEn: 'Product description goes here...',
     descAr: 'وصف المنتج هنا...',

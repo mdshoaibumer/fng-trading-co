@@ -2,7 +2,10 @@
 // so the same code runs in both the Edge middleware and Node route handlers.
 
 const SESSION_MAX_AGE_MS = 60 * 60 * 24 * 7 * 1000; // 7 days
-const PBKDF2_ITERATIONS = 100_000;
+// OWASP (2023) recommends >= 600k for PBKDF2-HMAC-SHA256. Each hash stores its
+// own iteration count (`pbkdf2$<iterations>$...`), so existing hashes keep
+// verifying and upgrade to this count the next time the password is set.
+const PBKDF2_ITERATIONS = 600_000;
 
 function toBase64Url(bytes: Uint8Array<ArrayBuffer>): string {
   let binary = '';

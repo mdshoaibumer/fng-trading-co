@@ -13,7 +13,11 @@ export async function POST(request: Request) {
     const perIp = rateLimit(`login:${getClientIp(request)}`, 5, 5 * 60 * 1000);
     if (!perIp.allowed) return tooManyRequests(perIp.retryAfterSeconds);
 
-    const global = globalRateLimit('login', 20, 15 * 60 * 1000);
+    // Peek the global cap WITHOUT consuming — only *failed* attempts count
+    // toward it (incremented below). This still hard-stops a spoofed-IP
+    // brute-force run, but stops an attacker from locking out the legitimate
+    // admin purely by hammering the endpoint with valid-looking requests.
+    const global = globalRateLimit('login', 50, 15 * 60 * 1000, false);
     if (!global.allowed) return tooManyRequests(global.retryAfterSeconds);
 
     const body = await request.json();
@@ -36,6 +40,8 @@ export async function POST(request: Request) {
     const { valid, isLegacyPlaintext } = await verifyPassword(password, storedPassword);
 
     if (!valid) {
+      // Consume a global attempt only on failure.
+      globalRateLimit('login', 50, 15 * 60 * 1000, true);
       return NextResponse.json({ error: 'Invalid password' }, { status: 401 });
     }
 

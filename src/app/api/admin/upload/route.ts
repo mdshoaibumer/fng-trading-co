@@ -4,6 +4,14 @@ import { ALLOWED_IMAGE_TYPES as ALLOWED_TYPES, MAX_UPLOAD_SIZE as MAX_FILE_SIZE,
 
 export async function POST(request: Request) {
   try {
+    // Reject oversized bodies before buffering the whole multipart payload
+    // into memory (formData() reads it all). The precise per-file check stays
+    // below; this is a cheap early guard against a memory-DoS upload.
+    const contentLength = Number(request.headers.get('content-length') || 0);
+    if (contentLength > MAX_FILE_SIZE + 1024 * 1024) {
+      return NextResponse.json({ error: 'File is too large. Maximum size is 8MB.' }, { status: 413 });
+    }
+
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
 

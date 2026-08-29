@@ -1,6 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
+import { cache } from 'react';
 import dotenv from 'dotenv';
 
+// Loads .env.local for the standalone `npx tsx` migrate CLI (which doesn't go
+// through Next's env loading). In the Next runtime this is a harmless no-op —
+// Next has already populated process.env, and the file isn't in the image.
 dotenv.config({ path: '.env.local' });
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
@@ -17,10 +21,16 @@ export const supabaseAdmin = supabaseServiceRoleKey
   ? createClient(supabaseUrl, supabaseServiceRoleKey)
   : supabase;
 
-export async function getSettings() {
+// cache() dedupes the fetch within a single server request — the layout and
+// the page both call getSettings(), and product pages call it several times.
+export const getSettings = cache(async () => {
   const { data } = await supabaseAdmin.from('settings').select('*');
   const settings: Record<string, unknown> = {};
   data?.forEach(item => {
+    // Never surface the admin password hash to callers. It's only read
+    // server-side, but stripping it here guarantees it can't leak into an RSC
+    // payload if the settings object is ever passed to a Client Component.
+    if (item.key === 'admin_password') return;
     settings[item.key] = item.value;
   });
   return settings as {
@@ -30,7 +40,7 @@ export async function getSettings() {
     social_media?: { facebook?: string; instagram?: string; linkedin?: string; twitter?: string };
     seo?: { title?: string; description?: string };
   };
-}
+});
 
 export interface PartEntry {
   nameEn: string;
@@ -61,7 +71,7 @@ export interface Product {
 // successful fetch that simply found zero matching rows — callers need to
 // tell "nothing to show" apart from "something broke" instead of collapsing
 // both into an empty array.
-export async function getProducts(kind: 'printer' | 'equipment'): Promise<{ products: Product[]; error: boolean }> {
+export const getProducts = cache(async (kind: 'printer' | 'equipment'): Promise<{ products: Product[]; error: boolean }> => {
   const { data, error } = await supabaseAdmin
     .from('printers')
     .select('*')
@@ -85,4 +95,4 @@ export async function getProducts(kind: 'printer' | 'equipment'): Promise<{ prod
     }));
 
   return { products, error: false };
-}
+});
