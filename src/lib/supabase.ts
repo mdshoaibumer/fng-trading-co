@@ -24,7 +24,7 @@ export async function getSettings() {
     settings[item.key] = item.value;
   });
   return settings as {
-    contact?: { whatsapp?: string; phone?: string };
+    contact?: { whatsapp?: string; phone?: string; email?: string };
     ai_settings?: { welcome_message?: string; system_prompt?: string };
     videos?: { divider1?: string; divider2?: string };
     social_media?: { facebook?: string; instagram?: string; linkedin?: string; twitter?: string };

@@ -95,7 +95,7 @@ export default async function LocaleLayout({
         <NextIntlClientProvider messages={messages}>
           <Navbar />
           {children}
-          <Footer />
+          <Footer email={settings.contact?.email} />
           <WhatsAppButton whatsapp={settings.contact?.whatsapp} />
           <ChatWidgetLoader welcomeMessage={settings.ai_settings?.welcome_message} />
         </NextIntlClientProvider>

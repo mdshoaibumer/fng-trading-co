@@ -104,7 +104,7 @@ export default async function HomePage({
     'image': `${websiteUrl}/FNG_LOGO.png`,
     'url': websiteUrl,
     'telephone': settings.contact?.phone || '+966-59-338-0390',
-    'email': SITE_EMAIL,
+    'email': settings.contact?.email || SITE_EMAIL,
     'address': {
       '@type': 'PostalAddress',
       'streetAddress': isAr ? 'طريق مكة المكرمة الفرعي، حي السليمانية' : 'Makkah Al Mukarramah Branch Rd, Al Sulaimaniyah',

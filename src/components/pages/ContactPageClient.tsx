@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { CheckCircle2, MapPin, Mail, Phone, Clock, ShieldCheck, Zap } from 'lucide-react';
 import { SITE_EMAIL } from '@/lib/siteContact';
 
-export default function ContactPageClient() {
+export default function ContactPageClient({ email }: { email?: string }) {
   const t = useTranslations('contact');
   const tp = useTranslations('contactPage');
   const params = useParams();
@@ -109,7 +109,7 @@ export default function ContactPageClient() {
                   </div>
                   <div>
                     <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '4px' }}>{tp('emailLabel')}</p>
-                    <p style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '1.1rem' }}>{SITE_EMAIL}</p>
+                    <p style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '1.1rem' }}>{email || SITE_EMAIL}</p>
                   </div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>

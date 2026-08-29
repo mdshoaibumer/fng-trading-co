@@ -7,7 +7,7 @@ import { MapPin, Globe, Mail } from 'lucide-react';
 import { gateHref } from './Navbar';
 import { SITE_EMAIL } from '@/lib/siteContact';
 
-export default function Footer() {
+export default function Footer({ email }: { email?: string }) {
   const t = useTranslations('footer');
   const params = useParams();
   const pathname = usePathname();
@@ -142,7 +142,7 @@ export default function Footer() {
                 <Globe size={16} color="var(--accent)" style={{ flexShrink: 0 }} /> www.fngtradingco.com
               </span>
               <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', wordBreak: 'break-all', flexDirection: isAr ? 'row-reverse' : 'row', textAlign: isAr ? 'right' : 'left' }}>
-                <Mail size={16} color="var(--accent)" style={{ flexShrink: 0 }} /> {SITE_EMAIL}
+                <Mail size={16} color="var(--accent)" style={{ flexShrink: 0 }} /> {email || SITE_EMAIL}
               </span>
             </div>
           </div>

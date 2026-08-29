@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { safeJsonLd } from '@/lib/safeJsonLd';
 import { buildAlternates } from '@/lib/metadata';
 import { SITE_EMAIL, SITE_URL } from '@/lib/siteContact';
+import { getSettings } from '@/lib/supabase';
 
 export async function generateMetadata({
   params,
@@ -30,6 +31,8 @@ export default async function PrivacyPolicyPage({
   setRequestLocale(locale);
 
   const t = await getTranslations({ locale, namespace: 'privacyPage' });
+  const settings = await getSettings();
+  const contactEmail = settings.contact?.email || SITE_EMAIL;
   const isAr = locale === 'ar';
   const websiteUrl = SITE_URL;
 
@@ -101,7 +104,7 @@ export default async function PrivacyPolicyPage({
             <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px' }}>
               {t('section4Title')}
             </h2>
-            <p>{t('section4Desc', { email: SITE_EMAIL })}</p>
+            <p>{t('section4Desc', { email: contactEmail })}</p>
           </div>
         </div>
 
