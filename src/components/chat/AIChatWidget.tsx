@@ -72,7 +72,7 @@ export default function AIChatWidget({ welcomeMessage }: { welcomeMessage?: stri
     <>
       {/* Floating Toggle Button - Moved to left to avoid WhatsApp overlap */}
       <motion.button
-        className="fixed bottom-6 left-6 w-14 h-14 rounded-full bg-[#8DB833] text-white flex items-center justify-center shadow-xl z-50 hover:bg-[#7aa02a] transition-colors"
+        className="fixed bottom-6 left-6 w-14 h-14 rounded-full bg-[var(--accent)] text-white flex items-center justify-center shadow-xl z-50 hover:bg-[#7aa02a] transition-colors"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(true)}
@@ -102,7 +102,7 @@ export default function AIChatWidget({ welcomeMessage }: { welcomeMessage?: stri
             {/* Header */}
             <div className="bg-slate-900 text-white p-4 flex items-center justify-between" style={{ padding: '16px' }}>
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-[#8DB833] flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full bg-[var(--accent)] flex items-center justify-center">
                   <Bot size={18} className="text-white" />
                 </div>
                 <div>
@@ -131,7 +131,7 @@ export default function AIChatWidget({ welcomeMessage }: { welcomeMessage?: stri
                 >
                   <div className={`rounded-2xl break-words shadow-sm ${
                     msg.role === 'user' 
-                      ? 'bg-[#8DB833] text-white rounded-tr-sm' 
+                      ? 'bg-[var(--accent)] text-white rounded-tr-sm' 
                       : 'bg-white text-slate-700 rounded-tl-sm border border-slate-100'
                   }`} style={{ padding: '12px', fontSize: '14px', maxWidth: '85%' }}>
                     {msg.content}
@@ -146,7 +146,7 @@ export default function AIChatWidget({ welcomeMessage }: { welcomeMessage?: stri
                   className="flex justify-start"
                 >
                   <div className="bg-white p-3 rounded-2xl rounded-tl-sm shadow-sm border border-slate-100 flex items-center gap-2" style={{ padding: '12px' }}>
-                    <Loader2 size={16} className="animate-spin text-[#8DB833]" />
+                    <Loader2 size={16} className="animate-spin text-[var(--accent)]" />
                     <span className="text-xs text-slate-500 m-0">Nexia is typing...</span>
                   </div>
                 </motion.div>
@@ -162,14 +162,14 @@ export default function AIChatWidget({ welcomeMessage }: { welcomeMessage?: stri
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Type a message..."
-                  className="w-full bg-slate-50 border border-slate-200 rounded-full focus:outline-none focus:border-[#8DB833] focus:ring-1 focus:ring-[#8DB833] text-slate-800 transition-all"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-full focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] text-slate-800 transition-all"
                   style={{ padding: '12px 48px 12px 16px', fontSize: '14px' }}
                 />
                 <button
                   type="submit"
                   disabled={!input.trim() || isLoading}
                   aria-label="Send message"
-                  className="absolute right-2 w-8 h-8 flex items-center justify-center bg-[#8DB833] text-white rounded-full hover:bg-[#7aa02a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="absolute right-2 w-8 h-8 flex items-center justify-center bg-[var(--accent)] text-white rounded-full hover:bg-[#7aa02a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <Send size={14} style={{ marginLeft: '2px' }} />
                 </button>

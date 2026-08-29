@@ -24,28 +24,28 @@ export default async function AboutPageClient({ locale }: { locale: string }) {
       <div className="container">
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '32px', marginBottom: '64px' }}>
           
-          <div style={{ background: '#fff', padding: '40px', borderRadius: '24px', border: '1px solid #EEEEEE', textAlign: isAr ? 'right' : 'left' }}>
+          <div style={{ background: '#fff', padding: '40px', borderRadius: '24px', border: '1px solid var(--light-grey)', textAlign: isAr ? 'right' : 'left' }}>
             <Target size={32} color="var(--accent)" style={{ marginBottom: '24px' }} />
             <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '16px' }}>{t('missionTitle')}</h3>
-            <p style={{ color: '#555', lineHeight: 1.7, fontSize: '1.05rem' }}>{t('missionDesc')}</p>
+            <p style={{ color: 'var(--text-secondary)', lineHeight: 1.7, fontSize: '1.05rem' }}>{t('missionDesc')}</p>
           </div>
 
-          <div style={{ background: '#fff', padding: '40px', borderRadius: '24px', border: '1px solid #EEEEEE', textAlign: isAr ? 'right' : 'left' }}>
+          <div style={{ background: '#fff', padding: '40px', borderRadius: '24px', border: '1px solid var(--light-grey)', textAlign: isAr ? 'right' : 'left' }}>
             <Eye size={32} color="var(--accent)" style={{ marginBottom: '24px' }} />
             <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '16px' }}>{t('visionTitle')}</h3>
-            <p style={{ color: '#555', lineHeight: 1.7, fontSize: '1.05rem' }}>{t('visionDesc')}</p>
+            <p style={{ color: 'var(--text-secondary)', lineHeight: 1.7, fontSize: '1.05rem' }}>{t('visionDesc')}</p>
           </div>
 
-          <div style={{ background: '#fff', padding: '40px', borderRadius: '24px', border: '1px solid #EEEEEE', textAlign: isAr ? 'right' : 'left' }}>
+          <div style={{ background: '#fff', padding: '40px', borderRadius: '24px', border: '1px solid var(--light-grey)', textAlign: isAr ? 'right' : 'left' }}>
             <ShieldCheck size={32} color="var(--accent)" style={{ marginBottom: '24px' }} />
             <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '16px' }}>{t('leadershipTitle')}</h3>
-            <p style={{ color: '#555', lineHeight: 1.7, fontSize: '1.05rem' }}>{t('leadershipDesc')}</p>
+            <p style={{ color: 'var(--text-secondary)', lineHeight: 1.7, fontSize: '1.05rem' }}>{t('leadershipDesc')}</p>
           </div>
 
         </div>
 
         {/* Certifications Block */}
-        <div style={{ background: 'linear-gradient(135deg, #1A3D2B, #0F2A1C)', padding: 'clamp(32px, 5vw, 64px) clamp(20px, 4vw, 40px)', borderRadius: '32px', textAlign: 'center' }}>
+        <div style={{ background: 'linear-gradient(135deg, var(--primary), var(--bg-darker))', padding: 'clamp(32px, 5vw, 64px) clamp(20px, 4vw, 40px)', borderRadius: '32px', textAlign: 'center' }}>
           <h3 style={{ color: '#fff', fontSize: '2rem', fontWeight: 800, marginBottom: '32px' }}>{tt('title')}</h3>
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '24px' }}>
             {['ISO 14001', 'ISO 9001', 'SASO', 'Vision 2030 Partner'].map((cert, i) => (

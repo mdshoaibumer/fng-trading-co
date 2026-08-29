@@ -43,7 +43,7 @@ export default function FaqPageClient() {
               style={{ 
                 background: '#fff', 
                 borderRadius: '20px', 
-                border: '1px solid #EEEEEE',
+                border: '1px solid var(--light-grey)',
                 overflow: 'hidden',
                 boxShadow: openIndex === i ? '0 10px 30px rgba(0,0,0,0.03)' : 'none',
                 transition: 'all 300ms ease'
@@ -89,7 +89,7 @@ export default function FaqPageClient() {
                 transition: 'all 300ms ease',
                 padding: openIndex === i ? '0 clamp(20px, 4vw, 32px) clamp(20px, 4vw, 32px) clamp(20px, 4vw, 32px)' : '0 clamp(20px, 4vw, 32px)'
               }}>
-                <p style={{ color: '#555', lineHeight: 1.7, fontSize: '1.05rem', margin: 0, textAlign: isAr ? 'right' : 'left' }}>
+                <p style={{ color: 'var(--text-secondary)', lineHeight: 1.7, fontSize: '1.05rem', margin: 0, textAlign: isAr ? 'right' : 'left' }}>
                   {faq.a}
                 </p>
               </div>

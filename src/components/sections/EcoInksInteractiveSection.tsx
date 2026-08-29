@@ -73,7 +73,7 @@ export default function EcoInksInteractiveSection() {
                 <span style={{ color: '#111827', fontWeight: 700, fontSize: 'clamp(0.75rem, 1.5vw, 1.1rem)' }}>
                   {isAr ? 'الغلاف المعاد تدويره' : 'Recycled Cartridge Shell'}
                 </span>
-                <div style={{ width: 'clamp(20px, 5vw, 80px)', height: '2px', background: `linear-gradient(${isAr ? '270deg' : '90deg'}, #8DB833, transparent)` }} />
+                <div style={{ width: 'clamp(20px, 5vw, 80px)', height: '2px', background: `linear-gradient(${isAr ? '270deg' : '90deg'}, var(--accent), transparent)` }} />
               </div>
               <div style={{
                 position: 'absolute', top: '45%', [isAr ? 'left' : 'right']: '-5%',
@@ -85,7 +85,7 @@ export default function EcoInksInteractiveSection() {
                 <span style={{ color: '#111827', fontWeight: 700, fontSize: 'clamp(0.75rem, 1.5vw, 1.1rem)' }}>
                   {isAr ? 'قلب الحبر الحيوي' : 'Bio-based Toner Core'}
                 </span>
-                <div style={{ width: 'clamp(20px, 5vw, 80px)', height: '2px', background: `linear-gradient(${isAr ? '90deg' : '270deg'}, #8DB833, transparent)` }} />
+                <div style={{ width: 'clamp(20px, 5vw, 80px)', height: '2px', background: `linear-gradient(${isAr ? '90deg' : '270deg'}, var(--accent), transparent)` }} />
               </div>
               <div style={{
                 position: 'absolute', bottom: '20%', [isAr ? 'right' : 'left']: '-5%',
@@ -97,7 +97,7 @@ export default function EcoInksInteractiveSection() {
                 <span style={{ color: '#111827', fontWeight: 700, fontSize: 'clamp(0.75rem, 1.5vw, 1.1rem)' }}>
                   {isAr ? 'نظام منع التسرب' : 'Zero-Spill Seal System'}
                 </span>
-                <div style={{ width: 'clamp(20px, 5vw, 80px)', height: '2px', background: `linear-gradient(${isAr ? '270deg' : '90deg'}, #8DB833, transparent)` }} />
+                <div style={{ width: 'clamp(20px, 5vw, 80px)', height: '2px', background: `linear-gradient(${isAr ? '270deg' : '90deg'}, var(--accent), transparent)` }} />
               </div>
             </>
           )}

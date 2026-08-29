@@ -22,7 +22,7 @@ export default function MaintenanceTeaser() {
       <div className="container">
         <div style={{
           maxWidth: '800px', margin: '0 auto',
-          background: 'linear-gradient(135deg, #0F2A1C 0%, #1A3D2B 100%)',
+          background: 'linear-gradient(135deg, var(--bg-darker) 0%, var(--primary) 100%)',
           borderRadius: '24px', padding: 'clamp(32px, 5vw, 56px)',
           position: 'relative', overflow: 'hidden',
           textAlign: 'center',

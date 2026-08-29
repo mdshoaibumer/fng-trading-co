@@ -54,7 +54,7 @@ export default function EcoInksHeroSection() {
           marginTop: 'clamp(32px, 6vw, 64px)', display: 'flex', flexDirection: 'column',
           alignItems: 'center', gap: '12px', animation: 'pulse 3s ease-in-out infinite',
         }}>
-          <div style={{ width: '2px', height: '32px', background: 'linear-gradient(to bottom, #8DB833, transparent)' }} />
+          <div style={{ width: '2px', height: '32px', background: 'linear-gradient(to bottom, var(--accent), transparent)' }} />
         </div>
       </div>
     </section>

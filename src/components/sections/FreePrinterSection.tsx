@@ -54,14 +54,14 @@ export default function FreePrinterSection() {
         <div style={{ textAlign: 'center', marginBottom: 'clamp(32px, 6vw, 64px)' }}>
           <span className="section-tag">{t('tag')}</span>
           <h2 style={{ fontSize: 'clamp(1.5rem,4vw,3.5rem)', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px' }}>{t('title')}</h2>
-          <p style={{ color: '#555', fontSize: 'clamp(0.9rem, 2vw, 1.15rem)', maxWidth: '500px', margin: '0 auto' }}>{t('subtitle')}</p>
+          <p style={{ color: 'var(--text-secondary)', fontSize: 'clamp(0.9rem, 2vw, 1.15rem)', maxWidth: '500px', margin: '0 auto' }}>{t('subtitle')}</p>
         </div>
         <div className="fp-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: 'clamp(16px, 3vw, 32px)', marginBottom: 'clamp(32px, 6vw, 64px)' }}>
           <div className="glass" style={{ padding: 'clamp(20px, 4vw, 40px) clamp(16px, 3vw, 32px)', textAlign: isAr ? 'right' : 'center', background: 'rgba(247,248,245,0.8)' }}>
             <AnimatedCounter target={500} suffix={isAr ? ' ＋' : '+'} />
             <p style={{ color: '#6B7C3F', fontSize: '0.95rem', fontWeight: 600, marginTop: '8px', marginBottom: '16px', textAlign: isAr ? 'right' : 'center' }}>{t('earn.counter')}</p>
             <h3 style={{ color: 'var(--primary)', fontSize: 'clamp(1.1rem, 3vw, 1.4rem)', marginBottom: '12px', textAlign: isAr ? 'right' : 'center' }}>{t('earn.title')}</h3>
-            <p style={{ color: '#555', fontSize: '0.9rem', maxWidth: '280px', margin: isAr ? '0 0 0 auto' : '0 auto', textAlign: isAr ? 'right' : 'center' }}>{t('earn.desc')}</p>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', maxWidth: '280px', margin: isAr ? '0 0 0 auto' : '0 auto', textAlign: isAr ? 'right' : 'center' }}>{t('earn.desc')}</p>
           </div>
           <div className="glass" style={{ padding: 'clamp(20px, 4vw, 40px) clamp(16px, 3vw, 32px)', textAlign: 'center', background: 'rgba(232,240,228,0.5)', border: '2px solid rgba(141,184,51,0.2)' }}>
             <h3 style={{ color: 'var(--primary)', fontSize: 'clamp(1.1rem, 3vw, 1.4rem)', marginBottom: '24px' }}>{t('model.title')}</h3>
@@ -75,16 +75,16 @@ export default function FreePrinterSection() {
                   </span>
                   <span style={{ color: 'var(--primary)', fontWeight: 600, fontSize: '0.9rem' }}>{t(`model.${s}` as 'model.step1')}</span>
                 </div>
-                {i < 2 && <div style={{ width: '2px', height: '20px', background: 'linear-gradient(180deg,#8DB833,rgba(141,184,51,0.2))', margin: '0 auto' }} />}
+                {i < 2 && <div style={{ width: '2px', height: '20px', background: 'linear-gradient(180deg,var(--accent),rgba(141,184,51,0.2))', margin: '0 auto' }} />}
               </div>
             ))}
           </div>
           <div className="glass" style={{ padding: 'clamp(20px, 4vw, 40px) clamp(16px, 3vw, 32px)', textAlign: 'center', background: 'rgba(247,248,245,0.8)' }}>
-            <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'linear-gradient(135deg,#1A3D2B,#4A5E2A)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+            <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'linear-gradient(135deg,var(--primary),#4A5E2A)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
               <Droplet size={28} color="#fff" />
             </div>
             <h3 style={{ color: 'var(--primary)', fontSize: 'clamp(1.1rem, 3vw, 1.4rem)', marginBottom: '12px' }}>{t('pay.title')}</h3>
-            <p style={{ color: '#555', fontSize: '0.9rem', maxWidth: '280px', margin: '0 auto' }}>{t('pay.desc')}</p>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', maxWidth: '280px', margin: '0 auto' }}>{t('pay.desc')}</p>
           </div>
         </div>
         <div style={{ overflow: 'hidden', padding: '24px 0', borderTop: '1px solid #EEE', position: 'relative' }}>

@@ -14,7 +14,7 @@ export default function SourcingHeroSection() {
 
   return (
     <section id="sourcing-hero" className="section" style={{
-      background: 'linear-gradient(160deg, #0F2A1C 0%, #1A3D2B 55%, #12301F 100%)',
+      background: 'linear-gradient(160deg, var(--bg-darker) 0%, var(--primary) 55%, #12301F 100%)',
       paddingTop: 'clamp(140px, 18vw, 200px)', position: 'relative', overflow: 'hidden',
     }}>
       <div style={{

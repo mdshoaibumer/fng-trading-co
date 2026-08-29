@@ -12,7 +12,7 @@ export default async function PrinterPartsHeroSection({ locale }: { locale: stri
       style={{
         position: 'relative',
         overflow: 'hidden',
-        background: 'linear-gradient(160deg, #0F2A1C 0%, #1A3D2B 40%, #0D0D0D 100%)',
+        background: 'linear-gradient(160deg, var(--bg-darker) 0%, var(--primary) 40%, #0D0D0D 100%)',
         padding: 'clamp(140px, 20vh, 200px) 0 clamp(60px, 10vh, 120px)',
         minHeight: '55vh',
         display: 'flex',

@@ -49,7 +49,7 @@ export default function ProductCatalogSection({
           }}>
             {title}
           </h2>
-          <p style={{ fontSize: 'clamp(0.9rem, 2vw, 1.15rem)', color: '#555', maxWidth: '700px', margin: '0 auto', lineHeight: 1.6 }}>
+          <p style={{ fontSize: 'clamp(0.9rem, 2vw, 1.15rem)', color: 'var(--text-secondary)', maxWidth: '700px', margin: '0 auto', lineHeight: 1.6 }}>
             {subtitle}
           </p>
         </div>

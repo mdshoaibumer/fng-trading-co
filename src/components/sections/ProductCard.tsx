@@ -81,7 +81,7 @@ export default function ProductCard({ product, isAr, productUrl }: { product: Pr
           )}
           <div style={{
             position: 'absolute', top: '16px', right: isAr ? '16px' : 'auto', left: isAr ? 'auto' : '16px',
-            background: product.available === false ? '#6B7280' : 'linear-gradient(135deg, #8DB833, #6B7C3F)', color: 'white',
+            background: product.available === false ? '#6B7280' : 'linear-gradient(135deg, var(--accent), #6B7C3F)', color: 'white',
             padding: '6px 14px', borderRadius: '20px', fontWeight: 700, fontSize: '0.8rem',
             boxShadow: product.available === false ? 'none' : '0 4px 12px rgba(141, 184, 51, 0.4)', zIndex: 2,
           }}>
@@ -114,7 +114,7 @@ export default function ProductCard({ product, isAr, productUrl }: { product: Pr
           </h3>
         </Link>
         <p style={{
-          color: '#555',
+          color: 'var(--text-secondary)',
           fontSize: '0.9rem',
           lineHeight: 1.6,
           marginBottom: '20px',

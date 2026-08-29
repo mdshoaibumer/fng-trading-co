@@ -31,13 +31,13 @@ export default async function IndustriesPageClient({ locale }: { locale: string 
           ].map((b, i) => (
             <div key={i} style={{
               background: '#fff', padding: '32px', borderRadius: '24px',
-              border: '1px solid #EEEEEE', boxShadow: '0 10px 30px rgba(0,0,0,0.02)',
+              border: '1px solid var(--light-grey)', boxShadow: '0 10px 30px rgba(0,0,0,0.02)',
             }}>
               <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: 'rgba(141,184,51,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
                 {b.icon}
               </div>
               <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px' }}>{b.title}</h3>
-              <p style={{ color: '#555', fontSize: '0.95rem', lineHeight: 1.6 }}>{b.desc}</p>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.6 }}>{b.desc}</p>
             </div>
           ))}
         </div>

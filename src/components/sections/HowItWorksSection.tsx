@@ -39,11 +39,11 @@ export default function HowItWorksSection() {
               <div style={{ fontSize: 'clamp(2rem,5vw,4rem)', fontWeight: 900, color: 'rgba(141,184,51,0.15)', fontFamily: 'var(--font-inter),sans-serif', lineHeight: 1, marginBottom: '12px' }}>
                 {t(`steps.${s}.number`)}
               </div>
-              <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'linear-gradient(135deg,#1A3D2B,#4A5E2A)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'linear-gradient(135deg,var(--primary),#4A5E2A)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
                 {ICONS[i]}
               </div>
               <h3 style={{ color: 'var(--primary)', fontSize: 'clamp(1.05rem, 2.5vw, 1.3rem)', fontWeight: 700, marginBottom: '10px' }}>{t(`steps.${s}.title`)}</h3>
-              <p style={{ color: '#555', fontSize: '0.85rem', lineHeight: 1.7, maxWidth: '300px', margin: '0 auto' }}>{t(`steps.${s}.desc`)}</p>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', lineHeight: 1.7, maxWidth: '300px', margin: '0 auto' }}>{t(`steps.${s}.desc`)}</p>
             </div>
           ))}
         </div>
@@ -51,7 +51,7 @@ export default function HowItWorksSection() {
           {[0,1].map(i => (
             <div key={i} style={{
               width: '30%', height: '2px',
-              background: visible ? 'linear-gradient(90deg,transparent,#8DB833,transparent)' : 'transparent',
+              background: visible ? 'linear-gradient(90deg,transparent,var(--accent),transparent)' : 'transparent',
               transition: `all 800ms ease ${600 + i * 200}ms`,
             }} />
           ))}

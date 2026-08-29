@@ -41,7 +41,7 @@ export default function ContactSection() {
 
   return (
     <section id="contact" className="section contact-section" style={{
-      background: 'linear-gradient(135deg,#0F2A1C 0%,#1A3D2B 60%,#0F2A1C 100%)',
+      background: 'linear-gradient(135deg,var(--bg-darker) 0%,var(--primary) 60%,var(--bg-darker) 100%)',
       position: 'relative', overflow: 'hidden',
     }}>
       <div className="contact-accent" style={{ position: 'absolute', top: '-20%', right: '-10%', width: '500px', height: '500px', borderRadius: '50%', background: 'radial-gradient(circle,rgba(141,184,51,0.12) 0%,transparent 70%)', pointerEvents: 'none' }} />

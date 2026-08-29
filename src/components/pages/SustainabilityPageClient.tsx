@@ -35,7 +35,7 @@ function AnimatedStat({ target, suffix, label }: { target: number; suffix: strin
   const displayedCount = isMounted ? count : target;
 
   return (
-    <div ref={ref} style={{ background: '#fff', padding: 'clamp(24px, 4vw, 40px)', borderRadius: '24px', border: '1px solid #EEEEEE', textAlign: 'center', boxShadow: '0 10px 30px rgba(0,0,0,0.02)' }}>
+    <div ref={ref} style={{ background: '#fff', padding: 'clamp(24px, 4vw, 40px)', borderRadius: '24px', border: '1px solid var(--light-grey)', textAlign: 'center', boxShadow: '0 10px 30px rgba(0,0,0,0.02)' }}>
       <div style={{ fontSize: 'clamp(2rem, 6vw, 3.5rem)', fontWeight: 900, color: 'var(--accent)', lineHeight: 1, marginBottom: '12px', fontFamily: 'var(--font-inter), sans-serif' }}>
         {displayedCount.toLocaleString()}{suffix}
       </div>
@@ -61,7 +61,7 @@ export default function SustainabilityPageClient() {
         </div>
       </div>
       <div className="container">
-        <div style={{ background: 'linear-gradient(135deg, #1A3D2B, #0F2A1C)', padding: 'clamp(24px, 5vw, 64px)', borderRadius: 'clamp(16px, 3vw, 32px)', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ background: 'linear-gradient(135deg, var(--primary), var(--bg-darker))', padding: 'clamp(24px, 5vw, 64px)', borderRadius: 'clamp(16px, 3vw, 32px)', position: 'relative', overflow: 'hidden' }}>
           <div style={{ position: 'absolute', top: '-100px', right: '-100px', width: '400px', height: '400px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(141,184,51,0.15) 0%, transparent 70%)', pointerEvents: 'none' }} />
           <h2 style={{ fontSize: 'clamp(1.5rem, 4vw, 2.5rem)', fontWeight: 800, color: '#fff', marginBottom: 'clamp(24px, 5vw, 48px)', textAlign: 'center', position: 'relative', zIndex: 2 }}>The Eco Inks Cycle</h2>
           <div className="sp-cycle" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 'clamp(20px, 4vw, 40px)', position: 'relative', zIndex: 2 }}>

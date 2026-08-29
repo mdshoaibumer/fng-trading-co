@@ -136,7 +136,7 @@ export default function TonerProductsSection() {
             {t('title')}
           </h2>
           <p style={{
-            fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', color: '#555',
+            fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', color: 'var(--text-secondary)',
             maxWidth: '650px', margin: '0 auto', lineHeight: 1.6,
           }}>
             {t('subtitle')}
@@ -190,7 +190,7 @@ export default function TonerProductsSection() {
               }}>
                 {t('green.name')}
               </h3>
-              <p style={{ color: '#555', fontSize: '0.85rem', lineHeight: 1.6, marginBottom: '20px' }}>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', lineHeight: 1.6, marginBottom: '20px' }}>
                 {t('green.desc')}
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px' }}>
@@ -251,7 +251,7 @@ export default function TonerProductsSection() {
               }}>
                 {t('premium.name')}
               </h3>
-              <p style={{ color: '#555', fontSize: '0.85rem', lineHeight: 1.6, marginBottom: '20px' }}>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', lineHeight: 1.6, marginBottom: '20px' }}>
                 {t('premium.desc')}
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px' }}>

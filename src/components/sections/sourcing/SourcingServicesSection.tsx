@@ -26,7 +26,7 @@ export default function SourcingServicesSection() {
         <div style={{ textAlign: 'center', marginBottom: 'clamp(32px, 6vw, 64px)' }}>
           <span className="section-tag">{t('tag')}</span>
           <h2 style={{ fontSize: 'clamp(1.5rem,4vw,3.5rem)', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px' }}>{t('title')}</h2>
-          <p style={{ color: '#555', fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', maxWidth: '600px', margin: '0 auto' }}>{t('subtitle')}</p>
+          <p style={{ color: 'var(--text-secondary)', fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', maxWidth: '600px', margin: '0 auto' }}>{t('subtitle')}</p>
         </div>
         <div className="ss-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'clamp(16px, 3vw, 24px)' }}>
           {SERVICE_KEYS.map((key) => (
@@ -40,14 +40,14 @@ export default function SourcingServicesSection() {
               onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 24px rgba(26,61,43,0.06)'; e.currentTarget.style.borderColor = 'rgba(141,184,51,0.1)'; }}
             >
               <div style={{
-                width: '48px', height: '48px', borderRadius: '14px', background: 'linear-gradient(135deg,#1A3D2B,#4A5E2A)',
+                width: '48px', height: '48px', borderRadius: '14px', background: 'linear-gradient(135deg,var(--primary),#4A5E2A)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px',
                 marginLeft: isAr ? 'auto' : '0', marginRight: isAr ? '0' : 'auto',
               }}>
                 {ICONS[key]}
               </div>
               <h3 style={{ color: 'var(--primary)', fontSize: '1.05rem', fontWeight: 700, marginBottom: '10px' }}>{t(`items.${key}.name`)}</h3>
-              <p style={{ color: '#555', fontSize: '0.85rem', lineHeight: 1.7 }}>{t(`items.${key}.desc`)}</p>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', lineHeight: 1.7 }}>{t(`items.${key}.desc`)}</p>
             </div>
           ))}
         </div>

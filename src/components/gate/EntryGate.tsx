@@ -97,7 +97,7 @@ export default function EntryGate() {
       tabIndex={-1}
       style={{
         position: 'fixed', inset: 0, zIndex: 2000,
-        background: 'linear-gradient(160deg, #0F2A1C 0%, #1A3D2B 55%, #12301F 100%)',
+        background: 'linear-gradient(160deg, var(--bg-darker) 0%, var(--primary) 55%, #12301F 100%)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         opacity: open ? 1 : 0, pointerEvents: open ? 'auto' : 'none',
         transition: 'opacity 500ms cubic-bezier(0.22, 1, 0.36, 1)',

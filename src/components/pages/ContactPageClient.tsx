@@ -85,13 +85,13 @@ export default function ContactPageClient() {
                 {tp('locations')}
               </h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                <div style={{ padding: '24px', background: 'var(--bg-secondary)', borderRadius: '20px', border: '1px solid #EEEEEE' }}>
+                <div style={{ padding: '24px', background: 'var(--bg-secondary)', borderRadius: '20px', border: '1px solid var(--light-grey)' }}>
                   <h4 style={{ fontWeight: 700, color: 'var(--primary)', fontSize: '1.1rem', marginBottom: '8px' }}>{tp('hq')}</h4>
-                  <p style={{ color: '#555', lineHeight: 1.6 }}>{tp('hqAddress')}</p>
+                  <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>{tp('hqAddress')}</p>
                 </div>
-                <div style={{ padding: '24px', background: 'var(--bg-secondary)', borderRadius: '20px', border: '1px solid #EEEEEE' }}>
+                <div style={{ padding: '24px', background: 'var(--bg-secondary)', borderRadius: '20px', border: '1px solid var(--light-grey)' }}>
                   <h4 style={{ fontWeight: 700, color: 'var(--primary)', fontSize: '1.1rem', marginBottom: '8px' }}>{tp('uae')}</h4>
-                  <p style={{ color: '#555', lineHeight: 1.6 }}>{tp('uaeAddress')}</p>
+                  <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>{tp('uaeAddress')}</p>
                 </div>
               </div>
             </div>
@@ -108,7 +108,7 @@ export default function ContactPageClient() {
                     <Mail color="var(--accent)" size={24} />
                   </div>
                   <div>
-                    <p style={{ color: '#555', fontSize: '0.9rem', marginBottom: '4px' }}>{tp('emailLabel')}</p>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '4px' }}>{tp('emailLabel')}</p>
                     <p style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '1.1rem' }}>{SITE_EMAIL}</p>
                   </div>
                 </div>
@@ -117,7 +117,7 @@ export default function ContactPageClient() {
                     <Phone color="var(--accent)" size={24} />
                   </div>
                   <div>
-                    <p style={{ color: '#555', fontSize: '0.9rem', marginBottom: '4px' }}>{tp('phoneLabel')}</p>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '4px' }}>{tp('phoneLabel')}</p>
                     <p style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '1.1rem' }}>{tp('phoneValue')}</p>
                   </div>
                 </div>
@@ -126,7 +126,7 @@ export default function ContactPageClient() {
                     <Clock color="var(--accent)" size={24} />
                   </div>
                   <div>
-                    <p style={{ color: '#555', fontSize: '0.9rem', marginBottom: '4px' }}>{tp('hoursLabel')}</p>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '4px' }}>{tp('hoursLabel')}</p>
                     <p style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '1.1rem' }}>{tp('hoursValue')}</p>
                   </div>
                 </div>
@@ -141,7 +141,7 @@ export default function ContactPageClient() {
             borderRadius: '32px',
             padding: '48px 40px',
             boxShadow: '0 20px 60px rgba(0,0,0,0.05)',
-            border: '1px solid #EEEEEE',
+            border: '1px solid var(--light-grey)',
             position: 'relative'
           }}>
             {status === 'success' ? (
@@ -150,7 +150,7 @@ export default function ContactPageClient() {
                   <CheckCircle2 size={64} color="var(--accent)" strokeWidth={1.5} />
                 </div>
                 <h3 style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px' }}>Request Received</h3>
-                <p style={{ color: '#555', fontSize: '1.1rem', lineHeight: 1.6 }}>{t('form.success')}</p>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', lineHeight: 1.6 }}>{t('form.success')}</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -163,7 +163,7 @@ export default function ContactPageClient() {
                   value={form.website}
                   onChange={e => setForm(f => ({ ...f, website: e.target.value }))} />
                 <h3 style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '8px' }}>Send a Message</h3>
-                <p style={{ color: '#555', marginBottom: '24px' }}>Fill out the form below and we will get back to you shortly.</p>
+                <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>Fill out the form below and we will get back to you shortly.</p>
                 
                 <div className="form-row" style={{ gap: '20px' }}>
                   <div>
@@ -225,7 +225,7 @@ export default function ContactPageClient() {
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label htmlFor="contact-page-quantity" style={{ fontSize: '0.9rem', color: '#555', fontWeight: 600 }}>{t('form.quantity')}</label>
+                  <label htmlFor="contact-page-quantity" style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: 600 }}>{t('form.quantity')}</label>
                   <select id="contact-page-quantity" style={{ ...inputStyle, cursor: 'pointer' }} value={form.quantity}
                     onChange={e => setForm(f => ({ ...f, quantity: e.target.value }))}>
                     {[1, 2, 3, 5, 10, 20, '50+'].map(n => <option key={n} value={n} style={{ color: '#000' }}>{n}</option>)}

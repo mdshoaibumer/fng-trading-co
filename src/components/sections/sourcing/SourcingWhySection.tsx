@@ -46,7 +46,7 @@ export default function SourcingWhySection() {
             <div style={{ textAlign: isAr ? 'right' : 'left' }}>
               <span className="section-tag">{t('tag')}</span>
               <h2 style={{ fontSize: 'clamp(1.6rem,3.5vw,2.75rem)', fontWeight: 800, color: 'var(--primary)', marginBottom: '16px' }}>{t('title')}</h2>
-              <p style={{ color: '#555', fontSize: 'clamp(0.9rem, 2vw, 1.05rem)', lineHeight: 1.7 }}>{t('subtitle')}</p>
+              <p style={{ color: 'var(--text-secondary)', fontSize: 'clamp(0.9rem, 2vw, 1.05rem)', lineHeight: 1.7 }}>{t('subtitle')}</p>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {POINT_KEYS.map((key) => (
@@ -65,7 +65,7 @@ export default function SourcingWhySection() {
                   </div>
                   <div>
                     <h3 style={{ color: 'var(--primary)', fontSize: '1rem', fontWeight: 700, marginBottom: '4px' }}>{t(`points.${key}.title`)}</h3>
-                    <p style={{ color: '#555', fontSize: '0.85rem', lineHeight: 1.6 }}>{t(`points.${key}.desc`)}</p>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', lineHeight: 1.6 }}>{t(`points.${key}.desc`)}</p>
                   </div>
                 </div>
               ))}
@@ -83,7 +83,7 @@ export default function SourcingWhySection() {
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: 'clamp(32px, 6vw, 56px)' }}>
             <span className="section-tag">{t('licensing.tag')}</span>
-            <h2 style={{ fontSize: 'clamp(1.4rem,3.5vw,2.5rem)', fontWeight: 800, color: '#0F2A1C', marginBottom: '12px' }}>{t('licensing.title')}</h2>
+            <h2 style={{ fontSize: 'clamp(1.4rem,3.5vw,2.5rem)', fontWeight: 800, color: 'var(--bg-darker)', marginBottom: '12px' }}>{t('licensing.title')}</h2>
             <p style={{ color: '#4B5563', fontSize: 'clamp(0.9rem, 2vw, 1.05rem)', maxWidth: '600px', margin: '0 auto', lineHeight: 1.7 }}>{t('licensing.subtitle')}</p>
           </div>
           <div className="lic-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'clamp(16px, 2vw, 24px)' }}>
@@ -114,8 +114,8 @@ export default function SourcingWhySection() {
 
                 <div style={{ padding: 'clamp(16px, 2vw, 22px)', display: 'flex', flexDirection: 'column', flex: 1 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexDirection: isAr ? 'row-reverse' : 'row', marginBottom: '8px' }}>
-                    <CheckCircle2 size={18} color="#8DB833" strokeWidth={2} style={{ flexShrink: 0 }} />
-                    <h3 style={{ color: '#0F2A1C', fontSize: '1.05rem', fontWeight: 800, margin: 0 }}>
+                    <CheckCircle2 size={18} color="var(--accent)" strokeWidth={2} style={{ flexShrink: 0 }} />
+                    <h3 style={{ color: 'var(--bg-darker)', fontSize: '1.05rem', fontWeight: 800, margin: 0 }}>
                       {t(`licensing.${key}Label`)}
                     </h3>
                   </div>
@@ -128,13 +128,13 @@ export default function SourcingWhySection() {
                       credit code; the Saudi cards stop at the authority. */}
                   {key === 'china' && (
                     <>
-                      <p style={{ color: '#0F2A1C', fontSize: '0.85rem', fontWeight: 700, lineHeight: 1.6, margin: '12px 0 0' }}>
+                      <p style={{ color: 'var(--bg-darker)', fontSize: '0.85rem', fontWeight: 700, lineHeight: 1.6, margin: '12px 0 0' }}>
                         {t('licensing.chinaEntity')}
                       </p>
                       <div style={{ color: '#6B7280', fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', marginTop: '12px' }}>
                         {t('licensing.usccLabel')}
                       </div>
-                      <div style={{ color: '#0F2A1C', fontSize: '0.85rem', fontWeight: 700, fontFamily: 'IBM Plex Mono, monospace', marginTop: '2px' }}>
+                      <div style={{ color: 'var(--bg-darker)', fontSize: '0.85rem', fontWeight: 700, fontFamily: 'IBM Plex Mono, monospace', marginTop: '2px' }}>
                         {t('licensing.usccValue')}
                       </div>
                     </>
@@ -157,7 +157,7 @@ export default function SourcingWhySection() {
         </div>
         <style jsx>{`
           .lic-card:hover {
-            border-color: #8DB833;
+            border-color: var(--accent);
             box-shadow: 0 12px 28px rgba(15, 42, 28, 0.1);
             transform: translateY(-2px);
           }

@@ -203,7 +203,7 @@ export default function ProductPageClient({ product, whatsapp, locale, itemType 
                     style={{
                       position: 'relative',
                       width: '80px', height: '80px', borderRadius: '16px', overflow: 'hidden',
-                      border: currentImage === idx ? '2px solid #8DB833' : '1px solid #E0E7DE',
+                      border: currentImage === idx ? '2px solid var(--accent)' : '1px solid #E0E7DE',
                       background: 'white', cursor: 'pointer', transition: 'all 0.2s',
                       flexShrink: 0
                     }}
@@ -247,7 +247,7 @@ export default function ProductPageClient({ product, whatsapp, locale, itemType 
               {product.name}
             </h1>
 
-            <p style={{ fontSize: '1.1rem', color: '#555', lineHeight: 1.6, marginBottom: '32px', opacity: product.available === false ? 0.6 : 1 }}>
+            <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '32px', opacity: product.available === false ? 0.6 : 1 }}>
               {isAr ? product.descAr : product.descEn}
             </p>
 

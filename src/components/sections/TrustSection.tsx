@@ -21,7 +21,7 @@ export default function TrustSection() {
           {[0,1,2].map(i => (
             <div key={i} style={{
               padding: 'clamp(20px, 4vw, 32px) clamp(16px, 3vw, 28px)', borderRadius: '20px', background: '#fff',
-              border: '1px solid #EEEEEE', borderBottom: '3px solid #1A3D2B',
+              border: '1px solid var(--light-grey)', borderBottom: '3px solid var(--primary)',
               boxShadow: '0 4px 20px rgba(0,0,0,0.04)', transition: 'all 300ms ease',
               textAlign: isAr ? 'right' : 'left'
             }}

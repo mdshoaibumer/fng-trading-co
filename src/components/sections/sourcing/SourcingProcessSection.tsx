@@ -16,13 +16,13 @@ export default function SourcingProcessSection() {
         <div style={{ textAlign: 'center', marginBottom: 'clamp(32px, 6vw, 64px)' }}>
           <span className="section-tag">{t('tag')}</span>
           <h2 style={{ fontSize: 'clamp(1.5rem,4vw,3.5rem)', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px' }}>{t('title')}</h2>
-          <p style={{ color: '#555', fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', maxWidth: '600px', margin: '0 auto' }}>{t('subtitle')}</p>
+          <p style={{ color: 'var(--text-secondary)', fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', maxWidth: '600px', margin: '0 auto' }}>{t('subtitle')}</p>
         </div>
         <div className="sp-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'clamp(16px, 2.5vw, 24px)' }}>
           {STEP_KEYS.map((key) => (
             <div key={key} style={{
               padding: 'clamp(18px, 3vw, 24px) clamp(16px, 2.5vw, 20px)', borderRadius: '16px', background: '#fff',
-              border: '1px solid #EEEEEE', borderTop: '3px solid #8DB833',
+              border: '1px solid var(--light-grey)', borderTop: '3px solid var(--accent)',
               textAlign: isAr ? 'right' : 'left',
               transition: 'all 350ms cubic-bezier(0.34,1.56,0.64,1)', cursor: 'default',
             }}
@@ -37,7 +37,7 @@ export default function SourcingProcessSection() {
                 {t(`steps.${key}.number`)}
               </div>
               <h3 style={{ color: 'var(--primary)', fontSize: '1rem', fontWeight: 700, marginBottom: '8px' }}>{t(`steps.${key}.title`)}</h3>
-              <p style={{ color: '#555', fontSize: '0.82rem', lineHeight: 1.65 }}>{t(`steps.${key}.desc`)}</p>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.82rem', lineHeight: 1.65 }}>{t(`steps.${key}.desc`)}</p>
             </div>
           ))}
         </div>

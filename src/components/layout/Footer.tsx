@@ -43,7 +43,7 @@ export default function Footer() {
       id="footer"
       className="footer-root"
       style={{
-        background: 'linear-gradient(180deg, #0F2A1C 0%, #0D0D0D 100%)',
+        background: 'linear-gradient(180deg, var(--bg-darker) 0%, #0D0D0D 100%)',
         padding: '64px 0 32px',
         borderTop: '1px solid rgba(141, 184, 51, 0.2)',
       }}

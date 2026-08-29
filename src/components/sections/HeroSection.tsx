@@ -86,7 +86,7 @@ export default function HeroSection() {
     <section id="hero" ref={sectionRef} className="hero-section" style={{ height: isMobile ? '300vh' : '500vh', position: 'relative' }}>
       <div style={{
         position: 'sticky', top: 0, height: '100vh', width: '100%', overflow: 'hidden',
-        backgroundImage: `linear-gradient(135deg, #0F2A1C 0%, #1A3D2B ${30 + ecoGlow * 20}%, ${ecoGlow > 0.5 ? '#2A4F1E' : '#0F2A1C'} 100%)`,
+        backgroundImage: `linear-gradient(135deg, var(--bg-darker) 0%, var(--primary) ${30 + ecoGlow * 20}%, ${ecoGlow > 0.5 ? '#2A4F1E' : 'var(--bg-darker)'} 100%)`,
         backgroundSize: '200% 200%', animation: runDecorativeLoops ? 'slowPan 15s ease-in-out infinite' : 'none',
       }}>
         {/* Radial glow */}
@@ -152,7 +152,7 @@ export default function HeroSection() {
                     <span style={{ color: 'var(--accent)', fontWeight: 600, fontSize: 'clamp(0.85rem, 1.5vw, 1.1rem)', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
                       {isAr ? 'الغطاء العلوي' : 'Top Cover Unit'}
                     </span>
-                    <div style={{ width: 'clamp(40px, 8vw, 80px)', height: '2px', background: `linear-gradient(${isAr ? '270deg' : '90deg'}, #8DB833, transparent)` }} />
+                    <div style={{ width: 'clamp(40px, 8vw, 80px)', height: '2px', background: `linear-gradient(${isAr ? '270deg' : '90deg'}, var(--accent), transparent)` }} />
                   </div>
                 </div>
                 <div style={{
@@ -166,7 +166,7 @@ export default function HeroSection() {
                     <span style={{ color: 'var(--accent)', fontWeight: 600, fontSize: 'clamp(0.85rem, 1.5vw, 1.1rem)', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
                       {isAr ? 'لوحة التحكم والمحرك' : 'Mainboard & Engine'}
                     </span>
-                    <div style={{ width: 'clamp(40px, 8vw, 80px)', height: '2px', background: `linear-gradient(${isAr ? '90deg' : '270deg'}, #8DB833, transparent)` }} />
+                    <div style={{ width: 'clamp(40px, 8vw, 80px)', height: '2px', background: `linear-gradient(${isAr ? '90deg' : '270deg'}, var(--accent), transparent)` }} />
                   </div>
                 </div>
                 <div style={{
@@ -180,7 +180,7 @@ export default function HeroSection() {
                     <span style={{ color: 'var(--accent)', fontWeight: 600, fontSize: 'clamp(0.85rem, 1.5vw, 1.1rem)', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
                       {isAr ? 'وحدة الحبر الصديق للبيئة' : 'Eco Toner Cartridge'}
                     </span>
-                    <div style={{ width: 'clamp(40px, 8vw, 80px)', height: '2px', background: `linear-gradient(${isAr ? '270deg' : '90deg'}, #8DB833, transparent)` }} />
+                    <div style={{ width: 'clamp(40px, 8vw, 80px)', height: '2px', background: `linear-gradient(${isAr ? '270deg' : '90deg'}, var(--accent), transparent)` }} />
                   </div>
                 </div>
               </>

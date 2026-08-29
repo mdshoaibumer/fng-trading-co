@@ -28,17 +28,17 @@ export default function SourcingCategoriesSection() {
         <div style={{ textAlign: 'center', marginBottom: 'clamp(32px, 6vw, 64px)' }}>
           <span className="section-tag">{t('tag')}</span>
           <h2 style={{ fontSize: 'clamp(1.5rem,4vw,3.5rem)', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px' }}>{t('title')}</h2>
-          <p style={{ color: '#555', fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', maxWidth: '600px', margin: '0 auto' }}>{t('subtitle')}</p>
+          <p style={{ color: 'var(--text-secondary)', fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', maxWidth: '600px', margin: '0 auto' }}>{t('subtitle')}</p>
         </div>
         <div className="sc-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
           {CATEGORY_KEYS.map((key) => (
             <div key={key} style={{
-              padding: 'clamp(18px, 3vw, 24px)', borderRadius: '16px', background: '#fff', border: '1px solid #EEEEEE',
+              padding: 'clamp(18px, 3vw, 24px)', borderRadius: '16px', background: '#fff', border: '1px solid var(--light-grey)',
               transition: 'all 350ms cubic-bezier(0.34,1.56,0.64,1)', textAlign: isAr ? 'right' : 'left',
               cursor: 'default',
             }}
               onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-6px)'; e.currentTarget.style.boxShadow = '0 12px 40px rgba(26,61,43,0.1)'; e.currentTarget.style.borderColor = 'rgba(141,184,51,0.3)'; }}
-              onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = '#EEEEEE'; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = 'var(--light-grey)'; }}
             >
               <div style={{
                 width: '44px', height: '44px', borderRadius: '12px',
@@ -49,7 +49,7 @@ export default function SourcingCategoriesSection() {
                 {ICONS[key]}
               </div>
               <h3 style={{ color: 'var(--primary)', fontSize: '0.95rem', fontWeight: 700, marginBottom: '6px' }}>{t(`items.${key}.name`)}</h3>
-              <p style={{ color: '#555', fontSize: '0.8rem', lineHeight: 1.6, marginBottom: '14px' }}>{t(`items.${key}.desc`)}</p>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', lineHeight: 1.6, marginBottom: '14px' }}>{t(`items.${key}.desc`)}</p>
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 <span style={{ padding: '4px 10px', borderRadius: '999px', background: 'var(--bg-secondary)', color: '#4A5E2A', fontSize: '0.7rem', fontWeight: 600, fontFamily: 'var(--font-ibm-plex-mono), monospace' }}>
                   {t(`items.${key}.moq`)}

@@ -69,7 +69,7 @@ export default function PrinterPartsCatalogSection() {
           <h2 style={{fontSize:'clamp(1.5rem,4vw,3rem)',fontWeight:800,color:'var(--primary)',marginBottom:'16px',fontFamily:isAr?'var(--font-ibm-plex-arabic), sans-serif':'var(--font-inter), sans-serif'}}>
             {isAr?'٨ فئات — ٣٠+ قطعة غيار':'8 Categories — 30+ Parts'}
           </h2>
-          <p style={{fontSize:'clamp(0.9rem,2vw,1.1rem)',color:'#555',maxWidth:'600px',margin:'0 auto',lineHeight:1.6}}>
+          <p style={{fontSize:'clamp(0.9rem,2vw,1.1rem)',color:'var(--text-secondary)',maxWidth:'600px',margin:'0 auto',lineHeight:1.6}}>
             {isAr?'اختر الفئة لعرض قطع الغيار المتوفرة مع موديلات الطابعات المتوافقة.':'Select a category to view available parts with compatible printer models.'}
           </p>
         </div>
