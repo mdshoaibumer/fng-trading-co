@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
-import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
 import { useDialogA11y } from '@/lib/useDialogA11y';
@@ -129,8 +128,18 @@ export default function EntryGate() {
           already set, changing language here silently dismissed the gate and
           dropped them on the printers page instead of the chooser they were
           looking at. Answering the chooser is what markGateSeen is for; a
-          language switch is not an answer, so it deliberately isn't called. */}
-      <Link
+          language switch is not an answer, so it deliberately isn't called.
+
+          A plain <a>, not a <Link>: switching language replaces every string
+          on the page and flips lang/dir/font on the document, so it is a
+          document-level change and gets a document-level navigation. As a
+          <Link> it was a client transition, and clicking it before the page
+          had finished hydrating left React hydrating the English HTML against
+          an Arabic tree — a recoverable hydration mismatch, but a real one,
+          and easy to hit here because the chooser loads two full-bleed photos
+          before it settles. A full load also means no view transition runs
+          across the swap, which is one less thing to keep the nav bar out of. */}
+      <a
         href={`/${otherLocale}?gate=1`}
         style={{
           position: 'absolute', top: 'clamp(16px, 3vw, 24px)', [isAr ? 'left' : 'right']: 'clamp(16px, 3vw, 24px)',
@@ -145,7 +154,7 @@ export default function EntryGate() {
         onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.25)'; e.currentTarget.style.color = '#fff'; }}
       >
         {tNav('lang')}
-      </Link>
+      </a>
 
       <div style={{ position: 'relative', width: '100%', maxWidth: '1100px', margin: 'auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 'clamp(28px, 5vw, 48px)' }}>
