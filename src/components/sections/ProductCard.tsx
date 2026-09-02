@@ -20,7 +20,7 @@ export default function ProductCard({ product, isAr, productUrl }: { product: Pr
 
   return (
     <div className="glass item-card" style={{
-      display: 'flex', flexDirection: 'column', background: 'rgba(255, 255, 255, 0.7)',
+      display: 'flex', flexDirection: 'column', background: 'rgba(255, 255, 255, 0.7)', width: '100%',
       borderRadius: '24px', overflow: 'hidden', border: '1px solid rgba(141, 184, 51, 0.2)',
       boxShadow: '0 20px 40px rgba(0,0,0,0.05)', transition: 'transform 0.3s ease, box-shadow 0.3s ease',
     }}>
@@ -45,7 +45,7 @@ export default function ProductCard({ product, isAr, productUrl }: { product: Pr
                 alt={`${product.name} - View ${idx + 1}`}
                 fill
                 sizes="(max-width: 640px) 90vw, 400px"
-                onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/placeholder.png'; }}
+                onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.srcset = ''; e.currentTarget.src = '/placeholder.png'; }}
                 style={{ objectFit: 'contain', filter: 'drop-shadow(0 15px 25px rgba(0,0,0,0.1))' }}
               />
             </div>

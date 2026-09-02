@@ -55,36 +55,36 @@ export default function SustainabilityPageClient() {
       </div>
       <div className="container" style={{ marginBottom: 'clamp(40px, 8vw, 80px)' }}>
         <div className="sp-stats" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 'clamp(16px, 3vw, 32px)' }}>
-          <AnimatedStat target={124} suffix=" tons" label={t('stats.co2.label')} />
-          <AnimatedStat target={2500} suffix=" trees" label={t('stats.trees.label')} />
+          <AnimatedStat target={124} suffix={` ${t('stats.co2.unit')}`} label={t('stats.co2.label')} />
+          <AnimatedStat target={2500} suffix={` ${t('stats.trees.unit')}`} label={t('stats.trees.label')} />
           <AnimatedStat target={85} suffix="%" label={t('stats.plastic.label')} />
         </div>
       </div>
       <div className="container">
         <div style={{ background: 'linear-gradient(135deg, var(--primary), var(--bg-darker))', padding: 'clamp(24px, 5vw, 64px)', borderRadius: 'clamp(16px, 3vw, 32px)', position: 'relative', overflow: 'hidden' }}>
           <div style={{ position: 'absolute', top: '-100px', right: '-100px', width: '400px', height: '400px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(141,184,51,0.15) 0%, transparent 70%)', pointerEvents: 'none' }} />
-          <h2 style={{ fontSize: 'clamp(1.5rem, 4vw, 2.5rem)', fontWeight: 800, color: '#fff', marginBottom: 'clamp(24px, 5vw, 48px)', textAlign: 'center', position: 'relative', zIndex: 2 }}>The Eco Inks Cycle</h2>
+          <h2 style={{ fontSize: 'clamp(1.5rem, 4vw, 2.5rem)', fontWeight: 800, color: '#fff', marginBottom: 'clamp(24px, 5vw, 48px)', textAlign: 'center', position: 'relative', zIndex: 2 }}>{t('cycle.title')}</h2>
           <div className="sp-cycle" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 'clamp(20px, 4vw, 40px)', position: 'relative', zIndex: 2 }}>
             <div style={{ textAlign: 'center' }}>
               <div style={{ width: 'clamp(56px, 8vw, 80px)', height: 'clamp(56px, 8vw, 80px)', borderRadius: '20px', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', border: '1px solid rgba(255,255,255,0.2)' }}>
                 <Leaf size={32} color="var(--accent)" />
               </div>
-              <h3 style={{ color: '#fff', fontSize: 'clamp(1rem, 2vw, 1.2rem)', fontWeight: 700, marginBottom: '12px' }}>Bio-Derived</h3>
-              <p style={{ color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, fontSize: '0.9rem' }}>We use plant-based resins and sustainable sourcing instead of petroleum bases for all our toner powders.</p>
+              <h3 style={{ color: '#fff', fontSize: 'clamp(1rem, 2vw, 1.2rem)', fontWeight: 700, marginBottom: '12px' }}>{t('cycle.bio.title')}</h3>
+              <p style={{ color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, fontSize: '0.9rem' }}>{t('cycle.bio.desc')}</p>
             </div>
             <div style={{ textAlign: 'center' }}>
               <div style={{ width: 'clamp(56px, 8vw, 80px)', height: 'clamp(56px, 8vw, 80px)', borderRadius: '20px', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', border: '1px solid rgba(255,255,255,0.2)' }}>
                 <Wind size={32} color="var(--accent)" />
               </div>
-              <h3 style={{ color: '#fff', fontSize: 'clamp(1rem, 2vw, 1.2rem)', fontWeight: 700, marginBottom: '12px' }}>Zero VOC</h3>
-              <p style={{ color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, fontSize: '0.9rem' }}>Our toners emit zero Volatile Organic Compounds, ensuring safe and clean air quality in your office.</p>
+              <h3 style={{ color: '#fff', fontSize: 'clamp(1rem, 2vw, 1.2rem)', fontWeight: 700, marginBottom: '12px' }}>{t('cycle.voc.title')}</h3>
+              <p style={{ color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, fontSize: '0.9rem' }}>{t('cycle.voc.desc')}</p>
             </div>
             <div style={{ textAlign: 'center' }}>
               <div style={{ width: 'clamp(56px, 8vw, 80px)', height: 'clamp(56px, 8vw, 80px)', borderRadius: '20px', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', border: '1px solid rgba(255,255,255,0.2)' }}>
                 <RefreshCcw size={32} color="var(--accent)" />
               </div>
-              <h3 style={{ color: '#fff', fontSize: 'clamp(1rem, 2vw, 1.2rem)', fontWeight: 700, marginBottom: '12px' }}>Closed-Loop</h3>
-              <p style={{ color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, fontSize: '0.9rem' }}>We collect all empty cartridges directly from your office. Plastics are melted down and reused for new supplies.</p>
+              <h3 style={{ color: '#fff', fontSize: 'clamp(1rem, 2vw, 1.2rem)', fontWeight: 700, marginBottom: '12px' }}>{t('cycle.loop.title')}</h3>
+              <p style={{ color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, fontSize: '0.9rem' }}>{t('cycle.loop.desc')}</p>
             </div>
           </div>
         </div>

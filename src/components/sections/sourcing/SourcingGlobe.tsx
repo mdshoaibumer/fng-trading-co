@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useMemo, useRef, useCallback } from 'react';
 import createGlobe from 'cobe';
+import { useServiceRegions } from '@/components/providers/ServiceRegionsProvider';
 
 interface RouteMarker {
   id: string;
@@ -14,31 +15,50 @@ interface RouteArc {
   to: [number, number];
 }
 
-// China sourcing hubs (Guangzhou, Shenzhen, Yiwu) and Saudi delivery points
-// (Riyadh, Jeddah, Dammam), connected by the shipping routes FNG runs.
+// China sourcing hubs (Guangzhou, Shenzhen, Yiwu) plus one marker per
+// country FNG operates in (src/lib/serviceRegions.ts), connected by the
+// shipping routes FNG runs from the factories to each office hub.
 const GUANGZHOU: [number, number] = [23.13, 113.26];
 const SHENZHEN: [number, number] = [22.54, 114.06];
 const YIWU: [number, number] = [29.31, 120.08];
-const RIYADH: [number, number] = [24.71, 46.68];
-const JEDDAH: [number, number] = [21.49, 39.19];
-const DAMMAM: [number, number] = [26.43, 50.10];
+const CHINA_HUBS: [number, number][] = [GUANGZHOU, SHENZHEN, YIWU];
 
-const MARKERS: RouteMarker[] = [
-  { id: 'guangzhou', location: GUANGZHOU },
-  { id: 'shenzhen', location: SHENZHEN },
-  { id: 'yiwu', location: YIWU },
-  { id: 'riyadh', location: RIYADH },
-  { id: 'jeddah', location: JEDDAH },
-  { id: 'dammam', location: DAMMAM },
-];
-
-const ARCS: RouteArc[] = [
-  { id: 'gz-riyadh', from: GUANGZHOU, to: RIYADH },
-  { id: 'sz-jeddah', from: SHENZHEN, to: JEDDAH },
-  { id: 'yiwu-dammam', from: YIWU, to: DAMMAM },
-];
+interface GlobeMarker extends RouteMarker { size: number }
 
 export default function SourcingGlobe({ className = '', maxWidth = '480px', interactive = true }: { className?: string; maxWidth?: string; interactive?: boolean }) {
+  // Markers and arcs used to be module constants built from the hardcoded
+  // region list. They are per-render now because the footprint is editable
+  // from Admin → Regions; useMemo keeps their identity stable so the effect
+  // below doesn't tear down and rebuild the globe on every render.
+  const serviceRegions = useServiceRegions();
+
+  const markers = useMemo<GlobeMarker[]>(() => [
+    { id: 'shenzhen', location: SHENZHEN, size: 0.045 },
+    { id: 'yiwu', location: YIWU, size: 0.045 },
+    ...serviceRegions.map((r) => ({ id: r.code.toLowerCase(), location: r.hub, size: r.presence === 'office' ? 0.07 : 0.045 })),
+  ], [serviceRegions]);
+
+  // Office hubs get a route from a Chinese factory hub; the wider markets
+  // share one consolidation point so the globe reads as a network, not a
+  // starburst. That point is the first office country (Riyadh in the built-in
+  // list) rather than simply the first row, so reordering the list in Admin
+  // can't hang every market route off a country with no office.
+  const arcs = useMemo<RouteArc[]>(() => {
+    const consolidation = (serviceRegions.find((r) => r.presence === 'office') ?? serviceRegions[0]).hub;
+    return [
+      ...serviceRegions.filter((r) => r.presence === 'office' && r.code !== 'CN').map((r, i) => ({
+        id: `cn-${r.code.toLowerCase()}`,
+        from: CHINA_HUBS[i % CHINA_HUBS.length],
+        to: r.hub,
+      })),
+      ...serviceRegions.filter((r) => r.presence === 'market').map((r) => ({
+        id: `sa-${r.code.toLowerCase()}`,
+        from: consolidation,
+        to: r.hub,
+      })),
+    ];
+  }, [serviceRegions]);
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pointerInteracting = useRef<{ x: number; y: number } | null>(null);
   const dragOffset = useRef({ phi: 0 });
@@ -133,10 +153,10 @@ export default function SourcingGlobe({ className = '', maxWidth = '480px', inte
         markerColor: [0.55, 0.72, 0.2],
         glowColor: [0.35, 0.45, 0.28],
         markerElevation: 0.02,
-        markers: MARKERS.map((m) => ({ location: m.location, size: 0.06 })),
-        arcs: ARCS.map((a) => ({ from: a.from, to: a.to })),
+        markers: markers.map((m) => ({ location: m.location, size: m.size })),
+        arcs: arcs.map((a) => ({ from: a.from, to: a.to })),
         arcColor: [0.55, 0.72, 0.2],
-        arcWidth: 2, arcHeight: 0.35,
+        arcWidth: 1.6, arcHeight: 0.3,
         opacity: 0.9,
       });
 
@@ -162,7 +182,10 @@ export default function SourcingGlobe({ className = '', maxWidth = '480px', inte
       if (animationId) cancelAnimationFrame(animationId);
       if (globe) globe.destroy();
     };
-  }, []);
+    // markers/arcs are memoised on the region list, so in practice this runs
+    // once per mount — but listing them keeps the globe honest if the
+    // footprint ever changes without a remount.
+  }, [markers, arcs]);
 
   return (
     <div className={`relative aspect-square select-none ${className}`} style={{ maxWidth, margin: '0 auto' }}>

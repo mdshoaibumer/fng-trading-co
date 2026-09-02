@@ -16,9 +16,13 @@ export default function AdminContentPage() {
 
   React.useEffect(() => {
     fetch('/api/admin/content')
-      .then(res => res.json())
-      .then(res => {
-        setData(res);
+      .then(async (res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const body = await res.json();
+        // Either locale may be missing (fresh install: the DB row does not
+        // exist yet and the API returns {}); the editor tolerates that.
+        if (!body || typeof body !== 'object') throw new Error('Unexpected response');
+        setData({ en: body.en ?? {}, ar: body.ar ?? {} });
         setLoading(false);
       })
       .catch(() => {
@@ -63,7 +67,9 @@ export default function AdminContentPage() {
   if (loading) return <div>Loading translations...</div>;
   if (!data) return <div>Failed to load content. Refresh to try again.</div>;
 
-  const sections = Object.keys(data.en).filter(s => s !== 'meta'); // Exclude meta for simpler UI for now
+  // Sections come from whichever locale has them, so a partial AR row still
+  // lists every section (an empty one just shows no editable strings).
+  const sections = Array.from(new Set([...Object.keys(data.en ?? {}), ...Object.keys(data.ar ?? {})])).filter(s => s !== 'meta');
 
   return (
     <div style={{ animation: 'fadeIn 0.5s ease-out' }}>
@@ -151,7 +157,7 @@ export default function AdminContentPage() {
               Section: <span style={{ color: 'var(--admin-accent)', fontWeight: 800 }}>{section}</span>
             </h3>
             <div style={{ display: 'grid', gap: '20px' }}>
-              {Object.keys(data[activeTab][section]).map(key => {
+              {Object.keys(data[activeTab]?.[section] ?? {}).map(key => {
                 const value = data[activeTab][section][key];
                 if (typeof value !== 'string') return null; // Handle nested objects if any later
                 if (search && !key.toLowerCase().includes(search.toLowerCase()) && !value.toLowerCase().includes(search.toLowerCase())) return null;

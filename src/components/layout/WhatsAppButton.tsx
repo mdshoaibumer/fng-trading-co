@@ -11,7 +11,7 @@ export default function WhatsAppButton({ whatsapp }: { whatsapp?: string }) {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => setVisible(true), 3000);
+    const timer = setTimeout(() => setVisible(true), 900);
     const checkMobile = () => setIsMobile(window.innerWidth <= 768);
     checkMobile();
     window.addEventListener('resize', checkMobile, { passive: true });

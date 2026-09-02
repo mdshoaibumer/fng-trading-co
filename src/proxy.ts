@@ -10,6 +10,7 @@ const PUBLIC_GET_ROUTES = new Set([
   '/api/admin/equipment',
   '/api/admin/parts',
   '/api/admin/settings',
+  '/api/admin/regions',
 ]);
 
 const intlMiddleware = createMiddleware(routing);
@@ -39,7 +40,19 @@ function isSameOrigin(request: NextRequest): boolean {
   if (!origin) return false;
   const host = request.headers.get('x-forwarded-host') || request.headers.get('host');
   try {
-    return new URL(origin).host === host;
+    const originUrl = new URL(origin);
+    if (originUrl.host === host) return true;
+    // Behind a reverse proxy that rewrites Host (e.g. to localhost:3000)
+    // without forwarding the original, the browser's Origin is still the
+    // public site — accept that too, so the admin can't be locked out by
+    // proxy configuration alone.
+    const configured = process.env.NEXT_PUBLIC_SITE_URL;
+    if (configured) {
+      try {
+        if (originUrl.origin === new URL(configured).origin) return true;
+      } catch { /* malformed NEXT_PUBLIC_SITE_URL — ignore */ }
+    }
+    return false;
   } catch {
     return false;
   }

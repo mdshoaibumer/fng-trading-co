@@ -5,6 +5,7 @@ import { HeartPulse, GraduationCap, Building, Scale, ShoppingCart, Landmark, Rul
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useDialogA11y } from '@/lib/useDialogA11y';
+import Reveal from '@/components/ui/Reveal';
 
 const INDUSTRIES = ['healthcare', 'education', 'realEstate', 'legal', 'retail', 'government', 'architecture', 'logistics'] as const;
 type Industry = typeof INDUSTRIES[number];
@@ -40,14 +41,15 @@ export default function IndustriesSection() {
   return (
     <section id="industries" className="section" style={{ background: '#fff', position: 'relative' }}>
       <div className="container">
-        <div style={{ textAlign: 'center', marginBottom: 'clamp(32px, 6vw, 64px)' }}>
+        <Reveal style={{ textAlign: 'center', marginBottom: 'clamp(32px, 6vw, 64px)' }}>
           <span className="section-tag">{t('tag')}</span>
           <h2 style={{ fontSize: 'clamp(1.5rem,4vw,3.5rem)', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px' }}>{t('title')}</h2>
           <p style={{ color: 'var(--text-secondary)', fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', maxWidth: '550px', margin: '0 auto' }}>{t('subtitle')}</p>
-        </div>
+        </Reveal>
         <div className="industries-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(260px,1fr))', gap: '24px' }}>
-          {INDUSTRIES.map((ind) => (
-            <div key={ind} role="button" tabIndex={0} aria-haspopup="dialog"
+          {INDUSTRIES.map((ind, i) => (
+            <Reveal key={ind} delay={(i % 4) * 80} from="scale" threshold={0.1}>
+            <div role="button" tabIndex={0} aria-haspopup="dialog"
               aria-label={t(`items.${ind}.name`)}
               style={{
               padding: 'clamp(20px, 4vw, 32px) clamp(16px, 3vw, 24px)', borderRadius: '16px', background: '#fff', border: '1px solid var(--light-grey)',
@@ -72,6 +74,7 @@ export default function IndustriesSection() {
               <h3 style={{ color: 'var(--primary)', fontSize: 'clamp(0.95rem, 2vw, 1.05rem)', fontWeight: 700, marginBottom: '6px' }}>{t(`items.${ind}.name`)}</h3>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', lineHeight: 1.6 }}>{t(`items.${ind}.desc`)}</p>
             </div>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -82,7 +85,8 @@ export default function IndustriesSection() {
         background: 'rgba(255, 255, 255, 0.4)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         opacity: selectedIndustry ? 1 : 0, pointerEvents: selectedIndustry ? 'auto' : 'none',
-        transition: 'opacity 400ms ease', padding: '16px',
+        visibility: selectedIndustry ? 'visible' : 'hidden',
+        transition: 'opacity 400ms ease, visibility 0s linear ' + (selectedIndustry ? '0s' : '400ms'), padding: '16px',
       }}
       onClick={closeModal}
       >

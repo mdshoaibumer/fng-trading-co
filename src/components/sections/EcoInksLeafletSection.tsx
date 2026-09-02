@@ -2,6 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import { Leaf, Printer, ShieldCheck, TrendingUp } from 'lucide-react';
+import Reveal from '@/components/ui/Reveal';
 
 export default function EcoInksLeafletSection() {
   const params = useParams();
@@ -36,7 +37,8 @@ export default function EcoInksLeafletSection() {
         </div>
         <div className="leaflet-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 'clamp(12px, 3vw, 32px)' }}>
           {features.map((feat, idx) => (
-            <div key={idx} style={{
+            <Reveal key={idx} delay={idx * 90} threshold={0.1}>
+            <div style={{ height: '100%',
               background: '#F9FAFB', border: '1px solid #F3F4F6', borderRadius: '20px',
               padding: 'clamp(20px, 4vw, 40px) clamp(16px, 3vw, 32px)',
               transition: 'all 200ms ease-out', cursor: 'default', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
@@ -52,6 +54,7 @@ export default function EcoInksLeafletSection() {
               </h3>
               <p style={{ color: '#4B5563', lineHeight: 1.6, fontSize: '0.9rem' }}>{feat.description}</p>
             </div>
+            </Reveal>
           ))}
         </div>
       </div>

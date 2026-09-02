@@ -56,7 +56,11 @@ export default function EcoInksInteractiveSection() {
           )}
           <canvas ref={canvasRef} style={{
             width: '100%', aspectRatio: '16 / 10', display: imagesLoaded ? 'block' : 'none',
-            filter: `drop-shadow(0 20px 40px rgba(0, 0, 0, 0.08)) drop-shadow(0 0 20px rgba(141, 184, 51, ${0.1 * glowIntensity}))`,
+            // A static shadow: a filter whose value changes with scroll forces
+            // the canvas to be re-filtered on every frame, which is the single
+            // most expensive thing this section can do. The green glow behind
+            // it (above) carries the scroll-reactive part instead.
+            filter: 'drop-shadow(0 20px 40px rgba(0, 0, 0, 0.08))',
           }} />
 
           {/* Labels — hidden on mobile */}

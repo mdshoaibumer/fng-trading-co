@@ -14,6 +14,7 @@ import {
   Eye,
   MessageCircle,
   Monitor,
+  Globe2,
   Menu,
   X
 } from 'lucide-react';
@@ -40,6 +41,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
     { name: 'Printers', icon: <Printer size={20} />, path: '/admin/printers' },
     { name: 'Printer Parts', icon: <Package size={20} />, path: '/admin/parts' },
     { name: 'Office Equipment', icon: <Monitor size={20} />, path: '/admin/equipment' },
+    { name: 'Regions', icon: <Globe2 size={20} />, path: '/admin/regions' },
     { name: 'Settings', icon: <Settings size={20} />, path: '/admin/settings' },
   ];
 

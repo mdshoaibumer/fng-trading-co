@@ -4,6 +4,9 @@ import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import { CheckCircle2, Lock, Clock } from 'lucide-react';
+import { regionName } from '@/lib/serviceRegions';
+import { useServiceRegions } from '@/components/providers/ServiceRegionsProvider';
+import Reveal from '@/components/ui/Reveal';
 
 export default function ContactSection() {
   const t = useTranslations('contact');
@@ -11,7 +14,10 @@ export default function ContactSection() {
   const locale = params.locale as string;
   const isAr = locale === 'ar';
   const [status, setStatus] = useState<'idle'|'loading'|'success'|'error'>('idle');
-  const [form, setForm] = useState({ name: '', company: '', phone: '', city: '', quantity: '1', website: '' });
+  // `country` stores the English country name so leads read consistently in
+  // the admin panel whichever language the visitor used.
+  const serviceRegions = useServiceRegions();
+  const [form, setForm] = useState({ name: '', company: '', phone: '', country: serviceRegions[0].nameEn, city: '', quantity: '1', website: '' });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,7 +54,7 @@ export default function ContactSection() {
       <div className="container" style={{ position: 'relative', zIndex: 2 }}>
         <div className="contact-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: '64px', alignItems: 'center' }}>
           {/* Left */}
-          <div style={{ textAlign: isAr ? 'right' : 'left' }}>
+          <Reveal from="start" style={{ textAlign: isAr ? 'right' : 'left' }}>
             <span className="section-tag">{t('tag')}</span>
             <h2 style={{ fontSize: 'clamp(2rem,5vw,4rem)', fontWeight: 800, color: '#fff', marginBottom: '16px' }}>{t('title')}</h2>
             <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 'clamp(1rem, 2.5vw, 1.2rem)', marginBottom: '32px' }}>{t('subtitle')}</p>
@@ -62,10 +68,10 @@ export default function ContactSection() {
                 <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.85rem' }}>{t('form.response')}</span>
               </div>
             </div>
-          </div>
+          </Reveal>
 
           {/* Right */}
-          <div className="glass-dark" style={{ padding: 'clamp(24px, 5vw, 40px) clamp(20px, 4vw, 32px)' }}>
+          <Reveal from="end" delay={150} className="glass-dark" style={{ padding: 'clamp(24px, 5vw, 40px) clamp(20px, 4vw, 32px)' }}>
             {status === 'success' ? (
               <div role="status" style={{ textAlign: 'center', padding: '40px 0' }}>
                 <div style={{ fontSize: '3rem', marginBottom: '16px', display: 'flex', justifyContent: 'center' }}>
@@ -100,19 +106,28 @@ export default function ContactSection() {
                   onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.15)')} />
                 <div className="contact-form-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                   <div>
+                    <label htmlFor="contact-country" className="sr-only">{t('form.country')}</label>
+                    <select id="contact-country" style={{ ...inputStyle, cursor: 'pointer' }} value={form.country}
+                      onChange={e => setForm(f => ({ ...f, country: e.target.value }))}>
+                      {serviceRegions.map(r => (
+                        <option key={r.code} value={r.nameEn} style={{ color: '#000' }}>{regionName(r, locale)}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
                     <label htmlFor="contact-city" className="sr-only">{t('form.city')}</label>
                     <input id="contact-city" style={inputStyle} placeholder={t('form.city')} value={form.city}
                       onChange={e => setForm(f => ({ ...f, city: e.target.value }))}
                       onFocus={e => (e.target.style.borderColor = 'var(--accent)')}
                       onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.15)')} />
                   </div>
-                  <div>
-                    <label htmlFor="contact-quantity" className="sr-only">{t('form.quantity')}</label>
-                    <select id="contact-quantity" style={{ ...inputStyle, cursor: 'pointer' }} value={form.quantity}
-                      onChange={e => setForm(f => ({ ...f, quantity: e.target.value }))}>
-                      {[1,2,3,5,10,20].map(n => <option key={n} value={n} style={{ color: '#000' }}>{n}</option>)}
-                    </select>
-                  </div>
+                </div>
+                <div>
+                  <label htmlFor="contact-quantity" style={{ display: 'block', color: 'rgba(255,255,255,0.55)', fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', textAlign: isAr ? 'right' : 'left' }}>{t('form.quantity')}</label>
+                  <select id="contact-quantity" style={{ ...inputStyle, cursor: 'pointer' }} value={form.quantity}
+                    onChange={e => setForm(f => ({ ...f, quantity: e.target.value }))}>
+                    {[1,2,3,5,10,20].map(n => <option key={n} value={n} style={{ color: '#000' }}>{n}</option>)}
+                  </select>
                 </div>
                 <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '8px', minHeight: '48px' }}
                   disabled={status === 'loading'}>
@@ -121,7 +136,7 @@ export default function ContactSection() {
                 {status === 'error' && <p role="alert" style={{ color: '#C0392B', fontSize: '0.85rem', textAlign: 'center' }}>{t('form.error')}</p>}
               </form>
             )}
-          </div>
+          </Reveal>
         </div>
       </div>
       <style jsx>{`

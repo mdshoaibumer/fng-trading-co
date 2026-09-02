@@ -379,6 +379,19 @@ p {
   to { width: 100%; }
 }
 
+/* Scroll-reveal helper (src/components/ui/Reveal.tsx): 'start'/'end' slides
+   are logical, so flip them under RTL. */
+:root { --reveal-dir: 1; }
+[dir="rtl"] { --reveal-dir: -1; }
+
+/* Product cards sit on a flat near-white gradient, where a 24px backdrop
+   blur is invisible but still costs a full re-sample of everything behind
+   the card on every scroll frame — six cards on a phone is six of those. */
+.item-card {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
 /* ─── REDUCED MOTION — Section 9.3 ──────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *,

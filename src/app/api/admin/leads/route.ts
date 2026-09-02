@@ -1,5 +1,10 @@
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 import { supabaseAdmin } from '@/lib/supabase';
+
+const LEAD_STATUSES = ['new', 'contacted', 'qualified', 'closed'] as const;
+const patchSchema = z.object({ id: z.coerce.number().int().positive(), status: z.enum(LEAD_STATUSES) });
+const deleteSchema = z.object({ id: z.coerce.number().int().positive() });
 
 // PostgREST's .or() filter syntax treats `,`, `.`, `:`, `(` and `)` as
 // structural characters. Wrapping a value in double quotes tells it to
@@ -44,11 +49,11 @@ export async function GET(request: Request) {
 
 export async function PATCH(request: Request) {
   try {
-    const { id, status } = await request.json();
-
-    if (!id || !status) {
-      return NextResponse.json({ error: 'Missing id or status' }, { status: 400 });
+    const parsed = patchSchema.safeParse(await request.json());
+    if (!parsed.success) {
+      return NextResponse.json({ error: 'Invalid id or status' }, { status: 400 });
     }
+    const { id, status } = parsed.data;
 
     const { error } = await supabaseAdmin
       .from('inquiries')
@@ -65,11 +70,11 @@ export async function PATCH(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
-    const { id } = await request.json();
-
-    if (!id) {
-      return NextResponse.json({ error: 'Missing id' }, { status: 400 });
+    const parsed = deleteSchema.safeParse(await request.json());
+    if (!parsed.success) {
+      return NextResponse.json({ error: 'Invalid id' }, { status: 400 });
     }
+    const { id } = parsed.data;
 
     const { error } = await supabaseAdmin
       .from('inquiries')

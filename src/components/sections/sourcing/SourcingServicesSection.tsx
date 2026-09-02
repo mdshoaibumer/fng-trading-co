@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
+import Reveal from '@/components/ui/Reveal';
 import { ShieldCheck, ClipboardCheck, Search, Layers, Ship, FileCheck } from 'lucide-react';
 
 const SERVICE_KEYS = ['verification', 'audit', 'qc', 'consolidation', 'freight', 'customs'] as const;
@@ -29,8 +30,9 @@ export default function SourcingServicesSection() {
           <p style={{ color: 'var(--text-secondary)', fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', maxWidth: '600px', margin: '0 auto' }}>{t('subtitle')}</p>
         </div>
         <div className="ss-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'clamp(16px, 3vw, 24px)' }}>
-          {SERVICE_KEYS.map((key) => (
-            <div key={key} style={{
+          {SERVICE_KEYS.map((key, i) => (
+            <Reveal key={key} delay={(i % 3) * 100} threshold={0.1}>
+            <div style={{ height: '100%',
               padding: 'clamp(20px, 4vw, 28px)', borderRadius: '20px', background: '#fff',
               boxShadow: '0 4px 24px rgba(26,61,43,0.06)', border: '1px solid rgba(141,184,51,0.1)',
               textAlign: isAr ? 'right' : 'left',
@@ -49,6 +51,7 @@ export default function SourcingServicesSection() {
               <h3 style={{ color: 'var(--primary)', fontSize: '1.05rem', fontWeight: 700, marginBottom: '10px' }}>{t(`items.${key}.name`)}</h3>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', lineHeight: 1.7 }}>{t(`items.${key}.desc`)}</p>
             </div>
+            </Reveal>
           ))}
         </div>
       </div>

@@ -2,6 +2,7 @@ import type { Product } from '@/lib/supabase';
 import ProductCard from './ProductCard';
 import ErrorState from '@/components/ui/ErrorState';
 import EmptyState from '@/components/ui/EmptyState';
+import Reveal from '@/components/ui/Reveal';
 
 /**
  * Shared by the homepage printer catalog and the office-equipment catalog —
@@ -34,7 +35,7 @@ export default function ProductCatalogSection({
         borderRadius: '50%', pointerEvents: 'none',
       }} />
       <div className="container">
-        <div style={{ textAlign: 'center', marginBottom: 'clamp(40px, 8vw, 80px)' }}>
+        <Reveal style={{ textAlign: 'center', marginBottom: 'clamp(40px, 8vw, 80px)' }}>
           <span style={{
             display: 'inline-block', color: 'var(--accent)', background: 'rgba(141, 184, 51, 0.1)',
             padding: '8px 20px', borderRadius: '20px', fontSize: '0.9rem', fontWeight: 700,
@@ -52,7 +53,7 @@ export default function ProductCatalogSection({
           <p style={{ fontSize: 'clamp(0.9rem, 2vw, 1.15rem)', color: 'var(--text-secondary)', maxWidth: '700px', margin: '0 auto', lineHeight: 1.6 }}>
             {subtitle}
           </p>
-        </div>
+        </Reveal>
 
         {error ? (
           <ErrorState
@@ -71,8 +72,10 @@ export default function ProductCatalogSection({
             display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
             gap: 'clamp(16px, 3vw, 32px)', alignItems: 'stretch',
           }}>
-            {products.map(product => (
-              <ProductCard key={product.id} product={product} isAr={isAr} productUrl={`${basePath}/${product.id}`} />
+            {products.map((product, i) => (
+              <Reveal key={product.id} delay={Math.min(i, 5) * 90} style={{ display: 'flex' }}>
+                <ProductCard product={product} isAr={isAr} productUrl={`${basePath}/${product.id}`} />
+              </Reveal>
             ))}
           </div>
         )}

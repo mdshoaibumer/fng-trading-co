@@ -40,7 +40,7 @@ export default async function PrinterPartsPage({
     '@context': 'https://schema.org',
     '@type': 'Product',
     'name': isAr ? 'كتالوج قطع غيار طابعات HP' : 'HP Printer Parts Catalog',
-    'image': `${websiteUrl}/Printer%20Parts.jpeg`,
+    'image': `${websiteUrl}/printer-parts-hero.jpeg`,
     'description': isAr 
       ? 'كتالوج شامل لقطع غيار طابعات HP LaserJet الأصلية والمتوافقة مثل وحدات التثبيت الحراري، أسطوانات التغذية، وأحزمة النقل.' 
       : 'Comprehensive catalog of genuine and compatible HP LaserJet printer parts including fusers, maintenance kits, rollers, and formatting boards.',

@@ -76,12 +76,9 @@ export default function AIChatWidget({ welcomeMessage }: { welcomeMessage?: stri
       });
 
       const data = await res.json();
-      
-      if (res.ok && data.choices && data.choices[0]) {
-        setMessages(prev => [...prev, { 
-          role: 'assistant', 
-          content: data.choices[0].message.content 
-        }]);
+
+      if (res.ok && typeof data.content === 'string') {
+        setMessages(prev => [...prev, { role: 'assistant', content: data.content }]);
       } else {
         console.error('Chat error data:', data);
         setMessages(prev => [...prev, { role: 'assistant', content: copy.connError }]);
@@ -153,24 +150,24 @@ export default function AIChatWidget({ welcomeMessage }: { welcomeMessage?: stri
             {/* Messages Area - Added explicit inline padding to override any CSS issues */}
             <div className="flex-1 overflow-y-auto bg-slate-50" aria-live="polite" aria-atomic="false" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {messages.map((msg, idx) => (
-                <motion.div 
+                <motion.div
                   key={idx}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div className={`rounded-2xl break-words shadow-sm ${
-                    msg.role === 'user' 
-                      ? 'bg-[var(--accent)] text-white rounded-tr-sm' 
+                    msg.role === 'user'
+                      ? 'bg-[var(--accent)] text-white rounded-tr-sm'
                       : 'bg-white text-slate-700 rounded-tl-sm border border-slate-100'
                   }`} style={{ padding: '12px', fontSize: '14px', maxWidth: '85%' }}>
                     {msg.content}
                   </div>
                 </motion.div>
               ))}
-              
+
               {isLoading && (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   className="flex justify-start"

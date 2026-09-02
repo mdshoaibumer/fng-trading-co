@@ -11,3 +11,12 @@
 // is 'use client' — a Server Component importing from it gets a client
 // reference proxy, not the string, and the cookie lookup silently misses.
 export const GATE_COOKIE = 'fng_gate_seen';
+
+// Marks the chooser as answered from the client. Called by the gate itself on
+// dismiss and by the Home links in the Navbar/Footer, so heading "home" from
+// any page renders the page straight away instead of the chooser. Client-only
+// (touches document); server code imports only GATE_COOKIE from this module.
+export function markGateSeen(): void {
+  if (typeof document === 'undefined') return;
+  document.cookie = `${GATE_COOKIE}=1; path=/; SameSite=Lax`;
+}

@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
+import Reveal from '@/components/ui/Reveal';
 import { UserCheck, BadgeCheck, ShieldCheck, CheckCircle2, ExternalLink } from 'lucide-react';
 
 const POINT_KEYS = ['accountability', 'verified', 'compliance'] as const;
@@ -43,15 +44,15 @@ export default function SourcingWhySection() {
       <section id="sourcing-why" className="section" style={{ background: '#fff' }}>
         <div className="container">
           <div className="why-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(32px, 6vw, 64px)', alignItems: 'center' }}>
-            <div style={{ textAlign: isAr ? 'right' : 'left' }}>
+            <Reveal from="start" style={{ textAlign: isAr ? 'right' : 'left' }}>
               <span className="section-tag">{t('tag')}</span>
               <h2 style={{ fontSize: 'clamp(1.6rem,3.5vw,2.75rem)', fontWeight: 800, color: 'var(--primary)', marginBottom: '16px' }}>{t('title')}</h2>
               <p style={{ color: 'var(--text-secondary)', fontSize: 'clamp(0.9rem, 2vw, 1.05rem)', lineHeight: 1.7 }}>{t('subtitle')}</p>
-            </div>
+            </Reveal>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {POINT_KEYS.map((key) => (
+              {POINT_KEYS.map((key, i) => (
+                <Reveal key={key} from="end" delay={i * 120}>
                 <div
-                  key={key}
                   className="glass"
                   style={{ padding: '20px 24px', display: 'flex', gap: '16px', alignItems: 'flex-start', flexDirection: isAr ? 'row-reverse' : 'row', textAlign: isAr ? 'right' : 'left', background: 'rgba(247,248,245,0.9)', transition: 'all 350ms cubic-bezier(0.34,1.56,0.64,1)', cursor: 'default' }}
                   // These are full-width rows rather than tiles, so they nudge
@@ -68,6 +69,7 @@ export default function SourcingWhySection() {
                     <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', lineHeight: 1.6 }}>{t(`points.${key}.desc`)}</p>
                   </div>
                 </div>
+                </Reveal>
               ))}
             </div>
           </div>
@@ -87,15 +89,15 @@ export default function SourcingWhySection() {
             <p style={{ color: '#4B5563', fontSize: 'clamp(0.9rem, 2vw, 1.05rem)', maxWidth: '600px', margin: '0 auto', lineHeight: 1.7 }}>{t('licensing.subtitle')}</p>
           </div>
           <div className="lic-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'clamp(16px, 2vw, 24px)' }}>
-            {LICENSES.map(({ key, preview, href }) => (
+            {LICENSES.map(({ key, preview, href }, i) => (
+              <Reveal key={key} delay={i * 110} from="scale" threshold={0.1} style={{ display: 'flex' }}>
               <a
-                key={key}
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="lic-card"
                 style={{
-                  display: 'flex', flexDirection: 'column', textDecoration: 'none',
+                  display: 'flex', flexDirection: 'column', textDecoration: 'none', width: '100%',
                   background: '#fff', borderRadius: '14px', overflow: 'hidden',
                   border: '1px solid rgba(15,42,28,0.1)',
                   textAlign: isAr ? 'right' : 'left',
@@ -152,6 +154,7 @@ export default function SourcingWhySection() {
                   </span>
                 </div>
               </a>
+              </Reveal>
             ))}
           </div>
         </div>

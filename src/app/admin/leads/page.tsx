@@ -12,7 +12,10 @@ import {
   Mail,
   Building2,
   ChevronDown,
-  RefreshCw
+  RefreshCw,
+  MapPin,
+  Briefcase,
+  Hash
 } from 'lucide-react';
 import { useToast } from '@/components/admin/Toast';
 
@@ -34,7 +37,20 @@ interface Lead {
   type?: string;
   status?: string;
   message?: string;
+  country?: string;
+  city?: string;
+  industry?: string;
+  quantity?: string;
   created_at?: string;
+}
+
+// Every value is quoted with embedded quotes doubled (RFC 4180), and cells
+// that a spreadsheet would evaluate as a formula (=, +, -, @ ...) get a
+// leading apostrophe - lead names/companies come straight from the public form.
+function csvCell(value: unknown): string {
+  let v = value == null ? '' : String(value);
+  if (/^[=+\-@\t\r]/.test(v)) v = `'${v}`;
+  return `"${v.replace(/"/g, '""')}"`;
 }
 
 export default function AdminLeadsPage() {
@@ -119,18 +135,12 @@ export default function AdminLeadsPage() {
       showToast('No leads to export', 'info');
       return;
     }
-    const headers = ['Name', 'Email', 'Phone', 'Company', 'Type', 'Status', 'Message', 'Date'];
+    const headers = ['Name', 'Email', 'Phone', 'Company', 'Country', 'City', 'Industry', 'Quantity', 'Type', 'Status', 'Message', 'Date'];
     const rows = leads.map(l => [
-      l.name || '',
-      l.email || '',
-      l.phone || '',
-      l.company || '',
-      l.type || '',
-      l.status || '',
-      (l.message || '').replace(/"/g, '""'),
+      l.name, l.email, l.phone, l.company, l.country, l.city, l.industry, l.quantity, l.type, l.status, l.message,
       l.created_at ? new Date(l.created_at).toLocaleDateString() : ''
     ]);
-    const csv = [headers.join(','), ...rows.map(r => r.map(v => `"${v}"`).join(','))].join('\n');
+    const csv = [headers.map(csvCell).join(','), ...rows.map(r => r.map(csvCell).join(','))].join('\r\n');
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -255,6 +265,21 @@ export default function AdminLeadsPage() {
                       {lead.company && (
                         <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                           <Building2 size={13} /> {lead.company}
+                        </span>
+                      )}
+                      {(lead.country || lead.city) && (
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <MapPin size={13} /> {[lead.city, lead.country].filter(Boolean).join(', ')}
+                        </span>
+                      )}
+                      {lead.industry && (
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <Briefcase size={13} /> {lead.industry}
+                        </span>
+                      )}
+                      {lead.quantity && (
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }} title="Printers requested">
+                          <Hash size={13} /> {lead.quantity}
                         </span>
                       )}
                     </div>

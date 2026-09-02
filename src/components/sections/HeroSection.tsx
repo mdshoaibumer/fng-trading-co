@@ -5,7 +5,10 @@ import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { useScrollFrameSequence, framePath } from '@/lib/useScrollFrameSequence';
 
-const TOTAL_FRAMES = 10;
+// Nine frames, not ten: the original set had 06 and 07 byte-identical, which
+// showed as a dead stop right at the turnaround of the ping-pong timeline. The
+// duplicate was dropped and the rest renumbered, so every frame now advances.
+const TOTAL_FRAMES = 9;
 const desktopFramePath = framePath('video-frames');
 const mobileFramePath = framePath('video-frames-mobile');
 

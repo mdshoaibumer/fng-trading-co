@@ -5,6 +5,8 @@ import { safeJsonLd } from '@/lib/safeJsonLd';
 import { getSettings } from '@/lib/supabase';
 import { buildAlternates } from '@/lib/metadata';
 import { SITE_EMAIL, SITE_URL } from '@/lib/siteContact';
+import { areaServedSchema } from '@/lib/serviceRegions';
+import { getServiceRegions } from '@/lib/getServiceRegions';
 
 // Reads live contact settings from Supabase on every request.
 export const dynamic = 'force-dynamic';
@@ -33,6 +35,7 @@ export default async function ContactPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const serviceRegions = await getServiceRegions();
 
   const settings = await getSettings();
   const isAr = locale === 'ar';
@@ -68,16 +71,11 @@ export default async function ContactPage({
       'opens': '09:00',
       'closes': '18:00'
     },
-    'areaServed': [
-      { '@type': 'AdministrativeArea', 'name': 'Riyadh' },
-      { '@type': 'AdministrativeArea', 'name': 'Jeddah' },
-      { '@type': 'AdministrativeArea', 'name': 'Dammam' },
-      { '@type': 'AdministrativeArea', 'name': 'Al Madinah' }
-    ],
+    'areaServed': areaServedSchema(serviceRegions),
     'priceRange': '$$',
     'description': isAr 
-      ? 'مورد طابعات HP المجددة و خراطيش الحبر الصديقة للبيئة للشركات والمؤسسات في السعودية.' 
-      : 'Refurbished HP printer supplier and eco-friendly toner provider serving businesses across Saudi Arabia.'
+      ? 'مورد طابعات HP المجددة و خراطيش الحبر الصديقة للبيئة للشركات والمؤسسات في السعودية والإمارات وعُمان والصين ودول الخليج.' 
+      : 'Refurbished HP printer supplier and eco-friendly toner provider serving businesses across Saudi Arabia, the UAE, Oman, China and the wider Gulf.'
   };
 
   const breadcrumbSchema = {

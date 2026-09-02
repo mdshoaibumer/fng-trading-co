@@ -134,7 +134,7 @@ export default async function PrinterProductPage({
         '@type': 'ListItem',
         'position': 2,
         'name': isAr ? 'الطابعات' : 'Printers',
-        'item': `${websiteUrl}/${locale}` // Falls back to catalog section on homepage
+        'item': `${websiteUrl}/${locale}/printers`
       },
       {
         '@type': 'ListItem',

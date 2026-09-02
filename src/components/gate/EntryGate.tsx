@@ -7,7 +7,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
 import { useDialogA11y } from '@/lib/useDialogA11y';
-import { GATE_COOKIE } from '@/lib/entryGate';
+import { markGateSeen } from '@/lib/entryGate';
 
 // Gate-only photography. The catalog keeps its own cutout of the M428fdw
 // under /printers/... for the product pages — these two exist just to give
@@ -52,9 +52,7 @@ export default function EntryGate() {
   const Arrow = isAr ? ArrowLeft : ArrowRight;
   const [open, setOpen] = useState(true);
   const [mounted, setMounted] = useState(true);
-  const markSeen = () => {
-    document.cookie = `${GATE_COOKIE}=1; path=/; SameSite=Lax`;
-  };
+  const markSeen = markGateSeen;
 
   const dismiss = () => {
     markSeen();

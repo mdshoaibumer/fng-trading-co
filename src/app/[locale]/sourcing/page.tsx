@@ -9,6 +9,8 @@ import SourcingWhySection from '@/components/sections/sourcing/SourcingWhySectio
 import ContactSection from '@/components/sections/ContactSection';
 import { buildAlternates } from '@/lib/metadata';
 import { safeJsonLd } from '@/lib/safeJsonLd';
+import { areaServedSchema } from '@/lib/serviceRegions';
+import { getServiceRegions } from '@/lib/getServiceRegions';
 
 export async function generateMetadata({
   params,
@@ -33,6 +35,7 @@ export default async function SourcingPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const serviceRegions = await getServiceRegions();
   const t = await getTranslations({ locale, namespace: 'sourcingHero' });
   const isAr = locale === 'ar';
   const websiteUrl = SITE_URL;
@@ -56,10 +59,7 @@ export default async function SourcingPage({
       'name': 'Future Next Gen',
       'url': websiteUrl,
     },
-    'areaServed': {
-      '@type': 'Country',
-      'name': 'Saudi Arabia',
-    },
+    'areaServed': areaServedSchema(serviceRegions),
     'url': `${websiteUrl}/${locale}/sourcing`,
   };
 

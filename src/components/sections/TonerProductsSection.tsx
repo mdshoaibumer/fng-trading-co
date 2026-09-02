@@ -7,10 +7,10 @@ import { Leaf, Recycle, ShieldCheck, Award, Target, Sparkles, DollarSign, Zap, B
 import { useCarousel } from '@/hooks/useCarousel';
 
 function ImageCarousel({ images, alt }: { images: string[]; alt: string }) {
-  const { current, goTo: setCurrent, next, prev } = useCarousel({ length: images.length, autoplayMs: 4000 });
+  const { current, goTo: setCurrent, next, prev, pauseHandlers } = useCarousel({ length: images.length, autoplayMs: 4000 });
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+    <div style={{ position: 'relative', width: '100%', height: '100%' }} {...pauseHandlers}>
       {images.map((src, i) => (
         <Image key={src} src={src} alt={`${alt} ${i + 1}`} fill
           style={{

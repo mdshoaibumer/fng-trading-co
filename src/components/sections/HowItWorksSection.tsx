@@ -22,7 +22,7 @@ export default function HowItWorksSection() {
   }, []);
 
   return (
-    <section id="how-it-works" className="section" style={{ background: 'var(--bg-secondary)' }}>
+    <section id="how-it-works" className="section" style={{ background: 'var(--bg-secondary)', isolation: 'isolate' }}>
       <div className="container" ref={ref}>
         <div style={{ textAlign: 'center', marginBottom: 'clamp(32px, 6vw, 64px)' }}>
           <span className="section-tag">{t('tag')}</span>

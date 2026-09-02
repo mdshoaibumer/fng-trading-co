@@ -5,6 +5,8 @@ import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import { CheckCircle2, MapPin, Mail, Phone, Clock, ShieldCheck, Zap } from 'lucide-react';
 import { SITE_EMAIL } from '@/lib/siteContact';
+import { officeRegions, regionName, regionHub } from '@/lib/serviceRegions';
+import { useServiceRegions } from '@/components/providers/ServiceRegionsProvider';
 
 export default function ContactPageClient({ email }: { email?: string }) {
   const t = useTranslations('contact');
@@ -13,7 +15,8 @@ export default function ContactPageClient({ email }: { email?: string }) {
   const locale = params.locale as string;
   const isAr = locale === 'ar';
   const [status, setStatus] = useState<'idle'|'loading'|'success'|'error'>('idle');
-  const [form, setForm] = useState({ name: '', company: '', phone: '', email: '', industry: '', city: '', message: '', quantity: '1', website: '' });
+  const serviceRegions = useServiceRegions();
+  const [form, setForm] = useState({ name: '', company: '', phone: '', email: '', industry: '', country: serviceRegions[0].nameEn, city: '', message: '', quantity: '1', website: '' });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,16 +87,52 @@ export default function ContactPageClient({ email }: { email?: string }) {
                 <MapPin color="var(--accent)" />
                 {tp('locations')}
               </h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                <div style={{ padding: '24px', background: 'var(--bg-secondary)', borderRadius: '20px', border: '1px solid var(--light-grey)' }}>
-                  <h4 style={{ fontWeight: 700, color: 'var(--primary)', fontSize: '1.1rem', marginBottom: '8px' }}>{tp('hq')}</h4>
-                  <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>{tp('hqAddress')}</p>
-                </div>
-                <div style={{ padding: '24px', background: 'var(--bg-secondary)', borderRadius: '20px', border: '1px solid var(--light-grey)' }}>
-                  <h4 style={{ fontWeight: 700, color: 'var(--primary)', fontSize: '1.1rem', marginBottom: '8px' }}>{tp('uae')}</h4>
-                  <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>{tp('uaeAddress')}</p>
-                </div>
+              {/* One card per country with an FNG office, then a chip row for
+                  every market served. Both come from the live region list
+                  (Admin -> Regions); the address lines live in
+                  messages/*.json (contactPage.*), keyed by country code, so a
+                  country added in Admin shows its hub city until a matching
+                  address key is translated. */}
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '12px', textAlign: isAr ? 'right' : 'left' }}>{tp('offices')}</p>
+              <div className="office-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '28px' }}>
+                {officeRegions(serviceRegions).map((r) => {
+                  const addressKey = ({ SA: 'hqAddress', AE: 'uaeAddress', CN: 'cnAddress', OM: 'omAddress' } as Record<string, string>)[r.code];
+                  const titleKey = ({ SA: 'hq', AE: 'uae', CN: 'cn', OM: 'om' } as Record<string, string>)[r.code];
+                  return (
+                    <div key={r.code} className="office-card" style={{
+                      padding: '20px 22px', background: 'var(--bg-secondary)', borderRadius: '20px', border: '1px solid var(--light-grey)',
+                      textAlign: isAr ? 'right' : 'left', transition: 'transform 250ms ease, box-shadow 250ms ease, border-color 250ms ease',
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                        <span aria-hidden="true" style={{
+                          fontFamily: 'var(--font-ibm-plex-mono), monospace', fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.08em',
+                          padding: '4px 8px', borderRadius: '8px', background: 'rgba(141,184,51,0.14)', color: '#5C7F1F', border: '1px solid rgba(141,184,51,0.3)',
+                        }}>{r.code}</span>
+                        <h4 style={{ fontWeight: 800, color: 'var(--primary)', fontSize: '1.02rem', margin: 0 }}>
+                          {titleKey ? tp(titleKey as Parameters<typeof tp>[0]) : regionName(r, locale)}
+                        </h4>
+                      </div>
+                      <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, fontSize: '0.9rem', margin: 0 }}>
+                        {addressKey ? tp(addressKey as Parameters<typeof tp>[0]) : regionHub(r, locale)}
+                      </p>
+                    </div>
+                  );
+                })}
               </div>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '12px', textAlign: isAr ? 'right' : 'left' }}>{tp('markets')}</p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                {serviceRegions.map((r) => (
+                  <span key={r.code} style={{
+                    display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '999px',
+                    background: r.presence === 'office' ? 'rgba(141,184,51,0.12)' : 'var(--bg-secondary)',
+                    border: `1px solid ${r.presence === 'office' ? 'rgba(141,184,51,0.4)' : 'var(--light-grey)'}`,
+                    color: 'var(--primary)', fontSize: '0.82rem', fontWeight: 600,
+                  }}>
+                    <span aria-hidden="true" style={{ fontFamily: 'var(--font-ibm-plex-mono), monospace', fontSize: '0.68rem', fontWeight: 800, letterSpacing: '0.06em', color: r.presence === 'office' ? '#5C7F1F' : '#6B7280' }}>{r.code}</span>{regionName(r, locale)}
+                  </span>
+                ))}
+              </div>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', lineHeight: 1.6, marginTop: '12px', textAlign: isAr ? 'right' : 'left' }}>{tp('marketsNote')}</p>
             </div>
 
             {/* Direct Contact */}
@@ -201,19 +240,29 @@ export default function ContactPageClient({ email }: { email?: string }) {
 
                 <div className="form-row" style={{ gap: '20px' }}>
                   <div>
+                    <label htmlFor="contact-page-country" className="sr-only">{t('form.country')}</label>
+                    <select id="contact-page-country" style={{ ...inputStyle, cursor: 'pointer' }} value={form.country}
+                      onChange={e => setForm(f => ({ ...f, country: e.target.value }))}>
+                      {serviceRegions.map(r => (
+                        <option key={r.code} value={r.nameEn}>{regionName(r, locale)}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
                     <label htmlFor="contact-page-city" className="sr-only">{t('form.city')}</label>
                     <input id="contact-page-city" style={inputStyle} placeholder={t('form.city')} value={form.city} required
                       onChange={e => setForm(f => ({ ...f, city: e.target.value }))}
                       onFocus={e => { e.target.style.borderColor = 'var(--accent)'; e.target.style.background = '#fff'; }}
                       onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.background = '#F9FAFB'; }} />
                   </div>
-                  <div>
-                    <label htmlFor="contact-page-industry" className="sr-only">{t('form.industry')}</label>
-                    <input id="contact-page-industry" style={inputStyle} placeholder={t('form.industry')} value={form.industry} required
-                      onChange={e => setForm(f => ({ ...f, industry: e.target.value }))}
-                      onFocus={e => { e.target.style.borderColor = 'var(--accent)'; e.target.style.background = '#fff'; }}
-                      onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.background = '#F9FAFB'; }} />
-                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="contact-page-industry" className="sr-only">{t('form.industry')}</label>
+                  <input id="contact-page-industry" style={inputStyle} placeholder={t('form.industry')} value={form.industry} required
+                    onChange={e => setForm(f => ({ ...f, industry: e.target.value }))}
+                    onFocus={e => { e.target.style.borderColor = 'var(--accent)'; e.target.style.background = '#fff'; }}
+                    onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.background = '#F9FAFB'; }} />
                 </div>
 
                 <div>
@@ -250,8 +299,10 @@ export default function ContactPageClient({ email }: { email?: string }) {
       </div>
       <style jsx>{`
         .form-row { display: grid; grid-template-columns: 1fr 1fr; }
+        .office-card:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(26,61,43,0.08); border-color: rgba(141,184,51,0.4) !important; }
         @media (max-width: 480px) {
           .form-row { grid-template-columns: 1fr; }
+          .office-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
     </main>

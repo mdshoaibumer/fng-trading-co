@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
+import Reveal from '@/components/ui/Reveal';
 
 const STEP_KEYS = ['s1', 's2', 's3', 's4', 's5', 's6', 's7'] as const;
 
@@ -19,8 +20,9 @@ export default function SourcingProcessSection() {
           <p style={{ color: 'var(--text-secondary)', fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', maxWidth: '600px', margin: '0 auto' }}>{t('subtitle')}</p>
         </div>
         <div className="sp-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'clamp(16px, 2.5vw, 24px)' }}>
-          {STEP_KEYS.map((key) => (
-            <div key={key} style={{
+          {STEP_KEYS.map((key, i) => (
+            <Reveal key={key} delay={(i % 4) * 90} threshold={0.1}>
+            <div style={{ height: '100%',
               padding: 'clamp(18px, 3vw, 24px) clamp(16px, 2.5vw, 20px)', borderRadius: '16px', background: '#fff',
               border: '1px solid var(--light-grey)', borderTop: '3px solid var(--accent)',
               textAlign: isAr ? 'right' : 'left',
@@ -39,6 +41,7 @@ export default function SourcingProcessSection() {
               <h3 style={{ color: 'var(--primary)', fontSize: '1rem', fontWeight: 700, marginBottom: '8px' }}>{t(`steps.${key}.title`)}</h3>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.82rem', lineHeight: 1.65 }}>{t(`steps.${key}.desc`)}</p>
             </div>
+            </Reveal>
           ))}
         </div>
       </div>

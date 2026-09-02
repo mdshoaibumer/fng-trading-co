@@ -143,7 +143,7 @@ export default function ProductPageClient({ product, whatsapp, locale, itemType 
                   fill
                   priority
                   sizes="(max-width: 900px) 90vw, 45vw"
-                  onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/placeholder.png'; }}
+                  onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.srcset = ''; e.currentTarget.src = '/placeholder.png'; }}
                   style={{
                     objectFit: 'contain',
                     transition: isZoomed ? 'none' : 'all 0.5s cubic-bezier(0.22, 1, 0.36, 1)',
@@ -214,7 +214,7 @@ export default function ProductPageClient({ product, whatsapp, locale, itemType 
                       alt=""
                       fill
                       sizes="80px"
-                      onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/placeholder.png'; }}
+                      onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.srcset = ''; e.currentTarget.src = '/placeholder.png'; }}
                       style={{ objectFit: 'contain', padding: '8px' }}
                     />
                   </button>
