@@ -497,20 +497,32 @@ p {
 
 /* Persistent chrome must not slide with the page — the visitor needs one
    fixed reference point to read the content as having moved rather than the
-   whole viewport. The nav carries a backdrop-filter, so this uses the
-   hide-the-old-snapshot variant; cross-fading two blurred snapshots flashes. */
+   whole viewport.
+
+   Both snapshots are pinned opaque and un-animated rather than hiding the old
+   one. Hiding it looked equivalent while the bar's contents were identical
+   across a navigation, but the language toggle is a navigation too: /en -> /ar
+   swaps every label and mirrors the row, so old and new genuinely differ.
+   With the old snapshot removed there was a window where the group had
+   nothing to paint at all while the rest of the page cross-faded — the bar
+   visibly blinked out and back. Keeping both and letting the new one sit on
+   top means there is never a frame without a navbar.
+
+   mix-blend-mode has to be normal: the pair defaults to plus-lighter, which
+   would add two opaque snapshots together and wash the bar out for the
+   duration. */
 ::view-transition-group(persistent-nav),
 ::view-transition-group(persistent-whatsapp) {
   animation: none;
   z-index: 100;
 }
 ::view-transition-old(persistent-nav),
-::view-transition-old(persistent-whatsapp) {
-  display: none;
-}
 ::view-transition-new(persistent-nav),
+::view-transition-old(persistent-whatsapp),
 ::view-transition-new(persistent-whatsapp) {
   animation: none;
+  mix-blend-mode: normal;
+  opacity: 1;
 }
 
 /* The transition overlay swallows clicks for its whole duration; let them
