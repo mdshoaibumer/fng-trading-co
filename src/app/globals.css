@@ -92,36 +92,31 @@
   padding: 0;
 }
 
-/* Switching language is always a full page load, not a client navigation:
-   <html lang>/<dir> live in the root layout, and Next cannot swap a root
-   layout client-side, so it falls back to an MPA navigation. (Verified —
-   same-locale links keep the JS context alive, locale switches replace the
-   document.) That means the browser paints the incoming document's background
-   before its content, and this used to be the white body underneath — a white
-   screen between two dark screens, which is what the language toggle flashed.
+/* Hold the outgoing page on screen across a full page load instead of
+   painting a blank frame. Switching language is ALWAYS a full load — <html
+   lang>/dir live in the root layout and Next cannot swap a root layout
+   client-side, so it falls back to an MPA navigation (verified: same-locale
+   links keep the JS context alive, locale switches replace the document).
+   With this, the browser snapshots the old document and swaps to the new one;
+   paired with the `animation: none` on the root snapshots further down, the
+   swap is instant and there is no uncovered frame at all. Browsers without
+   cross-document view transitions ignore this and fall back to the background
+   below. */
+@view-transition {
+  navigation: auto;
+}
 
-   So the document carries the page's own surface colour. The base is the soft
-   white the light pages use; the home route is dark from its hero up, and
-   announces itself with #hero, so a gate-to-gate or hero-to-hero switch paints
-   dark on dark and there is nothing to see. */
 html {
-  background: var(--bg-secondary);
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
 
-html:has(#hero) {
-  background: var(--bg-darker);
-}
-
 body {
   font-family: var(--font-english);
   color: var(--text-primary);
-  /* transparent, not white: the document background above is what shows during
-     a page load, and an opaque body here would paint over it. */
-  background: transparent;
+  background: var(--bg-primary);
   line-height: 1.7;
   font-size: 16px;
   overflow-x: hidden;
