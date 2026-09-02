@@ -427,13 +427,40 @@ p {
   to { transform: translateY(0); }
 }
 
+/* The page sits on a white body — the dark screens (the entry chooser, the
+   hero) paint their own background in front of it rather than on it. So any
+   moment during a transition where the viewport is not fully covered by an
+   opaque snapshot shows white through. Two places used to leave such a gap:
+
+   1. The root snapshot. Nothing styled it, so the browser ran its default
+      cross-fade: old fading out while new faded in, both semi-transparent at
+      the midpoint, white showing between them. That fade is the ONLY thing
+      that animates on an untyped navigation — a language switch, for
+      instance — which is why switching language flashed white.
+   2. The lateral fade below, which faded the old page to nothing and only
+      then began fading the new one in, leaving a fully transparent gap
+      between the two.
+
+   Both are fixed the same way: the outgoing snapshot stays put and opaque,
+   and the incoming one fades in on top of it. There is never a frame without
+   something opaque covering the viewport. mix-blend-mode must be normal —
+   the pair defaults to plus-lighter, which would add two opaque snapshots
+   together and wash the page out. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
 /* Lateral moves between marketing pages — no hierarchy to express, so no
    direction either. */
 ::view-transition-old(.fade-out) {
-  animation: var(--duration-exit) ease-in vt-fade reverse;
+  animation: none;
+  mix-blend-mode: normal;
 }
 ::view-transition-new(.fade-in) {
-  animation: var(--duration-enter) ease-out var(--duration-exit) both vt-fade;
+  animation: var(--duration-enter) ease-out both vt-fade;
+  mix-blend-mode: normal;
 }
 
 /* Hierarchical moves: catalog -> product and back. */
