@@ -5,11 +5,22 @@ import { supabaseAdmin } from '@/lib/supabase';
 import { hashPassword, verifySessionToken } from '@/lib/adminSession';
 import { revalidatePublicSite } from '@/lib/revalidate';
 
-// Only http(s) URLs (or blank) are accepted for anything rendered as a link
-// or media source — never javascript:/data: schemes.
+// Only http(s) URLs, site-relative paths, or blank are accepted for anything
+// rendered as a link or media source — never javascript:/data: schemes.
+//
+// Site-relative paths have to be allowed because the divider videos are
+// self-hosted and stored that way ("/videos/forest-animation.mp4"). Rejecting
+// them made the Settings page unsaveable in a way that looked unrelated to
+// whatever was being edited: it loads every value with a GET and posts them
+// all back, so the stored video paths failed validation on every save and the
+// error surfaced against whichever field the admin had just changed.
+//
+// "/" but not "//": a protocol-relative "//evil.com" is an external URL
+// wearing a relative path's clothes, and stays rejected along with the
+// javascript:/data: schemes this guards against.
 const httpUrl = z.string().trim().max(2048).refine(
-  (v) => v === '' || /^https?:\/\//i.test(v),
-  { message: 'Must be an http(s) URL' }
+  (v) => v === '' || /^https?:\/\//i.test(v) || /^\/(?!\/)/.test(v),
+  { message: 'Must be an http(s) URL or a site-relative path' }
 ).optional();
 const shortText = z.string().trim().max(200).optional();
 
