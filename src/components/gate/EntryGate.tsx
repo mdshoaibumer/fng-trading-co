@@ -109,8 +109,15 @@ export default function EntryGate() {
         pointerEvents: 'none',
       }} />
 
+      {/* Keeps ?gate=1 on the way across. Without it this switched to a bare
+          /ar, and the landing page only re-opens the chooser for gate=1 or a
+          visitor who has never answered it — so for anyone with the cookie
+          already set, changing language here silently dismissed the gate and
+          dropped them on the printers page instead of the chooser they were
+          looking at. Answering the chooser is what markGateSeen is for; a
+          language switch is not an answer, so it deliberately isn't called. */}
       <Link
-        href={`/${otherLocale}`}
+        href={`/${otherLocale}?gate=1`}
         style={{
           position: 'absolute', top: 'clamp(16px, 3vw, 24px)', [isAr ? 'left' : 'right']: 'clamp(16px, 3vw, 24px)',
           zIndex: 3, height: '40px', padding: '0 20px', borderRadius: '999px',
