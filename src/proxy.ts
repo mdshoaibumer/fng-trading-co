@@ -66,8 +66,22 @@ function isSameOrigin(request: NextRequest): boolean {
 export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // The bare root is the front door: someone typing the domain gets the
+  // chooser, every time. Carrying ?gate=1 is what asks the landing page for it
+  // (see src/app/[locale]/page.tsx) — without it the page falls back to "has
+  // this visitor answered before?", and anyone with the cookie set was sent
+  // straight past the chooser into the printers side.
+  //
+  // Deliberately only the bare root. A bookmark or a link to /en or /ar is a
+  // request for that track's home page, and those still go straight through
+  // rather than making a returning visitor re-answer the question.
+  //
+  // publicUrl clears the query (it refuses to carry anything client-supplied
+  // into a redirect target), so the parameter is set on the result.
   if (pathname === '/') {
-    return NextResponse.redirect(publicUrl(`/${defaultLocale}`, request));
+    const url = publicUrl(`/${defaultLocale}`, request);
+    url.search = '?gate=1';
+    return NextResponse.redirect(url);
   }
 
   // 1. Handle Admin Security
