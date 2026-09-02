@@ -69,9 +69,23 @@ export default function EntryGate() {
 
   const dialogRef = useDialogA11y<HTMLDivElement>(open, dismiss);
 
+  // Scroll lock, plus a flag the stylesheet uses to take the floating chrome
+  // (nav bar, WhatsApp button) off the screen entirely while the chooser is
+  // up. They sit behind this overlay and are invisible anyway — until a view
+  // transition runs. Both carry a view-transition-name, which lifts them out
+  // of the page and into the transition layer above it, so switching language
+  // on the chooser made the nav bar flash into view over the top and then
+  // vanish again. An element that is display:none is never captured, so there
+  // is nothing to lift.
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
+    const root = document.documentElement;
+    if (open) root.setAttribute('data-gate-open', '');
+    else root.removeAttribute('data-gate-open');
+    return () => {
+      document.body.style.overflow = '';
+      root.removeAttribute('data-gate-open');
+    };
   }, [open]);
 
   // Closing only fades the gate out (opacity/pointerEvents) so the 500ms

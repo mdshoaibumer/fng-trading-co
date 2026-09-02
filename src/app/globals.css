@@ -525,6 +525,19 @@ p {
   opacity: 1;
 }
 
+/* While the entry-gate chooser is up it owns the whole viewport, and the
+   floating chrome behind it is not wanted. Hiding it also removes the only way
+   it could ever show through: both the nav bar and the WhatsApp button carry a
+   view-transition-name, so during a transition they are lifted into the
+   transition layer — which paints above the page, and therefore above the
+   chooser — and the nav bar flashed in and out when switching language on it.
+   display:none means no snapshot is captured at all. !important because both
+   elements set `display` inline. */
+[data-gate-open] #main-nav,
+[data-gate-open] #whatsapp-btn {
+  display: none !important;
+}
+
 /* The transition overlay swallows clicks for its whole duration; let them
    through so a fast visitor never loses a tap mid-animation. */
 ::view-transition {
