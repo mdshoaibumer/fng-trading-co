@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
@@ -130,16 +131,14 @@ export default function EntryGate() {
           looking at. Answering the chooser is what markGateSeen is for; a
           language switch is not an answer, so it deliberately isn't called.
 
-          A plain <a>, not a <Link>: switching language replaces every string
-          on the page and flips lang/dir/font on the document, so it is a
-          document-level change and gets a document-level navigation. As a
-          <Link> it was a client transition, and clicking it before the page
-          had finished hydrating left React hydrating the English HTML against
-          an Arabic tree — a recoverable hydration mismatch, but a real one,
-          and easy to hit here because the chooser loads two full-bleed photos
-          before it settles. A full load also means no view transition runs
-          across the swap, which is one less thing to keep the nav bar out of. */}
-      <a
+          Kept as a <Link>. This was briefly a plain <a> to rule out a
+          hydration mismatch seen when the toggle is clicked before the page
+          finishes hydrating — but a full document load repaints the body,
+          which is white, so every language switch flashed white between the
+          two dark chooser screens. A visible flash on every switch is a worse
+          problem than a recoverable, dev-only hydration warning that React
+          silently re-renders past, so the client transition stays. */}
+      <Link
         href={`/${otherLocale}?gate=1`}
         style={{
           position: 'absolute', top: 'clamp(16px, 3vw, 24px)', [isAr ? 'left' : 'right']: 'clamp(16px, 3vw, 24px)',
@@ -154,7 +153,7 @@ export default function EntryGate() {
         onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.25)'; e.currentTarget.style.color = '#fff'; }}
       >
         {tNav('lang')}
-      </a>
+      </Link>
 
       <div style={{ position: 'relative', width: '100%', maxWidth: '1100px', margin: 'auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 'clamp(28px, 5vw, 48px)' }}>

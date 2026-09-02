@@ -233,13 +233,10 @@ export default function Navbar() {
           gap: '16px',
           flexShrink: 0,
         }}>
-          {/* Language Toggle. A plain <a> rather than a <Link> for the same
-              reason as the chooser's: a locale switch replaces every string and
-              flips the document's lang/dir/font, so it is a document-level
-              change. Done as a client transition it can start before hydration
-              finishes and leave React reconciling one locale's HTML against
-              the other's tree. */}
-          <a
+          {/* Language Toggle. A <Link>, not a plain <a>: a full document load
+              repaints the white body between pages, which flashed on every
+              language switch. See the note on the chooser's toggle. */}
+          <Link
             href={switchPath}
             className="nav-lang-desktop"
             style={{
@@ -268,7 +265,7 @@ export default function Navbar() {
             }}
           >
             {t('lang')}
-          </a>
+          </Link>
 
           {/* CTA */}
           <a
