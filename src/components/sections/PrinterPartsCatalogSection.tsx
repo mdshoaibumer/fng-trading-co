@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { Flame, RotateCcw, ArrowRightLeft, Disc3, Cpu, ScanLine, LayoutGrid, Settings, ChevronDown, ChevronUp, MessageCircle } from 'lucide-react';
 import { useWhatsappNumber } from '@/hooks/useWhatsappNumber';
 import LoadingState from '@/components/ui/LoadingState';
+import Reveal from '@/components/ui/Reveal';
 import ErrorState from '@/components/ui/ErrorState';
 
 interface Part { nameEn:string; nameAr:string; models:string; }
@@ -62,7 +63,7 @@ export default function PrinterPartsCatalogSection() {
     <section style={{padding:'clamp(60px,10vw,120px) 0',background:'linear-gradient(180deg,#FFFFFF 0%,#F4F7F2 100%)',position:'relative',overflow:'hidden'}}>
       <div style={{position:'absolute',top:'-10%',left:isAr?'auto':'-5%',right:isAr?'-5%':'auto',width:'500px',height:'500px',background:'radial-gradient(circle,rgba(141,184,51,0.04) 0%,transparent 70%)',borderRadius:'50%',pointerEvents:'none'}}/>
       <div className="container">
-        <div style={{textAlign:'center',marginBottom:'clamp(40px,6vw,72px)'}}>
+        <Reveal as="div" style={{textAlign:'center',marginBottom:'clamp(40px,6vw,72px)'}}>
           <span style={{display:'inline-block',color:'var(--accent)',background:'rgba(141,184,51,0.1)',padding:'8px 20px',borderRadius:'20px',fontSize:'0.85rem',fontWeight:700,textTransform:'uppercase',letterSpacing:isAr?'0':'1px',marginBottom:'16px',border:'1px solid rgba(141,184,51,0.2)'}}>
             {isAr?'كتالوج القطع':'Parts Catalog'}
           </span>
@@ -72,7 +73,7 @@ export default function PrinterPartsCatalogSection() {
           <p style={{fontSize:'clamp(0.9rem,2vw,1.1rem)',color:'var(--text-secondary)',maxWidth:'600px',margin:'0 auto',lineHeight:1.6}}>
             {isAr?'اختر الفئة لعرض قطع الغيار المتوفرة مع موديلات الطابعات المتوافقة.':'Select a category to view available parts with compatible printer models.'}
           </p>
-        </div>
+        </Reveal>
 
         {loading ? (
           <LoadingState />
@@ -89,7 +90,8 @@ export default function PrinterPartsCatalogSection() {
               const isOpen = expanded===key;
               const categoryParts = parts[key]||[];
             return (
-              <div key={key} style={{background:isOpen?'#FFFFFF':'#FAFBF9',border:`1px solid ${isOpen?'rgba(141,184,51,0.3)':'#F3F4F6'}`,borderRadius:'16px',overflow:'hidden',transition:'all 300ms cubic-bezier(0.22,1,0.36,1)',boxShadow:isOpen?'0 12px 32px rgba(0,0,0,0.06)':'0 2px 4px rgba(0,0,0,0.02)'}}>
+              <Reveal key={key} delay={CATEGORY_KEYS.indexOf(key) * 60} distance={16}>
+              <div style={{background:isOpen?'#FFFFFF':'#FAFBF9',border:`1px solid ${isOpen?'rgba(141,184,51,0.3)':'#F3F4F6'}`,borderRadius:'16px',overflow:'hidden',transition:'all 300ms cubic-bezier(0.22,1,0.36,1)',boxShadow:isOpen?'0 12px 32px rgba(0,0,0,0.06)':'0 2px 4px rgba(0,0,0,0.02)'}}>
                 <button onClick={()=>setExpanded(p=>p===key?null:key)} style={{width:'100%',display:'flex',alignItems:'center',gap:'16px',padding:'clamp(16px,3vw,24px) clamp(16px,3vw,28px)',background:'none',border:'none',cursor:'pointer',textAlign:isAr?'right':'left',flexDirection:isAr?'row-reverse':'row'}}>
                   <div style={{width:'48px',height:'48px',borderRadius:'14px',background:isOpen?'rgba(141,184,51,0.15)':'rgba(141,184,51,0.08)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,border:`1px solid ${isOpen?'rgba(141,184,51,0.3)':'rgba(141,184,51,0.1)'}`}}>
                     {ICONS[key]}
@@ -129,6 +131,7 @@ export default function PrinterPartsCatalogSection() {
                   </div>
                 </div>
               </div>
+              </Reveal>
             );
           })}
           </div>

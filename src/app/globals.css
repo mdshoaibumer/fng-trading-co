@@ -330,39 +330,6 @@ p {
   50% { opacity: 1; }
 }
 
-@keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
 @keyframes shimmer {
   0% { background-position: -200% center; }
   100% { background-position: 200% center; }
@@ -374,10 +341,47 @@ p {
   to { transform: rotate(360deg); }
 }
 
+/* Connector line that draws itself in. scaleX rather than the width it used
+   to animate: width is a layout property, so the old version reflowed once
+   per frame per line — seven of them on the sourcing process section. The
+   element sets its own transform-origin so the line grows from the correct
+   end under RTL. */
 @keyframes drawLine {
-  from { width: 0; }
-  to { width: 100%; }
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
 }
+
+/* Shared card hover. Compositor-only — transform and box-shadow, never
+   top/height.
+
+   The distance and shadow are custom properties because the existing hovers
+   across the site are deliberately not identical: the toner cards tint their
+   shadow to each product family, the trust cards lift less far than the
+   category cards. A call site overrides what it needs
+   (style={{ '--lift': '-4px' }}) and inherits the rest.
+
+   Gated on (hover: hover) — the hand-rolled onMouseEnter versions this
+   replaces fire on a touch tap and leave the card stuck in its lifted state
+   with no pointer to leave with. */
+.card-lift {
+  --lift: -6px;
+  --lift-shadow: 0 18px 40px rgba(26, 61, 43, 0.12);
+  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (hover: hover) {
+  .card-lift:hover {
+    transform: translateY(var(--lift));
+    box-shadow: var(--lift-shadow);
+  }
+}
+
+/* Put this on the card itself, never on a <Reveal> wrapper around it. Reveal
+   sets an inline `transition` tuned for its entrance (700ms, plus the stagger
+   delay), and an inline transition outranks this class — the card would then
+   take three quarters of a second to answer a hover. Wrapping instead of
+   sharing the element keeps the two timings independent. */
 
 /* Scroll-reveal helper (src/components/ui/Reveal.tsx): 'start'/'end' slides
    are logical, so flip them under RTL. */
@@ -390,6 +394,138 @@ p {
 .item-card {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
+}
+
+/* ─── VIEW TRANSITIONS ──────────────────────────────────────────────────────
+   Recipes taken from the vercel-react-view-transitions skill rather than
+   hand-written; they get the staggered exit/enter timing and the motion blur
+   on morphs right, which is fiddly to reproduce. Driven by <ViewTransition>
+   components (src/components/ui/PageTransition.tsx and the product image
+   morph) — a bare view-transition-name in CSS animates nothing on its own.
+
+   Browsers without the API ignore all of this and navigate normally.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  --duration-exit: 150ms;
+  --duration-enter: 210ms;
+  --duration-move: 400ms;
+}
+
+@keyframes vt-fade {
+  from { filter: blur(3px); opacity: 0; }
+  to { filter: blur(0); opacity: 1; }
+}
+
+@keyframes vt-slide {
+  from { translate: var(--slide-offset); }
+  to { translate: 0; }
+}
+
+@keyframes vt-slide-y {
+  from { transform: translateY(var(--slide-y-offset, 10px)); }
+  to { transform: translateY(0); }
+}
+
+/* Lateral moves between marketing pages — no hierarchy to express, so no
+   direction either. */
+::view-transition-old(.fade-out) {
+  animation: var(--duration-exit) ease-in vt-fade reverse;
+}
+::view-transition-new(.fade-in) {
+  animation: var(--duration-enter) ease-out var(--duration-exit) both vt-fade;
+}
+
+/* Hierarchical moves: catalog -> product and back. */
+::view-transition-old(.nav-forward) {
+  --slide-offset: -60px;
+  animation:
+    var(--duration-exit) ease-in both vt-fade reverse,
+    var(--duration-move) ease-in-out both vt-slide reverse;
+}
+::view-transition-new(.nav-forward) {
+  --slide-offset: 60px;
+  animation:
+    var(--duration-enter) ease-out var(--duration-exit) both vt-fade,
+    var(--duration-move) ease-in-out both vt-slide;
+}
+
+::view-transition-old(.nav-back) {
+  --slide-offset: 60px;
+  animation:
+    var(--duration-exit) ease-in both vt-fade reverse,
+    var(--duration-move) ease-in-out both vt-slide reverse;
+}
+::view-transition-new(.nav-back) {
+  --slide-offset: -60px;
+  animation:
+    var(--duration-enter) ease-out var(--duration-exit) both vt-fade,
+    var(--duration-move) ease-in-out both vt-slide;
+}
+
+/* "Forward" means further along the reading direction, so the offsets invert
+   under Arabic. Without this, going deeper in RTL slides the wrong way and
+   reads as going back. The pseudo-elements live on the root, so they are
+   matched via :root[dir] rather than an ancestor selector. */
+:root[dir="rtl"]::view-transition-old(.nav-forward) { --slide-offset: 60px; }
+:root[dir="rtl"]::view-transition-new(.nav-forward) { --slide-offset: -60px; }
+:root[dir="rtl"]::view-transition-old(.nav-back) { --slide-offset: -60px; }
+:root[dir="rtl"]::view-transition-new(.nav-back) { --slide-offset: 60px; }
+
+/* Suspense reveal: the loading.tsx skeleton hands off to real content. */
+::view-transition-old(.slide-down) {
+  animation:
+    var(--duration-exit) ease-out both vt-fade reverse,
+    var(--duration-exit) ease-out both vt-slide-y reverse;
+}
+::view-transition-new(.slide-up) {
+  animation:
+    var(--duration-enter) ease-in var(--duration-exit) both vt-fade,
+    var(--duration-move) ease-in both vt-slide-y;
+}
+
+/* Product image morphing from its catalog card into the detail gallery. */
+::view-transition-group(.morph) {
+  animation-duration: var(--duration-move);
+}
+::view-transition-image-pair(.morph) {
+  animation-name: vt-via-blur;
+}
+@keyframes vt-via-blur {
+  30% { filter: blur(3px); }
+}
+
+/* Persistent chrome must not slide with the page — the visitor needs one
+   fixed reference point to read the content as having moved rather than the
+   whole viewport. The nav carries a backdrop-filter, so this uses the
+   hide-the-old-snapshot variant; cross-fading two blurred snapshots flashes. */
+::view-transition-group(persistent-nav),
+::view-transition-group(persistent-whatsapp) {
+  animation: none;
+  z-index: 100;
+}
+::view-transition-old(persistent-nav),
+::view-transition-old(persistent-whatsapp) {
+  display: none;
+}
+::view-transition-new(persistent-nav),
+::view-transition-new(persistent-whatsapp) {
+  animation: none;
+}
+
+/* The transition overlay swallows clicks for its whole duration; let them
+   through so a fast visitor never loses a tap mid-animation. */
+::view-transition {
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
 }
 
 /* ─── REDUCED MOTION — Section 9.3 ──────────────────────────────────────── */

@@ -121,7 +121,14 @@ export default function Navbar() {
           width: 'calc(100% - 48px)',
           maxWidth: '1400px',
           zIndex: 1000,
-          height: '80px',
+          // Pulls the bar out of the page's view-transition snapshot so it
+          // stays put while content slides underneath it. See the
+          // persistent-nav rules in globals.css.
+          viewTransitionName: 'persistent-nav',
+          // Condenses once past the fold. The bar is position:fixed, so its
+          // own height change cannot reflow the page behind it — it is one
+          // transition on a threshold crossing, not a per-scroll-frame value.
+          height: scrolled ? '68px' : '80px',
           display: 'flex',
           alignItems: 'center',
           padding: '0 32px',
@@ -130,7 +137,7 @@ export default function Navbar() {
           // part of it. This keeps the three groups apart at every width; the
           // centred links then always have at least this much breathing room.
           gap: '24px',
-          transition: 'transform 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+          transition: 'transform 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94), height 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
           willChange: 'transform',
           background: 'rgba(255, 255, 255, 0.75)',
           backdropFilter: 'blur(32px) saturate(200%)',
@@ -164,6 +171,13 @@ export default function Navbar() {
               objectFit: 'contain',
               height: '56px',
               width: 'auto',
+              // Scale rather than a second height animation: the logo shrinking
+              // with the bar is the whole effect, and a transform costs the
+              // compositor nothing while a height would relayout the nav's
+              // flex row alongside it.
+              transform: scrolled ? 'scale(0.82)' : 'scale(1)',
+              transformOrigin: isAr ? 'right center' : 'left center',
+              transition: 'transform 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
             }}
             className="nav-logo-img"
             priority
@@ -191,6 +205,9 @@ export default function Navbar() {
             <Link
               key={link.href}
               href={link.href}
+              // Sibling pages: a cross-fade, not a slide. Typed explicitly
+              // because PageTransition leaves the untyped default at 'none'.
+              transitionTypes={['nav-lateral']}
               onClick={link.isHome ? (e) => handleHomeClick(e, link.href) : undefined}
               style={{
                 color: '#4B5563',
@@ -411,6 +428,7 @@ export default function Navbar() {
           <Link
             key={link.href}
             href={link.href}
+            transitionTypes={['nav-lateral']}
             onClick={(e) => { setMobileOpen(false); if (link.isHome) handleHomeClick(e, link.href); }}
             style={{
               color: '#111827',

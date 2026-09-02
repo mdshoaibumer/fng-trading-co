@@ -17,6 +17,7 @@ import { buildAlternates } from '@/lib/metadata';
 import { SITE_EMAIL, SITE_URL } from '@/lib/siteContact';
 import { areaServedSchema, serviceRegionsList } from '@/lib/serviceRegions';
 import { getServiceRegions } from '@/lib/getServiceRegions';
+import PageTransition from '@/components/ui/PageTransition';
 
 // Reads live settings (videos, contact info) from Supabase on every request.
 export const dynamic = 'force-dynamic';
@@ -152,39 +153,41 @@ export default async function HomePage({
   };
 
   return (
-    <main>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(organizationSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(localBusinessSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(websiteSchema) }}
-      />
-      {showGate && <EntryGate />}
-      <HeroSection />
-      <ProductCatalogSection
-        products={printers}
-        error={printersError}
-        isAr={isAr}
-        basePath={`/${locale}/printers`}
-        tag={isAr ? 'طابعاتنا المُجددة' : 'Refurbished Printers'}
-        title={isAr ? 'طابعات HP مُجددة باحترافية' : 'Professionally Refurbished HP Printers'}
-        subtitle={isAr
-          ? 'كل طابعة يتم فحصها وتنظيفها وتجديدها باحترافية واختبارها لتعمل بمعايير المصنع. جودة HP بجزء بسيط من تكلفة الجديدة.'
-          : 'Every printer is professionally inspected, cleaned, refurbished, and tested to factory standards. HP quality at a fraction of the new price.'}
-      />
-      <FreePrinterSection />
-      <HowItWorksSection />
-      <VideoDivider src={videos.divider1 || ''} />
-      <IndustriesSection />
-      <VideoDivider src={videos.divider2 || ''} />
-      <TrustSection />
-      <ContactSection />
-    </main>
+    <PageTransition>
+      <main>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(organizationSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(localBusinessSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(websiteSchema) }}
+        />
+        {showGate && <EntryGate />}
+        <HeroSection />
+        <ProductCatalogSection
+          products={printers}
+          error={printersError}
+          isAr={isAr}
+          basePath={`/${locale}/printers`}
+          tag={isAr ? 'طابعاتنا المُجددة' : 'Refurbished Printers'}
+          title={isAr ? 'طابعات HP مُجددة باحترافية' : 'Professionally Refurbished HP Printers'}
+          subtitle={isAr
+            ? 'كل طابعة يتم فحصها وتنظيفها وتجديدها باحترافية واختبارها لتعمل بمعايير المصنع. جودة HP بجزء بسيط من تكلفة الجديدة.'
+            : 'Every printer is professionally inspected, cleaned, refurbished, and tested to factory standards. HP quality at a fraction of the new price.'}
+        />
+        <FreePrinterSection />
+        <HowItWorksSection />
+        <VideoDivider src={videos.divider1 || ''} />
+        <IndustriesSection />
+        <VideoDivider src={videos.divider2 || ''} />
+        <TrustSection />
+        <ContactSection />
+      </main>
+    </PageTransition>
   );
 }

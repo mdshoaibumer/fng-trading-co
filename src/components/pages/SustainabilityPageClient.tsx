@@ -2,45 +2,27 @@
 
 import { useTranslations } from 'next-intl';
 import { Leaf, RefreshCcw, Wind } from 'lucide-react';
-import { useRef, useEffect, useState } from 'react';
-import { useIsClient } from '@/lib/useIsClient';
+import CountUp from '@/components/ui/CountUp';
+import Reveal from '@/components/ui/Reveal';
 
-function AnimatedStat({ target, suffix, label }: { target: number; suffix: string; label: string }) {
-  const [count, setCount] = useState(0);
-  const ref = useRef<HTMLDivElement>(null);
-  const [started, setStarted] = useState(false);
-  const isMounted = useIsClient();
-
-  useEffect(() => {
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setStarted(true); }, { threshold: 0.5 });
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!started) return;
-    let cur = 0; const inc = target / 60;
-    const iv = setInterval(() => { 
-      cur += inc; 
-      if (cur >= target) { 
-        setCount(target); 
-        clearInterval(iv); 
-      } else {
-        setCount(Math.floor(cur)); 
-      }
-    }, 33);
-    return () => clearInterval(iv);
-  }, [started, target]);
-
-  const displayedCount = isMounted ? count : target;
-
+/**
+ * Stat card. The counting itself lives in <CountUp>, which — unlike the
+ * hand-rolled setInterval version this replaced — drives the count on
+ * requestAnimationFrame with an ease-out, renders the final figure on the
+ * server so it survives without JS, and stops animating for visitors who ask
+ * for reduced motion.
+ */
+function StatCard({ value, label }: { value: string; label: string }) {
   return (
-    <div ref={ref} style={{ background: '#fff', padding: 'clamp(24px, 4vw, 40px)', borderRadius: '24px', border: '1px solid var(--light-grey)', textAlign: 'center', boxShadow: '0 10px 30px rgba(0,0,0,0.02)' }}>
-      <div style={{ fontSize: 'clamp(2rem, 6vw, 3.5rem)', fontWeight: 900, color: 'var(--accent)', lineHeight: 1, marginBottom: '12px', fontFamily: 'var(--font-inter), sans-serif' }}>
-        {displayedCount.toLocaleString()}{suffix}
+    <Reveal style={{ display: 'flex' }}>
+      <div className="card-lift" style={{ background: '#fff', padding: 'clamp(24px, 4vw, 40px)', borderRadius: '24px', border: '1px solid var(--light-grey)', textAlign: 'center', boxShadow: '0 10px 30px rgba(0,0,0,0.02)', width: '100%' }}>
+        <CountUp
+          value={value}
+          style={{ display: 'block', fontSize: 'clamp(2rem, 6vw, 3.5rem)', fontWeight: 900, color: 'var(--accent)', lineHeight: 1, marginBottom: '12px', fontFamily: 'var(--font-inter), sans-serif' }}
+        />
+        <div style={{ fontSize: 'clamp(0.9rem, 2vw, 1.2rem)', fontWeight: 700, color: 'var(--primary)' }}>{label}</div>
       </div>
-      <div style={{ fontSize: 'clamp(0.9rem, 2vw, 1.2rem)', fontWeight: 700, color: 'var(--primary)' }}>{label}</div>
-    </div>
+    </Reveal>
   );
 }
 
@@ -55,9 +37,9 @@ export default function SustainabilityPageClient() {
       </div>
       <div className="container" style={{ marginBottom: 'clamp(40px, 8vw, 80px)' }}>
         <div className="sp-stats" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 'clamp(16px, 3vw, 32px)' }}>
-          <AnimatedStat target={124} suffix={` ${t('stats.co2.unit')}`} label={t('stats.co2.label')} />
-          <AnimatedStat target={2500} suffix={` ${t('stats.trees.unit')}`} label={t('stats.trees.label')} />
-          <AnimatedStat target={85} suffix="%" label={t('stats.plastic.label')} />
+          <StatCard value={`124 ${t('stats.co2.unit')}`} label={t('stats.co2.label')} />
+          <StatCard value={`2,500 ${t('stats.trees.unit')}`} label={t('stats.trees.label')} />
+          <StatCard value="85%" label={t('stats.plastic.label')} />
         </div>
       </div>
       <div className="container">

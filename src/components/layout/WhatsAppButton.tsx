@@ -41,6 +41,10 @@ export default function WhatsAppButton({ whatsapp }: { whatsapp?: string }) {
         bottom: isMobile ? '16px' : '24px',
         right: isMobile ? '16px' : '24px',
         zIndex: 900,
+        // Held out of the page's view-transition snapshot, like the nav — a
+        // floating action button sliding away with the content it floats over
+        // looks like a bug. See globals.css.
+        viewTransitionName: 'persistent-whatsapp',
         width: showLabel ? 'auto' : `${size}px`,
         height: `${size}px`,
         borderRadius: '999px',

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { ViewTransition } from 'react';
 import Image from 'next/image';
 import {
   ChevronLeft,
@@ -108,7 +109,7 @@ export default function ProductPageClient({ product, whatsapp, locale, itemType 
             {isAr ? 'العودة' : 'Back'}
           </button>
           <nav style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#666', fontSize: '0.9rem', flexDirection: isAr ? 'row-reverse' : 'row' }}>
-            <Link href={`/${locale}`} style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 600 }}>{isAr ? 'الرئيسية' : 'Home'}</Link>
+            <Link href={`/${locale}`} transitionTypes={['nav-back']} style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 600 }}>{isAr ? 'الرئيسية' : 'Home'}</Link>
             <span>/</span>
             <span style={{ fontWeight: 500 }}>{product.name}</span>
           </nav>
@@ -120,6 +121,10 @@ export default function ProductPageClient({ product, whatsapp, locale, itemType 
         }}>
           {/* Left Column: Image Gallery */}
           <div className="gallery-column" style={{ order: isAr ? 2 : 1 }}>
+            {/* The other half of the catalog card's morph — same name, so the
+                card's image container animates into this one on the way in and
+                back out again on the way out. */}
+            <ViewTransition name={`product-image-${product.id}`} share="morph">
             <div
               className="main-image-container"
               style={{
@@ -188,6 +193,7 @@ export default function ProductPageClient({ product, whatsapp, locale, itemType 
                 </>
               )}
             </div>
+            </ViewTransition>
 
             {/* Thumbnails */}
             {product.images.length > 1 && (

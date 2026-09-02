@@ -1,4 +1,5 @@
 import AboutPageClient from '@/components/pages/AboutPageClient';
+import PageTransition from '@/components/ui/PageTransition';
 import { SITE_URL } from '@/lib/siteContact';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
@@ -70,7 +71,7 @@ export default async function AboutPage({
   };
 
   return (
-    <>
+    <PageTransition>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeJsonLd(aboutSchema) }}
@@ -80,6 +81,6 @@ export default async function AboutPage({
         dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
       />
       <AboutPageClient locale={locale} />
-    </>
+    </PageTransition>
   );
 }

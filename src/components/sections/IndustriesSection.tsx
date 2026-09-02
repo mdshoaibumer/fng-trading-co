@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useDialogA11y } from '@/lib/useDialogA11y';
 import Reveal from '@/components/ui/Reveal';
+import CountUp from '@/components/ui/CountUp';
 
 const INDUSTRIES = ['healthcare', 'education', 'realEstate', 'legal', 'retail', 'government', 'architecture', 'logistics'] as const;
 type Industry = typeof INDUSTRIES[number];
@@ -145,9 +146,15 @@ export default function IndustriesSection() {
                     boxShadow: '0 10px 30px rgba(0,0,0,0.03)', border: '1px solid var(--light-grey)',
                     textAlign: isAr ? 'right' : 'left'
                   }}>
-                    <div style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 900, color: 'var(--accent)', lineHeight: 1, marginBottom: '12px' }}>
-                      {t(`items.${selectedIndustry}.details.stat`)}
-                    </div>
+                    {/* Keyed on the industry so switching tabs remounts the
+                        counter and the new figure counts up too — without it
+                        the number would simply swap, since CountUp only
+                        animates once per mount. */}
+                    <CountUp
+                      key={selectedIndustry}
+                      value={t(`items.${selectedIndustry}.details.stat`)}
+                      style={{ display: 'block', fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 900, color: 'var(--accent)', lineHeight: 1, marginBottom: '12px' }}
+                    />
                     <div style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--primary)' }}>
                       {t(`items.${selectedIndustry}.details.statLabel`)}
                     </div>

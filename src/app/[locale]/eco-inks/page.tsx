@@ -10,6 +10,7 @@ import EcoInksSustainabilitySection from '@/components/sections/EcoInksSustainab
 import TonerProductsSection from '@/components/sections/TonerProductsSection';
 import ContactSection from '@/components/sections/ContactSection';
 import { buildAlternates } from '@/lib/metadata';
+import PageTransition from '@/components/ui/PageTransition';
 
 export async function generateMetadata({
   params,
@@ -109,26 +110,28 @@ export default async function EcoInksPage({
   };
 
   return (
-    <main>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(productGreenSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(productPremiumSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
-      />
-      <EcoInksHeroSection />
-      <EcoInksInteractiveSection />
-      <EcoInksLeafletSection />
-      <EcoInksSection />
-      <EcoInksSustainabilitySection />
-      <TonerProductsSection />
-      <ContactSection />
-    </main>
+    <PageTransition>
+      <main>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(productGreenSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(productPremiumSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
+        />
+        <EcoInksHeroSection />
+        <EcoInksInteractiveSection />
+        <EcoInksLeafletSection />
+        <EcoInksSection />
+        <EcoInksSustainabilitySection />
+        <TonerProductsSection />
+        <ContactSection />
+      </main>
+    </PageTransition>
   );
 }

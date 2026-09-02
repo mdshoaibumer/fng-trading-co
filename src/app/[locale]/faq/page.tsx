@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { safeJsonLd } from '@/lib/safeJsonLd';
 import { buildAlternates } from '@/lib/metadata';
+import PageTransition from '@/components/ui/PageTransition';
 
 export async function generateMetadata({
   params,
@@ -103,16 +104,18 @@ export default async function FaqPage({
   };
 
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(faqSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
-      />
-      <FaqPageClient />
-    </>
+    <PageTransition>
+      <>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(faqSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
+        />
+        <FaqPageClient />
+      </>
+    </PageTransition>
   );
 }

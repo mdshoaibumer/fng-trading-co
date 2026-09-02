@@ -16,6 +16,8 @@ import { useEffect, useRef, useState, type CSSProperties, type ElementType, type
  * - Server-rendered HTML carries the hidden state, so there is no flash of
  *   un-animated content; a client that never runs JS still sees everything
  *   because the fallback below flips to visible after a short timeout.
+ * - Once revealed it stops setting `transform` at all, leaving the element
+ *   free for a CSS hover effect (e.g. the shared `.card-lift`).
  */
 export default function Reveal({
   children,
@@ -89,7 +91,10 @@ export default function Reveal({
       style={{
         ...style,
         opacity: visible ? 1 : 0,
-        transform: visible ? 'none' : hidden,
+        // Left undefined once visible, not pinned to 'none': an inline
+        // transform outranks any class rule, so pinning it would stop a
+        // hover utility like .card-lift from ever lifting the element.
+        transform: visible ? undefined : hidden,
         transition: `opacity ${duration}ms cubic-bezier(0.22, 1, 0.36, 1) ${delay}ms, transform ${duration}ms cubic-bezier(0.22, 1, 0.36, 1) ${delay}ms`,
         willChange: visible ? 'auto' : 'opacity, transform',
       }}

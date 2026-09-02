@@ -6,6 +6,7 @@ import type { Metadata } from 'next';
 import { safeJsonLd } from '@/lib/safeJsonLd';
 import { buildAlternates } from '@/lib/metadata';
 import { DEFAULT_WHATSAPP_NUMBER, sanitizeWhatsappNumber } from '@/lib/whatsapp';
+import PageTransition from '@/components/ui/PageTransition';
 
 // Reads live product data from Supabase per request.
 export const dynamic = 'force-dynamic';
@@ -146,16 +147,18 @@ export default async function EquipmentProductPage({
   };
 
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(productSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
-      />
-      <ProductPageClient product={equipment} whatsapp={whatsapp} locale={locale} itemType="equipment" />
-    </>
+    <PageTransition>
+      <>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(productSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
+        />
+        <ProductPageClient product={equipment} whatsapp={whatsapp} locale={locale} itemType="equipment" />
+      </>
+    </PageTransition>
   );
 }

@@ -7,6 +7,7 @@ import { buildAlternates } from '@/lib/metadata';
 import { SITE_EMAIL, SITE_URL } from '@/lib/siteContact';
 import { areaServedSchema } from '@/lib/serviceRegions';
 import { getServiceRegions } from '@/lib/getServiceRegions';
+import PageTransition from '@/components/ui/PageTransition';
 
 // Reads live contact settings from Supabase on every request.
 export const dynamic = 'force-dynamic';
@@ -98,16 +99,18 @@ export default async function ContactPage({
   };
 
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(localBusinessSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
-      />
-      <ContactPageClient email={settings.contact?.email || SITE_EMAIL} />
-    </>
+    <PageTransition>
+      <>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(localBusinessSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
+        />
+        <ContactPageClient email={settings.contact?.email || SITE_EMAIL} />
+      </>
+    </PageTransition>
   );
 }

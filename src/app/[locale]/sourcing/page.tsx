@@ -11,6 +11,7 @@ import { buildAlternates } from '@/lib/metadata';
 import { safeJsonLd } from '@/lib/safeJsonLd';
 import { areaServedSchema } from '@/lib/serviceRegions';
 import { getServiceRegions } from '@/lib/getServiceRegions';
+import PageTransition from '@/components/ui/PageTransition';
 
 export async function generateMetadata({
   params,
@@ -64,21 +65,23 @@ export default async function SourcingPage({
   };
 
   return (
-    <main>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(serviceSchema) }}
-      />
-      <SourcingHeroSection />
-      <SourcingProcessSection />
-      <SourcingCategoriesSection />
-      <SourcingServicesSection />
-      <SourcingWhySection />
-      <ContactSection />
-    </main>
+    <PageTransition>
+      <main>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(serviceSchema) }}
+        />
+        <SourcingHeroSection />
+        <SourcingProcessSection />
+        <SourcingCategoriesSection />
+        <SourcingServicesSection />
+        <SourcingWhySection />
+        <ContactSection />
+      </main>
+    </PageTransition>
   );
 }

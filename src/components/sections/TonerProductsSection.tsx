@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { Leaf, Recycle, ShieldCheck, Award, Target, Sparkles, DollarSign, Zap, BarChart3, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCarousel } from '@/hooks/useCarousel';
+import Reveal from '@/components/ui/Reveal';
 
 function ImageCarousel({ images, alt }: { images: string[]; alt: string }) {
   const { current, goTo: setCurrent, next, prev, pauseHandlers } = useCarousel({ length: images.length, autoplayMs: 4000 });
@@ -119,7 +120,7 @@ export default function TonerProductsSection() {
 
       <div className="container" style={{ position: 'relative', zIndex: 2 }}>
         {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: 'clamp(40px, 6vw, 72px)' }}>
+        <Reveal as="div" style={{ textAlign: 'center', marginBottom: 'clamp(40px, 6vw, 72px)' }}>
           <span style={{
             display: 'inline-block', color: 'var(--accent)', background: 'rgba(141,184,51,0.1)',
             padding: '8px 20px', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 700,
@@ -141,7 +142,7 @@ export default function TonerProductsSection() {
           }}>
             {t('subtitle')}
           </p>
-        </div>
+        </Reveal>
 
         {/* Two cards side by side */}
         <div className="toner-grid" style={{

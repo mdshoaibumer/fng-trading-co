@@ -7,6 +7,7 @@ import PrinterPartsCatalogSection from '@/components/sections/PrinterPartsCatalo
 import MaintenanceTeaser from '@/components/sections/MaintenanceTeaser';
 import ContactSection from '@/components/sections/ContactSection';
 import { buildAlternates } from '@/lib/metadata';
+import PageTransition from '@/components/ui/PageTransition';
 
 export async function generateMetadata({
   params,
@@ -81,19 +82,21 @@ export default async function PrinterPartsPage({
   };
 
   return (
-    <main>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(partsCatalogSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
-      />
-      <PrinterPartsHeroSection locale={locale} />
-      <PrinterPartsCatalogSection />
-      <MaintenanceTeaser />
-      <ContactSection />
-    </main>
+    <PageTransition>
+      <main>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(partsCatalogSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
+        />
+        <PrinterPartsHeroSection locale={locale} />
+        <PrinterPartsCatalogSection />
+        <MaintenanceTeaser />
+        <ContactSection />
+      </main>
+    </PageTransition>
   );
 }
