@@ -246,7 +246,12 @@ export default function HeroSection() {
                 fontWeight: 600, display: 'inline-block',
                 animation: ecoGlow > 0.3 && runDecorativeLoops ? 'floatLabel 3s ease-in-out infinite' : 'none',
               }}>
-                {isAr ? '◈ حبر صديق للبيئة — Ink Engineered for Earth' : '◈ Ink Engineered for Earth'}
+                {/* Arabic reads Arabic only. This used to carry the English
+                    line after the Arabic one, which showed both languages at
+                    once on the Arabic site — the brand names elsewhere (HP,
+                    FNG) stay in Latin because they are names, but this is a
+                    sentence and it has a translation. */}
+                {isAr ? '◈ حبر صديق للبيئة' : '◈ Ink Engineered for Earth'}
               </span>
             </div>
 
