@@ -6,6 +6,7 @@ import type { Metadata } from 'next';
 import { safeJsonLd } from '@/lib/safeJsonLd';
 import { buildAlternates } from '@/lib/metadata';
 import { DEFAULT_WHATSAPP_NUMBER, sanitizeWhatsappNumber } from '@/lib/whatsapp';
+import PageTransition from '@/components/ui/PageTransition';
 
 // Reads live product data from Supabase per request.
 export const dynamic = 'force-dynamic';
@@ -134,7 +135,7 @@ export default async function PrinterProductPage({
         '@type': 'ListItem',
         'position': 2,
         'name': isAr ? 'الطابعات' : 'Printers',
-        'item': `${websiteUrl}/${locale}` // Falls back to catalog section on homepage
+        'item': `${websiteUrl}/${locale}/printers`
       },
       {
         '@type': 'ListItem',
@@ -146,16 +147,18 @@ export default async function PrinterProductPage({
   };
 
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(productSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
-      />
-      <ProductPageClient product={printer} whatsapp={whatsapp} locale={locale} itemType="printer" />
-    </>
+    <PageTransition>
+      <>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(productSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
+        />
+        <ProductPageClient product={printer} whatsapp={whatsapp} locale={locale} itemType="printer" />
+      </>
+    </PageTransition>
   );
 }

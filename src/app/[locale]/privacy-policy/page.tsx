@@ -4,6 +4,7 @@ import { safeJsonLd } from '@/lib/safeJsonLd';
 import { buildAlternates } from '@/lib/metadata';
 import { SITE_EMAIL, SITE_URL } from '@/lib/siteContact';
 import { getSettings } from '@/lib/supabase';
+import PageTransition from '@/components/ui/PageTransition';
 
 export async function generateMetadata({
   params,
@@ -56,59 +57,61 @@ export default async function PrivacyPolicyPage({
   };
 
   return (
-    <main style={{ background: 'var(--bg-secondary)', minHeight: '100vh', paddingTop: 'clamp(120px, 15vh, 160px)', paddingBottom: '80px' }}>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
-      />
-      <div className="container" style={{ maxWidth: '800px', margin: '0 auto', padding: '0 20px', textAlign: isAr ? 'right' : 'left' }}>
+    <PageTransition>
+      <main style={{ background: 'var(--bg-secondary)', minHeight: '100vh', paddingTop: 'clamp(120px, 15vh, 160px)', paddingBottom: '80px' }}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
+        />
+        <div className="container" style={{ maxWidth: '800px', margin: '0 auto', padding: '0 20px', textAlign: isAr ? 'right' : 'left' }}>
         
-        {/* Header */}
-        <div style={{ marginBottom: '48px', borderBottom: '1px solid #E5E7EB', paddingBottom: '24px' }}>
-          <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', fontWeight: 900, color: 'var(--primary)', marginBottom: '16px' }}>
-            {t('title')}
-          </h1>
-          <p style={{ color: '#9CA3AF', fontSize: '0.95rem' }}>
-            {t('subtitle')}
-          </p>
+          {/* Header */}
+          <div style={{ marginBottom: '48px', borderBottom: '1px solid #E5E7EB', paddingBottom: '24px' }}>
+            <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', fontWeight: 900, color: 'var(--primary)', marginBottom: '16px' }}>
+              {t('title')}
+            </h1>
+            <p style={{ color: '#9CA3AF', fontSize: '0.95rem' }}>
+              {t('subtitle')}
+            </p>
+          </div>
+
+          {/* Content */}
+          <div style={{ color: '#374151', lineHeight: 1.8, fontSize: '1.05rem', display: 'flex', flexDirection: 'column', gap: '32px' }}>
+            <p style={{ fontSize: '1.1rem' }}>
+              {t('introduction')}
+            </p>
+
+            <div>
+              <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px' }}>
+                {t('section1Title')}
+              </h2>
+              <p>{t('section1Desc')}</p>
+            </div>
+
+            <div>
+              <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px' }}>
+                {t('section2Title')}
+              </h2>
+              <p>{t('section2Desc')}</p>
+            </div>
+
+            <div>
+              <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px' }}>
+                {t('section3Title')}
+              </h2>
+              <p>{t('section3Desc')}</p>
+            </div>
+
+            <div>
+              <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px' }}>
+                {t('section4Title')}
+              </h2>
+              <p>{t('section4Desc', { email: contactEmail })}</p>
+            </div>
+          </div>
+
         </div>
-
-        {/* Content */}
-        <div style={{ color: '#374151', lineHeight: 1.8, fontSize: '1.05rem', display: 'flex', flexDirection: 'column', gap: '32px' }}>
-          <p style={{ fontSize: '1.1rem' }}>
-            {t('introduction')}
-          </p>
-
-          <div>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px' }}>
-              {t('section1Title')}
-            </h2>
-            <p>{t('section1Desc')}</p>
-          </div>
-
-          <div>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px' }}>
-              {t('section2Title')}
-            </h2>
-            <p>{t('section2Desc')}</p>
-          </div>
-
-          <div>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px' }}>
-              {t('section3Title')}
-            </h2>
-            <p>{t('section3Desc')}</p>
-          </div>
-
-          <div>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px' }}>
-              {t('section4Title')}
-            </h2>
-            <p>{t('section4Desc', { email: contactEmail })}</p>
-          </div>
-        </div>
-
-      </div>
-    </main>
+      </main>
+    </PageTransition>
   );
 }

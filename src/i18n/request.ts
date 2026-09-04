@@ -1,30 +1,7 @@
 import { getRequestConfig } from 'next-intl/server';
 import { routing } from './routing';
 import { supabaseAdmin } from '@/lib/supabase';
-
-function isPlainObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
-}
-
-// Recursively layers `override` on top of `base`, key by key, instead of
-// replacing whole namespaces. This keeps newly added keys in messages/*.json
-// visible even when the DB row (admin-edited via the content editor) predates
-// them, while still letting the DB override any key it does define.
-function deepMerge(base: Record<string, unknown>, override: Record<string, unknown>): Record<string, unknown> {
-  const result: Record<string, unknown> = { ...base };
-  for (const key of Object.keys(override)) {
-    // Never merge prototype-polluting keys from the DB-sourced content blob.
-    if (key === '__proto__' || key === 'constructor' || key === 'prototype') continue;
-    const overrideValue = override[key];
-    const baseValue = result[key];
-    if (isPlainObject(baseValue) && isPlainObject(overrideValue)) {
-      result[key] = deepMerge(baseValue, overrideValue);
-    } else {
-      result[key] = overrideValue;
-    }
-  }
-  return result;
-}
+import { deepMerge } from '@/lib/deepMerge';
 
 export default getRequestConfig(async ({ requestLocale }) => {
   let locale = await requestLocale;

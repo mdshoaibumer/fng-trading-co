@@ -6,6 +6,8 @@ import { usePathname, useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useDialogA11y } from '@/lib/useDialogA11y';
+import { homeHref, isCurrentPage, scrollToTop } from '@/lib/navigation';
+import { markGateSeen } from '@/lib/entryGate';
 
 // Printers and sourcing are run as two separate businesses, so the only way
 // between them is the entry gate on the landing page. `?gate=1` is what asks
@@ -44,11 +46,17 @@ export default function Navbar() {
     return () => { document.body.style.overflow = ''; };
   }, [mobileOpen]);
 
-  // Deliberately no cross-links between the two sets: the printers nav does not
-  // offer sourcing, and the sourcing nav does not offer printers. Switching
-  // tracks goes back through the gate, via the logo.
+  // The two link sets stay separate — the printers nav lists only printer
+  // pages, the sourcing nav only sourcing anchors. The one crossing point is
+  // the Sourcing pill next to the CTA (see below): the logo/gate route was the
+  // only way across, and nothing about a logo tells a visitor that a second
+  // business lives behind it.
+  //
+  // Home is a plain link to this track's home page. When that page is already
+  // on screen it scrolls back to the top instead of reloading (see
+  // handleHomeClick) — it never re-opens the chooser.
   const printerLinks = [
-    { href: gateHref(locale), label: t('home') },
+    { href: homeHref(locale, false), label: t('home'), isHome: true },
     { href: `/${locale}/about`, label: t('about') },
     { href: `/${locale}/sustainability`, label: t('sustainability') },
     { href: `/${locale}/eco-inks`, label: t('ecoInks') },
@@ -60,10 +68,9 @@ export default function Navbar() {
   ];
 
   // The sourcing site is a single page, so these are in-page anchors — apart
-  // from Home, which goes back to the gate, mirroring the printers nav. Without
-  // it the only way back on mobile is the logo, which is easy to miss.
+  // from Home, which is the top of the sourcing page itself.
   const sourcingLinks = [
-    { href: gateHref(locale), label: t('home') },
+    { href: homeHref(locale, true), label: t('home'), isHome: true },
     { href: `/${locale}/sourcing#sourcing-process`, label: tSourcing('process') },
     { href: `/${locale}/sourcing#sourcing-categories`, label: tSourcing('categories') },
     { href: `/${locale}/sourcing#sourcing-services`, label: tSourcing('services') },
@@ -72,6 +79,25 @@ export default function Navbar() {
   ];
 
   const navLinks = isSourcing ? sourcingLinks : printerLinks;
+
+  // Home on the page you are already on: scroll to the top rather than doing
+  // a full navigation. Anywhere else, remember the chooser as answered so the
+  // home page renders straight away instead of greeting the visitor again.
+  const handleHomeClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    markGateSeen();
+    if (isCurrentPage(pathname, href)) {
+      e.preventDefault();
+      scrollToTop();
+    }
+  };
+
+  // Where the bar gives up and hands everything to the hamburger. The two
+  // navs are very different widths, so one shared number short-changes one of
+  // them: the printers nav carries nine English links plus two pills and a
+  // long CTA and needs ~1280px, while the sourcing nav's six short links leave
+  // ~285px spare at that width. Keeping sourcing at its original 1100px stops
+  // the printers nav's requirement from collapsing a nav that fits fine.
+  const collapseAt = isSourcing ? 1099 : 1279;
 
   const otherLocale = isAr ? 'en' : 'ar';
   
@@ -95,7 +121,14 @@ export default function Navbar() {
           width: 'calc(100% - 48px)',
           maxWidth: '1400px',
           zIndex: 1000,
-          height: '80px',
+          // Pulls the bar out of the page's view-transition snapshot so it
+          // stays put while content slides underneath it. See the
+          // persistent-nav rules in globals.css.
+          viewTransitionName: 'persistent-nav',
+          // Condenses once past the fold. The bar is position:fixed, so its
+          // own height change cannot reflow the page behind it — it is one
+          // transition on a threshold crossing, not a per-scroll-frame value.
+          height: scrolled ? '68px' : '80px',
           display: 'flex',
           alignItems: 'center',
           padding: '0 32px',
@@ -104,7 +137,7 @@ export default function Navbar() {
           // part of it. This keeps the three groups apart at every width; the
           // centred links then always have at least this much breathing room.
           gap: '24px',
-          transition: 'transform 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+          transition: 'transform 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94), height 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
           willChange: 'transform',
           background: 'rgba(255, 255, 255, 0.75)',
           backdropFilter: 'blur(32px) saturate(200%)',
@@ -138,6 +171,13 @@ export default function Navbar() {
               objectFit: 'contain',
               height: '56px',
               width: 'auto',
+              // Scale rather than a second height animation: the logo shrinking
+              // with the bar is the whole effect, and a transform costs the
+              // compositor nothing while a height would relayout the nav's
+              // flex row alongside it.
+              transform: scrolled ? 'scale(0.82)' : 'scale(1)',
+              transformOrigin: isAr ? 'right center' : 'left center',
+              transition: 'transform 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
             }}
             className="nav-logo-img"
             priority
@@ -162,9 +202,13 @@ export default function Navbar() {
           className="nav-links-desktop"
         >
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.href}
               href={link.href}
+              // Sibling pages: a cross-fade, not a slide. Typed explicitly
+              // because PageTransition leaves the untyped default at 'none'.
+              transitionTypes={['nav-lateral']}
+              onClick={link.isHome ? (e) => handleHomeClick(e, link.href) : undefined}
               style={{
                 color: '#4B5563',
                 textDecoration: 'none',
@@ -178,7 +222,7 @@ export default function Navbar() {
               onMouseLeave={(e) => (e.currentTarget.style.color = '#4B5563')}
             >
               {link.label}
-            </a>
+            </Link>
           ))}
         </div>
 
@@ -189,7 +233,9 @@ export default function Navbar() {
           gap: '16px',
           flexShrink: 0,
         }}>
-          {/* Language Toggle */}
+          {/* Language Toggle. A <Link>, not a plain <a>: a full document load
+              repaints the white body between pages, which flashed on every
+              language switch. See the note on the chooser's toggle. */}
           <Link
             href={switchPath}
             className="nav-lang-desktop"
@@ -253,11 +299,59 @@ export default function Navbar() {
             {isSourcing ? tSourcing('cta') : t('getFreePrinter')}
           </a>
 
+          {/* The crossing point between the two tracks, sitting after the CTA —
+              so it is to its right in English and, because the bar mirrors
+              with the document direction, to its left in Arabic. Carries the
+              same solid accent fill as the CTA rather than an outline, so the
+              two read as a matched pair.
+              Present on both sides and pointing at the other one: sourcing
+              from the printers nav, refurbished printers from the sourcing
+              nav. Before this the logo/gate was the only route across, and
+              nothing about a logo tells a visitor a second business is behind
+              it — which was as true landing on sourcing as it was here.
+              Going to the printers home marks the gate answered, the same
+              choice the chooser's "Explore Printers" records: without that, a
+              visitor who deep-linked straight to /sourcing would get the
+              chooser thrown up in front of the page they just asked for. */}
+          <a
+            href={isSourcing ? `/${locale}` : `/${locale}/sourcing`}
+            onClick={isSourcing ? markGateSeen : undefined}
+            className="nav-sourcing-desktop"
+            style={{
+              height: '44px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px',
+              padding: '0 24px',
+              borderRadius: '999px',
+              background: 'var(--accent)',
+              color: '#FFFFFF',
+              fontSize: '0.9rem',
+              fontWeight: 700,
+              textDecoration: 'none',
+              whiteSpace: 'nowrap',
+              transition: 'all 200ms cubic-bezier(0.34, 1.56, 0.64, 1)',
+              boxShadow: '0 4px 12px rgba(141, 184, 51, 0.3)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'scale(1.05)';
+              e.currentTarget.style.boxShadow = '0 8px 20px rgba(141,184,51,0.5)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'scale(1)';
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(141, 184, 51, 0.3)';
+            }}
+          >
+            {isSourcing ? t('refurbishedPrinters') : t('sourcing')}
+            <span aria-hidden="true" style={{ fontSize: '1rem', lineHeight: 1 }}>{isAr ? '←' : '→'}</span>
+          </a>
+
           {/* Mobile Hamburger */}
           <button
             className="mobile-menu-btn"
             onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label="Toggle menu"
+            aria-label={isAr ? 'فتح القائمة' : 'Toggle menu'}
             aria-expanded={mobileOpen}
             aria-controls="mobile-nav-overlay"
             style={{
@@ -320,8 +414,12 @@ export default function Navbar() {
           alignItems: 'center',
           justifyContent: 'center',
           gap: '24px',
-          transition: 'all 400ms cubic-bezier(0.22, 1, 0.36, 1)',
+          transition: 'opacity 400ms cubic-bezier(0.22, 1, 0.36, 1), transform 400ms cubic-bezier(0.22, 1, 0.36, 1), visibility 0s linear ' + (mobileOpen ? '0s' : '400ms'),
           opacity: mobileOpen ? 1 : 0,
+          // visibility (not just pointer-events) so the closed menu's links are
+          // not focusable / read by screen readers. Delayed on close so the
+          // fade-out still plays.
+          visibility: mobileOpen ? 'visible' : 'hidden',
           pointerEvents: mobileOpen ? 'all' : 'none',
           transform: mobileOpen ? 'translateX(0)' : (isAr ? 'translateX(100%)' : 'translateX(-100%)'),
           padding: '100px 32px 48px',
@@ -329,10 +427,11 @@ export default function Navbar() {
         }}
       >
         {navLinks.map((link, i) => (
-          <a
+          <Link
             key={link.href}
             href={link.href}
-            onClick={() => setMobileOpen(false)}
+            transitionTypes={['nav-lateral']}
+            onClick={(e) => { setMobileOpen(false); if (link.isHome) handleHomeClick(e, link.href); }}
             style={{
               color: '#111827',
               textDecoration: 'none',
@@ -348,7 +447,7 @@ export default function Navbar() {
             }}
           >
             {link.label}
-          </a>
+          </Link>
         ))}
 
         {/* No language toggle here: it lives in the bar itself at every size,
@@ -379,17 +478,45 @@ export default function Navbar() {
         >
           {isSourcing ? tSourcing('cta') : t('getFreePrinter')}
         </a>
+
+        {/* The desktop pill is hidden under 1280px, so the crossing point has
+            to exist here too or the other track is unreachable on a phone. */}
+        <a
+          href={isSourcing ? `/${locale}` : `/${locale}/sourcing`}
+          onClick={() => { setMobileOpen(false); if (isSourcing) markGateSeen(); }}
+          style={{
+            padding: '16px 32px',
+            borderRadius: '999px',
+            background: 'var(--accent)',
+            color: '#FFFFFF',
+            fontWeight: 700,
+            textDecoration: 'none',
+            fontSize: '1rem',
+            minHeight: '52px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            width: '100%',
+            maxWidth: '280px',
+            boxShadow: '0 4px 12px rgba(141,184,51,0.3)',
+          }}
+        >
+          {isSourcing ? t('refurbishedPrinters') : t('sourcing')}
+          <span aria-hidden="true">{isAr ? '←' : '→'}</span>
+        </a>
       </div>
 
       <style jsx>{`
-        /* Between the hamburger breakpoint and ~1360px the English printers nav
-           — nine links plus a long CTA — is wider than the pill containing it,
-           so the CTA spilled past the rounded edge and the links ran into the
-           language pill. Tighten spacing across this band rather than dropping
-           to the hamburger, which would cost the desktop nav on ordinary
-           1280px laptops. The Arabic nav and the five-link sourcing nav both
-           fit without this, but sharing the rule keeps them consistent. */
-        @media (min-width: 1100px) and (max-width: 1360px) {
+        /* Between the hamburger breakpoint and ~1440px the English printers nav
+           — nine links plus the Sourcing pill and a long CTA — is wider than
+           the bar containing it, so the CTA spilled past the rounded edge and
+           the links ran into the language pill. Tighten spacing across this
+           band rather than dropping to the hamburger, which would cost the
+           desktop nav on ordinary 1280px laptops. The Arabic nav and the
+           five-link sourcing nav both fit without this, but sharing the rule
+           keeps them consistent. */
+        @media (min-width: ${collapseAt + 1}px) and (max-width: 1440px) {
           #main-nav {
             padding: 0 20px !important;
             gap: 16px !important;
@@ -397,7 +524,9 @@ export default function Navbar() {
           .nav-links-desktop {
             gap: 10px !important;
           }
-          .nav-links-desktop a {
+          /* :global(a) — these are next/link <Link>s now, which styled-jsx
+             cannot scope (see the note on .nav-lang-desktop below). */
+          .nav-links-desktop :global(a) {
             font-size: 0.76rem !important;
           }
           /* :global() — see the note on the mobile rule below. */
@@ -408,6 +537,15 @@ export default function Navbar() {
           .nav-cta-desktop {
             padding: 0 16px !important;
             font-size: 0.78rem !important;
+          }
+          .nav-sourcing-desktop {
+            padding: 0 12px !important;
+            font-size: 0.78rem !important;
+          }
+          /* The arrow is affordance, not information — the first thing the
+             pill can give back when the row is short of room. */
+          .nav-sourcing-desktop :global(span) {
+            display: none !important;
           }
         }
         /* The overlay centres its items, but once they are taller than the
@@ -423,13 +561,24 @@ export default function Navbar() {
           justify-content: safe center !important;
           gap: 18px !important;
         }
-        /* Hamburger below 1100px, not 1024px: even fully tightened, the nine
-           English printer links plus the CTA do not fit under ~1100. */
-        @media (max-width: 1099px) {
+        /* Hamburger below collapseAt (1280px on printers, 1100px on
+           sourcing — see the note where it is defined). The nine English
+           printer links need ~619px even fully tightened, and the right-hand
+           group (language pill + cross-link pill + CTA) takes the rest of the
+           bar. Measured: at 1150px the printers row fit with exactly zero
+           slack BEFORE the cross-link pill existed, and the pill costs 120px;
+           trimming it inside the band buys back ~36px, so that row needs
+           ~1280px to fit with real slack. Below the cutoff the whole set, both
+           pills included, lives in the overlay instead of being silently
+           clipped by the links container's overflow:hidden. */
+        @media (max-width: ${collapseAt}px) {
           .nav-links-desktop {
             display: none !important;
           }
           .nav-cta-desktop {
+            display: none !important;
+          }
+          .nav-sourcing-desktop {
             display: none !important;
           }
           /* The language pill stays in the bar at every size, so switching

@@ -15,6 +15,9 @@ import VideoDivider from '@/components/sections/VideoDivider';
 import { getSettings, getProducts } from '@/lib/supabase';
 import { buildAlternates } from '@/lib/metadata';
 import { SITE_EMAIL, SITE_URL } from '@/lib/siteContact';
+import { areaServedSchema, serviceRegionsList } from '@/lib/serviceRegions';
+import { getServiceRegions } from '@/lib/getServiceRegions';
+import PageTransition from '@/components/ui/PageTransition';
 
 // Reads live settings (videos, contact info) from Supabase on every request.
 export const dynamic = 'force-dynamic';
@@ -49,6 +52,7 @@ export default async function HomePage({
   const settings = await getSettings();
   const videos = settings.videos || { divider1: '', divider2: '' };
   const { products: printers, error: printersError } = await getProducts('printer');
+  const serviceRegions = await getServiceRegions();
 
   // Greet a visitor who hasn't picked a track yet, and re-open the chooser
   // whenever it is asked for explicitly with ?gate=1 — which is what the
@@ -73,9 +77,10 @@ export default async function HomePage({
     'alternateName': 'FNG',
     'url': websiteUrl,
     'logo': `${websiteUrl}/FNG_LOGO.png`,
-    'description': isAr 
-      ? 'المورد الرائد في المملكة العربية السعودية لطابعات HP المجددة، أحبار طابعات صديقة للبيئة، وقطع غيار طابعات أصلية.' 
-      : 'Saudi Arabia\'s leading supplier of refurbished HP printers, eco-friendly toners, and genuine printer parts.',
+    'description': isAr
+      ? `المورد الرائد لطابعات HP المجددة، أحبار طابعات صديقة للبيئة، وقطع غيار طابعات أصلية — نعمل في ${serviceRegionsList(serviceRegions, 'ar')}.`
+      : `Leading supplier of refurbished HP printers, eco-friendly toners, and genuine printer parts, operating across ${serviceRegionsList(serviceRegions, 'en')}.`,
+    'areaServed': areaServedSchema(serviceRegions),
     'foundingDate': '2021',
     'address': {
       '@type': 'PostalAddress',
@@ -125,11 +130,11 @@ export default async function HomePage({
       'opens': '09:00',
       'closes': '18:00'
     },
-    'areaServed': ['Riyadh', 'Jeddah', 'Dammam', 'Al Madinah'],
+    'areaServed': areaServedSchema(serviceRegions),
     'priceRange': '$$',
     'description': isAr 
-      ? 'توريد طابعات HP مجددة ومستلزمات أحبار طابعات ليزر للشركات والمؤسسات.' 
-      : 'Refurbished HP printer supplier and eco-friendly toner provider serving businesses across Saudi Arabia.'
+      ? 'توريد طابعات HP مجددة ومستلزمات أحبار طابعات ليزر للشركات والمؤسسات في السعودية والإمارات وعُمان والصين ودول الخليج.' 
+      : 'Refurbished HP printer supplier and eco-friendly toner provider serving businesses across Saudi Arabia, the UAE, Oman, China and the wider Gulf.'
   };
 
   const websiteSchema = {
@@ -148,39 +153,41 @@ export default async function HomePage({
   };
 
   return (
-    <main>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(organizationSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(localBusinessSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(websiteSchema) }}
-      />
-      {showGate && <EntryGate />}
-      <HeroSection />
-      <ProductCatalogSection
-        products={printers}
-        error={printersError}
-        isAr={isAr}
-        basePath={`/${locale}/printers`}
-        tag={isAr ? 'طابعاتنا المُجددة' : 'Refurbished Printers'}
-        title={isAr ? 'طابعات HP مُجددة باحترافية' : 'Professionally Refurbished HP Printers'}
-        subtitle={isAr
-          ? 'كل طابعة يتم فحصها وتنظيفها وتجديدها باحترافية واختبارها لتعمل بمعايير المصنع. جودة HP بجزء بسيط من تكلفة الجديدة.'
-          : 'Every printer is professionally inspected, cleaned, refurbished, and tested to factory standards. HP quality at a fraction of the new price.'}
-      />
-      <FreePrinterSection />
-      <HowItWorksSection />
-      <VideoDivider src={videos.divider1 || ''} />
-      <IndustriesSection />
-      <VideoDivider src={videos.divider2 || ''} />
-      <TrustSection />
-      <ContactSection />
-    </main>
+    <PageTransition>
+      <main>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(organizationSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(localBusinessSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(websiteSchema) }}
+        />
+        {showGate && <EntryGate />}
+        <HeroSection />
+        <ProductCatalogSection
+          products={printers}
+          error={printersError}
+          isAr={isAr}
+          basePath={`/${locale}/printers`}
+          tag={isAr ? 'طابعاتنا المُجددة' : 'Refurbished Printers'}
+          title={isAr ? 'طابعات HP مُجددة باحترافية' : 'Professionally Refurbished HP Printers'}
+          subtitle={isAr
+            ? 'كل طابعة يتم فحصها وتنظيفها وتجديدها باحترافية واختبارها لتعمل بمعايير المصنع. جودة HP بجزء بسيط من تكلفة الجديدة.'
+            : 'Every printer is professionally inspected, cleaned, refurbished, and tested to factory standards. HP quality at a fraction of the new price.'}
+        />
+        <FreePrinterSection />
+        <HowItWorksSection />
+        <VideoDivider src={videos.divider1 || ''} />
+        <IndustriesSection />
+        <VideoDivider src={videos.divider2 || ''} />
+        <TrustSection />
+        <ContactSection />
+      </main>
+    </PageTransition>
   );
 }

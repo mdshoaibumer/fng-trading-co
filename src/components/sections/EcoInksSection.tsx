@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { Leaf, Wind, Recycle, CheckCircle2, ThermometerSun, Zap } from 'lucide-react';
+import Reveal from '@/components/ui/Reveal';
 
 const FEATURES = ['bio', 'voc', 'recycle', 'quality', 'temp', 'energy'] as const;
 const ICONS = [
@@ -30,7 +31,8 @@ export default function EcoInksSection() {
         </div>
         <div className="eco-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: 'clamp(12px, 3vw, 24px)' }}>
           {FEATURES.map((f, i) => (
-            <div key={f} style={{
+            <Reveal key={f} delay={(i % 3) * 90} threshold={0.1}>
+            <div style={{ height: '100%',
               background: '#F9FAFB', border: '1px solid #F3F4F6', borderRadius: '20px',
               padding: 'clamp(20px, 4vw, 32px) clamp(16px, 3vw, 28px)',
               transition: 'all 350ms cubic-bezier(0.34,1.56,0.64,1)',
@@ -52,6 +54,7 @@ export default function EcoInksSection() {
               <h3 style={{ color: 'var(--accent)', fontSize: 'clamp(0.95rem, 2vw, 1.15rem)', fontWeight: 700, marginBottom: '8px' }}>{t(`features.${f}.title`)}</h3>
               <p style={{ color: '#4B5563', fontSize: '0.85rem', lineHeight: 1.6 }}>{t(`features.${f}.desc`)}</p>
             </div>
+            </Reveal>
           ))}
         </div>
       </div>

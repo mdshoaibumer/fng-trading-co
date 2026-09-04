@@ -2,6 +2,7 @@
 
 import { ChevronLeft, ChevronRight, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
+import { ViewTransition } from 'react';
 import Image from 'next/image';
 import type { Product } from '@/lib/supabase';
 import { useCarousel } from '@/hooks/useCarousel';
@@ -20,12 +21,23 @@ export default function ProductCard({ product, isAr, productUrl }: { product: Pr
 
   return (
     <div className="glass item-card" style={{
-      display: 'flex', flexDirection: 'column', background: 'rgba(255, 255, 255, 0.7)',
+      display: 'flex', flexDirection: 'column', background: 'rgba(255, 255, 255, 0.7)', width: '100%',
       borderRadius: '24px', overflow: 'hidden', border: '1px solid rgba(141, 184, 51, 0.2)',
       boxShadow: '0 20px 40px rgba(0,0,0,0.05)', transition: 'transform 0.3s ease, box-shadow 0.3s ease',
     }}>
       {/* Image Slider */}
-      <Link href={productUrl} style={{ display: 'block', position: 'relative', width: '100%', height: '320px', pointerEvents: product.available === false ? 'none' : 'auto' }}>
+      {/* All three routes into the detail page are the same move — deeper into
+          the catalog — so they carry the same direction. PageTransition on each
+          page reads it and slides accordingly. */}
+      <Link href={productUrl} transitionTypes={['nav-forward']} style={{ display: 'block', position: 'relative', width: '100%', height: '320px', pointerEvents: product.available === false ? 'none' : 'auto' }}>
+        {/* Named so it pairs with the same container on the detail page and
+            morphs across the navigation — one object moving rather than two
+            swapping. The container is named, not the individual <Image>s,
+            because both sides are carousels and which slide is showing at the
+            moment of the click is not something either side can know about the
+            other. default="none" stops it cross-fading on unrelated
+            transitions, e.g. when the catalog re-renders. */}
+        <ViewTransition name={`product-image-${product.id}`} share="morph" default="none">
         <div className="item-img-area" style={{
           position: 'relative', width: '100%', height: '100%',
           background: 'radial-gradient(circle, rgba(141, 184, 51, 0.05) 0%, transparent 70%)',
@@ -45,7 +57,7 @@ export default function ProductCard({ product, isAr, productUrl }: { product: Pr
                 alt={`${product.name} - View ${idx + 1}`}
                 fill
                 sizes="(max-width: 640px) 90vw, 400px"
-                onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/placeholder.png'; }}
+                onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.srcset = ''; e.currentTarget.src = '/placeholder.png'; }}
                 style={{ objectFit: 'contain', filter: 'drop-shadow(0 15px 25px rgba(0,0,0,0.1))' }}
               />
             </div>
@@ -91,6 +103,7 @@ export default function ProductCard({ product, isAr, productUrl }: { product: Pr
             }
           </div>
         </div>
+        </ViewTransition>
       </Link>
       {/* Content */}
       <div style={{
@@ -101,7 +114,7 @@ export default function ProductCard({ product, isAr, productUrl }: { product: Pr
         textAlign: isAr ? 'right' : 'left',
         opacity: product.available === false ? 0.7 : 1
       }}>
-        <Link href={productUrl} style={{ textDecoration: 'none', pointerEvents: product.available === false ? 'none' : 'auto' }}>
+        <Link href={productUrl} transitionTypes={['nav-forward']} style={{ textDecoration: 'none', pointerEvents: product.available === false ? 'none' : 'auto' }}>
           <h3 style={{
             color: 'var(--primary)',
             fontSize: 'clamp(1.1rem, 3vw, 1.4rem)',
@@ -149,6 +162,7 @@ export default function ProductCard({ product, isAr, productUrl }: { product: Pr
         </div>
         <Link
           href={productUrl}
+          transitionTypes={['nav-forward']}
           className="btn-primary"
           style={{
             width: '100%',

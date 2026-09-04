@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Clock, Wrench, MessageCircle } from 'lucide-react';
 
 import { useWhatsappNumber } from '@/hooks/useWhatsappNumber';
+import Reveal from '@/components/ui/Reveal';
 
 export default function MaintenanceTeaser() {
   const params = useParams();
@@ -20,7 +21,7 @@ export default function MaintenanceTeaser() {
       position: 'relative',
     }}>
       <div className="container">
-        <div style={{
+        <Reveal as="div" from="scale" style={{
           maxWidth: '800px', margin: '0 auto',
           background: 'linear-gradient(135deg, var(--bg-darker) 0%, var(--primary) 100%)',
           borderRadius: '24px', padding: 'clamp(32px, 5vw, 56px)',
@@ -103,7 +104,7 @@ export default function MaintenanceTeaser() {
               {t('cta')}
             </a>
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );

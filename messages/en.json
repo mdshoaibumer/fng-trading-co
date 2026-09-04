@@ -10,6 +10,7 @@
     "ecoInks": "Eco Inks",
     "industries": "Industries",
     "sourcing": "Sourcing",
+    "refurbishedPrinters": "Refurbished Printers",
     "faq": "FAQ",
     "contact": "Contact",
     "printerParts": "Printer Parts",
@@ -101,7 +102,7 @@
       "get": {
         "number": "01",
         "title": "Get",
-        "desc": "Request your certified refurbished HP printer with zero deposit and no contract lock-in. We offer professional delivery and installation within 48 hours across our primary service regions: Riyadh, Jeddah, Dammam, and Al Madinah."
+        "desc": "Request your certified refurbished HP printer with zero deposit and no contract lock-in. We offer professional delivery and installation within 48 hours across Saudi Arabia, the UAE, Oman and our other markets."
       },
       "print": {
         "number": "02",
@@ -120,8 +121,8 @@
     "title": "Every Industry. One Smart Decision.",
     "subtitle": "Sustainable printing solutions designed for every sector",
     "items": {
-      "healthcare": { 
-        "name": "Healthcare & Clinics", 
+      "healthcare": {
+        "name": "Healthcare & Clinics",
         "desc": "Safe, reliable printing for medical records",
         "details": {
           "stat": "70%",
@@ -130,8 +131,8 @@
           "benefit2": "No toxic emissions in sterile areas"
         }
       },
-      "education": { 
-        "name": "Education", 
+      "education": {
+        "name": "Education",
         "desc": "High-quality learning materials at lower cost",
         "details": {
           "stat": "500K+",
@@ -140,8 +141,8 @@
           "benefit2": "Zero budget surprises"
         }
       },
-      "realEstate": { 
-        "name": "Real Estate", 
+      "realEstate": {
+        "name": "Real Estate",
         "desc": "Stunning marketing materials with vibrant colours",
         "details": {
           "stat": "2x",
@@ -150,8 +151,8 @@
           "benefit2": "Print on demand"
         }
       },
-      "legal": { 
-        "name": "Legal & Finance", 
+      "legal": {
+        "name": "Legal & Finance",
         "desc": "Clear, reliable documents",
         "details": {
           "stat": "100%",
@@ -160,8 +161,8 @@
           "benefit2": "Secure local network"
         }
       },
-      "retail": { 
-        "name": "Retail & F&B", 
+      "retail": {
+        "name": "Retail & F&B",
         "desc": "Professional-grade menus and labels",
         "details": {
           "stat": "24/7",
@@ -170,8 +171,8 @@
           "benefit2": "Same-day menu updates"
         }
       },
-      "government": { 
-        "name": "Government & Public Sector", 
+      "government": {
+        "name": "Government & Public Sector",
         "desc": "Aligned with Vision 2030 goals",
         "details": {
           "stat": "100%",
@@ -180,8 +181,8 @@
           "benefit2": "Local support & maintenance"
         }
       },
-      "architecture": { 
-        "name": "Architecture & Design", 
+      "architecture": {
+        "name": "Architecture & Design",
         "desc": "Ultra-precise blueprints and renderings",
         "details": {
           "stat": "4800",
@@ -190,8 +191,8 @@
           "benefit2": "A3 and oversized support"
         }
       },
-      "logistics": { 
-        "name": "Logistics & Operations", 
+      "logistics": {
+        "name": "Logistics & Operations",
         "desc": "Non-stop shipping labels and reports",
         "details": {
           "stat": "0",
@@ -207,9 +208,21 @@
     "title": "Your Partner for Vision 2030",
     "subtitle": "Every page you print contributes to a greener future",
     "stats": {
-      "co2": { "value": "124", "unit": "tons", "label": "CO₂ Saved" },
-      "trees": { "value": "2,500", "unit": "trees", "label": "Equivalent" },
-      "plastic": { "value": "85", "unit": "%", "label": "Plastic Recycled" }
+      "co2": {
+        "value": "124",
+        "unit": "tons",
+        "label": "CO₂ Saved"
+      },
+      "trees": {
+        "value": "2,500",
+        "unit": "trees",
+        "label": "Equivalent"
+      },
+      "plastic": {
+        "value": "85",
+        "unit": "%",
+        "label": "Plastic Recycled"
+      }
     },
     "milestones": {
       "2021": "FNG founded in Riyadh",
@@ -218,6 +231,21 @@
       "2024": "ISO Environmental Certification",
       "2025": "Gulf region expansion",
       "2030": "Fully carbon neutral"
+    },
+    "cycle": {
+      "title": "The Eco Inks Cycle",
+      "bio": {
+        "title": "Bio-Derived",
+        "desc": "We use plant-based resins and sustainable sourcing instead of petroleum bases for all our toner powders."
+      },
+      "voc": {
+        "title": "Zero VOC",
+        "desc": "Our toners emit zero Volatile Organic Compounds, ensuring safe and clean air quality in your office."
+      },
+      "loop": {
+        "title": "Closed-Loop",
+        "desc": "We collect all empty cartridges directly from your office. Plastics are melted down and reused for new supplies."
+      }
     }
   },
   "trust": {
@@ -243,7 +271,12 @@
         "company": "Modern Construction Est."
       }
     ],
-    "certifications": ["ISO 14001", "ISO 9001", "SASO", "Vision 2030 Partner"]
+    "certifications": [
+      "ISO 14001",
+      "ISO 9001",
+      "SASO",
+      "Vision 2030 Partner"
+    ]
   },
   "contact": {
     "tag": "Contact Us",
@@ -255,6 +288,7 @@
       "phone": "Phone Number",
       "email": "Email Address",
       "industry": "Industry",
+      "country": "Country",
       "city": "City",
       "message": "Additional Details (Optional)",
       "quantity": "Number of Printers Needed",
@@ -277,10 +311,17 @@
       "item4": "Pay Only For What You Print"
     },
     "locations": "Our Locations",
-    "hq": "KSA Operations",
-    "hqAddress": "Serving major hubs including Riyadh (HQ), Jeddah, Dammam, and Al Madinah",
-    "uae": "UAE Branch",
+    "offices": "Offices",
+    "markets": "Markets we serve",
+    "marketsNote": "Delivery, installation and sourcing support across the region — ask us about your country.",
+    "hq": "Saudi Arabia — Headquarters",
+    "hqAddress": "Makkah Al Mukarramah Branch Rd, Al Sulaimaniyah, Riyadh 12621",
+    "uae": "United Arab Emirates",
     "uaeAddress": "Dubai Design District (d3), Building 3, Dubai",
+    "cn": "China",
+    "cnAddress": "Tianhe District, Guangzhou — sourcing, factory audit & QC office",
+    "om": "Oman",
+    "omAddress": "Muscat — regional sales & installation operations",
     "contactInfo": "Contact Information",
     "emailLabel": "Email Us",
     "phoneLabel": "Call Us",
@@ -291,7 +332,7 @@
   "footer": {
     "brand": "FNG — Refurbished Office Equipment",
     "tagline": "Specialized in HP Printers, Eco-Friendly Toners & Genuine Parts.",
-    "copyright": "© 2025 FNG Future Next Gen — Saudi Arabia",
+    "copyright": "© 2026 FNG Future Next Gen — Saudi Arabia · UAE · Oman · China",
     "links": {
       "privacy": "Privacy Policy",
       "terms": "Terms & Conditions"
@@ -339,79 +380,172 @@
         "name": "Fuser Assemblies",
         "desc": "Heat and pressure units that bond toner to paper.",
         "parts": [
-          { "name": "Fuser Unit (Complete Assembly)", "models": "M402, M404, M428, M575, 3303fdw" },
-          { "name": "Fuser Film Sleeve", "models": "M402, M404, M426" },
-          { "name": "Pressure Roller", "models": "Universal — M400 / M500 Series" },
-          { "name": "Fuser Gear Kit", "models": "M402, M426, M428" }
+          {
+            "name": "Fuser Unit (Complete Assembly)",
+            "models": "M402, M404, M428, M575, 3303fdw"
+          },
+          {
+            "name": "Fuser Film Sleeve",
+            "models": "M402, M404, M426"
+          },
+          {
+            "name": "Pressure Roller",
+            "models": "Universal — M400 / M500 Series"
+          },
+          {
+            "name": "Fuser Gear Kit",
+            "models": "M402, M426, M428"
+          }
         ]
       },
       "pickup": {
         "name": "Pickup & Feed Rollers",
         "desc": "Essential rollers that pull paper through the print path.",
         "parts": [
-          { "name": "Paper Pickup Roller", "models": "M402, M404, M428, M575" },
-          { "name": "Separation Pad", "models": "M402, M404, M426, M428" },
-          { "name": "Feed Roller Assembly", "models": "M575, M551, 3303fdw" },
-          { "name": "Tray 2 Roller Kit", "models": "M402, M404, M428" }
+          {
+            "name": "Paper Pickup Roller",
+            "models": "M402, M404, M428, M575"
+          },
+          {
+            "name": "Separation Pad",
+            "models": "M402, M404, M426, M428"
+          },
+          {
+            "name": "Feed Roller Assembly",
+            "models": "M575, M551, 3303fdw"
+          },
+          {
+            "name": "Tray 2 Roller Kit",
+            "models": "M402, M404, M428"
+          }
         ]
       },
       "transfer": {
         "name": "Transfer Components",
         "desc": "Belts and rollers that transfer toner from cartridge to paper.",
         "parts": [
-          { "name": "Transfer Belt (ITB)", "models": "M575, M551, 3303fdw" },
-          { "name": "Transfer Roller", "models": "M402, M404, M426, M428" },
-          { "name": "Secondary Transfer Roller", "models": "M575, M551" }
+          {
+            "name": "Transfer Belt (ITB)",
+            "models": "M575, M551, 3303fdw"
+          },
+          {
+            "name": "Transfer Roller",
+            "models": "M402, M404, M426, M428"
+          },
+          {
+            "name": "Secondary Transfer Roller",
+            "models": "M575, M551"
+          }
         ]
       },
       "drum": {
         "name": "Imaging Drums & OPC",
         "desc": "Photosensitive drums that form the image before toner application.",
         "parts": [
-          { "name": "OPC Drum (Organic Photoconductor)", "models": "Universal — All HP LaserJet" },
-          { "name": "Drum Unit (Complete)", "models": "M402, M404, M428" },
-          { "name": "Imaging Drum Kit", "models": "M575, M551, 3303fdw" },
-          { "name": "Developer Unit", "models": "M575, M551" }
+          {
+            "name": "OPC Drum (Organic Photoconductor)",
+            "models": "Universal — All HP LaserJet"
+          },
+          {
+            "name": "Drum Unit (Complete)",
+            "models": "M402, M404, M428"
+          },
+          {
+            "name": "Imaging Drum Kit",
+            "models": "M575, M551, 3303fdw"
+          },
+          {
+            "name": "Developer Unit",
+            "models": "M575, M551"
+          }
         ]
       },
       "formatter": {
         "name": "Formatter & PCB Boards",
         "desc": "Main logic boards that process print jobs and control operations.",
         "parts": [
-          { "name": "Formatter Board", "models": "M402, M404, M428, M575" },
-          { "name": "Power Supply Board", "models": "M402, M404, M426" },
-          { "name": "DC Controller Board", "models": "M575, M551" },
-          { "name": "Engine Control Board", "models": "M402, M428" }
+          {
+            "name": "Formatter Board",
+            "models": "M402, M404, M428, M575"
+          },
+          {
+            "name": "Power Supply Board",
+            "models": "M402, M404, M426"
+          },
+          {
+            "name": "DC Controller Board",
+            "models": "M575, M551"
+          },
+          {
+            "name": "Engine Control Board",
+            "models": "M402, M428"
+          }
         ]
       },
       "scanner": {
         "name": "Scanner & ADF Parts",
         "desc": "Automatic document feeder and scanner components.",
         "parts": [
-          { "name": "ADF Roller Kit", "models": "M428, M575, 3303fdw" },
-          { "name": "Scanner Glass Assembly", "models": "M428, M575, 3303fdw" },
-          { "name": "Flatbed Scanner Cable", "models": "M428, M575" },
-          { "name": "ADF Separation Pad", "models": "M428, M575, 3303fdw" }
+          {
+            "name": "ADF Roller Kit",
+            "models": "M428, M575, 3303fdw"
+          },
+          {
+            "name": "Scanner Glass Assembly",
+            "models": "M428, M575, 3303fdw"
+          },
+          {
+            "name": "Flatbed Scanner Cable",
+            "models": "M428, M575"
+          },
+          {
+            "name": "ADF Separation Pad",
+            "models": "M428, M575, 3303fdw"
+          }
         ]
       },
       "trays": {
         "name": "Trays & Covers",
         "desc": "Paper trays, input/output bins, and printer covers.",
         "parts": [
-          { "name": "Paper Tray Cassette (Tray 2)", "models": "M402, M404, M428" },
-          { "name": "Multipurpose (MP) Tray", "models": "M575, M551" },
-          { "name": "Output Bin Assembly", "models": "M402, M404, M428" },
-          { "name": "Front Cover / Access Door", "models": "Universal — M400 / M500 Series" },
-          { "name": "Rear Cover Assembly", "models": "M402, M404" }
+          {
+            "name": "Paper Tray Cassette (Tray 2)",
+            "models": "M402, M404, M428"
+          },
+          {
+            "name": "Multipurpose (MP) Tray",
+            "models": "M575, M551"
+          },
+          {
+            "name": "Output Bin Assembly",
+            "models": "M402, M404, M428"
+          },
+          {
+            "name": "Front Cover / Access Door",
+            "models": "Universal — M400 / M500 Series"
+          },
+          {
+            "name": "Rear Cover Assembly",
+            "models": "M402, M404"
+          }
         ]
       },
       "maintenance": {
         "name": "Maintenance Kits",
         "desc": "Complete maintenance kits for preventive servicing.",
         "parts": [
-          { "name": "Maintenance Kit (Fuser + Rollers + Pads)", "models": "M402, M404" },
-          { "name": "LaserJet MFP Maintenance Kit", "models": "M428, M575, 3303fdw" },
-          { "name": "ADF Maintenance Kit", "models": "M428, M575" }
+          {
+            "name": "Maintenance Kit (Fuser + Rollers + Pads)",
+            "models": "M402, M404"
+          },
+          {
+            "name": "LaserJet MFP Maintenance Kit",
+            "models": "M428, M575, 3303fdw"
+          },
+          {
+            "name": "ADF Maintenance Kit",
+            "models": "M428, M575"
+          }
         ]
       }
     }
@@ -478,10 +612,22 @@
     "cta1": "Request a Quote",
     "cta2": "Explore Categories",
     "stats": {
-      "moq": { "value": "500", "label": "Minimum Order Quantity, pcs" },
-      "lead": { "value": "15–30", "label": "Days Typical Lead Time" },
-      "factories": { "value": "100+", "label": "Verified Factories in Network" },
-      "compliance": { "value": "SABER", "label": "Compliant Customs Clearance" }
+      "moq": {
+        "value": "500",
+        "label": "Minimum Order Quantity, pcs"
+      },
+      "lead": {
+        "value": "15–30",
+        "label": "Days Typical Lead Time"
+      },
+      "factories": {
+        "value": "100+",
+        "label": "Verified Factories in Network"
+      },
+      "compliance": {
+        "value": "SABER",
+        "label": "Compliant Customs Clearance"
+      }
     }
   },
   "sourcingProcess": {
@@ -489,13 +635,41 @@
     "title": "From inquiry to your door",
     "subtitle": "Seven stages, one point of contact — from your first message to a cleared shipment at your door.",
     "steps": {
-      "s1": { "number": "01", "title": "Inquiry", "desc": "Send your product, target spec and quantity over WhatsApp or the contact form. We confirm feasibility and typical pricing within one business day." },
-      "s2": { "number": "02", "title": "Sourcing & Quotation", "desc": "We shortlist verified factories from our China network, negotiate pricing at your volume, and return a formal quotation with unit cost, MOQ and lead time." },
-      "s3": { "number": "03", "title": "Sample Approval", "desc": "A physical sample ships for your sign-off before production begins — no bulk order is placed against an unapproved sample." },
-      "s4": { "number": "04", "title": "Factory QC Inspection", "desc": "Our team inspects the production run on-site against your approved sample and spec sheet before it leaves the factory floor." },
-      "s5": { "number": "05", "title": "Shipping", "desc": "Consolidated sea or air freight from the origin port, tracked door to port, with documentation prepared in parallel." },
-      "s6": { "number": "06", "title": "SABER & Customs Clearance", "desc": "SABER certificates and customs clearance at the Saudi border are handled end to end — you never deal with the paperwork." },
-      "s7": { "number": "07", "title": "Delivery to Your Door", "desc": "Final-mile delivery to your warehouse or office anywhere in the Kingdom, with a signed proof of delivery." }
+      "s1": {
+        "number": "01",
+        "title": "Inquiry",
+        "desc": "Send your product, target spec and quantity over WhatsApp or the contact form. We confirm feasibility and typical pricing within one business day."
+      },
+      "s2": {
+        "number": "02",
+        "title": "Sourcing & Quotation",
+        "desc": "We shortlist verified factories from our China network, negotiate pricing at your volume, and return a formal quotation with unit cost, MOQ and lead time."
+      },
+      "s3": {
+        "number": "03",
+        "title": "Sample Approval",
+        "desc": "A physical sample ships for your sign-off before production begins — no bulk order is placed against an unapproved sample."
+      },
+      "s4": {
+        "number": "04",
+        "title": "Factory QC Inspection",
+        "desc": "Our team inspects the production run on-site against your approved sample and spec sheet before it leaves the factory floor."
+      },
+      "s5": {
+        "number": "05",
+        "title": "Shipping",
+        "desc": "Consolidated sea or air freight from the origin port, tracked door to port, with documentation prepared in parallel."
+      },
+      "s6": {
+        "number": "06",
+        "title": "SABER & Customs Clearance",
+        "desc": "SABER certificates and customs clearance at the Saudi border are handled end to end — you never deal with the paperwork."
+      },
+      "s7": {
+        "number": "07",
+        "title": "Delivery to Your Door",
+        "desc": "Final-mile delivery to your warehouse or office anywhere in the Kingdom, with a signed proof of delivery."
+      }
     }
   },
   "sourcingCategories": {
@@ -504,14 +678,54 @@
     "subtitle": "Electronics sourced from audited factories across China, with standard specs, minimum order quantities and lead times set up front.",
     "footnote": "Specs, MOQ and lead time shown are standard starting points — every quotation is confirmed against your target specification, branding and destination port before an order is placed.",
     "items": {
-      "computers": { "name": "Computers & Laptops", "desc": "Notebooks, mini PCs, all-in-ones and monitors — Windows-ready, custom branding available.", "moq": "500 pcs", "lead": "20–30 days" },
-      "mobileAccessories": { "name": "Mobile Phone Accessories", "desc": "Cases, tempered-glass protectors, grips and car mounts.", "moq": "500 pcs", "lead": "15–20 days" },
-      "chargers": { "name": "Chargers & Power Banks", "desc": "PD fast chargers, cables and power banks, CE/FCC/SABER-ready documentation.", "moq": "500 pcs", "lead": "18–25 days" },
-      "audio": { "name": "Audio & Headphones", "desc": "TWS earbuds, over-ear headphones and Bluetooth speakers.", "moq": "500 pcs", "lead": "20–28 days" },
-      "wearables": { "name": "Smart Wearables", "desc": "Smartwatches and fitness bands with app integration options.", "moq": "500 pcs", "lead": "25–35 days" },
-      "networking": { "name": "Networking Equipment", "desc": "Routers, extenders and switches for home and small office use.", "moq": "500 pcs", "lead": "20–30 days" },
-      "smartHome": { "name": "Smart Home Devices", "desc": "Smart plugs, cameras, lighting and sensors on Wi-Fi and Zigbee.", "moq": "500 pcs", "lead": "25–35 days" },
-      "gaming": { "name": "Gaming Accessories", "desc": "Controllers, headsets, keyboards and mice for PC and console.", "moq": "500 pcs", "lead": "18–25 days" }
+      "computers": {
+        "name": "Computers & Laptops",
+        "desc": "Notebooks, mini PCs, all-in-ones and monitors — Windows-ready, custom branding available.",
+        "moq": "500 pcs",
+        "lead": "20–30 days"
+      },
+      "mobileAccessories": {
+        "name": "Mobile Phone Accessories",
+        "desc": "Cases, tempered-glass protectors, grips and car mounts.",
+        "moq": "500 pcs",
+        "lead": "15–20 days"
+      },
+      "chargers": {
+        "name": "Chargers & Power Banks",
+        "desc": "PD fast chargers, cables and power banks, CE/FCC/SABER-ready documentation.",
+        "moq": "500 pcs",
+        "lead": "18–25 days"
+      },
+      "audio": {
+        "name": "Audio & Headphones",
+        "desc": "TWS earbuds, over-ear headphones and Bluetooth speakers.",
+        "moq": "500 pcs",
+        "lead": "20–28 days"
+      },
+      "wearables": {
+        "name": "Smart Wearables",
+        "desc": "Smartwatches and fitness bands with app integration options.",
+        "moq": "500 pcs",
+        "lead": "25–35 days"
+      },
+      "networking": {
+        "name": "Networking Equipment",
+        "desc": "Routers, extenders and switches for home and small office use.",
+        "moq": "500 pcs",
+        "lead": "20–30 days"
+      },
+      "smartHome": {
+        "name": "Smart Home Devices",
+        "desc": "Smart plugs, cameras, lighting and sensors on Wi-Fi and Zigbee.",
+        "moq": "500 pcs",
+        "lead": "25–35 days"
+      },
+      "gaming": {
+        "name": "Gaming Accessories",
+        "desc": "Controllers, headsets, keyboards and mice for PC and console.",
+        "moq": "500 pcs",
+        "lead": "18–25 days"
+      }
     }
   },
   "sourcingServices": {
@@ -519,12 +733,30 @@
     "title": "Services",
     "subtitle": "Everything between a factory in China and a warehouse in Saudi Arabia — handled by one team, on one invoice.",
     "items": {
-      "verification": { "name": "Supplier Verification", "desc": "Business license checks, factory background and reference orders, so you only quote against suppliers we would use ourselves." },
-      "audit": { "name": "Factory Audit", "desc": "On-site visits assessing production capacity, working conditions and quality systems before an order is placed." },
-      "qc": { "name": "QC Inspection", "desc": "Pre-shipment inspection against your approved sample — AQL sampling, function tests and packaging checks, with a photo report." },
-      "consolidation": { "name": "Consolidation", "desc": "Goods from multiple factories combined into a single shipment at our China warehouse, cutting freight cost and paperwork." },
-      "freight": { "name": "Freight", "desc": "Sea and air freight booked and tracked door to port, with customs-ready documentation prepared in parallel." },
-      "customs": { "name": "Customs Clearance", "desc": "SABER certification and Saudi customs clearance managed end to end, so shipments move straight to delivery." }
+      "verification": {
+        "name": "Supplier Verification",
+        "desc": "Business license checks, factory background and reference orders, so you only quote against suppliers we would use ourselves."
+      },
+      "audit": {
+        "name": "Factory Audit",
+        "desc": "On-site visits assessing production capacity, working conditions and quality systems before an order is placed."
+      },
+      "qc": {
+        "name": "QC Inspection",
+        "desc": "Pre-shipment inspection against your approved sample — AQL sampling, function tests and packaging checks, with a photo report."
+      },
+      "consolidation": {
+        "name": "Consolidation",
+        "desc": "Goods from multiple factories combined into a single shipment at our China warehouse, cutting freight cost and paperwork."
+      },
+      "freight": {
+        "name": "Freight",
+        "desc": "Sea and air freight booked and tracked door to port, with customs-ready documentation prepared in parallel."
+      },
+      "customs": {
+        "name": "Customs Clearance",
+        "desc": "SABER certification and Saudi customs clearance managed end to end, so shipments move straight to delivery."
+      }
     }
   },
   "sourcingWhy": {
@@ -532,9 +764,18 @@
     "title": "A Saudi office. A China network. One point of contact.",
     "subtitle": "Built on years of factory relationships across Guangdong and Zhejiang, we stand between you and the supplier — verifying, inspecting and shipping so you never have to.",
     "points": {
-      "accountability": { "title": "Direct accountability", "desc": "One team handles sourcing, QC and clearance — no handoffs, no finger-pointing when something needs fixing." },
-      "verified": { "title": "Verified, not assumed", "desc": "Every supplier is audited before we work with them, and every shipment is inspected before it ships." },
-      "compliance": { "title": "Compliance first", "desc": "SABER certification and Saudi customs requirements are built into our process from day one, not handled as an afterthought." }
+      "accountability": {
+        "title": "Direct accountability",
+        "desc": "One team handles sourcing, QC and clearance — no handoffs, no finger-pointing when something needs fixing."
+      },
+      "verified": {
+        "title": "Verified, not assumed",
+        "desc": "Every supplier is audited before we work with them, and every shipment is inspected before it ships."
+      },
+      "compliance": {
+        "title": "Compliance first",
+        "desc": "SABER certification and Saudi customs requirements are built into our process from day one, not handled as an afterthought."
+      }
     },
     "licensing": {
       "tag": "Registered on Both Ends",
@@ -624,7 +865,7 @@
     "section2Title": "2. Eco Inks Subscription",
     "section2Desc": "By enrolling in the program, you agree to purchase and use only FNG Eco Inks or Premium compatible toners for the deployed printers. Using third-party generic toners is a violation of the agreement and voids the free maintenance and support service.",
     "section3Title": "3. Maintenance & Support",
-    "section3Desc": "FNG provides free maintenance, repair, and replacement support for all deployed printers, provided the business is actively using our toners. Maintenance requests are responded to within 48 hours in Riyadh, Jeddah, Dammam, and Al Madinah.",
+    "section3Desc": "FNG provides free maintenance, repair, and replacement support for all deployed printers, provided the business is actively using our toners. Maintenance requests are responded to within 48 hours in Saudi Arabia, the UAE and Oman, and within 72 hours in our other markets.",
     "section4Title": "4. Agreement Duration & Termination",
     "section4Desc": "Our B2B agreements are flexible with no restrictive lock-in clauses. Either party may terminate the agreement by providing 30 days' written notice, upon which FNG will collect the deployed printer equipment."
   }

@@ -3,6 +3,8 @@
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import SourcingGlobe from './SourcingGlobe';
+import Reveal from '@/components/ui/Reveal';
+import CountUp from '@/components/ui/CountUp';
 
 const STAT_KEYS = ['moq', 'lead', 'factories', 'compliance'] as const;
 
@@ -53,15 +55,16 @@ export default function SourcingHeroSection() {
           marginTop: 'clamp(48px, 8vw, 88px)', paddingTop: 'clamp(28px, 5vw, 40px)',
           borderTop: '1px solid rgba(255,255,255,0.12)',
         }}>
-          {STAT_KEYS.map((key) => (
-            <div key={key} style={{ textAlign: isAr ? 'right' : 'left' }}>
-              <div style={{ fontSize: 'clamp(1.6rem, 3.5vw, 2.5rem)', fontWeight: 800, color: 'var(--accent)', lineHeight: 1, marginBottom: '8px', fontFamily: 'var(--font-ibm-plex-mono), monospace' }}>
-                {t(`stats.${key}.value`)}
-              </div>
+          {STAT_KEYS.map((key, i) => (
+            <Reveal key={key} delay={200 + i * 110} style={{ textAlign: isAr ? 'right' : 'left' }}>
+              <CountUp
+                value={t(`stats.${key}.value`)}
+                style={{ display: 'block', fontSize: 'clamp(1.6rem, 3.5vw, 2.5rem)', fontWeight: 800, color: 'var(--accent)', lineHeight: 1, marginBottom: '8px', fontFamily: 'var(--font-ibm-plex-mono), monospace' }}
+              />
               <div style={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.03em', maxWidth: '18ch' }}>
                 {t(`stats.${key}.label`)}
               </div>
-            </div>
+            </Reveal>
           ))}
         </div>
       </div>

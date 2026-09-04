@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
 import { useDialogA11y } from '@/lib/useDialogA11y';
-import { GATE_COOKIE } from '@/lib/entryGate';
+import { markGateSeen } from '@/lib/entryGate';
 
 // Gate-only photography. The catalog keeps its own cutout of the M428fdw
 // under /printers/... for the product pages — these two exist just to give
@@ -52,9 +52,7 @@ export default function EntryGate() {
   const Arrow = isAr ? ArrowLeft : ArrowRight;
   const [open, setOpen] = useState(true);
   const [mounted, setMounted] = useState(true);
-  const markSeen = () => {
-    document.cookie = `${GATE_COOKIE}=1; path=/; SameSite=Lax`;
-  };
+  const markSeen = markGateSeen;
 
   const dismiss = () => {
     markSeen();
@@ -71,9 +69,23 @@ export default function EntryGate() {
 
   const dialogRef = useDialogA11y<HTMLDivElement>(open, dismiss);
 
+  // Scroll lock, plus a flag the stylesheet uses to take the floating chrome
+  // (nav bar, WhatsApp button) off the screen entirely while the chooser is
+  // up. They sit behind this overlay and are invisible anyway — until a view
+  // transition runs. Both carry a view-transition-name, which lifts them out
+  // of the page and into the transition layer above it, so switching language
+  // on the chooser made the nav bar flash into view over the top and then
+  // vanish again. An element that is display:none is never captured, so there
+  // is nothing to lift.
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
+    const root = document.documentElement;
+    if (open) root.setAttribute('data-gate-open', '');
+    else root.removeAttribute('data-gate-open');
+    return () => {
+      document.body.style.overflow = '';
+      root.removeAttribute('data-gate-open');
+    };
   }, [open]);
 
   // Closing only fades the gate out (opacity/pointerEvents) so the 500ms
@@ -111,8 +123,23 @@ export default function EntryGate() {
         pointerEvents: 'none',
       }} />
 
+      {/* Keeps ?gate=1 on the way across. Without it this switched to a bare
+          /ar, and the landing page only re-opens the chooser for gate=1 or a
+          visitor who has never answered it — so for anyone with the cookie
+          already set, changing language here silently dismissed the gate and
+          dropped them on the printers page instead of the chooser they were
+          looking at. Answering the chooser is what markGateSeen is for; a
+          language switch is not an answer, so it deliberately isn't called.
+
+          Kept as a <Link>. This was briefly a plain <a> to rule out a
+          hydration mismatch seen when the toggle is clicked before the page
+          finishes hydrating — but a full document load repaints the body,
+          which is white, so every language switch flashed white between the
+          two dark chooser screens. A visible flash on every switch is a worse
+          problem than a recoverable, dev-only hydration warning that React
+          silently re-renders past, so the client transition stays. */}
       <Link
-        href={`/${otherLocale}`}
+        href={`/${otherLocale}?gate=1`}
         style={{
           position: 'absolute', top: 'clamp(16px, 3vw, 24px)', [isAr ? 'left' : 'right']: 'clamp(16px, 3vw, 24px)',
           zIndex: 3, height: '40px', padding: '0 20px', borderRadius: '999px',

@@ -39,6 +39,14 @@ export const getSettings = cache(async () => {
     videos?: { divider1?: string; divider2?: string };
     social_media?: { facebook?: string; instagram?: string; linkedin?: string; twitter?: string };
     seo?: { title?: string; description?: string };
+    /**
+     * The admin-edited service-region footprint. Deliberately `unknown`: it is
+     * free-form JSON in the database and is only trustworthy once it has been
+     * through `parseServiceRegions`, so typing it as ServiceRegion[] here would
+     * hand callers a guarantee this function cannot make. Read it via
+     * `getServiceRegions()` rather than touching it directly.
+     */
+    service_regions?: unknown;
   };
 });
 

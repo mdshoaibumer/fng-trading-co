@@ -39,9 +39,15 @@ export default function AdminPartsPage() {
 
   React.useEffect(() => {
     fetch('/api/admin/parts')
-      .then(res => res.json())
-      .then(data => {
-        setParts(data);
+      .then(async (res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        if (!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('Unexpected response');
+        // Every category must be an array — drop anything else so the
+        // renderer's .length/.map never hits a non-array.
+        const clean: PartsData = {};
+        for (const [k, v] of Object.entries(data)) if (Array.isArray(v)) clean[k] = v as PartsData[string];
+        setParts(clean);
         setLoading(false);
       })
       .catch(() => {

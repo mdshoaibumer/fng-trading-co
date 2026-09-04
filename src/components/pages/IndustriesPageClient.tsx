@@ -1,6 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import IndustriesSection from '@/components/sections/IndustriesSection';
 import { Leaf, DollarSign, RefreshCw, ShieldCheck } from 'lucide-react';
+import Reveal from '@/components/ui/Reveal';
 
 export default async function IndustriesPageClient({ locale }: { locale: string }) {
   const t = await getTranslations({ locale, namespace: 'industriesPage' });
@@ -10,7 +11,7 @@ export default async function IndustriesPageClient({ locale }: { locale: string 
     <main style={{ background: 'var(--bg-secondary)', minHeight: '100vh', paddingTop: 'clamp(120px, 15vh, 160px)' }}>
       
       {/* Page Header */}
-      <div className="container" style={{ textAlign: 'center', marginBottom: '80px' }}>
+      <Reveal as="div" className="container" style={{ textAlign: 'center', marginBottom: '80px' }}>
         <span className="section-tag" style={{ margin: '0 auto 16px' }}>{t('title')}</span>
         <h1 style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', fontWeight: 900, color: 'var(--primary)', marginBottom: '24px', letterSpacing: '-0.02em' }}>
           {t('title')}
@@ -18,7 +19,7 @@ export default async function IndustriesPageClient({ locale }: { locale: string 
         <p style={{ color: '#4B5563', fontSize: '1.2rem', maxWidth: '700px', margin: '0 auto', lineHeight: 1.6 }}>
           {t('subtitle')}
         </p>
-      </div>
+      </Reveal>
 
       {/* Core Universal Benefits Grid */}
       <div className="container" style={{ marginBottom: '80px' }}>
@@ -29,16 +30,18 @@ export default async function IndustriesPageClient({ locale }: { locale: string 
             { icon: <RefreshCw size={28} color="var(--accent)" />, title: isAr ? 'صيانة مستمرة' : 'Continuous Maintenance', desc: isAr ? 'إصلاحات أو استبدال فوري لضمان عدم توقف العمل.' : 'Immediate repairs or replacements to ensure zero downtime.' },
             { icon: <ShieldCheck size={28} color="var(--accent)" />, title: isAr ? 'دعم محلي' : 'Local Support', desc: isAr ? 'دعم فني سريع داخل المملكة لخدمتك على مدار الساعة.' : 'Fast, dedicated technical support within the Kingdom.' }
           ].map((b, i) => (
-            <div key={i} style={{
-              background: '#fff', padding: '32px', borderRadius: '24px',
-              border: '1px solid var(--light-grey)', boxShadow: '0 10px 30px rgba(0,0,0,0.02)',
-            }}>
-              <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: 'rgba(141,184,51,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
-                {b.icon}
+            <Reveal key={i} delay={i * 90} style={{ display: 'flex' }}>
+              <div className="card-lift" style={{
+                background: '#fff', padding: '32px', borderRadius: '24px', width: '100%',
+                border: '1px solid var(--light-grey)', boxShadow: '0 10px 30px rgba(0,0,0,0.02)',
+              }}>
+                <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: 'rgba(141,184,51,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
+                  {b.icon}
+                </div>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px' }}>{b.title}</h3>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.6 }}>{b.desc}</p>
               </div>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px' }}>{b.title}</h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.6 }}>{b.desc}</p>
-            </div>
+            </Reveal>
           ))}
         </div>
       </div>

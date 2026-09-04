@@ -82,3 +82,7 @@ ALTER TABLE inquiries ENABLE ROW LEVEL SECURITY;
 -- Intentionally no policies here either: lead forms POST to /api/contact
 -- and /api/printer-request, which insert via the service-role client.
 -- The anon key has no direct access to this table.
+
+-- Lead forms collect the country separately now that FNG operates across
+-- several countries (see src/lib/serviceRegions.ts). Safe to re-run.
+ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS country TEXT;

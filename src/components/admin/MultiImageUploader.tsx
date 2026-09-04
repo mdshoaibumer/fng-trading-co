@@ -118,6 +118,20 @@ export default function MultiImageUploader({
   const addUrl = () => {
     const trimmed = urlValue.trim();
     if (!trimmed) return;
+    // next/image only serves *.supabase.co (next.config.ts remotePatterns) or
+    // same-origin paths — anything else would render as a broken image on the
+    // public site, so refuse it here with a clear message.
+    let ok = trimmed.startsWith('/');
+    if (!ok) {
+      try {
+        const u = new URL(trimmed);
+        ok = u.protocol === 'https:' && (u.hostname.endsWith('.supabase.co') || (typeof window !== 'undefined' && u.host === window.location.host));
+      } catch { ok = false; }
+    }
+    if (!ok) {
+      showToast('Use an https://….supabase.co image URL (or upload the file) — other hosts cannot be displayed.', 'error');
+      return;
+    }
     onImagesChange([...activeImages, trimmed]);
     setUrlValue('');
     setShowUrlInput(false);

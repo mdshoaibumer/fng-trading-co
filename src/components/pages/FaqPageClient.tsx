@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { useParams } from 'next/navigation';
+import Reveal from '@/components/ui/Reveal';
 
 export default function FaqPageClient() {
   const t = useTranslations('faqPage');
@@ -24,7 +25,7 @@ export default function FaqPageClient() {
     <main style={{ background: 'var(--bg-secondary)', minHeight: '100vh', paddingTop: 'clamp(120px, 15vh, 160px)', paddingBottom: 'clamp(60px, 10vh, 120px)' }}>
       
       {/* Page Header */}
-      <div className="container" style={{ textAlign: 'center', marginBottom: '80px' }}>
+      <Reveal as="div" className="container" style={{ textAlign: 'center', marginBottom: '80px' }}>
         <span className="section-tag" style={{ margin: '0 auto 16px' }}>{t('title')}</span>
         <h1 style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', fontWeight: 900, color: 'var(--primary)', marginBottom: '24px', letterSpacing: '-0.02em' }}>
           {t('title')}
@@ -32,14 +33,14 @@ export default function FaqPageClient() {
         <p style={{ color: '#4B5563', fontSize: '1.2rem', maxWidth: '700px', margin: '0 auto', lineHeight: 1.6 }}>
           {t('subtitle')}
         </p>
-      </div>
+      </Reveal>
 
       {/* Accordion */}
       <div className="container" style={{ maxWidth: '800px' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {faqs.map((faq, i) => (
-            <div 
-              key={i} 
+            <Reveal key={i} delay={i * 70} distance={18}>
+            <div
               style={{ 
                 background: '#fff', 
                 borderRadius: '20px', 
@@ -99,6 +100,7 @@ export default function FaqPageClient() {
                 </p>
               </div>
             </div>
+            </Reveal>
           ))}
         </div>
       </div>

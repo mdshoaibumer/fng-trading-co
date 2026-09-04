@@ -5,7 +5,10 @@ import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { useScrollFrameSequence, framePath } from '@/lib/useScrollFrameSequence';
 
-const TOTAL_FRAMES = 10;
+// Nine frames, not ten: the original set had 06 and 07 byte-identical, which
+// showed as a dead stop right at the turnaround of the ping-pong timeline. The
+// duplicate was dropped and the rest renumbered, so every frame now advances.
+const TOTAL_FRAMES = 9;
 const desktopFramePath = framePath('video-frames');
 const mobileFramePath = framePath('video-frames-mobile');
 
@@ -105,8 +108,20 @@ export default function HeroSection() {
           position: 'relative', zIndex: 2,
         }}>
           {/* Canvas */}
+          {/* The phase badge below is absolutely positioned and hangs 40px
+              (30px on mobile) past the bottom of this wrapper, so the gap to
+              the headline block has to clear it. At the old 12px it did not:
+              the badge overlapped the "Ink Engineered for Earth" pill by 17px
+              at mid-scroll, where both are visible at once. The badge is a
+              single nowrap line in both locales, so its height is stable and
+              this margin does not need to flex with the text.
+              Sized for the worst case rather than the resting one: the wrapper
+              scales to 1.05 as the sequence plays, which carries the badge
+              visually further down while the pill below it stays put, so the
+              clearance is at its narrowest around two thirds of the way
+              through the scroll — not at the top. */}
           <div ref={canvasWrapperRef} style={{
-            position: 'relative', marginBottom: isMobile ? '8px' : '12px', width: '100%',
+            position: 'relative', marginBottom: isMobile ? '40px' : '48px', width: '100%',
             maxWidth: isMobile ? '100%' : '600px', flex: '1 1 auto', minHeight: '100px', maxHeight: isMobile ? '25vh' : '35vh',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             // Mutated directly on scroll by applyScrollTransforms — these are just the
@@ -231,7 +246,12 @@ export default function HeroSection() {
                 fontWeight: 600, display: 'inline-block',
                 animation: ecoGlow > 0.3 && runDecorativeLoops ? 'floatLabel 3s ease-in-out infinite' : 'none',
               }}>
-                {isAr ? '◈ حبر صديق للبيئة — Ink Engineered for Earth' : '◈ Ink Engineered for Earth'}
+                {/* Arabic reads Arabic only. This used to carry the English
+                    line after the Arabic one, which showed both languages at
+                    once on the Arabic site — the brand names elsewhere (HP,
+                    FNG) stay in Latin because they are names, but this is a
+                    sentence and it has a translation. */}
+                {isAr ? '◈ حبر صديق للبيئة' : '◈ Ink Engineered for Earth'}
               </span>
             </div>
 

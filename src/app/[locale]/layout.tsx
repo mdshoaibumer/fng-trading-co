@@ -10,6 +10,8 @@ import Footer from '@/components/layout/Footer';
 import WhatsAppButton from '@/components/layout/WhatsAppButton';
 import ChatWidgetLoader from '@/components/chat/ChatWidgetLoader';
 import { getSettings } from '@/lib/supabase';
+import { getServiceRegions } from '@/lib/getServiceRegions';
+import { ServiceRegionsProvider } from '@/components/providers/ServiceRegionsProvider';
 import { inter, ibmPlexSansArabic, ibmPlexMono } from '@/lib/fonts';
 import '../globals.css';
 
@@ -89,6 +91,8 @@ export default async function LocaleLayout({
   const dir = isRTL(locale) ? 'rtl' : 'ltr';
   const messages = await getMessages();
   const settings = await getSettings();
+  // Shares getSettings()'s request cache, so this is not a second round trip.
+  const serviceRegions = await getServiceRegions();
 
   return (
     <html
@@ -97,19 +101,18 @@ export default async function LocaleLayout({
       className={`${inter.variable} ${ibmPlexSansArabic.variable} ${ibmPlexMono.variable}`}
       suppressHydrationWarning
     >
-      <head>
-        <link rel="icon" href="/favicon.ico" />
-      </head>
       <body suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>
-          <a href="#main-content" className="skip-link">
-            {isRTL(locale) ? 'تخطَّ إلى المحتوى' : 'Skip to content'}
-          </a>
-          <Navbar />
-          <div id="main-content">{children}</div>
-          <Footer email={settings.contact?.email} />
-          <WhatsAppButton whatsapp={settings.contact?.whatsapp} />
-          <ChatWidgetLoader welcomeMessage={settings.ai_settings?.welcome_message} />
+          <ServiceRegionsProvider regions={serviceRegions}>
+            <a href="#main-content" className="skip-link">
+              {isRTL(locale) ? 'تخطَّ إلى المحتوى' : 'Skip to content'}
+            </a>
+            <Navbar />
+            <div id="main-content">{children}</div>
+            <Footer email={settings.contact?.email} />
+            <WhatsAppButton whatsapp={settings.contact?.whatsapp} />
+            <ChatWidgetLoader welcomeMessage={settings.ai_settings?.welcome_message} />
+          </ServiceRegionsProvider>
         </NextIntlClientProvider>
       </body>
     </html>

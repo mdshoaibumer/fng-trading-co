@@ -9,6 +9,9 @@ import SourcingWhySection from '@/components/sections/sourcing/SourcingWhySectio
 import ContactSection from '@/components/sections/ContactSection';
 import { buildAlternates } from '@/lib/metadata';
 import { safeJsonLd } from '@/lib/safeJsonLd';
+import { areaServedSchema } from '@/lib/serviceRegions';
+import { getServiceRegions } from '@/lib/getServiceRegions';
+import PageTransition from '@/components/ui/PageTransition';
 
 export async function generateMetadata({
   params,
@@ -33,6 +36,7 @@ export default async function SourcingPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const serviceRegions = await getServiceRegions();
   const t = await getTranslations({ locale, namespace: 'sourcingHero' });
   const isAr = locale === 'ar';
   const websiteUrl = SITE_URL;
@@ -56,29 +60,28 @@ export default async function SourcingPage({
       'name': 'Future Next Gen',
       'url': websiteUrl,
     },
-    'areaServed': {
-      '@type': 'Country',
-      'name': 'Saudi Arabia',
-    },
+    'areaServed': areaServedSchema(serviceRegions),
     'url': `${websiteUrl}/${locale}/sourcing`,
   };
 
   return (
-    <main>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(serviceSchema) }}
-      />
-      <SourcingHeroSection />
-      <SourcingProcessSection />
-      <SourcingCategoriesSection />
-      <SourcingServicesSection />
-      <SourcingWhySection />
-      <ContactSection />
-    </main>
+    <PageTransition>
+      <main>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(serviceSchema) }}
+        />
+        <SourcingHeroSection />
+        <SourcingProcessSection />
+        <SourcingCategoriesSection />
+        <SourcingServicesSection />
+        <SourcingWhySection />
+        <ContactSection />
+      </main>
+    </PageTransition>
   );
 }

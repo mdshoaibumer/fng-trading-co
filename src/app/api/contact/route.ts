@@ -1,20 +1,23 @@
 import { NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase';
+import { insertInquiry } from '@/lib/inquiries';
 import { z } from 'zod';
 import { rateLimit, globalRateLimit, getClientIp, tooManyRequests } from '@/lib/rateLimit';
 
+// Every field is length-capped: these land in the database and in a
+// notification email, so an unbounded body is a storage/spam problem.
 const contactSchema = z.object({
-  name: z.string().min(2),
-  company: z.string().min(2),
-  phone: z.string().min(5),
-  city: z.string().optional(),
-  quantity: z.string().optional(),
-  email: z.union([z.string().email(), z.literal('')]).optional(),
-  industry: z.string().optional(),
-  message: z.string().optional(),
+  name: z.string().trim().min(2).max(120),
+  company: z.string().trim().min(2).max(160),
+  phone: z.string().trim().min(5).max(40),
+  country: z.string().trim().max(80).optional(),
+  city: z.string().trim().max(120).optional(),
+  quantity: z.string().trim().max(20).optional(),
+  email: z.union([z.string().trim().email().max(254), z.literal('')]).optional(),
+  industry: z.string().trim().max(120).optional(),
+  message: z.string().trim().max(4000).optional(),
   // Honeypot: a field real visitors never see or fill, styled off-screen
   // in the form. Bots that auto-fill every input tend to fill this one.
-  website: z.string().optional(),
+  website: z.string().max(500).optional(),
 });
 
 export async function POST(request: Request) {
@@ -43,23 +46,22 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true, message: 'Form submitted successfully' });
     }
 
-    const { name, company, phone, city, quantity, email, industry, message } = result.data;
+    const { name, company, phone, country, city, quantity, email, industry, message } = result.data;
 
     // Save to Supabase inquiries table
-    const { error } = await supabaseAdmin
-      .from('inquiries')
-      .insert({
-        type: 'contact',
-        name,
-        company,
-        phone,
-        email: email || null,
-        industry: industry || null,
-        message: message || null,
-        city,
-        quantity,
-        status: 'new'
-      });
+    const { error } = await insertInquiry({
+      type: 'contact',
+      name,
+      company,
+      phone,
+      email: email || null,
+      industry: industry || null,
+      message: message || null,
+      country: country || null,
+      city: city || null,
+      quantity: quantity || null,
+      status: 'new',
+    });
 
     if (error) {
       console.error('Supabase insert error:', error);
@@ -93,6 +95,7 @@ export async function POST(request: Request) {
             email: email || 'N/A',
             industry: industry || 'N/A',
             message: message || 'N/A',
+            country: country || 'N/A',
             city: city || 'N/A',
             quantity: quantity || '1'
           })

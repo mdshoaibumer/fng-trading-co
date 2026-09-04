@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
+import Reveal from '@/components/ui/Reveal';
 import { Laptop, Smartphone, BatteryCharging, Headphones, Watch, Router, Home, Gamepad2 } from 'lucide-react';
 
 const CATEGORY_KEYS = ['computers', 'mobileAccessories', 'chargers', 'audio', 'wearables', 'networking', 'smartHome', 'gaming'] as const;
@@ -31,8 +32,9 @@ export default function SourcingCategoriesSection() {
           <p style={{ color: 'var(--text-secondary)', fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', maxWidth: '600px', margin: '0 auto' }}>{t('subtitle')}</p>
         </div>
         <div className="sc-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
-          {CATEGORY_KEYS.map((key) => (
-            <div key={key} style={{
+          {CATEGORY_KEYS.map((key, i) => (
+            <Reveal key={key} delay={(i % 4) * 80} from="scale" threshold={0.1}>
+            <div style={{ height: '100%',
               padding: 'clamp(18px, 3vw, 24px)', borderRadius: '16px', background: '#fff', border: '1px solid var(--light-grey)',
               transition: 'all 350ms cubic-bezier(0.34,1.56,0.64,1)', textAlign: isAr ? 'right' : 'left',
               cursor: 'default',
@@ -59,6 +61,7 @@ export default function SourcingCategoriesSection() {
                 </span>
               </div>
             </div>
+            </Reveal>
           ))}
         </div>
         <p style={{ color: '#888', fontSize: '0.8rem', lineHeight: 1.7, marginTop: 'clamp(24px, 4vw, 40px)', textAlign: 'center', maxWidth: '700px', marginInline: 'auto' }}>

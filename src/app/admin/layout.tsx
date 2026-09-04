@@ -14,7 +14,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <html lang="en" className={inter.variable}>
       <head>
         <title>Future Next Gen Super Admin</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </head>
       <body>
         <AdminShell>{children}</AdminShell>

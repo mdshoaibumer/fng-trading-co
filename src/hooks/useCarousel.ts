@@ -12,6 +12,17 @@ interface UseCarouselOptions {
 
 export function useCarousel({ length, autoplayMs, lazyMount = false }: UseCarouselOptions) {
   const [current, setCurrent] = useState(0);
+  // Autoplay pauses while the visitor is interacting (hover/focus) and never
+  // runs for people who asked for reduced motion.
+  const [paused, setPaused] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const sync = () => setReducedMotion(mq.matches);
+    sync();
+    mq.addEventListener('change', sync);
+    return () => mq.removeEventListener('change', sync);
+  }, []);
   const [loadedIndices, setLoadedIndices] = useState<Set<number>>(() => new Set([0]));
 
   // Re-clamp during render (React's recommended "adjust state when a prop
@@ -38,17 +49,25 @@ export function useCarousel({ length, autoplayMs, lazyMount = false }: UseCarous
   }, [current, length, goTo]);
 
   useEffect(() => {
-    if (!autoplayMs || length <= 1) return;
+    if (!autoplayMs || length <= 1 || paused || reducedMotion) return;
     const timer = setInterval(next, autoplayMs);
     return () => clearInterval(timer);
     // Reset on `current` too, so manual navigation restarts the countdown
     // instead of being immediately overridden by a pending auto-advance.
-  }, [autoplayMs, length, next, current]);
+  }, [autoplayMs, length, next, current, paused, reducedMotion]);
+
+  /** Spread onto the carousel root to pause autoplay on hover/focus. */
+  const pauseHandlers = {
+    onMouseEnter: () => setPaused(true),
+    onMouseLeave: () => setPaused(false),
+    onFocus: () => setPaused(true),
+    onBlur: () => setPaused(false),
+  };
 
   const isLoaded = useCallback(
     (idx: number) => !lazyMount || loadedIndices.has(idx),
     [lazyMount, loadedIndices]
   );
 
-  return { current, goTo, next, prev, isLoaded };
+  return { current, goTo, next, prev, isLoaded, pauseHandlers };
 }

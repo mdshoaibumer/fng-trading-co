@@ -10,6 +10,7 @@ const PUBLIC_GET_ROUTES = new Set([
   '/api/admin/equipment',
   '/api/admin/parts',
   '/api/admin/settings',
+  '/api/admin/regions',
 ]);
 
 const intlMiddleware = createMiddleware(routing);
@@ -39,7 +40,19 @@ function isSameOrigin(request: NextRequest): boolean {
   if (!origin) return false;
   const host = request.headers.get('x-forwarded-host') || request.headers.get('host');
   try {
-    return new URL(origin).host === host;
+    const originUrl = new URL(origin);
+    if (originUrl.host === host) return true;
+    // Behind a reverse proxy that rewrites Host (e.g. to localhost:3000)
+    // without forwarding the original, the browser's Origin is still the
+    // public site — accept that too, so the admin can't be locked out by
+    // proxy configuration alone.
+    const configured = process.env.NEXT_PUBLIC_SITE_URL;
+    if (configured) {
+      try {
+        if (originUrl.origin === new URL(configured).origin) return true;
+      } catch { /* malformed NEXT_PUBLIC_SITE_URL — ignore */ }
+    }
+    return false;
   } catch {
     return false;
   }
@@ -53,8 +66,22 @@ function isSameOrigin(request: NextRequest): boolean {
 export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // The bare root is the front door: someone typing the domain gets the
+  // chooser, every time. Carrying ?gate=1 is what asks the landing page for it
+  // (see src/app/[locale]/page.tsx) — without it the page falls back to "has
+  // this visitor answered before?", and anyone with the cookie set was sent
+  // straight past the chooser into the printers side.
+  //
+  // Deliberately only the bare root. A bookmark or a link to /en or /ar is a
+  // request for that track's home page, and those still go straight through
+  // rather than making a returning visitor re-answer the question.
+  //
+  // publicUrl clears the query (it refuses to carry anything client-supplied
+  // into a redirect target), so the parameter is set on the result.
   if (pathname === '/') {
-    return NextResponse.redirect(publicUrl(`/${defaultLocale}`, request));
+    const url = publicUrl(`/${defaultLocale}`, request);
+    url.search = '?gate=1';
+    return NextResponse.redirect(url);
   }
 
   // 1. Handle Admin Security

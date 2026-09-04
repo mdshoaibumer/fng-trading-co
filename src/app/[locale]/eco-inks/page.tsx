@@ -10,6 +10,7 @@ import EcoInksSustainabilitySection from '@/components/sections/EcoInksSustainab
 import TonerProductsSection from '@/components/sections/TonerProductsSection';
 import ContactSection from '@/components/sections/ContactSection';
 import { buildAlternates } from '@/lib/metadata';
+import PageTransition from '@/components/ui/PageTransition';
 
 export async function generateMetadata({
   params,
@@ -43,7 +44,7 @@ export default async function EcoInksPage({
     '@context': 'https://schema.org',
     '@type': 'Product',
     'name': isAr ? 'حبر إيكو إنكس الأخضر (Eco Inks Green)' : 'EcoInks Green Toner',
-    'image': `${websiteUrl}/Toner%20Images/green_toner.png`,
+    'image': `${websiteUrl}/toners/green/green-toner-set.png`,
     'description': isAr 
       ? 'خراطيش HP أصلية مُعاد تصنيعها باحترافية — تمر بعمليات تنظيف، فحص، وإعادة تعبئة بحبر حيوي مستدام.' 
       : 'Original HP cartridges professionally remanufactured — cleaned, inspected, refilled with bio-based toner, and tested to OEM specifications.',
@@ -68,7 +69,7 @@ export default async function EcoInksPage({
     '@context': 'https://schema.org',
     '@type': 'Product',
     'name': isAr ? 'حبر إيكو إنكس بريميوم (Eco Inks Premium)' : 'EcoInks Premium Toner',
-    'image': `${websiteUrl}/Toner%20Images/premium_toner.png`,
+    'image': `${websiteUrl}/toners/premium/premium-toner-set.png`,
     'description': isAr 
       ? 'خراطيش حبر طابعات ليزر متوافقة جديدة بالكامل، مُصنعة بدقة لتطابق أداء خراطيش HP الأصلية.' 
       : 'Brand-new compatible cartridges manufactured to match HP originals. Engineered for high yield and consistent output.',
@@ -109,26 +110,28 @@ export default async function EcoInksPage({
   };
 
   return (
-    <main>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(productGreenSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(productPremiumSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
-      />
-      <EcoInksHeroSection />
-      <EcoInksInteractiveSection />
-      <EcoInksLeafletSection />
-      <EcoInksSection />
-      <EcoInksSustainabilitySection />
-      <TonerProductsSection />
-      <ContactSection />
-    </main>
+    <PageTransition>
+      <main>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(productGreenSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(productPremiumSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
+        />
+        <EcoInksHeroSection />
+        <EcoInksInteractiveSection />
+        <EcoInksLeafletSection />
+        <EcoInksSection />
+        <EcoInksSustainabilitySection />
+        <TonerProductsSection />
+        <ContactSection />
+      </main>
+    </PageTransition>
   );
 }

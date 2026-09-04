@@ -202,6 +202,19 @@ body {
   white-space: nowrap;
 }
 
+/* The header action row. This has to be a base rule, not a mobile-only one:
+   the buttons set `display: flex` inline to sit their icon next to their
+   label, which makes each of them a BLOCK-level flex container. In an
+   unstyled block parent they therefore stacked one on top of the other with
+   no gap — on the Dashboard, "Download Reports" ended exactly where "Refresh
+   Data" began. The mobile block below only overrides what differs there. */
+.page-header-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
 .btn-admin-primary {
   background: var(--admin-accent);
   color: var(--admin-ink);
@@ -278,8 +291,6 @@ body {
 
   .page-header-actions {
     width: 100%;
-    display: flex;
-    flex-wrap: wrap;
     gap: 8px;
   }
 

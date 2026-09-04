@@ -11,7 +11,7 @@ export default function WhatsAppButton({ whatsapp }: { whatsapp?: string }) {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => setVisible(true), 3000);
+    const timer = setTimeout(() => setVisible(true), 900);
     const checkMobile = () => setIsMobile(window.innerWidth <= 768);
     checkMobile();
     window.addEventListener('resize', checkMobile, { passive: true });
@@ -41,6 +41,10 @@ export default function WhatsAppButton({ whatsapp }: { whatsapp?: string }) {
         bottom: isMobile ? '16px' : '24px',
         right: isMobile ? '16px' : '24px',
         zIndex: 900,
+        // Held out of the page's view-transition snapshot, like the nav — a
+        // floating action button sliding away with the content it floats over
+        // looks like a bug. See globals.css.
+        viewTransitionName: 'persistent-whatsapp',
         width: showLabel ? 'auto' : `${size}px`,
         height: `${size}px`,
         borderRadius: '999px',

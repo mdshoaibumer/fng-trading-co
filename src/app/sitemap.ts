@@ -14,6 +14,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/equipment',
     '/faq',
     '/industries',
+    '/printers',
     '/printer-parts',
     '/sourcing',
     '/sustainability',

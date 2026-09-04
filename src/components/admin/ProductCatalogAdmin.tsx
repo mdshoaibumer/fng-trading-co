@@ -62,8 +62,10 @@ export default function ProductCatalogAdmin({ config }: { config: ProductCatalog
 
   React.useEffect(() => {
     fetch(apiPath)
-      .then(res => res.json())
-      .then(data => {
+      .then(async (res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        if (!Array.isArray(data)) throw new Error('Unexpected response');
         setItems(data);
         setLoading(false);
       })
@@ -251,10 +253,10 @@ export default function ProductCatalogAdmin({ config }: { config: ProductCatalog
                   <div style={{ direction: 'rtl' }}>
                     <h4 style={{ fontSize: '0.9rem', fontWeight: 800, marginBottom: '16px', color: 'var(--admin-accent-text)', textAlign: 'right' }}>المحتوى العربي</h4>
                     <div style={{ display: 'grid', gap: '16px' }}>
-                      <div>
-                        <label className="admin-label" style={{ textAlign: 'right', display: 'block' }}>اسم المنتج</label>
-                        <input className="admin-input" aria-label="Product name (Arabic)" value={item.nameAr || item.name} onChange={(e) => updateItem(item.id, 'nameAr', e.target.value)} />
-                      </div>
+                      {/* No Arabic name field: product names are model numbers
+                          (e.g. "HP LaserJet M428fdw") and the catalog table has
+                          a single `name` column, so the old input here looked
+                          editable but never saved anywhere. */}
                       <div>
                         <label className="admin-label" style={{ textAlign: 'right', display: 'block' }}>الوصف (AR)</label>
                         <textarea className="admin-input" aria-label="Description (Arabic)" style={{ height: '100px', fontFamily: 'var(--font-ibm-plex-arabic), sans-serif' }} value={item.descAr} onChange={(e) => updateItem(item.id, 'descAr', e.target.value)} />

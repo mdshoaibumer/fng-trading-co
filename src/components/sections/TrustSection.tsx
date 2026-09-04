@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
+import Reveal from '@/components/ui/Reveal';
 
 export default function TrustSection() {
   const t = useTranslations('trust');
@@ -19,8 +20,9 @@ export default function TrustSection() {
         </div>
         <div className="trust-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: 'clamp(16px, 3vw, 24px)', marginBottom: 'clamp(32px, 6vw, 64px)' }}>
           {[0,1,2].map(i => (
-            <div key={i} style={{
-              padding: 'clamp(20px, 4vw, 32px) clamp(16px, 3vw, 28px)', borderRadius: '20px', background: '#fff',
+            <Reveal key={i} delay={i * 120}>
+            <div style={{
+              padding: 'clamp(20px, 4vw, 32px) clamp(16px, 3vw, 28px)', borderRadius: '20px', background: '#fff', height: '100%',
               border: '1px solid var(--light-grey)', borderBottom: '3px solid var(--primary)',
               boxShadow: '0 4px 20px rgba(0,0,0,0.04)', transition: 'all 300ms ease',
               textAlign: isAr ? 'right' : 'left'
@@ -39,18 +41,19 @@ export default function TrustSection() {
                 </div>
               </div>
             </div>
+            </Reveal>
           ))}
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '12px' }}>
-          {certs.map(c => (
-            <div key={c} style={{
+          {certs.map((c, i) => (
+            <Reveal key={c} delay={300 + i * 90} from="scale" style={{
               padding: '8px 16px', borderRadius: '999px',
               background: 'var(--bg-secondary)', border: '1px solid rgba(74,144,217,0.2)',
               color: '#4A90D9', fontSize: '0.75rem', fontWeight: 600,
               fontFamily: 'var(--font-ibm-plex-mono), monospace', letterSpacing: '0.05em',
             }}>
               {c}
-            </div>
+            </Reveal>
           ))}
         </div>
       </div>
