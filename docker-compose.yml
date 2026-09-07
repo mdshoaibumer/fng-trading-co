@@ -1,0 +1,38 @@
+# Runs the FNG Next.js app in Docker.
+#
+# The Supabase backend runs in Docker too, managed by the Supabase CLI
+# (`supabase start`), which reads supabase/config.toml + the migrations +
+# supabase/seed.sql. That is the "Supabase images in a container" half; this
+# compose file is the "app in a container" half. Full walkthrough in
+# DOCKER-LOCAL.md.
+#
+#   supabase start          # brings up Postgres, REST, Storage, Studio, Kong…
+#   docker compose up --build
+#
+# The app talks to Supabase over host.docker.internal:54321 (the port the CLI
+# publishes on the host). The whole public site reads Supabase server-side, so
+# this single URL is correct from inside the container.
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # NEXT_PUBLIC_* are inlined into the client bundle at build time.
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL:-http://host.docker.internal:54321}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY:-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0}
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
+    image: fng-web
+    container_name: fng-web
+    ports:
+      - "3000:3000"
+    # Runtime-only secrets (service-role key, admin session secret, optional
+    # OpenRouter / Web3Forms keys). Never baked into an image layer.
+    env_file:
+      - .env.docker
+    # Lets the container resolve the host, where the Supabase CLI publishes
+    # its ports. host-gateway is provided by Docker on macOS, Windows and Linux.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped

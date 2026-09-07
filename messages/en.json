@@ -1,0 +1,872 @@
+{
+  "meta": {
+    "title": "Future Next Gen — The Future in Every Print | Refurbished HP Printers & Eco-Friendly Ink",
+    "description": "Complete refurbished HP office equipment, eco-friendly toners, and printer parts. Sustainable, high-quality printing solutions for businesses in Saudi Arabia."
+  },
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "sustainability": "Sustainability",
+    "ecoInks": "Eco Inks",
+    "industries": "Industries",
+    "sourcing": "Sourcing",
+    "refurbishedPrinters": "Refurbished Printers",
+    "faq": "FAQ",
+    "contact": "Contact",
+    "printerParts": "Printer Parts",
+    "officeEquipment": "Office Equipment",
+    "getFreePrinter": "Get Your Refurbished Printer",
+    "lang": "AR"
+  },
+  "navSourcing": {
+    "process": "Process",
+    "categories": "Categories",
+    "services": "Services",
+    "why": "Why Us",
+    "contact": "Contact",
+    "cta": "Request a Quote"
+  },
+  "hero": {
+    "headline": "The Future in Every Print",
+    "subtitle": "Your Trusted Partner for Refurbished Office Equipment — Specialized in HP Printers, Eco-Friendly Toners & Genuine Parts.",
+    "cta": "Get Your Refurbished Printer",
+    "scrollHint": "Discover More",
+    "parts": {
+      "shell": "Precision Shell",
+      "shellDesc": "Reinforced aluminium frame",
+      "access": "Easy Access",
+      "accessDesc": "One-touch maintenance",
+      "tray": "High Capacity",
+      "trayDesc": "500 sheets — continuous printing",
+      "output": "Smooth Output",
+      "outputDesc": "Precision-sorted collection",
+      "core": "Print Core",
+      "coreDesc": "Eco Inks eco-friendly toner"
+    }
+  },
+  "freePrinter": {
+    "tag": "Refurbished Office Equipment",
+    "title": "Certified Refurbished HP Printers",
+    "subtitle": "Professionally restored to factory standards",
+    "earn": {
+      "title": "Trusted Quality",
+      "counter": "Companies Onboarded",
+      "desc": "Trusted by a growing base of businesses across Saudi Arabia and the Gulf"
+    },
+    "model": {
+      "title": "How It Works",
+      "step1": "Refurbished Printer",
+      "step2": "Eco Inks Subscription",
+      "step3": "Grow Your Business"
+    },
+    "pay": {
+      "title": "Pay Only for Ink",
+      "desc": "Get your refurbished printer and pay only for Eco Inks. No hidden fees."
+    }
+  },
+  "ecoInks": {
+    "tag": "Eco Inks Technology",
+    "title": "Eco-Toner Engineered for the Real World",
+    "subtitle": "Eco-friendly toner with global standards — engineered for Saudi Arabia's climate",
+    "features": {
+      "bio": {
+        "title": "Bio-derived Pigments",
+        "desc": "Sustainable sourcing, no petroleum base"
+      },
+      "voc": {
+        "title": "Zero VOC Emissions",
+        "desc": "Indoor air quality certified"
+      },
+      "recycle": {
+        "title": "Recyclable Cartridge",
+        "desc": "Closed-loop return programme"
+      },
+      "quality": {
+        "title": "Identical Print Quality",
+        "desc": "ISO-standard output, no compromise"
+      },
+      "temp": {
+        "title": "Temperature Stable",
+        "desc": "Saudi climate tested (-10°C to +55°C)"
+      },
+      "energy": {
+        "title": "20% Lower Energy",
+        "desc": "Per page vs. standard toner"
+      }
+    }
+  },
+  "howItWorks": {
+    "tag": "How It Works",
+    "title": "Three Steps to Sustainable Printing",
+    "steps": {
+      "get": {
+        "number": "01",
+        "title": "Get",
+        "desc": "Request your certified refurbished HP printer with zero deposit and no contract lock-in. We offer professional delivery and installation within 48 hours across Saudi Arabia, the UAE, Oman and our other markets."
+      },
+      "print": {
+        "number": "02",
+        "title": "Print",
+        "desc": "Use your Eco Inks subscription. Auto-reorder when ink is low. Never run out. Always eco-certified."
+      },
+      "scale": {
+        "number": "03",
+        "title": "Scale",
+        "desc": "Add more printers as your business grows. Volume discounts. One invoice. Zero complications."
+      }
+    }
+  },
+  "industries": {
+    "tag": "Industries We Serve",
+    "title": "Every Industry. One Smart Decision.",
+    "subtitle": "Sustainable printing solutions designed for every sector",
+    "items": {
+      "healthcare": {
+        "name": "Healthcare & Clinics",
+        "desc": "Safe, reliable printing for medical records",
+        "details": {
+          "stat": "60%",
+          "statLabel": "Lower running cost",
+          "benefit1": "Confidential, on-site document handling",
+          "benefit2": "No toxic emissions in sterile areas"
+        }
+      },
+      "education": {
+        "name": "Education",
+        "desc": "High-quality learning materials at lower cost",
+        "details": {
+          "stat": "50%",
+          "statLabel": "Saved vs buying new",
+          "benefit1": "Vibrant colors for learning",
+          "benefit2": "Zero budget surprises"
+        }
+      },
+      "realEstate": {
+        "name": "Real Estate",
+        "desc": "Stunning marketing materials with vibrant colours",
+        "details": {
+          "stat": "2x",
+          "statLabel": "Faster Turnaround",
+          "benefit1": "Photo-quality brochures",
+          "benefit2": "Print on demand"
+        }
+      },
+      "legal": {
+        "name": "Legal & Finance",
+        "desc": "Clear, reliable documents",
+        "details": {
+          "stat": "12",
+          "statLabel": "Months warranty",
+          "benefit1": "Crisp text down to 4pt",
+          "benefit2": "Secure local network"
+        }
+      },
+      "retail": {
+        "name": "Retail & F&B",
+        "desc": "Professional-grade menus and labels",
+        "details": {
+          "stat": "48",
+          "statLabel": "Hour support response",
+          "benefit1": "Water-resistant labels",
+          "benefit2": "Same-day menu updates"
+        }
+      },
+      "government": {
+        "name": "Government & Public Sector",
+        "desc": "Aligned with Vision 2030 goals",
+        "details": {
+          "stat": "100%",
+          "statLabel": "Locally serviced",
+          "benefit1": "Sustainable procurement",
+          "benefit2": "Local support & maintenance"
+        }
+      },
+      "architecture": {
+        "name": "Architecture & Design",
+        "desc": "Ultra-precise blueprints and renderings",
+        "details": {
+          "stat": "1200",
+          "statLabel": "dpi print resolution",
+          "benefit1": "Perfect line weight",
+          "benefit2": "A3 and oversized support"
+        }
+      },
+      "logistics": {
+        "name": "Logistics & Operations",
+        "desc": "Non-stop shipping labels and reports",
+        "details": {
+          "stat": "40",
+          "statLabel": "Pages per minute",
+          "benefit1": "High-volume ruggedness",
+          "benefit2": "Barcode scanning clarity"
+        }
+      }
+    }
+  },
+  "sustainability": {
+    "tag": "Sustainability",
+    "title": "Your Partner for Vision 2030",
+    "subtitle": "Every page you print contributes to a greener future — the figures below are estimated annual impact.",
+    "stats": {
+      "co2": {
+        "value": "124",
+        "unit": "tons",
+        "label": "CO₂ saved (est.)"
+      },
+      "trees": {
+        "value": "2,500",
+        "unit": "trees",
+        "label": "Equivalent (est.)"
+      },
+      "plastic": {
+        "value": "85",
+        "unit": "%",
+        "label": "Plastic recycled (est.)"
+      }
+    },
+    "milestones": {
+      "2021": "FNG founded in Riyadh",
+      "2022": "Eco Inks line launched",
+      "2023": "A growing network of partner companies",
+      "2024": "ISO Environmental Certification",
+      "2025": "Gulf region expansion",
+      "2030": "Fully carbon neutral"
+    },
+    "cycle": {
+      "title": "The Eco Inks Cycle",
+      "bio": {
+        "title": "Bio-Derived",
+        "desc": "We use plant-based resins and sustainable sourcing instead of petroleum bases for all our toner powders."
+      },
+      "voc": {
+        "title": "Zero VOC",
+        "desc": "Our toners emit zero Volatile Organic Compounds, ensuring safe and clean air quality in your office."
+      },
+      "loop": {
+        "title": "Closed-Loop",
+        "desc": "We collect all empty cartridges directly from your office. Plastics are melted down and reused for new supplies."
+      }
+    }
+  },
+  "trust": {
+    "tag": "Built on Guarantees",
+    "title": "Why businesses choose FNG",
+    "testimonials": [
+      {
+        "quote": "FNG changed how we think about printing. Refurbished quality and exceptional service.",
+        "name": "Ahmed Al-Mansour",
+        "role": "CEO",
+        "company": "Elite Business Group"
+      },
+      {
+        "quote": "Eco-friendly ink helped us achieve sustainability goals while maintaining print quality.",
+        "name": "Sara Al-Qahtani",
+        "role": "Operations Director",
+        "company": "Horizon Medical Co."
+      },
+      {
+        "quote": "48-hour delivery and installation was impressive. Highly recommended.",
+        "name": "Khalid Al-Otaibi",
+        "role": "Procurement Manager",
+        "company": "Modern Construction Est."
+      }
+    ],
+    "certifications": [
+      "ISO 14001",
+      "ISO 9001",
+      "SASO",
+      "Vision 2030 Partner"
+    ]
+  },
+  "contact": {
+    "tag": "Contact Us",
+    "title": "Start Today",
+    "subtitle": "No Obligation",
+    "form": {
+      "name": "Full Name",
+      "company": "Company Name",
+      "phone": "Phone Number",
+      "email": "Email Address",
+      "industry": "Industry",
+      "country": "Country",
+      "city": "City",
+      "message": "Additional Details (Optional)",
+      "quantity": "Number of Printers Needed",
+      "submit": "Submit Request",
+      "privacy": "Your data is secure — Saudi PDPL compliant",
+      "response": "We respond within 24 hours",
+      "success": "Request submitted successfully! We'll be in touch soon.",
+      "error": "Something went wrong. Please try again."
+    },
+    "whatsapp": "Chat with us directly"
+  },
+  "contactPage": {
+    "title": "Get in Touch",
+    "subtitle": "We're here to help you transition to sustainable printing. Reach out to our team.",
+    "benefits": {
+      "title": "Why Partner With Us?",
+      "item1": "Certified Refurbished HP Printers",
+      "item2": "100% Eco-Friendly Inks",
+      "item3": "Free Maintenance & Support",
+      "item4": "Pay Only For What You Print"
+    },
+    "locations": "Our Locations",
+    "offices": "Offices",
+    "markets": "Markets we serve",
+    "marketsNote": "Delivery, installation and sourcing support across the region — ask us about your country.",
+    "hq": "Saudi Arabia — Headquarters",
+    "hqAddress": "Makkah Al Mukarramah Branch Rd, Al Sulaimaniyah, Riyadh 12621",
+    "uae": "United Arab Emirates",
+    "uaeAddress": "Dubai Design District (d3), Building 3, Dubai",
+    "cn": "China",
+    "cnAddress": "Tianhe District, Guangzhou — sourcing, factory audit & QC office",
+    "om": "Oman",
+    "omAddress": "Muscat — regional sales & installation operations",
+    "contactInfo": "Contact Information",
+    "emailLabel": "Email Us",
+    "phoneLabel": "Call Us",
+    "phoneValue": "+966 59 338 0390",
+    "hoursLabel": "Business Hours",
+    "hoursValue": "Sun - Thu, 9:00 AM - 6:00 PM"
+  },
+  "footer": {
+    "brand": "FNG — Refurbished Office Equipment",
+    "tagline": "Specialized in HP Printers, Eco-Friendly Toners & Genuine Parts.",
+    "copyright": "© 2026 FNG Future Next Gen — Saudi Arabia · UAE · Oman · China",
+    "links": {
+      "privacy": "Privacy Policy",
+      "terms": "Terms & Conditions"
+    }
+  },
+  "industriesPage": {
+    "title": "Empowering Every Sector",
+    "subtitle": "See exactly how our Refurbished Printer & Eco Inks model provides massive savings and efficiency for your industry.",
+    "cta": "Start Printing Smarter"
+  },
+  "faqPage": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Everything you need to know about our refurbished printers and Eco Inks subscriptions.",
+    "q1": "Are the printers new or refurbished?",
+    "a1": "Our printers are professionally refurbished HP LaserJet units. Each one is fully inspected, cleaned, and restored to factory specifications. We specialize in HP because parts are widely available and the printers are extremely user-friendly.",
+    "q2": "What happens if the printer breaks?",
+    "a2": "We offer full maintenance and support. If your printer malfunctions, our local support team will repair or replace it entirely free of charge, ensuring zero downtime for your business.",
+    "q3": "Am I locked into a long-term contract?",
+    "a3": "No. Our model is built on flexibility. We offer transparent, straightforward agreements without restrictive lock-in clauses.",
+    "q4": "How do I order more ink?",
+    "a4": "Our systems can optionally monitor ink levels and auto-ship replacements, or you can order via your dedicated account manager. Delivery is fast and localized.",
+    "q5": "Are Eco Inks truly sustainable?",
+    "a5": "Yes. Our toner uses bio-derived elements and zero volatile organic compounds (VOCs). We also operate a closed-loop recycling program for cartridges."
+  },
+  "aboutPage": {
+    "title": "Our Story",
+    "subtitle": "FNG — Your trusted source for complete refurbished office equipment, specialized in HP printers, since 2021.",
+    "missionTitle": "Our Mission",
+    "missionDesc": "To provide complete refurbished office equipment solutions — from certified HP printers and eco-friendly toners to genuine replacement parts — while significantly reducing costs and environmental impact.",
+    "visionTitle": "Aligned with Vision 2030",
+    "visionDesc": "We actively support Saudi Arabia's sustainability goals by reducing electronic waste, carbon emissions, and resource consumption.",
+    "leadershipTitle": "Built for Enterprise",
+    "leadershipDesc": "FNG is trusted by a growing base of businesses across the Kingdom. We combine global technology standards with exceptional local support."
+  },
+  "printerPartsPage": {
+    "tag": "HP Printer Parts",
+    "title": "Genuine & Compatible HP Printer Parts",
+    "subtitle": "Specializing in HP LaserJet — high-quality replacement parts to keep your printers running at peak performance.",
+    "ctaInquiry": "Inquire About This Part",
+    "ctaWhatsapp": "Quick Order via WhatsApp",
+    "compatibleWith": "Compatible With",
+    "noPartsYet": "No parts listed in this category yet — contact us on WhatsApp and we'll help you find what you need.",
+    "categories": {
+      "fuser": {
+        "name": "Fuser Assemblies",
+        "desc": "Heat and pressure units that bond toner to paper.",
+        "parts": [
+          {
+            "name": "Fuser Unit (Complete Assembly)",
+            "models": "M402, M404, M428, M575, 3303fdw"
+          },
+          {
+            "name": "Fuser Film Sleeve",
+            "models": "M402, M404, M426"
+          },
+          {
+            "name": "Pressure Roller",
+            "models": "Universal — M400 / M500 Series"
+          },
+          {
+            "name": "Fuser Gear Kit",
+            "models": "M402, M426, M428"
+          }
+        ]
+      },
+      "pickup": {
+        "name": "Pickup & Feed Rollers",
+        "desc": "Essential rollers that pull paper through the print path.",
+        "parts": [
+          {
+            "name": "Paper Pickup Roller",
+            "models": "M402, M404, M428, M575"
+          },
+          {
+            "name": "Separation Pad",
+            "models": "M402, M404, M426, M428"
+          },
+          {
+            "name": "Feed Roller Assembly",
+            "models": "M575, M551, 3303fdw"
+          },
+          {
+            "name": "Tray 2 Roller Kit",
+            "models": "M402, M404, M428"
+          }
+        ]
+      },
+      "transfer": {
+        "name": "Transfer Components",
+        "desc": "Belts and rollers that transfer toner from cartridge to paper.",
+        "parts": [
+          {
+            "name": "Transfer Belt (ITB)",
+            "models": "M575, M551, 3303fdw"
+          },
+          {
+            "name": "Transfer Roller",
+            "models": "M402, M404, M426, M428"
+          },
+          {
+            "name": "Secondary Transfer Roller",
+            "models": "M575, M551"
+          }
+        ]
+      },
+      "drum": {
+        "name": "Imaging Drums & OPC",
+        "desc": "Photosensitive drums that form the image before toner application.",
+        "parts": [
+          {
+            "name": "OPC Drum (Organic Photoconductor)",
+            "models": "Universal — All HP LaserJet"
+          },
+          {
+            "name": "Drum Unit (Complete)",
+            "models": "M402, M404, M428"
+          },
+          {
+            "name": "Imaging Drum Kit",
+            "models": "M575, M551, 3303fdw"
+          },
+          {
+            "name": "Developer Unit",
+            "models": "M575, M551"
+          }
+        ]
+      },
+      "formatter": {
+        "name": "Formatter & PCB Boards",
+        "desc": "Main logic boards that process print jobs and control operations.",
+        "parts": [
+          {
+            "name": "Formatter Board",
+            "models": "M402, M404, M428, M575"
+          },
+          {
+            "name": "Power Supply Board",
+            "models": "M402, M404, M426"
+          },
+          {
+            "name": "DC Controller Board",
+            "models": "M575, M551"
+          },
+          {
+            "name": "Engine Control Board",
+            "models": "M402, M428"
+          }
+        ]
+      },
+      "scanner": {
+        "name": "Scanner & ADF Parts",
+        "desc": "Automatic document feeder and scanner components.",
+        "parts": [
+          {
+            "name": "ADF Roller Kit",
+            "models": "M428, M575, 3303fdw"
+          },
+          {
+            "name": "Scanner Glass Assembly",
+            "models": "M428, M575, 3303fdw"
+          },
+          {
+            "name": "Flatbed Scanner Cable",
+            "models": "M428, M575"
+          },
+          {
+            "name": "ADF Separation Pad",
+            "models": "M428, M575, 3303fdw"
+          }
+        ]
+      },
+      "trays": {
+        "name": "Trays & Covers",
+        "desc": "Paper trays, input/output bins, and printer covers.",
+        "parts": [
+          {
+            "name": "Paper Tray Cassette (Tray 2)",
+            "models": "M402, M404, M428"
+          },
+          {
+            "name": "Multipurpose (MP) Tray",
+            "models": "M575, M551"
+          },
+          {
+            "name": "Output Bin Assembly",
+            "models": "M402, M404, M428"
+          },
+          {
+            "name": "Front Cover / Access Door",
+            "models": "Universal — M400 / M500 Series"
+          },
+          {
+            "name": "Rear Cover Assembly",
+            "models": "M402, M404"
+          }
+        ]
+      },
+      "maintenance": {
+        "name": "Maintenance Kits",
+        "desc": "Complete maintenance kits for preventive servicing.",
+        "parts": [
+          {
+            "name": "Maintenance Kit (Fuser + Rollers + Pads)",
+            "models": "M402, M404"
+          },
+          {
+            "name": "LaserJet MFP Maintenance Kit",
+            "models": "M428, M575, 3303fdw"
+          },
+          {
+            "name": "ADF Maintenance Kit",
+            "models": "M428, M575"
+          }
+        ]
+      }
+    }
+  },
+  "tonerProducts": {
+    "tag": "Our Toner Range",
+    "title": "Two Lines, One Standard of Excellence",
+    "subtitle": "Whether you choose eco-first or cost-first, both deliver HP-grade quality certified to ISO standards.",
+    "green": {
+      "badge": "Eco-Friendly",
+      "name": "Eco Inks Green Toner",
+      "type": "Remanufactured Laser Toner",
+      "desc": "Original HP cartridges professionally remanufactured — cleaned, inspected, refilled with bio-based toner, and tested to OEM specifications. Maximum sustainability with zero quality compromise.",
+      "features": [
+        "Recycled OEM HP cartridge shell",
+        "Bio-derived, VOC-free toner powder",
+        "Closed-loop recycling program",
+        "ISO 9001 & 19752 certified yield",
+        "Ideal for Vision 2030 sustainability goals"
+      ]
+    },
+    "premium": {
+      "badge": "Best Value",
+      "name": "Eco Inks Premium Toner",
+      "type": "Compatible Toner",
+      "desc": "Brand-new compatible cartridges manufactured to match HP originals. Engineered for high yield and consistent output at a fraction of the cost.",
+      "features": [
+        "New-build cartridge — not recycled",
+        "Precision-engineered for HP LaserJet",
+        "High-yield capacity for heavy printing",
+        "ISO 9001 & 19752 certified",
+        "Cost-optimized for volume users"
+      ],
+      "imageComingSoon": "Image Coming Soon"
+    },
+    "cta": "Request a Sample"
+  },
+  "maintenanceTeaser": {
+    "tag": "Coming Soon",
+    "title": "On-Site Maintenance & Repair",
+    "desc": "Our dedicated maintenance team is being assembled to provide on-site printer servicing across Saudi Arabia. Stay tuned for professional repair, preventive maintenance, and emergency support.",
+    "cta": "Register Your Interest"
+  },
+  "gate": {
+    "eyebrow": "What are you looking for?",
+    "title": "Two ways we help your business run",
+    "printers": {
+      "tag": "Refurbished Hardware",
+      "title": "Printers & Ink",
+      "desc": "Certified refurbished HP printers, eco-friendly toner subscriptions, and genuine parts — delivered and installed in 48 hours across Saudi Arabia.",
+      "cta": "Explore Printers"
+    },
+    "sourcing": {
+      "tag": "Import & Procurement",
+      "title": "Electronics Sourcing",
+      "desc": "Verified factory sourcing from China to Saudi Arabia — computers, mobile accessories and consumer electronics, inspected and customs-cleared end to end.",
+      "cta": "Explore Sourcing"
+    }
+  },
+  "sourcingHero": {
+    "kicker": "Electronics Sourcing — China to Saudi Arabia",
+    "headline": "What you source, that's what you get.",
+    "subtitle": "A Saudi-based sourcing operation with a verified supplier network across China, specializing in computers, mobile accessories and consumer electronics. Every order is inspected before it ships and cleared before it lands.",
+    "cta1": "Request a Quote",
+    "cta2": "Explore Categories",
+    "stats": {
+      "moq": {
+        "value": "500",
+        "label": "Minimum Order Quantity, pcs"
+      },
+      "lead": {
+        "value": "15–30",
+        "label": "Days Typical Lead Time"
+      },
+      "factories": {
+        "value": "100+",
+        "label": "Verified Factories in Network"
+      },
+      "compliance": {
+        "value": "SABER",
+        "label": "Compliant Customs Clearance"
+      }
+    }
+  },
+  "sourcingProcess": {
+    "tag": "The Process",
+    "title": "From inquiry to your door",
+    "subtitle": "Seven stages, one point of contact — from your first message to a cleared shipment at your door.",
+    "steps": {
+      "s1": {
+        "number": "01",
+        "title": "Inquiry",
+        "desc": "Send your product, target spec and quantity over WhatsApp or the contact form. We confirm feasibility and typical pricing within one business day."
+      },
+      "s2": {
+        "number": "02",
+        "title": "Sourcing & Quotation",
+        "desc": "We shortlist verified factories from our China network, negotiate pricing at your volume, and return a formal quotation with unit cost, MOQ and lead time."
+      },
+      "s3": {
+        "number": "03",
+        "title": "Sample Approval",
+        "desc": "A physical sample ships for your sign-off before production begins — no bulk order is placed against an unapproved sample."
+      },
+      "s4": {
+        "number": "04",
+        "title": "Factory QC Inspection",
+        "desc": "Our team inspects the production run on-site against your approved sample and spec sheet before it leaves the factory floor."
+      },
+      "s5": {
+        "number": "05",
+        "title": "Shipping",
+        "desc": "Consolidated sea or air freight from the origin port, tracked door to port, with documentation prepared in parallel."
+      },
+      "s6": {
+        "number": "06",
+        "title": "SABER & Customs Clearance",
+        "desc": "SABER certificates and customs clearance at the Saudi border are handled end to end — you never deal with the paperwork."
+      },
+      "s7": {
+        "number": "07",
+        "title": "Delivery to Your Door",
+        "desc": "Final-mile delivery to your warehouse or office anywhere in the Kingdom, with a signed proof of delivery."
+      }
+    }
+  },
+  "sourcingCategories": {
+    "tag": "What We Source",
+    "title": "Categories",
+    "subtitle": "Electronics sourced from audited factories across China, with standard specs, minimum order quantities and lead times set up front.",
+    "footnote": "Specs, MOQ and lead time shown are standard starting points — every quotation is confirmed against your target specification, branding and destination port before an order is placed.",
+    "items": {
+      "computers": {
+        "name": "Computers & Laptops",
+        "desc": "Notebooks, mini PCs, all-in-ones and monitors — Windows-ready, custom branding available.",
+        "moq": "500 pcs",
+        "lead": "20–30 days"
+      },
+      "mobileAccessories": {
+        "name": "Mobile Phone Accessories",
+        "desc": "Cases, tempered-glass protectors, grips and car mounts.",
+        "moq": "500 pcs",
+        "lead": "15–20 days"
+      },
+      "chargers": {
+        "name": "Chargers & Power Banks",
+        "desc": "PD fast chargers, cables and power banks, CE/FCC/SABER-ready documentation.",
+        "moq": "500 pcs",
+        "lead": "18–25 days"
+      },
+      "audio": {
+        "name": "Audio & Headphones",
+        "desc": "TWS earbuds, over-ear headphones and Bluetooth speakers.",
+        "moq": "500 pcs",
+        "lead": "20–28 days"
+      },
+      "wearables": {
+        "name": "Smart Wearables",
+        "desc": "Smartwatches and fitness bands with app integration options.",
+        "moq": "500 pcs",
+        "lead": "25–35 days"
+      },
+      "networking": {
+        "name": "Networking Equipment",
+        "desc": "Routers, extenders and switches for home and small office use.",
+        "moq": "500 pcs",
+        "lead": "20–30 days"
+      },
+      "smartHome": {
+        "name": "Smart Home Devices",
+        "desc": "Smart plugs, cameras, lighting and sensors on Wi-Fi and Zigbee.",
+        "moq": "500 pcs",
+        "lead": "25–35 days"
+      },
+      "gaming": {
+        "name": "Gaming Accessories",
+        "desc": "Controllers, headsets, keyboards and mice for PC and console.",
+        "moq": "500 pcs",
+        "lead": "18–25 days"
+      }
+    }
+  },
+  "sourcingServices": {
+    "tag": "What We Handle",
+    "title": "Services",
+    "subtitle": "Everything between a factory in China and a warehouse in Saudi Arabia — handled by one team, on one invoice.",
+    "items": {
+      "verification": {
+        "name": "Supplier Verification",
+        "desc": "Business license checks, factory background and reference orders, so you only quote against suppliers we would use ourselves."
+      },
+      "audit": {
+        "name": "Factory Audit",
+        "desc": "On-site visits assessing production capacity, working conditions and quality systems before an order is placed."
+      },
+      "qc": {
+        "name": "QC Inspection",
+        "desc": "Pre-shipment inspection against your approved sample — AQL sampling, function tests and packaging checks, with a photo report."
+      },
+      "consolidation": {
+        "name": "Consolidation",
+        "desc": "Goods from multiple factories combined into a single shipment at our China warehouse, cutting freight cost and paperwork."
+      },
+      "freight": {
+        "name": "Freight",
+        "desc": "Sea and air freight booked and tracked door to port, with customs-ready documentation prepared in parallel."
+      },
+      "customs": {
+        "name": "Customs Clearance",
+        "desc": "SABER certification and Saudi customs clearance managed end to end, so shipments move straight to delivery."
+      }
+    }
+  },
+  "sourcingWhy": {
+    "tag": "Why Source With Us",
+    "title": "A Saudi office. A China network. One point of contact.",
+    "subtitle": "Built on years of factory relationships across Guangdong and Zhejiang, we stand between you and the supplier — verifying, inspecting and shipping so you never have to.",
+    "points": {
+      "accountability": {
+        "title": "Direct accountability",
+        "desc": "One team handles sourcing, QC and clearance — no handoffs, no finger-pointing when something needs fixing."
+      },
+      "verified": {
+        "title": "Verified, not assumed",
+        "desc": "Every supplier is audited before we work with them, and every shipment is inspected before it ships."
+      },
+      "compliance": {
+        "title": "Compliance first",
+        "desc": "SABER certification and Saudi customs requirements are built into our process from day one, not handled as an afterthought."
+      }
+    },
+    "licensing": {
+      "tag": "Registered on Both Ends",
+      "title": "Licensed in the Kingdom and in China",
+      "subtitle": "A registered Saudi trading entity and a wholly-owned company in Guangzhou — the same team on both sides of the shipment.",
+      "saudiCrLabel": "Saudi Commercial Registration",
+      "saudiCrValue": "Ministry of Commerce, Saudi Arabia",
+      "fngLabel": "FNG Trading Licence",
+      "fngValue": "Kingdom of Saudi Arabia",
+      "chinaLabel": "China Business License",
+      "chinaValue": "Guangzhou Tianhe District Market Supervision Administration",
+      "chinaEntity": "Guangzhou Marco Information Technology Co., Ltd.",
+      "usccLabel": "Unified Social Credit Code",
+      "usccValue": "91440106MAKXCFHN7X",
+      "viewDocument": "View document"
+    }
+  },
+  "seo": {
+    "sourcing": {
+      "title": "Electronics Sourcing from China to Saudi Arabia | FNG",
+      "description": "FNG sources computers, mobile accessories and consumer electronics from verified factories in China — factory audits, QC inspection, freight and SABER customs clearance handled end to end for Saudi businesses."
+    },
+    "about": {
+      "title": "About Us | Future Next Gen",
+      "description": "Learn about Future Next Gen, a Saudi supplier of refurbished HP printers, eco-friendly toner, genuine printer parts, and electronics sourcing."
+    },
+    "contact": {
+      "title": "Contact Us | Future Next Gen",
+      "description": "Get in touch with Future Next Gen. Our team in Riyadh is ready to assist you with refurbished printer programs, toner supplies, and business support."
+    },
+    "ecoInks": {
+      "title": "Eco Inks & Premium Toners | Future Next Gen",
+      "description": "Discover Eco Inks. High-yield, sustainable, and premium compatible toners designed for HP LaserJet printers."
+    },
+    "faq": {
+      "title": "Frequently Asked Questions | Future Next Gen",
+      "description": "Find answers to the most common questions about our Refurbished Printer Program, refurbished HP machines, and Eco Inks toner supply."
+    },
+    "industries": {
+      "title": "Industries We Serve | Future Next Gen",
+      "description": "Future Next Gen provides specialized printing solutions for Healthcare, Education, Corporate, and Government sectors in Saudi Arabia."
+    },
+    "printerParts": {
+      "title": "Printer Parts Catalog | Future Next Gen",
+      "description": "Browse our comprehensive catalog of HP printer parts including fusers, maintenance kits, rollers, and formatting boards."
+    },
+    "printers": {
+      "title": "Refurbished HP Printers Catalog | Future Next Gen",
+      "description": "Explore our catalog of certified refurbished HP LaserJet printers. Available with our exclusive Eco Inks toner subscription — you pay only for the ink."
+    },
+    "sustainability": {
+      "title": "Sustainability Commitment | Future Next Gen",
+      "description": "Learn about our commitment to e-waste reduction and environmental sustainability through our printer refurbishing and Eco Inks programs."
+    },
+    "privacy": {
+      "title": "Privacy Policy | Future Next Gen",
+      "description": "Read the Privacy Policy of Future Next Gen (FNG) to understand how we protect and process your data in compliance with Saudi PDPL."
+    },
+    "terms": {
+      "title": "Terms & Conditions | Future Next Gen",
+      "description": "Read the Terms & Conditions of Future Next Gen (FNG) regarding our refurbished HP printer program and Eco Inks subscription."
+    },
+    "equipment": {
+      "title": "Refurbished Office Equipment | Future Next Gen",
+      "description": "Browse certified refurbished office equipment from Future Next Gen — ergonomic chairs, desks, monitors, and computers restored to like-new condition for Saudi businesses."
+    }
+  },
+  "privacyPage": {
+    "title": "Privacy Policy",
+    "subtitle": "Last updated: June 9, 2026",
+    "introduction": "Future Next Gen ('FNG', 'we', 'us', or 'our') is committed to protecting your personal data. This Privacy Policy describes how we collect, use, and share personal data in connection with our website (fngtradingco.com) and our Sustainable Printing services in Saudi Arabia, in compliance with the Saudi Personal Data Protection Law (PDPL).",
+    "section1Title": "1. Data Collection",
+    "section1Desc": "We collect information you provide directly to us when requesting a refurbished printer, subscribing to Eco Inks, or contacting us. This includes your name, company name, phone number, email address, city, and printing preferences.",
+    "section2Title": "2. Purpose of Processing",
+    "section2Desc": "We process your personal data to: provide and maintain our services, respond to inquiries, arrange delivery and installation, manage your Eco Inks subscription, and comply with regulatory requirements under KSA laws.",
+    "section3Title": "3. Data Sharing & Security",
+    "section3Desc": "We do not sell your personal data. Your data is stored securely and processed in accordance with the security standards set out by the KSA authorities. We only share data with service providers who assist in delivery, technical maintenance, or payment processing.",
+    "section4Title": "4. Your Rights",
+    "section4Desc": "Under the Saudi PDPL, you have the right to access, correct, destroy, or restrict the processing of your personal data. You may contact us at {email} to exercise these rights at any time."
+  },
+  "termsPage": {
+    "title": "Terms & Conditions",
+    "subtitle": "Last updated: June 9, 2026",
+    "introduction": "Welcome to fngtradingco.com. By accessing our website and using our Sustainable Printing services, you agree to comply with and be bound by the following Terms & Conditions. Please read them carefully.",
+    "section1Title": "1. Refurbished Printer Deployment Program",
+    "section1Desc": "Under our B2B model, FNG provides certified refurbished HP LaserJet printers to eligible Saudi businesses. The printers remain the property of Future Next Gen at all times. Deployment is subject to a paid Eco Inks toner subscription.",
+    "section2Title": "2. Eco Inks Subscription",
+    "section2Desc": "By enrolling in the program, you agree to purchase and use only FNG Eco Inks or Premium compatible toners for the deployed printers. Using third-party generic toners is a violation of the agreement and voids the free maintenance and support service.",
+    "section3Title": "3. Maintenance & Support",
+    "section3Desc": "FNG provides free maintenance, repair, and replacement support for all deployed printers, provided the business is actively using our toners. Maintenance requests are responded to within 48 hours in Saudi Arabia, the UAE and Oman, and within 72 hours in our other markets.",
+    "section4Title": "4. Agreement Duration & Termination",
+    "section4Desc": "Our B2B agreements are flexible with no restrictive lock-in clauses. Either party may terminate the agreement by providing 30 days' written notice, upon which FNG will collect the deployed printer equipment."
+  }
+}

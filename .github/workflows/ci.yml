@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      # This is the actual gate: a broken production build should never
+      # reach main unnoticed again, the way one did before CI existed.
+      - name: Build
+        run: npm run build
+        env:
+          # Placeholder values so build-time env access doesn't crash the
+          # build. No real secrets are needed to compile the app.
+          NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
+          SUPABASE_SERVICE_ROLE_KEY: placeholder
+          ADMIN_SESSION_SECRET: placeholder-ci-secret-not-used-in-production
+
+      # Blocking: the codebase's lint errors were cleared out (dead code
+      # removed, `any` types replaced with real types, missing dependency
+      # arrays fixed). Only 6 pre-existing, individually-reviewed
+      # no-img-element warnings remain, which don't fail the build.
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm test

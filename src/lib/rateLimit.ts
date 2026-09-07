@@ -1,0 +1,84 @@
+// Simple in-memory rate limiter. Hostinger runs this app as a single
+// persistent Node process (not serverless/edge), so a module-level Map
+// is a valid, dependency-free way to throttle abuse per route+IP.
+// Limitation: resets on process restart and does not share state across
+// multiple instances — acceptable for this app's current scale.
+
+type Bucket = { count: number; resetAt: number };
+
+const buckets = new Map<string, Bucket>();
+const MAX_TRACKED_KEYS = 5000;
+
+function sweepExpired(now: number) {
+  if (buckets.size < MAX_TRACKED_KEYS) return;
+  for (const [key, bucket] of buckets) {
+    if (now > bucket.resetAt) buckets.delete(key);
+  }
+  // If still at the cap after freeing expired buckets — e.g. an attacker
+  // rotating X-Forwarded-For creates thousands of live buckets within one
+  // window — evict oldest-first (Map preserves insertion order) so memory
+  // can't grow without bound.
+  while (buckets.size >= MAX_TRACKED_KEYS) {
+    const oldest = buckets.keys().next().value;
+    if (oldest === undefined) break;
+    buckets.delete(oldest);
+  }
+}
+
+export function rateLimit(
+  key: string,
+  limit: number,
+  windowMs: number,
+  /** When false, only checks the current count without consuming an attempt. */
+  consume: boolean = true
+): { allowed: boolean; retryAfterSeconds?: number } {
+  const now = Date.now();
+  sweepExpired(now);
+
+  const bucket = buckets.get(key);
+  const active = bucket && now <= bucket.resetAt ? bucket : undefined;
+  const count = active ? active.count : 0;
+
+  if (count >= limit) {
+    return { allowed: false, retryAfterSeconds: Math.ceil(((active?.resetAt ?? now) - now) / 1000) };
+  }
+
+  if (consume) {
+    if (active) active.count++;
+    else buckets.set(key, { count: 1, resetAt: now + windowMs });
+  }
+  return { allowed: true };
+}
+
+export function getClientIp(request: Request): string {
+  const forwarded = request.headers.get('x-forwarded-for');
+  if (forwarded) return forwarded.split(',')[0].trim();
+  return 'unknown';
+}
+
+// Per-IP limiting alone is bypassable by sending a different
+// X-Forwarded-For value on every request — there's no way to verify a
+// trusted-proxy chain from inside the app. globalRateLimit ignores the
+// claimed IP entirely and caps total attempts across everyone, which
+// can't be defeated by header spoofing. Intended for endpoints with a
+// small number of legitimate callers (e.g. the single shared admin
+// login) where a generous global ceiling won't bother real users but
+// still hard-stops a brute-force run.
+export function globalRateLimit(
+  key: string,
+  limit: number,
+  windowMs: number,
+  consume: boolean = true
+): { allowed: boolean; retryAfterSeconds?: number } {
+  return rateLimit(`global:${key}`, limit, windowMs, consume);
+}
+
+export function tooManyRequests(retryAfterSeconds?: number) {
+  return Response.json(
+    { error: 'Too many requests. Please try again shortly.' },
+    {
+      status: 429,
+      headers: retryAfterSeconds ? { 'Retry-After': String(retryAfterSeconds) } : undefined,
+    }
+  );
+}
