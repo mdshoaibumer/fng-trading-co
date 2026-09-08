@@ -730,11 +730,12 @@
     }
   },
   "sourcingSystems": {
-    "tag": "New: Systems Integration",
-    "title": "Networking & Security Systems",
-    "subtitle": "Enterprise networking, structured cabling and security infrastructure — sourced and supplied through our systems-integration partner for projects across Saudi Arabia, and quoted against your bill of quantities rather than a fixed piece count.",
+    "tag": "Systems Integration",
+    "title": "Enterprise Systems Catalog",
+    "subtitle": "Networking, structured cabling, security & surveillance, access control, business telephony and power & computing infrastructure — sourced and supplied through our systems-integration partner for projects across Saudi Arabia, and quoted against your bill of quantities rather than a fixed piece count.",
     "complianceNote": "Every shipment is classified against the ZATCA Integrated Customs Tariff before clearance. Radio-transmitting equipment additionally carries CITC type approval and SABER conformity certification.",
-    "comingSoon": "More lines — security & surveillance, access control, business telephony and power systems — are being added as photography comes in.",
+    "quickNavLabel": "Jump to a category",
+    "itemsCount": "{count} product lines",
     "cta": "Request a BOQ Quote",
     "compliance": {
       "hs": { "name": "ZATCA HS Classification", "desc": "Every item mapped to its customs heading before it ships." },
@@ -770,6 +771,64 @@
           "pvcConduit": { "name": "PVC Conduit", "desc": "Rigid and flexible PVC conduit for concealed cable runs." },
           "cableTesters": { "name": "Cable Testers", "desc": "Copper cable certifiers and continuity testers for commissioning." },
           "otdr": { "name": "OTDR", "desc": "Optical time-domain reflectometers for fibre-link fault location." }
+        }
+      },
+      "securitySurveillance": {
+        "name": "Security & Surveillance",
+        "desc": "CCTV, IP cameras, recorders and alarm systems for commercial and industrial surveillance projects.",
+        "items": {
+          "cctvCameras": { "name": "CCTV Cameras", "desc": "Analogue and HD-TVI dome and bullet cameras for standard commercial surveillance installs." },
+          "ipCameras": { "name": "IP Cameras", "desc": "Network cameras with PoE and onboard analytics for enterprise and smart-building deployments." },
+          "nvrRecorders": { "name": "NVR Recorders", "desc": "Network video recorders for multi-channel IP camera storage and remote monitoring." },
+          "dvrRecorders": { "name": "DVR Recorders", "desc": "Digital video recorders for analogue and HD-TVI camera systems." },
+          "professionalMonitors": { "name": "Professional Monitors", "desc": "Control-room and rack-mount monitors built for continuous surveillance-feed display." },
+          "burglarAlarmSystems": { "name": "Burglar Alarm Systems", "desc": "Motion sensors, door contacts and control panels for intrusion detection." },
+          "fireAlarmSystems": { "name": "Fire Alarm Systems", "desc": "Detectors, call points and panels for commercial fire-detection compliance." },
+          "videoDoorIntercoms": { "name": "Video Door Intercoms", "desc": "IP and analogue door-entry intercoms with camera and two-way audio." },
+          "cameraHousings": { "name": "Camera Housings", "desc": "Weatherproof and vandal-resistant enclosures for outdoor camera installs." },
+          "cameraBrackets": { "name": "Camera Brackets", "desc": "Wall, pole and ceiling mounts for dome and bullet camera installations." },
+          "mountingAccessories": { "name": "Mounting Accessories", "desc": "Junction boxes, adaptors and hardware for camera and sensor installation." }
+        }
+      },
+      "accessControl": {
+        "name": "Access Control & Time Attendance",
+        "desc": "Biometric readers, standalone terminals and door hardware for secured entry and staff attendance.",
+        "items": {
+          "biometricFingerprintReaders": { "name": "Biometric Fingerprint Readers", "desc": "USB fingerprint scanners for computer-peripheral login and attendance software." },
+          "biometricAccessReaders": { "name": "Biometric Access Readers", "desc": "Wall-mounted face and fingerprint readers for standalone door access control." },
+          "standaloneAccessTerminals": { "name": "Standalone Access Terminals", "desc": "All-in-one keypad and card terminals for single-door access control." },
+          "timeAttendanceTerminals": { "name": "Time-Attendance Terminals", "desc": "Clock-in terminals with biometric or card verification for payroll integration." },
+          "electricDoorLocks": { "name": "Electric Door Locks", "desc": "Fail-safe and fail-secure electric locks for access-controlled doors." },
+          "electricStrikes": { "name": "Electric Strikes", "desc": "Door-frame strike plates that release under electronic control." },
+          "electromagneticMaglocks": { "name": "Electromagnetic Maglocks", "desc": "High-holding-force magnetic locks for fire-exit and secure-door applications." },
+          "rfidCards": { "name": "RFID Cards", "desc": "125kHz proximity cards for entry-level access-control credentialing." },
+          "proximitySmartCards": { "name": "Proximity Smart Cards", "desc": "13.56MHz smart cards for access control, cashless payment and identity." }
+        }
+      },
+      "businessTelephony": {
+        "name": "Business Telephony",
+        "desc": "PBX platforms, desk handsets and headsets for multi-extension office telephony.",
+        "items": {
+          "analoguePbx": { "name": "Analogue PBX Systems", "desc": "Traditional PBX platforms for offices running standard analogue extensions." },
+          "ipPbxSystems": { "name": "IP PBX Systems", "desc": "SIP-based PBX platforms for VoIP extensions and multi-site trunking." },
+          "deskTelephones": { "name": "Desk Telephones", "desc": "Corded analogue and digital desk handsets for standard office extensions." },
+          "ipTelephones": { "name": "IP Telephones", "desc": "SIP desk phones with PoE and multi-line support for VoIP deployments." },
+          "headsets": { "name": "Professional Headsets", "desc": "Wired and wireless headsets for call centres and daily office use." }
+        }
+      },
+      "powerComputing": {
+        "name": "Power & Computing",
+        "desc": "Servers, workstations, UPS and power infrastructure for office and data-room deployments.",
+        "items": {
+          "upsUnits": { "name": "UPS Units", "desc": "Line-interactive and online UPS systems for server and network power protection." },
+          "poeInjectors": { "name": "PoE Injectors", "desc": "Single-port power-over-Ethernet injectors for non-PoE switch upgrades." },
+          "powerAdapters": { "name": "Power Adapters", "desc": "Replacement and OEM power adapters for networking and office equipment." },
+          "sealedLeadAcidBatteries": { "name": "Sealed Lead-Acid Batteries", "desc": "Replacement VRLA batteries for UPS and alarm-system backup power." },
+          "servers": { "name": "Servers", "desc": "Rack and tower servers for virtualization, storage and application workloads." },
+          "laptops": { "name": "Laptops", "desc": "Business-grade laptops for office, field and executive deployments." },
+          "desktopComputers": { "name": "Desktop Computers", "desc": "Business desktop PCs for standard office and workstation use." },
+          "multifunctionPrinters": { "name": "Multifunction Printers", "desc": "Print, scan, copy and fax devices for departmental office use." },
+          "businessCopiers": { "name": "Business Copiers", "desc": "High-volume copiers for print-room and shared office environments." }
         }
       }
     }
