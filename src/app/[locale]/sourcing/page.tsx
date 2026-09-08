@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import SourcingHeroSection from '@/components/sections/sourcing/SourcingHeroSection';
 import SourcingProcessSection from '@/components/sections/sourcing/SourcingProcessSection';
 import SourcingCategoriesSection from '@/components/sections/sourcing/SourcingCategoriesSection';
+import SourcingSystemsSection from '@/components/sections/sourcing/SourcingSystemsSection';
 import SourcingServicesSection from '@/components/sections/sourcing/SourcingServicesSection';
 import SourcingWhySection from '@/components/sections/sourcing/SourcingWhySection';
 import ContactSection from '@/components/sections/ContactSection';
@@ -78,6 +79,7 @@ export default async function SourcingPage({
         <SourcingHeroSection />
         <SourcingProcessSection />
         <SourcingCategoriesSection />
+        <SourcingSystemsSection />
         <SourcingServicesSection />
         <SourcingWhySection />
         <ContactSection />

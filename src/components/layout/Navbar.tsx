@@ -73,6 +73,7 @@ export default function Navbar() {
     { href: homeHref(locale, true), label: t('home'), isHome: true },
     { href: `/${locale}/sourcing#sourcing-process`, label: tSourcing('process') },
     { href: `/${locale}/sourcing#sourcing-categories`, label: tSourcing('categories') },
+    { href: `/${locale}/sourcing#sourcing-systems`, label: tSourcing('systems') },
     { href: `/${locale}/sourcing#sourcing-services`, label: tSourcing('services') },
     { href: `/${locale}/sourcing#sourcing-why`, label: tSourcing('why') },
     { href: `/${locale}/sourcing#contact`, label: tSourcing('contact') },

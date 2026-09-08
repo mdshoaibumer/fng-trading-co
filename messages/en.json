@@ -23,6 +23,7 @@
     "categories": "Categories",
     "services": "Services",
     "why": "Why Us",
+    "systems": "Systems",
     "contact": "Contact",
     "cta": "Request a Quote"
   },
@@ -725,6 +726,51 @@
         "desc": "Controllers, headsets, keyboards and mice for PC and console.",
         "moq": "500 pcs",
         "lead": "18–25 days"
+      }
+    }
+  },
+  "sourcingSystems": {
+    "tag": "New: Systems Integration",
+    "title": "Networking & Security Systems",
+    "subtitle": "Enterprise networking, structured cabling and security infrastructure — sourced and supplied through our systems-integration partner for projects across Saudi Arabia, and quoted against your bill of quantities rather than a fixed piece count.",
+    "complianceNote": "Every shipment is classified against the ZATCA Integrated Customs Tariff before clearance. Radio-transmitting equipment additionally carries CITC type approval and SABER conformity certification.",
+    "comingSoon": "More lines — security & surveillance, access control, business telephony and power systems — are being added as photography comes in.",
+    "cta": "Request a BOQ Quote",
+    "compliance": {
+      "hs": { "name": "ZATCA HS Classification", "desc": "Every item mapped to its customs heading before it ships." },
+      "citc": { "name": "CITC Type Approval", "desc": "Handled for every radio-transmitting device we supply." },
+      "saber": { "name": "SABER Conformity", "desc": "Certification arranged ahead of clearance, not after." }
+    },
+    "groups": {
+      "activeNetworking": {
+        "name": "Active Networking",
+        "desc": "Routers, switches, access points and WAN equipment for enterprise and carrier networks.",
+        "items": {
+          "routers": { "name": "Routers", "desc": "Enterprise and carrier-grade routers for WAN edge, branch and data-centre deployments." },
+          "switches": { "name": "Switches", "desc": "Managed Layer 2/3 switches with PoE+ and SFP+ uplinks for structured LANs." },
+          "wirelessAccessPoints": { "name": "Wireless Access Points", "desc": "Ceiling and wall-mount APs for high-density enterprise Wi-Fi coverage." },
+          "wanModems": { "name": "WAN Modems", "desc": "Fibre, DSL and cellular WAN modems for primary and failover links." },
+          "ipPbx": { "name": "IP PBX Systems", "desc": "IP and hybrid PBX platforms for multi-extension business telephony." },
+          "antennas": { "name": "Antennas", "desc": "Directional and omni antennas for point-to-point and wireless backhaul links." },
+          "sfpTransceivers": { "name": "SFP / Transceivers", "desc": "SFP, SFP+ and other transceiver modules for fibre and copper uplinks." }
+        }
+      },
+      "passiveNetworking": {
+        "name": "Passive Networking & Structured Cabling",
+        "desc": "Fibre, copper cabling, racks, cabinets and containment for structured cabling projects.",
+        "items": {
+          "fibreOpticCable": { "name": "Fibre Optic Cable", "desc": "Individually sheathed single-mode and multi-mode fibre for backbone runs." },
+          "copperPatchCords": { "name": "Copper Patch Cords", "desc": "Factory-terminated Cat5e/6/6A patch cords for rack and desk connections." },
+          "bulkUtpFtp": { "name": "Bulk UTP / FTP Cable", "desc": "Unterminated UTP and FTP cable by the box for site-run structured cabling." },
+          "rj45Connectors": { "name": "RJ45 Connectors", "desc": "RJ45 jacks, plugs and keystones for on-site termination." },
+          "faceplates": { "name": "Faceplates", "desc": "Single and multi-port wall faceplates for outlet termination." },
+          "networkCabinets": { "name": "Network Cabinets", "desc": "Wall-mount and floor-standing cabinets for IDF/MDF rooms." },
+          "serverRacks": { "name": "Server Racks", "desc": "Open-frame and enclosed 19-inch racks for server and network gear." },
+          "cableTrunking": { "name": "Cable Trunking", "desc": "PVC trunking and raceway for surface-run cable containment." },
+          "pvcConduit": { "name": "PVC Conduit", "desc": "Rigid and flexible PVC conduit for concealed cable runs." },
+          "cableTesters": { "name": "Cable Testers", "desc": "Copper cable certifiers and continuity testers for commissioning." },
+          "otdr": { "name": "OTDR", "desc": "Optical time-domain reflectometers for fibre-link fault location." }
+        }
       }
     }
   },
