@@ -22,7 +22,7 @@ export default function SourcingServicesSection() {
   const isAr = params.locale === 'ar';
 
   return (
-    <section id="sourcing-services" className="section" style={{ background: 'var(--bg-secondary)' }}>
+    <section id="sourcing-services" className="section" style={{ background: '#fff' }}>
       <div className="container">
         <div style={{ textAlign: 'center', marginBottom: 'clamp(32px, 6vw, 64px)' }}>
           <span className="section-tag">{t('tag')}</span>

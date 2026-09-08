@@ -58,3 +58,8 @@ next-env.d.ts
 
 # generated knowledge-graph output (regenerate with the graphify skill)
 /graphify-out/
+
+# Raw client-supplied source photography for the sourcing-systems catalog —
+# optimized/selected copies live in public/sourcing-systems/; this folder is
+# just the original drop and isn't meant to ship in the repo.
+/Client shared/
