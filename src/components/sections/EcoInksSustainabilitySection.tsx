@@ -1,30 +1,18 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useRef, useEffect, useState } from 'react';
 import Reveal from '@/components/ui/Reveal';
+import CountUp from '@/components/ui/CountUp';
 
+// Delegates the count-up to the shared <CountUp> (eased, reduced-motion-aware,
+// SSR-safe) rather than a bespoke linear setInterval — this used to visibly
+// animate at a different rate than every other stat on the site.
 function StatCounter({ value, unit, label }: { value: string; unit: string; label: string }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [vis, setVis] = useState(false);
-  const western = value.replace(/[٠-٩]/g, d => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)));
-  const numVal = parseInt(western.replace(/[^\d]/g, '')) || 0;
-  const [count, setCount] = useState(0);
-  useEffect(() => {
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVis(true); }, { threshold: 0.5 });
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, []);
-  useEffect(() => {
-    if (!vis) return;
-    let cur = 0; const inc = numVal / 50;
-    const iv = setInterval(() => { cur += inc; if (cur >= numVal) { setCount(numVal); clearInterval(iv); } else setCount(Math.floor(cur)); }, 40);
-    return () => clearInterval(iv);
-  }, [vis, numVal]);
   return (
-    <div ref={ref} style={{ textAlign: 'center' }}>
+    <div style={{ textAlign: 'center' }}>
       <div style={{ fontSize: 'clamp(2rem,5vw,4rem)', fontWeight: 800, color: 'var(--accent-text)', fontFamily: 'var(--font-inter),sans-serif', lineHeight: 1 }}>
-        {count.toLocaleString()}<span style={{ fontSize: '0.5em', marginInlineStart: '4px' }}>{unit}</span>
+        <CountUp value={value} />
+        <span style={{ fontSize: '0.5em', marginInlineStart: '4px' }}>{unit}</span>
       </div>
       <div style={{ color: '#4B5563', fontSize: '0.8rem', marginTop: '8px', fontWeight: 600 }}>{label}</div>
     </div>

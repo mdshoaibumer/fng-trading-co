@@ -38,14 +38,13 @@ export default function EcoInksLeafletSection() {
         <div className="leaflet-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 'clamp(12px, 3vw, 32px)' }}>
           {features.map((feat, idx) => (
             <Reveal key={idx} delay={idx * 90} threshold={0.1}>
-            <div style={{ height: '100%',
+            <div className="card-lift leaflet-card" style={{ height: '100%',
               background: '#F9FAFB', border: '1px solid #F3F4F6', borderRadius: 'var(--radius-2xl)',
               padding: 'clamp(20px, 4vw, 40px) clamp(16px, 3vw, 32px)',
-              transition: 'all 200ms ease-out', cursor: 'default', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
-            }}
-              onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(141,184,51,0.4)'; e.currentTarget.style.transform = 'translateY(-5px)'; e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#F3F4F6'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.05)'; }}
-            >
+              cursor: 'default', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
+              ['--lift' as string]: '-5px',
+              ['--lift-shadow' as string]: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
+            }}>
               <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'rgba(141,184,51,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px', border: '1px solid rgba(141,184,51,0.2)' }}>
                 {feat.icon}
               </div>
@@ -59,6 +58,9 @@ export default function EcoInksLeafletSection() {
         </div>
       </div>
       <style jsx>{`
+        @media (hover: hover) {
+          .leaflet-card:hover { border-color: rgba(141, 184, 51, 0.4); }
+        }
         @media (max-width: 768px) {
           .leaflet-grid { grid-template-columns: 1fr !important; }
           .leaflet-accent { display: none !important; }

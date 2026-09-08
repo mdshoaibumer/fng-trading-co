@@ -179,7 +179,7 @@ export default function AdminRegionsPage() {
   const errors = validate(rows);
 
   return (
-    <div style={{ animation: 'fadeIn 0.5s ease-out' }}>
+    <div style={{ animation: 'fadeIn var(--admin-duration-page) var(--admin-ease-out)' }}>
       <div style={{ marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
         <div>
           <h1 style={{ fontSize: '2rem', fontWeight: 800, color: '#0F172A', marginBottom: '8px' }}>Regions</h1>

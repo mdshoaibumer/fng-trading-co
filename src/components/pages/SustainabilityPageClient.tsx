@@ -40,9 +40,9 @@ export default function SustainabilityPageClient() {
       </div>
       <div className="container" style={{ marginBottom: 'clamp(40px, 8vw, 80px)' }}>
         <div className="sp-stats" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 'clamp(16px, 3vw, 32px)' }}>
-          <StatCard value={`124 ${t('stats.co2.unit')}`} label={t('stats.co2.label')} />
-          <StatCard value={`2,500 ${t('stats.trees.unit')}`} label={t('stats.trees.label')} />
-          <StatCard value="85%" label={t('stats.plastic.label')} />
+          <StatCard value={`${t('stats.co2.value')} ${t('stats.co2.unit')}`} label={t('stats.co2.label')} />
+          <StatCard value={`${t('stats.trees.value')} ${t('stats.trees.unit')}`} label={t('stats.trees.label')} />
+          <StatCard value={`${t('stats.plastic.value')}${t('stats.plastic.unit')}`} label={t('stats.plastic.label')} />
         </div>
         {/* Honest provenance for the headline figures — they are estimates, not
             audited measurements, which matters for an eco-positioned brand. */}

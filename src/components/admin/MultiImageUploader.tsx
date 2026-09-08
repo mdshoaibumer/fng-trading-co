@@ -229,7 +229,7 @@ export default function MultiImageUploader({
               display: 'flex', alignItems: 'center', gap: '6px',
               background: '#F1F5F9', border: '1px solid #E2E8F0', borderRadius: '10px',
               padding: '8px 14px', fontSize: '0.8rem', fontWeight: 600,
-              color: '#475569', cursor: 'pointer', transition: 'all 0.2s',
+              color: '#475569', cursor: 'pointer', transition: 'all var(--admin-duration-fast)',
             }}
           >
             <LinkIcon size={14} />
@@ -243,7 +243,7 @@ export default function MultiImageUploader({
               background: 'var(--admin-accent)', border: 'none', borderRadius: '10px',
               padding: '8px 14px', fontSize: '0.8rem', fontWeight: 700,
               color: '#0F172A', cursor: uploading ? 'wait' : 'pointer',
-              opacity: uploading ? 0.7 : 1, transition: 'all 0.2s',
+              opacity: uploading ? 0.7 : 1, transition: 'all var(--admin-duration-fast)',
             }}
           >
             {uploading ? <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} /> : <Upload size={14} />}
@@ -256,7 +256,7 @@ export default function MultiImageUploader({
       {showUrlInput && (
         <div style={{
           display: 'flex', gap: '8px', marginBottom: '16px',
-          animation: 'fadeIn 0.2s ease-out',
+          animation: 'uploaderFadeIn var(--admin-duration-fast) var(--admin-ease-out)',
         }}>
           <input
             className="admin-input"
@@ -310,7 +310,7 @@ export default function MultiImageUploader({
           }}>
             <div style={{
               height: '100%', width: '100%', background: 'linear-gradient(90deg, #8DB833, #6B7C3F)',
-              borderRadius: '3px', transformOrigin: 'left', transition: 'transform 0.3s ease',
+              borderRadius: '3px', transformOrigin: 'left', transition: 'transform var(--admin-duration-base) var(--admin-ease-simple)',
               transform: `scaleX(${uploadProgress.total > 0 ? uploadProgress.done / uploadProgress.total : 0})`,
             }} />
           </div>
@@ -340,7 +340,7 @@ export default function MultiImageUploader({
                     : '1px solid #E2E8F0',
                 background: '#FFFFFF',
                 opacity: draggedIndex === idx ? 0.5 : 1,
-                transition: 'all 0.2s ease',
+                transition: 'all var(--admin-duration-fast) var(--admin-ease-simple)',
                 cursor: 'grab',
               }}
             >
@@ -424,7 +424,7 @@ export default function MultiImageUploader({
                       background: 'none', border: 'none', cursor: 'pointer',
                       fontSize: '0.65rem', fontWeight: 700, color: 'var(--admin-accent)',
                       padding: '2px 6px', borderRadius: '4px',
-                      transition: 'background 0.2s',
+                      transition: 'background var(--admin-duration-fast)',
                     }}
                     onMouseOver={(e) => (e.currentTarget.style.background = 'rgba(141,184,51,0.1)')}
                     onMouseOut={(e) => (e.currentTarget.style.background = 'none')}
@@ -443,7 +443,7 @@ export default function MultiImageUploader({
                   style={{
                     background: 'none', border: 'none', cursor: 'pointer',
                     color: '#EF4444', padding: '4px', borderRadius: '6px',
-                    display: 'flex', alignItems: 'center', transition: 'background 0.2s',
+                    display: 'flex', alignItems: 'center', transition: 'background var(--admin-duration-fast)',
                   }}
                   onMouseOver={(e) => (e.currentTarget.style.background = 'rgba(239,68,68,0.1)')}
                   onMouseOut={(e) => (e.currentTarget.style.background = 'none')}
@@ -468,7 +468,7 @@ export default function MultiImageUploader({
           display: 'flex', flexDirection: 'column',
           alignItems: 'center', justifyContent: 'center', gap: '12px',
           background: isDragOverZone ? 'rgba(141,184,51,0.05)' : '#FAFBFC',
-          cursor: 'pointer', transition: 'all 0.3s ease',
+          cursor: 'pointer', transition: 'all var(--admin-duration-base) var(--admin-ease-simple)',
           minHeight: activeImages.length > 0 ? '100px' : '180px',
         }}
       >
@@ -476,7 +476,7 @@ export default function MultiImageUploader({
           width: '48px', height: '48px', borderRadius: '14px',
           background: isDragOverZone ? 'rgba(141,184,51,0.15)' : '#F1F5F9',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          transition: 'all 0.3s ease',
+          transition: 'all var(--admin-duration-base) var(--admin-ease-simple)',
         }}>
           {isDragOverZone ? (
             <Plus size={24} color="var(--admin-accent)" />
@@ -509,10 +509,7 @@ export default function MultiImageUploader({
       />
 
       <style>{`
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-        @keyframes fadeIn {
+        @keyframes uploaderFadeIn {
           from { opacity: 0; transform: translateY(-4px); }
           to { opacity: 1; transform: translateY(0); }
         }

@@ -34,14 +34,11 @@ export default function SourcingCategoriesSection() {
         <div className="sc-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
           {CATEGORY_KEYS.map((key, i) => (
             <Reveal key={key} delay={(i % 4) * 80} from="scale" threshold={0.1}>
-            <div style={{ height: '100%',
+            <div className="card-lift category-card" style={{ height: '100%',
               padding: 'clamp(18px, 3vw, 24px)', borderRadius: 'var(--radius-lg)', background: '#fff', border: '1px solid var(--light-grey)',
-              transition: 'all 350ms var(--ease-spring)', textAlign: isAr ? 'right' : 'left',
-              cursor: 'default',
-            }}
-              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-6px)'; e.currentTarget.style.boxShadow = '0 12px 40px rgba(26,61,43,0.1)'; e.currentTarget.style.borderColor = 'rgba(141,184,51,0.3)'; }}
-              onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = 'var(--light-grey)'; }}
-            >
+              textAlign: isAr ? 'right' : 'left', cursor: 'default',
+              ['--lift-shadow' as string]: '0 12px 40px rgba(26,61,43,0.1)',
+            }}>
               <div style={{
                 width: '44px', height: '44px', borderRadius: 'var(--radius-md)',
                 background: 'linear-gradient(135deg,rgba(26,61,43,0.08),rgba(141,184,51,0.08))',
@@ -69,6 +66,9 @@ export default function SourcingCategoriesSection() {
         </p>
       </div>
       <style jsx>{`
+        @media (hover: hover) {
+          .category-card:hover { border-color: rgba(141, 184, 51, 0.3); }
+        }
         @media (max-width: 1024px) {
           .sc-grid { grid-template-columns: repeat(2, 1fr) !important; }
         }

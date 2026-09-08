@@ -101,7 +101,6 @@ export default function AdminDashboard() {
     return (
       <div style={{ display: 'flex', height: '50vh', alignItems: 'center', justifyContent: 'center', color: 'var(--admin-accent)' }}>
         <Loader2 size={40} style={{ animation: 'spin 1s linear infinite' }} />
-        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
     );
   }
@@ -110,7 +109,7 @@ export default function AdminDashboard() {
   const recentLeads = data?.recentLeads || [];
 
   return (
-    <div style={{ animation: 'fadeIn 0.5s ease-out' }}>
+    <div style={{ animation: 'fadeIn var(--admin-duration-page) var(--admin-ease-out)' }}>
       {/* Header */}
       <div className="page-header" style={{ marginBottom: '40px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
         <div>
@@ -230,13 +229,6 @@ export default function AdminDashboard() {
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
     </div>
   );
 }

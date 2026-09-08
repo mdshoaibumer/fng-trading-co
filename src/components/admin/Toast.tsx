@@ -25,25 +25,43 @@ let toastId = 0;
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
+  // Toasts play their slide-out before actually leaving the DOM, so a leaving
+  // toast needs to render for one more animation frame after it is
+  // "dismissed" — tracked separately rather than removed from `toasts`
+  // straight away.
+  const [leavingIds, setLeavingIds] = useState<Set<number>>(new Set());
   // One auto-dismiss timer per toast, so hover/focus can pause them and a
   // manual dismiss can cancel them. Errors get no timer — they persist until
   // dismissed, since a failure the operator missed is worse than clutter.
   const timers = useRef<Map<number, ReturnType<typeof setTimeout>>>(new Map());
   const AUTO_MS = 5000;
 
-  const remove = useCallback((id: number) => {
-    setToasts(prev => prev.filter(t => t.id !== id));
+  // Starts the exit animation; the toast leaves `toasts` only once it
+  // finishes (onAnimationEnd below) — an immediate filter skipped the exit
+  // entirely, so a toast just vanished instead of sliding out.
+  const startLeave = useCallback((id: number) => {
+    setLeavingIds(prev => new Set(prev).add(id));
     const timer = timers.current.get(id);
     if (timer) { clearTimeout(timer); timers.current.delete(id); }
+  }, []);
+
+  const finishLeave = useCallback((id: number) => {
+    setToasts(prev => prev.filter(t => t.id !== id));
+    setLeavingIds(prev => {
+      if (!prev.has(id)) return prev;
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
   }, []);
 
   const arm = useCallback((id: number, type: ToastType) => {
     if (type === 'error') return; // errors persist
     timers.current.set(id, setTimeout(() => {
-      setToasts(prev => prev.filter(t => t.id !== id));
+      startLeave(id);
       timers.current.delete(id);
     }, AUTO_MS));
-  }, []);
+  }, [startLeave]);
 
   const showToast = useCallback((message: string, type: ToastType = 'success') => {
     const id = ++toastId;
@@ -51,7 +69,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     arm(id, type);
   }, [arm]);
 
-  const dismiss = (id: number) => remove(id);
+  const dismiss = (id: number) => startLeave(id);
 
   // Pause every running timer while the stack is hovered or focused, and
   // re-arm the auto-dismissing ones on leave — so a reader is never raced by a
@@ -101,11 +119,13 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
       }}>
         {toasts.map(toast => {
           const c = colors[toast.type];
+          const leaving = leavingIds.has(toast.id);
           return (
             <div
               key={toast.id}
               role={toast.type === 'error' ? 'alert' : 'status'}
               aria-atomic="true"
+              onAnimationEnd={() => { if (leaving) finishLeave(toast.id); }}
               style={{
                 pointerEvents: 'auto',
                 display: 'flex',
@@ -120,7 +140,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                 fontWeight: 600,
                 fontSize: '0.9rem',
                 fontFamily: 'var(--font-inter), sans-serif',
-                animation: 'toastSlideIn 0.3s ease-out',
+                animation: leaving ? 'toastSlideOut 0.3s ease-in forwards' : 'toastSlideIn 0.3s ease-out',
                 minWidth: '300px',
                 maxWidth: '460px',
               }}
@@ -150,6 +170,10 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
         @keyframes toastSlideIn {
           from { opacity: 0; transform: translateX(40px); }
           to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes toastSlideOut {
+          from { opacity: 1; transform: translateX(0); }
+          to { opacity: 0; transform: translateX(40px); }
         }
       `}</style>
     </ToastContext.Provider>

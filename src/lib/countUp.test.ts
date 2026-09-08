@@ -43,6 +43,14 @@ describe('segmentValue', () => {
       { text: '% less', value: null, pad: 0 },
     ]);
   });
+
+  it('parses Arabic-Indic digits, keeping the authored glyphs as the text', () => {
+    expect(segmentValue('١٢٤')).toEqual([{ text: '١٢٤', value: 124, pad: 0 }]);
+  });
+
+  it('keeps a grouped Arabic-Indic number together, as authored in ar.json', () => {
+    expect(segmentValue('٢,٥٠٠')).toEqual([{ text: '٢,٥٠٠', value: 2500, pad: 0 }]);
+  });
 });
 
 describe('hasNumbers', () => {
@@ -51,6 +59,21 @@ describe('hasNumbers', () => {
   });
   it('is false for a purely textual value', () => {
     expect(hasNumbers(segmentValue('SABER'))).toBe(false);
+  });
+  it('is true for an Arabic-Indic value', () => {
+    expect(hasNumbers(segmentValue('٨٥٪'))).toBe(true);
+  });
+});
+
+describe('isGrouped', () => {
+  it('is true for an ASCII thousands separator', () => {
+    expect(isGrouped('2,500')).toBe(true);
+  });
+  it('is true for an Arabic-Indic thousands separator', () => {
+    expect(isGrouped('٢,٥٠٠')).toBe(true);
+  });
+  it('is false for an ungrouped value', () => {
+    expect(isGrouped('124')).toBe(false);
   });
 });
 
@@ -96,6 +119,13 @@ describe('renderCountUp', () => {
     // 2500 authored bare stays bare, so the animation cannot introduce a comma
     // the designer did not ask for.
     expect(at('2500', 0.5)).toBe('1250');
+  });
+
+  it('counts an Arabic-Indic value in Western digits, landing on the authored glyphs', () => {
+    // Mid-count is Western digits regardless of locale (same as every other
+    // stat); only the final, at-rest frame is the exact authored string.
+    expect(at('٢,٥٠٠', 0.5)).toBe('1,250');
+    expect(at('٢,٥٠٠', 1)).toBe('٢,٥٠٠');
   });
 });
 

@@ -1,49 +1,10 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { Printer, Leaf, TrendingUp, Droplet } from 'lucide-react';
-import { useIsClient } from '@/lib/useIsClient';
 import Reveal from '@/components/ui/Reveal';
-
-function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: string }) {
-  const [count, setCount] = useState(0);
-  const ref = useRef<HTMLDivElement>(null);
-  const [started, setStarted] = useState(false);
-  const isMounted = useIsClient();
-
-  useEffect(() => {
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setStarted(true); }, { threshold: 0.5 });
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!started) return;
-    const duration = 2000;
-    let startTime: number | null = null;
-    let rafId: number;
-    const tick = (now: number) => {
-      if (startTime === null) startTime = now;
-      const progress = Math.min(1, (now - startTime) / duration);
-      setCount(Math.floor(progress * target));
-      if (progress < 1) rafId = requestAnimationFrame(tick);
-    };
-    rafId = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafId);
-  }, [started, target]);
-
-  const displayedCount = isMounted ? count : target;
-
-  return (
-    <div ref={ref}>
-      <span style={{ fontSize: 'clamp(2rem,5vw,4rem)', fontWeight: 800, color: 'var(--accent-text)', fontFamily: 'var(--font-inter),sans-serif', lineHeight: 1 }}>
-        {displayedCount.toLocaleString()}{suffix}
-      </span>
-    </div>
-  );
-}
+import CountUp from '@/components/ui/CountUp';
 
 export default function FreePrinterSection() {
   const t = useTranslations('freePrinter');
@@ -59,7 +20,11 @@ export default function FreePrinterSection() {
         </div>
         <div className="fp-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: 'clamp(16px, 3vw, 32px)', marginBottom: 'clamp(32px, 6vw, 64px)' }}>
           <Reveal delay={0} from="start" className="glass" style={{ padding: 'clamp(20px, 4vw, 40px) clamp(16px, 3vw, 32px)', textAlign: isAr ? 'right' : 'center', background: 'rgba(247,248,245,0.8)' }}>
-            <AnimatedCounter target={500} suffix={isAr ? ' ＋' : '+'} />
+            <CountUp
+              value={isAr ? '٥٠٠ ＋' : '500+'}
+              durationMs={2000}
+              style={{ fontSize: 'clamp(2rem,5vw,4rem)', fontWeight: 800, color: 'var(--accent-text)', fontFamily: 'var(--font-inter),sans-serif', lineHeight: 1 }}
+            />
             <p style={{ color: '#6B7C3F', fontSize: '0.95rem', fontWeight: 600, marginTop: '8px', marginBottom: '16px', textAlign: isAr ? 'right' : 'center' }}>{t('earn.counter')}</p>
             <h3 style={{ color: 'var(--primary)', fontSize: 'clamp(1.1rem, 3vw, 1.4rem)', marginBottom: '12px', textAlign: isAr ? 'right' : 'center' }}>{t('earn.title')}</h3>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', maxWidth: '280px', margin: isAr ? '0 0 0 auto' : '0 auto', textAlign: isAr ? 'right' : 'center' }}>{t('earn.desc')}</p>
@@ -117,9 +82,9 @@ export default function FreePrinterSection() {
                 justifyContent: 'center', 
                 color: 'var(--primary)', 
                 fontSize: '0.8rem', 
-                fontWeight: 700, 
+                fontWeight: 700,
                 flexShrink: 0,
-                boxShadow: '0 4px 12px rgba(0,0,0,0.01)' 
+                boxShadow: '0 4px 12px rgba(0,0,0,0.01)'
               }}>
                 {partner}
               </div>

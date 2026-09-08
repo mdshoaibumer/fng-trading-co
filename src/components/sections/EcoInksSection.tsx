@@ -32,16 +32,14 @@ export default function EcoInksSection() {
         <div className="eco-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: 'clamp(12px, 3vw, 24px)' }}>
           {FEATURES.map((f, i) => (
             <Reveal key={f} delay={(i % 3) * 90} threshold={0.1}>
-            <div style={{ height: '100%',
+            <div className="card-lift eco-card" style={{ height: '100%',
               background: '#F9FAFB', border: '1px solid #F3F4F6', borderRadius: 'var(--radius-2xl)',
               padding: 'clamp(20px, 4vw, 32px) clamp(16px, 3vw, 28px)',
-              transition: 'all 350ms var(--ease-spring)',
               boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
-              textAlign: isAr ? 'right' : 'left'
-            }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(141,184,51,0.4)'; e.currentTarget.style.transform = 'translateY(-6px) scale(1.02)'; e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)'; }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = '#F3F4F6'; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.05)'; }}
-            >
+              textAlign: isAr ? 'right' : 'left',
+              ['--lift-scale' as string]: 1.02,
+              ['--lift-shadow' as string]: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
+            }}>
               <div style={{ 
                 width: '44px', height: '44px', borderRadius: 'var(--radius-md)', background: 'rgba(141,184,51,0.12)', 
                 display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '14px', 
@@ -59,6 +57,9 @@ export default function EcoInksSection() {
         </div>
       </div>
       <style jsx>{`
+        @media (hover: hover) {
+          .eco-card:hover { border-color: rgba(141, 184, 51, 0.4); }
+        }
         @media (max-width: 768px) {
           .eco-grid { grid-template-columns: 1fr !important; }
           .eco-glow { display: none !important; }

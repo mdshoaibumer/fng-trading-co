@@ -32,15 +32,12 @@ export default function SourcingServicesSection() {
         <div className="ss-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'clamp(16px, 3vw, 24px)' }}>
           {SERVICE_KEYS.map((key, i) => (
             <Reveal key={key} delay={(i % 3) * 100} threshold={0.1}>
-            <div style={{ height: '100%',
+            <div className="card-lift service-card" style={{ height: '100%',
               padding: 'clamp(20px, 4vw, 28px)', borderRadius: 'var(--radius-2xl)', background: '#fff',
               boxShadow: '0 4px 24px rgba(26,61,43,0.06)', border: '1px solid rgba(141,184,51,0.1)',
-              textAlign: isAr ? 'right' : 'left',
-              transition: 'all 350ms var(--ease-spring)', cursor: 'default',
-            }}
-              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-6px)'; e.currentTarget.style.boxShadow = '0 16px 40px rgba(26,61,43,0.12)'; e.currentTarget.style.borderColor = 'rgba(141,184,51,0.35)'; }}
-              onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 24px rgba(26,61,43,0.06)'; e.currentTarget.style.borderColor = 'rgba(141,184,51,0.1)'; }}
-            >
+              textAlign: isAr ? 'right' : 'left', cursor: 'default',
+              ['--lift-shadow' as string]: '0 16px 40px rgba(26,61,43,0.12)',
+            }}>
               <div style={{
                 width: '48px', height: '48px', borderRadius: '14px', background: 'linear-gradient(135deg,var(--primary),#4A5E2A)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px',
@@ -56,6 +53,9 @@ export default function SourcingServicesSection() {
         </div>
       </div>
       <style jsx>{`
+        @media (hover: hover) {
+          .service-card:hover { border-color: rgba(141, 184, 51, 0.35); }
+        }
         @media (max-width: 768px) {
           .ss-grid { grid-template-columns: 1fr !important; }
         }

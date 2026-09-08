@@ -163,7 +163,7 @@ export default function AdminLeadsPage() {
   };
 
   return (
-    <div style={{ animation: 'fadeIn 0.5s ease-out' }}>
+    <div style={{ animation: 'fadeIn var(--admin-duration-page) var(--admin-ease-out)' }}>
       {/* Header */}
       <div className="page-header" style={{ marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
@@ -224,7 +224,6 @@ export default function AdminLeadsPage() {
         <div role="status" aria-live="polite" style={{ display: 'flex', height: '30vh', alignItems: 'center', justifyContent: 'center', color: 'var(--admin-accent)' }}>
           <Loader2 size={32} style={{ animation: 'spin 1s linear infinite' }} />
           <span className="sr-only" style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)' }}>Loading leads…</span>
-          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
         </div>
       ) : error ? (
         <div className="admin-card" role="alert" style={{ textAlign: 'center', padding: '60px 20px' }}>
@@ -359,7 +358,7 @@ export default function AdminLeadsPage() {
                     <button
                       onClick={() => deleteLead(lead.id)}
                       aria-label="Delete lead"
-                      style={{ background: 'none', border: 'none', color: '#CBD5E1', cursor: 'pointer', padding: '8px', borderRadius: '8px', transition: 'color 0.2s' }}
+                      style={{ background: 'none', border: 'none', color: '#CBD5E1', cursor: 'pointer', padding: '8px', borderRadius: '8px', transition: 'color var(--admin-duration-fast)' }}
                       onMouseEnter={(e) => (e.currentTarget.style.color = '#EF4444')}
                       onMouseLeave={(e) => (e.currentTarget.style.color = '#CBD5E1')}
                     >
@@ -372,13 +371,6 @@ export default function AdminLeadsPage() {
           })}
         </div>
       )}
-
-      <style jsx>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
     </div>
   );
 }

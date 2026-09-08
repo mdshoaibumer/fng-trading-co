@@ -54,6 +54,11 @@ const INQUIRY_TEXT: Record<'printer' | 'equipment', { ar: (name: string) => stri
 export default function ProductPageClient({ product, whatsapp, locale, itemType }: ProductPageClientProps) {
   const router = useRouter();
   const isAr = locale === 'ar';
+  // Same destination as the breadcrumb's catalog rung — used by the Back
+  // button too so it can carry a transitionTypes hint. router.back() doesn't
+  // accept one (only push()/replace() do), so it never got the directional
+  // slide its neighboring breadcrumb links get.
+  const catalogHref = itemType === 'printer' ? `/${locale}/printers` : `/${locale}/equipment`;
   const { current: currentImage, goTo: setCurrentImage, next: nextImage, prev: prevImage } = useCarousel({
     length: product.images.length,
   });
@@ -95,7 +100,7 @@ export default function ProductPageClient({ product, whatsapp, locale, itemType 
         {/* Breadcrumbs & Back Button */}
         <div style={{ marginBottom: '32px', display: 'flex', alignItems: 'center', gap: '16px', flexDirection: isAr ? 'row-reverse' : 'row' }}>
           <button
-            onClick={() => router.back()}
+            onClick={() => router.push(catalogHref, { transitionTypes: ['nav-back'] })}
             style={{
               background: 'white', border: '1px solid #E0E7DE', borderRadius: 'var(--radius-md)',
               padding: '8px 12px', display: 'flex', alignItems: 'center', gap: '8px',
@@ -113,7 +118,7 @@ export default function ProductPageClient({ product, whatsapp, locale, itemType 
             <span aria-hidden="true">/</span>
             {/* Catalog rung — the level the visitor came from. */}
             <Link
-              href={itemType === 'printer' ? `/${locale}/printers` : `/${locale}/equipment`}
+              href={catalogHref}
               transitionTypes={['nav-back']}
               style={{ color: 'var(--accent-text)', textDecoration: 'none', fontWeight: 600 }}
             >
@@ -133,7 +138,7 @@ export default function ProductPageClient({ product, whatsapp, locale, itemType 
             {/* The other half of the catalog card's morph — same name, so the
                 card's image container animates into this one on the way in and
                 back out again on the way out. */}
-            <ViewTransition name={`product-image-${product.id}`} share="morph">
+            <ViewTransition name={`product-image-${product.id}`} share="morph" default="none">
             <div
               className="main-image-container"
               style={{

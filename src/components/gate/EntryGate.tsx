@@ -52,7 +52,18 @@ export default function EntryGate() {
   const Arrow = isAr ? ArrowLeft : ArrowRight;
   const [open, setOpen] = useState(true);
   const [mounted, setMounted] = useState(true);
+  // Starts false so the first paint is the pre-entrance state; a rAF later
+  // flips it, which is what actually makes the fade/scale-in transition play
+  // instead of starting and ending at the same value. Separate from `open` —
+  // that one also drives the post-dismiss unmount timer below, which must not
+  // fire on mount.
+  const [entered, setEntered] = useState(false);
   const markSeen = markGateSeen;
+
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => setEntered(true));
+    return () => cancelAnimationFrame(raf);
+  }, []);
 
   const dismiss = () => {
     markSeen();
@@ -111,8 +122,10 @@ export default function EntryGate() {
         position: 'fixed', inset: 0, zIndex: 2000,
         background: 'linear-gradient(160deg, var(--bg-darker) 0%, var(--primary) 55%, #12301F 100%)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        opacity: open ? 1 : 0, pointerEvents: open ? 'auto' : 'none',
-        transition: 'opacity 500ms var(--ease-ink)',
+        opacity: entered && open ? 1 : 0,
+        transform: entered ? 'scale(1)' : 'scale(0.98)',
+        pointerEvents: open ? 'auto' : 'none',
+        transition: 'opacity 500ms var(--ease-ink), transform 500ms var(--ease-ink)',
         overflowY: 'auto', padding: 'clamp(24px, 6vw, 48px) clamp(16px, 5vw, 24px)',
       }}
     >
@@ -161,18 +174,29 @@ export default function EntryGate() {
             display: 'inline-block', color: 'var(--accent)', fontFamily: 'var(--font-ibm-plex-mono), monospace',
             fontSize: 'var(--text-xs)', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase',
             marginBottom: '14px',
+            opacity: entered ? 1 : 0,
+            transform: entered ? 'translateY(0)' : 'translateY(10px)',
+            transition: 'opacity 450ms var(--ease-ink), transform 450ms var(--ease-ink)',
           }}>
             {t('eyebrow')}
           </span>
           <h1 style={{
             fontSize: 'clamp(1.6rem, 4vw, 2.75rem)', fontWeight: 800, color: '#fff', margin: 0,
             fontFamily: isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif',
+            opacity: entered ? 1 : 0,
+            transform: entered ? 'translateY(0)' : 'translateY(10px)',
+            transition: 'opacity 450ms var(--ease-ink) 80ms, transform 450ms var(--ease-ink) 80ms',
           }}>
             {t('title')}
           </h1>
         </div>
 
-        <div className="gate-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(16px, 3vw, 32px)' }}>
+        <div className="gate-grid" style={{
+          display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(16px, 3vw, 32px)',
+          opacity: entered ? 1 : 0,
+          transform: entered ? 'translateY(0)' : 'translateY(10px)',
+          transition: 'opacity 450ms var(--ease-ink) 160ms, transform 450ms var(--ease-ink) 160ms',
+        }}>
           {/* Printers panel */}
           <a
             href={`/${locale}`}

@@ -106,7 +106,7 @@ export default function AdminLoginPage() {
                   color: '#FFFFFF',
                   fontSize: '1rem',
                   boxSizing: 'border-box',
-                  transition: 'all 0.2s'
+                  transition: 'all var(--admin-duration-fast)'
                 }}
               />
             </div>
@@ -127,7 +127,7 @@ export default function AdminLoginPage() {
               fontWeight: 800,
               cursor: loggingIn ? 'not-allowed' : 'pointer',
               opacity: loggingIn ? 0.7 : 1,
-              transition: 'all 0.2s',
+              transition: 'all var(--admin-duration-fast)',
               boxShadow: '0 8px 24px rgba(141, 184, 51, 0.2)'
             }}
           >

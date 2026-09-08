@@ -435,25 +435,29 @@ p {
 /* Shared card hover. Compositor-only — transform and box-shadow, never
    top/height.
 
-   The distance and shadow are custom properties because the existing hovers
-   across the site are deliberately not identical: the toner cards tint their
-   shadow to each product family, the trust cards lift less far than the
-   category cards. A call site overrides what it needs
-   (style={{ '--lift': '-4px' }}) and inherits the rest.
+   The distance, shadow and scale are custom properties because the existing
+   hovers across the site are deliberately not identical: the toner cards tint
+   their shadow to each product family, the trust cards lift less far than the
+   category cards, one section adds a touch of scale. A call site overrides
+   what it needs (style={{ '--lift': '-4px' }}) and inherits the rest —
+   --lift-scale defaults to 1 (no scale) so most call sites never set it.
 
    Gated on (hover: hover) — the hand-rolled onMouseEnter versions this
    replaces fire on a touch tap and leave the card stuck in its lifted state
-   with no pointer to leave with. */
+   with no pointer to leave with. Border-color-on-hover, where a section wants
+   it, is deliberately not part of this shared class — see each call site's
+   own scoped `:hover` rule. */
 .card-lift {
   --lift: -6px;
   --lift-shadow: 0 18px 40px rgba(26, 61, 43, 0.12);
+  --lift-scale: 1;
   transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
               box-shadow 320ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @media (hover: hover) {
   .card-lift:hover {
-    transform: translateY(var(--lift));
+    transform: translateY(var(--lift)) scale(var(--lift-scale));
     box-shadow: var(--lift-shadow);
   }
 }

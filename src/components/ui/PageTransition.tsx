@@ -22,6 +22,14 @@ import { ViewTransition } from 'react';
  *
  * The CSS lives in globals.css under VIEW TRANSITIONS. Browsers without the
  * View Transitions API simply navigate, with no animation and no error.
+ *
+ * Nested inside is a second, untyped ViewTransition pairing with loading.tsx's
+ * `exit="slide-down"` skeleton: a plain `enter="slide-up"` (not a type map)
+ * fires on whatever transition mounts this content, which in practice is only
+ * ever the untyped Suspense reveal — the outer wrapper above already owns any
+ * typed navigation, and a suspended destination's real content never mounts
+ * in the same commit as that navigation (see the docs' "Animate loading
+ * states with Suspense reveals" step).
  */
 export default function PageTransition({ children }: { children: React.ReactNode }) {
   return (
@@ -30,7 +38,9 @@ export default function PageTransition({ children }: { children: React.ReactNode
       exit={{ 'nav-forward': 'nav-forward', 'nav-back': 'nav-back', 'nav-lateral': 'fade-out', default: 'none' }}
       default="none"
     >
-      {children}
+      <ViewTransition enter="slide-up" default="none">
+        {children}
+      </ViewTransition>
     </ViewTransition>
   );
 }

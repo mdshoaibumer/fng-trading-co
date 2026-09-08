@@ -125,7 +125,7 @@ export default function ProductCatalogAdmin({ config }: { config: ProductCatalog
   if (loading) return <div>{config.loadingText}</div>;
 
   return (
-    <div style={{ animation: 'fadeIn 0.5s ease-out' }}>
+    <div style={{ animation: 'fadeIn var(--admin-duration-page) var(--admin-ease-out)' }}>
       <AdminPageHeader
         title={config.title}
         subtitle={config.subtitle}
@@ -365,10 +365,6 @@ export default function ProductCatalogAdmin({ config }: { config: ProductCatalog
           color: #64748B;
           margin-bottom: 6px;
           margin-left: 4px;
-        }
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
         }
       `}</style>
     </div>

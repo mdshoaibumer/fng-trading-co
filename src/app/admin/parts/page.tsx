@@ -113,7 +113,7 @@ export default function AdminPartsPage() {
   if (loading) return <div>Loading parts catalog...</div>;
 
   return (
-    <div style={{ animation: 'fadeIn 0.5s ease-out' }}>
+    <div style={{ animation: 'fadeIn var(--admin-duration-page) var(--admin-ease-out)' }}>
       <div style={{ marginBottom: '40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <h1 style={{ fontSize: '2rem', fontWeight: 800, color: '#0F172A', marginBottom: '8px' }}>Parts Inventory</h1>
@@ -224,13 +224,6 @@ export default function AdminPartsPage() {
           );
         })}
       </div>
-
-      <style jsx>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
     </div>
   );
 }

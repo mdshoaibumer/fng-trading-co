@@ -20,6 +20,30 @@
   --admin-surface: #FFFFFF;
   --admin-surface-alt: #F1F5F9;
   --admin-danger: #EF4444;
+
+  /* Motion. Deliberately smaller than the public site's easing system
+     (globals.css) — admin is a tool opened dozens of times a day, where
+     speed and predictability beat flair. Two durations, two easings, enough
+     to stop every transition being a hand-typed "0.2s ease" repeated across
+     files. */
+  --admin-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --admin-ease-simple: ease;
+  --admin-ease-out: ease-out;
+  --admin-duration-fast: 0.2s;
+  --admin-duration-base: 0.3s;
+  --admin-duration-page: 0.5s;
+}
+
+/* Shared entrance for a page's root wrapper — was a `@keyframes fadeIn` block
+   copy-pasted into seven admin files. */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Shared spinner, same reasoning — three identical copies. */
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 /* Admin routes don't load the public site's globals.css, which carries the
@@ -89,7 +113,7 @@ body {
 .admin-sidebar {
   background: var(--admin-ink);
   color: var(--admin-light);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all var(--admin-duration-base) var(--admin-ease);
   display: flex;
   flex-direction: column;
   position: sticky;
@@ -127,7 +151,7 @@ body {
   text-decoration: none;
   color: var(--admin-muted);
   margin-bottom: 4px;
-  transition: all 0.2s ease;
+  transition: all var(--admin-duration-fast) var(--admin-ease-simple);
   white-space: nowrap;
   overflow: hidden;
   width: 100%;
@@ -168,7 +192,7 @@ body {
   justify-content: center;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  transition: transform 0.3s ease;
+  transition: transform var(--admin-duration-base) var(--admin-ease-simple);
 }
 
 .admin-sidebar.expanded .sidebar-toggle { transform: rotate(180deg); }
@@ -197,7 +221,7 @@ body {
   font-weight: 600;
   font-size: 0.9rem;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--admin-duration-fast) var(--admin-ease-simple);
   border: none;
   white-space: nowrap;
 }
@@ -235,7 +259,7 @@ body {
   font-size: 0.95rem;
   color: var(--admin-text);
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color var(--admin-duration-fast);
 }
 
 .admin-input:focus {
@@ -265,7 +289,7 @@ body {
     /* Slide via transform (compositor-only) rather than the `left` layout
        property, which reflowed on every animation frame. */
     transform: translateX(-100%);
-    transition: transform 0.3s ease;
+    transition: transform var(--admin-duration-base) var(--admin-ease-simple);
   }
 
   .admin-sidebar.mobile-open {

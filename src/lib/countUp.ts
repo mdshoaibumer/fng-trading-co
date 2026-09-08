@@ -12,8 +12,13 @@
  */
 
 // Digit runs, keeping thousands separators together so "2,500" is one number
-// rather than "2" and "500".
-const NUMERIC_RUN = /\d[\d,]*/g;
+// rather than "2" and "500". Arabic-Indic digits (used throughout the ar
+// locale, e.g. "٢,٥٠٠") count alongside ASCII ones.
+const NUMERIC_RUN = /[\d٠-٩][\d,٠-٩]*/g;
+
+const ARABIC_INDIC_DIGITS = '٠١٢٣٤٥٦٧٨٩';
+const toWesternDigits = (s: string): string =>
+  s.replace(/[٠-٩]/g, (d) => String(ARABIC_INDIC_DIGITS.indexOf(d)));
 
 export interface CountUpSegment {
   /** The literal text of this run. */
@@ -26,8 +31,8 @@ export interface CountUpSegment {
 
 export const easeOutCubic = (t: number): number => 1 - Math.pow(1 - t, 3);
 
-/** True when the value contains a grouped number like "2,500". */
-export const isGrouped = (value: string): boolean => /\d,\d/.test(value);
+/** True when the value contains a grouped number like "2,500" or "٢,٥٠٠". */
+export const isGrouped = (value: string): boolean => /[\d٠-٩],[\d٠-٩]/.test(value);
 
 export function segmentValue(value: string): CountUpSegment[] {
   const out: CountUpSegment[] = [];
@@ -38,7 +43,7 @@ export function segmentValue(value: string): CountUpSegment[] {
     const raw = match[0];
     out.push({
       text: raw,
-      value: Number(raw.replace(/,/g, '')),
+      value: Number(toWesternDigits(raw).replace(/,/g, '')),
       pad: /^0\d/.test(raw) ? raw.length : 0,
     });
     last = start + raw.length;

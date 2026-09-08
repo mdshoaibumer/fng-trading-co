@@ -108,7 +108,7 @@ export default function AdminSettingsPage() {
   if (!settings) return <div>Failed to load settings. Refresh to try again.</div>;
 
   return (
-    <div style={{ animation: 'fadeIn 0.5s ease-out' }}>
+    <div style={{ animation: 'fadeIn var(--admin-duration-page) var(--admin-ease-out)' }}>
       <div className="settings-header">
         <div>
           <h1 style={{ fontSize: '2rem', fontWeight: 800, color: '#0F172A', marginBottom: '8px' }}>Global Settings</h1>
@@ -163,7 +163,7 @@ export default function AdminSettingsPage() {
                         backgroundColor: pwdStrength >= level 
                           ? (pwdStrength < 2 ? '#EF4444' : pwdStrength < 4 ? '#EAB308' : '#22C55E') 
                           : '#E2E8F0',
-                        transition: 'background-color 0.3s ease'
+                        transition: 'background-color var(--admin-duration-base) var(--admin-ease-simple)'
                       }} />
                     ))}
                   </div>
@@ -403,10 +403,6 @@ export default function AdminSettingsPage() {
           .full-width {
             grid-column: 1;
           }
-        }
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
         }
       `}</style>
     </div>

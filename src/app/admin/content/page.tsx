@@ -85,7 +85,7 @@ export default function AdminContentPage() {
   const sections = Array.from(new Set([...Object.keys(data.en ?? {}), ...Object.keys(data.ar ?? {})])).filter(s => s !== 'meta');
 
   return (
-    <div style={{ animation: 'fadeIn 0.5s ease-out' }}>
+    <div style={{ animation: 'fadeIn var(--admin-duration-page) var(--admin-ease-out)' }}>
       <div style={{ marginBottom: '40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <h1 style={{ fontSize: '2rem', fontWeight: 800, color: '#0F172A', marginBottom: '8px' }}>Site Content Editor</h1>
@@ -120,7 +120,7 @@ export default function AdminContentPage() {
               cursor: 'pointer',
               background: activeTab === 'en' ? '#FFFFFF' : 'transparent',
               color: activeTab === 'en' ? '#0F172A' : '#64748B',
-              transition: 'all 0.2s'
+              transition: 'all var(--admin-duration-fast)'
             }}
           >
             English (EN)
@@ -135,7 +135,7 @@ export default function AdminContentPage() {
               cursor: 'pointer',
               background: activeTab === 'ar' ? '#FFFFFF' : 'transparent',
               color: activeTab === 'ar' ? '#0F172A' : '#64748B',
-              transition: 'all 0.2s'
+              transition: 'all var(--admin-duration-fast)'
             }}
           >
             Arabic (AR)
@@ -199,13 +199,6 @@ export default function AdminContentPage() {
           </div>
         ))}
       </div>
-
-      <style jsx>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
     </div>
   );
 }
