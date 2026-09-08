@@ -84,7 +84,6 @@ export default function FreePrinterSection() {
                 fontSize: '0.8rem', 
                 fontWeight: 700,
                 flexShrink: 0,
-                boxShadow: '0 4px 12px rgba(0,0,0,0.01)'
               }}>
                 {partner}
               </div>

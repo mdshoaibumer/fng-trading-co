@@ -62,8 +62,12 @@ export default function EcoInksSustainabilitySection() {
             flex-direction: column !important;
             align-items: flex-start !important;
             gap: 24px !important;
-            padding-left: 24px !important;
-            border-left: 2px solid rgba(141,184,51,0.3) !important;
+            /* Logical properties, not left/right — align-items: flex-start already
+               follows dir="rtl" (flips to the right), so a physical padding-left/
+               border-left would detach the guide line from the content it connects
+               to in Arabic. */
+            padding-inline-start: 24px !important;
+            border-inline-start: 2px solid rgba(141,184,51,0.3) !important;
           }
         }
       `}</style>

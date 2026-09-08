@@ -46,11 +46,14 @@ export default function ContactPageClient({ email }: { email?: string }) {
     } catch { setStatus('error'); setErrorMsg(''); }
   };
 
+  // No outline:none here — the global :focus-visible ring in globals.css is a
+  // deliberately engineered two-ring halo (a single accent color failed 3:1
+  // contrast on one of the two backgrounds this site uses); inputs keep it
+  // instead of substituting a border/background swap.
   const inputStyle: React.CSSProperties = {
     width: '100%', padding: '16px 20px', borderRadius: 'var(--radius-lg)',
     border: '1px solid #E5E7EB', background: '#F9FAFB',
-    color: '#111827', fontSize: 'var(--text-base)', outline: 'none',
-    transition: 'all 200ms ease',
+    color: '#111827', fontSize: 'var(--text-base)',
     fontFamily: isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif',
   };
 
@@ -219,16 +222,12 @@ export default function ContactPageClient({ email }: { email?: string }) {
                   <div>
                     <label htmlFor="contact-page-name" className="sr-only">{t('form.name')}</label>
                     <input id="contact-page-name" style={inputStyle} placeholder={t('form.name')} required aria-required="true" autoComplete="name" value={form.name}
-                      onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                      onFocus={e => { e.target.style.borderColor = 'var(--accent)'; e.target.style.background = '#fff'; }}
-                      onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.background = '#F9FAFB'; }} />
+                      onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
                   </div>
                   <div>
                     <label htmlFor="contact-page-company" className="sr-only">{t('form.company')}</label>
                     <input id="contact-page-company" style={inputStyle} placeholder={t('form.company')} required aria-required="true" autoComplete="organization" value={form.company}
-                      onChange={e => setForm(f => ({ ...f, company: e.target.value }))}
-                      onFocus={e => { e.target.style.borderColor = 'var(--accent)'; e.target.style.background = '#fff'; }}
-                      onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.background = '#F9FAFB'; }} />
+                      onChange={e => setForm(f => ({ ...f, company: e.target.value }))} />
                   </div>
                 </div>
 
@@ -236,16 +235,12 @@ export default function ContactPageClient({ email }: { email?: string }) {
                   <div>
                     <label htmlFor="contact-page-email" className="sr-only">{t('form.email')}</label>
                     <input id="contact-page-email" style={inputStyle} placeholder={t('form.email')} type="email" required aria-required="true" autoComplete="email" value={form.email}
-                      onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                      onFocus={e => { e.target.style.borderColor = 'var(--accent)'; e.target.style.background = '#fff'; }}
-                      onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.background = '#F9FAFB'; }} />
+                      onChange={e => setForm(f => ({ ...f, email: e.target.value }))} />
                   </div>
                   <div>
                     <label htmlFor="contact-page-phone" className="sr-only">{t('form.phone')}</label>
                     <input id="contact-page-phone" style={inputStyle} placeholder={t('form.phone')} type="tel" required aria-required="true" autoComplete="tel" value={form.phone}
-                      onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
-                      onFocus={e => { e.target.style.borderColor = 'var(--accent)'; e.target.style.background = '#fff'; }}
-                      onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.background = '#F9FAFB'; }} />
+                      onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} />
                   </div>
                 </div>
 
@@ -262,26 +257,20 @@ export default function ContactPageClient({ email }: { email?: string }) {
                   <div>
                     <label htmlFor="contact-page-city" className="sr-only">{t('form.city')}</label>
                     <input id="contact-page-city" style={inputStyle} placeholder={t('form.city')} value={form.city} required aria-required="true" autoComplete="address-level2"
-                      onChange={e => setForm(f => ({ ...f, city: e.target.value }))}
-                      onFocus={e => { e.target.style.borderColor = 'var(--accent)'; e.target.style.background = '#fff'; }}
-                      onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.background = '#F9FAFB'; }} />
+                      onChange={e => setForm(f => ({ ...f, city: e.target.value }))} />
                   </div>
                 </div>
 
                 <div>
                   <label htmlFor="contact-page-industry" className="sr-only">{t('form.industry')}</label>
                   <input id="contact-page-industry" style={inputStyle} placeholder={t('form.industry')} value={form.industry} required
-                    onChange={e => setForm(f => ({ ...f, industry: e.target.value }))}
-                    onFocus={e => { e.target.style.borderColor = 'var(--accent)'; e.target.style.background = '#fff'; }}
-                    onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.background = '#F9FAFB'; }} />
+                    onChange={e => setForm(f => ({ ...f, industry: e.target.value }))} />
                 </div>
 
                 <div>
                   <label htmlFor="contact-page-message" className="sr-only">{t('form.message')}</label>
                   <textarea id="contact-page-message" style={{ ...inputStyle, minHeight: '120px', resize: 'vertical' }} placeholder={t('form.message')} value={form.message}
-                    onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
-                    onFocus={e => { e.target.style.borderColor = 'var(--accent)'; e.target.style.background = '#fff'; }}
-                    onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.background = '#F9FAFB'; }} />
+                    onChange={e => setForm(f => ({ ...f, message: e.target.value }))} />
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>

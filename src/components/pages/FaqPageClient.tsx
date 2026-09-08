@@ -86,18 +86,24 @@ export default function FaqPageClient() {
                 </div>
               </button>
               
+              {/* grid-rows trick: animates to the content's real height (no magic
+                  max-height cap that would silently clip a longer future answer),
+                  same pattern as PrinterPartsCatalogSection.tsx. */}
               <div
                 id={`faq-answer-${i}`}
                 role="region"
-                style={{
-                maxHeight: openIndex === i ? '500px' : '0',
-                opacity: openIndex === i ? 1 : 0,
-                transition: 'all 300ms ease',
-                padding: openIndex === i ? '0 clamp(20px, 4vw, 32px) clamp(20px, 4vw, 32px) clamp(20px, 4vw, 32px)' : '0 clamp(20px, 4vw, 32px)'
-              }}>
-                <p style={{ color: 'var(--text-secondary)', lineHeight: 1.7, fontSize: '1.05rem', margin: 0, textAlign: isAr ? 'right' : 'left' }}>
-                  {faq.a}
-                </p>
+                style={{ display: 'grid', gridTemplateRows: openIndex === i ? '1fr' : '0fr', transition: 'grid-template-rows 400ms var(--ease-ink)' }}>
+                <div style={{
+                  overflow: 'hidden',
+                  minHeight: 0,
+                  opacity: openIndex === i ? 1 : 0,
+                  transition: 'opacity 300ms ease',
+                  padding: openIndex === i ? '0 clamp(20px, 4vw, 32px) clamp(20px, 4vw, 32px) clamp(20px, 4vw, 32px)' : '0 clamp(20px, 4vw, 32px)'
+                }}>
+                  <p style={{ color: 'var(--text-secondary)', lineHeight: 1.7, fontSize: '1.05rem', margin: 0, textAlign: isAr ? 'right' : 'left' }}>
+                    {faq.a}
+                  </p>
+                </div>
               </div>
             </div>
             </Reveal>

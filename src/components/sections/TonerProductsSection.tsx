@@ -7,7 +7,7 @@ import { Leaf, Recycle, ShieldCheck, Award, Target, Sparkles, DollarSign, Zap, B
 import { useCarousel } from '@/hooks/useCarousel';
 import Reveal from '@/components/ui/Reveal';
 
-function ImageCarousel({ images, alt }: { images: string[]; alt: string }) {
+function ImageCarousel({ images, alt, isAr }: { images: string[]; alt: string; isAr: boolean }) {
   const { current, goTo: setCurrent, next, prev, pauseHandlers } = useCarousel({ length: images.length, autoplayMs: 4000 });
 
   return (
@@ -24,45 +24,56 @@ function ImageCarousel({ images, alt }: { images: string[]; alt: string }) {
       ))}
       {images.length > 1 && (
         <>
+          {/* 44x44 touch target and RTL-mirrored side/arrow direction, matching
+              the same carousel pattern in ProductCard.tsx. */}
           <button onClick={prev}
-            aria-label="Previous image"
+            aria-label={isAr ? 'الصورة السابقة' : 'Previous image'}
             style={{
-              position: 'absolute', left: '8px', top: '50%', transform: 'translateY(-50%)',
+              position: 'absolute', left: isAr ? 'auto' : '8px', right: isAr ? '8px' : 'auto', top: '50%', transform: 'translateY(-50%)',
               background: 'rgba(255,255,255,0.85)', border: 'none', borderRadius: '50%',
-              width: '32px', height: '32px', cursor: 'pointer', display: 'flex',
+              width: '44px', height: '44px', cursor: 'pointer', display: 'flex',
               alignItems: 'center', justifyContent: 'center', zIndex: 3,
               boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
             }}
           >
-            <ChevronLeft size={16} color="#333" />
+            {isAr ? <ChevronRight size={16} color="#333" /> : <ChevronLeft size={16} color="#333" />}
           </button>
           <button onClick={next}
-            aria-label="Next image"
+            aria-label={isAr ? 'الصورة التالية' : 'Next image'}
             style={{
-              position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)',
+              position: 'absolute', right: isAr ? 'auto' : '8px', left: isAr ? '8px' : 'auto', top: '50%', transform: 'translateY(-50%)',
               background: 'rgba(255,255,255,0.85)', border: 'none', borderRadius: '50%',
-              width: '32px', height: '32px', cursor: 'pointer', display: 'flex',
+              width: '44px', height: '44px', cursor: 'pointer', display: 'flex',
               alignItems: 'center', justifyContent: 'center', zIndex: 3,
               boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
             }}
           >
-            <ChevronRight size={16} color="#333" />
+            {isAr ? <ChevronLeft size={16} color="#333" /> : <ChevronRight size={16} color="#333" />}
           </button>
           <div style={{
             position: 'absolute', bottom: '10px', left: '50%', transform: 'translateX(-50%)',
-            display: 'flex', gap: '6px', zIndex: 3,
+            display: 'flex', gap: '2px', zIndex: 3,
           }}>
             {images.map((_, i) => (
+              /* 24x24 transparent hit area (WCAG 2.5.8) wrapping the small visual
+                 pill, matching ProductCard.tsx's dot pattern. */
               <button key={i} onClick={() => setCurrent(i)}
-                aria-label={`Go to image ${i + 1}`}
+                aria-label={isAr ? `عرض الصورة ${i + 1}` : `Go to image ${i + 1}`}
+                aria-current={i === current}
                 style={{
+                  width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  background: 'transparent', border: 'none', padding: 0, cursor: 'pointer',
+                }}
+              >
+                <span style={{
+                  display: 'block',
                   width: i === current ? '20px' : '8px', height: '8px',
-                  borderRadius: '4px', border: 'none', cursor: 'pointer',
+                  borderRadius: '4px',
                   background: i === current ? '#fff' : 'rgba(255,255,255,0.5)',
                   transition: 'all 300ms ease',
                   boxShadow: '0 1px 4px rgba(0,0,0,0.2)',
-                }}
-              />
+                }} />
+              </button>
             ))}
           </div>
         </>
@@ -166,7 +177,7 @@ export default function TonerProductsSection() {
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               position: 'relative',
             }}>
-              <ImageCarousel images={GREEN_IMAGES} alt="EcoInks Green Toner" />
+              <ImageCarousel images={GREEN_IMAGES} alt="EcoInks Green Toner" isAr={isAr} />
               <div style={{
                 position: 'absolute', top: '16px', left: isAr ? 'auto' : '16px', right: isAr ? '16px' : 'auto',
                 background: 'linear-gradient(135deg, #16A34A, #15803D)', color: '#fff',
@@ -227,7 +238,7 @@ export default function TonerProductsSection() {
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               position: 'relative',
             }}>
-              <ImageCarousel images={PREMIUM_IMAGES} alt="EcoInks Premium Toner" />
+              <ImageCarousel images={PREMIUM_IMAGES} alt="EcoInks Premium Toner" isAr={isAr} />
               <div style={{
                 position: 'absolute', top: '16px', left: isAr ? 'auto' : '16px', right: isAr ? '16px' : 'auto',
                 background: 'linear-gradient(135deg, #7C3AED, #6D28D9)', color: '#fff',

@@ -122,7 +122,7 @@ export default function PrinterPartsCatalogSection() {
                         </div>
                         <span style={{color:'#666',fontSize:'0.75rem',background:'rgba(141,184,51,0.08)',padding:'3px 10px',borderRadius:'6px',fontFamily:'var(--font-inter), sans-serif',flexShrink:0}}>{p.models}</span>
                         <a href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(isAr?`مرحباً، أريد الاستفسار عن: ${p.nameAr}`:`Hello, I'd like to inquire about: ${p.nameEn}`)}`} target="_blank" rel="noopener noreferrer"
-                          style={{padding:'6px 14px',borderRadius:'var(--radius-sm)',background:'var(--accent)',color:'var(--deep-forest)',fontSize:'0.75rem',fontWeight:700,textDecoration:'none',flexShrink:0,transition:'all 200ms ease',whiteSpace:'nowrap'}}
+                          style={{display:'inline-flex',alignItems:'center',justifyContent:'center',minHeight:'40px',padding:'8px 16px',borderRadius:'var(--radius-sm)',background:'var(--accent)',color:'var(--deep-forest)',fontSize:'0.75rem',fontWeight:700,textDecoration:'none',flexShrink:0,transition:'all 200ms ease',whiteSpace:'nowrap'}}
                           onMouseEnter={e=>{e.currentTarget.style.background='#7AA52D';}} onMouseLeave={e=>{e.currentTarget.style.background='var(--accent)';}}>
                           {isAr?'استفسار':'Inquire'}
                         </a>

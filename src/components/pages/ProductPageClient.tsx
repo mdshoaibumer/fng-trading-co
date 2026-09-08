@@ -183,26 +183,28 @@ export default function ProductPageClient({ product, whatsapp, locale, itemType 
                 </div>
               )}
 
-              {/* Navigation Arrows */}
+              {/* Navigation Arrows — prev/next sit on physically opposite sides in
+                  RTL with matching arrow direction, same convention as the zoom
+                  badge above and EntryGate.tsx's ArrowLeft/ArrowRight swap. */}
               {product.images.length > 1 && !isZoomed && (
                 <>
                   <IconButton
                     onClick={(e) => { e.stopPropagation(); prevImage(); }}
                     label={isAr ? 'الصورة السابقة' : 'Previous image'}
-                    icon={<ChevronLeft size={24} />}
+                    icon={isAr ? <ChevronRight size={24} /> : <ChevronLeft size={24} />}
                     size={48}
                     background="white"
                     color="var(--primary)"
-                    style={{ position: 'absolute', left: '20px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                    style={{ position: 'absolute', [isAr ? 'right' : 'left']: '20px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
                   />
                   <IconButton
                     onClick={(e) => { e.stopPropagation(); nextImage(); }}
                     label={isAr ? 'الصورة التالية' : 'Next image'}
-                    icon={<ChevronRight size={24} />}
+                    icon={isAr ? <ChevronLeft size={24} /> : <ChevronRight size={24} />}
                     size={48}
                     background="white"
                     color="var(--primary)"
-                    style={{ position: 'absolute', right: '20px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                    style={{ position: 'absolute', [isAr ? 'left' : 'right']: '20px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
                   />
                 </>
               )}

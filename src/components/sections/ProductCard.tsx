@@ -80,18 +80,21 @@ export default function ProductCard({ product, isAr, productUrl }: { product: Pr
         </Link>
         {product.images.length > 1 && product.available !== false && (
           <>
+            {/* Prev/next sit on physically opposite sides in RTL (previous = the
+                side reading continues back toward) with matching arrow direction,
+                same convention as EntryGate.tsx's ArrowLeft/ArrowRight swap. */}
             <button onClick={prevImage} className="slider-btn" aria-label={isAr ? 'الصورة السابقة' : 'Previous image'} style={{
-              position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.85)', border: 'none',
+              position: 'absolute', left: isAr ? 'auto' : '12px', right: isAr ? '12px' : 'auto', top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.85)', border: 'none',
               borderRadius: '50%', width: '44px', height: '44px', display: 'flex', alignItems: 'center',
               justifyContent: 'center', cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
               color: 'var(--primary)', zIndex: 2,
-            }}><ChevronLeft size={20} /></button>
+            }}>{isAr ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}</button>
             <button onClick={nextImage} className="slider-btn" aria-label={isAr ? 'الصورة التالية' : 'Next image'} style={{
-              position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.85)', border: 'none',
+              position: 'absolute', right: isAr ? 'auto' : '12px', left: isAr ? '12px' : 'auto', top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.85)', border: 'none',
               borderRadius: '50%', width: '44px', height: '44px', display: 'flex', alignItems: 'center',
               justifyContent: 'center', cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
               color: 'var(--primary)', zIndex: 2,
-            }}><ChevronRight size={20} /></button>
+            }}>{isAr ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}</button>
             <div style={{ position: 'absolute', bottom: '10px', left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: '2px', zIndex: 2 }}>
               {images.map((_: string, idx: number) => (
                 /* 24x24 transparent hit area (WCAG 2.5.8) wrapping the small

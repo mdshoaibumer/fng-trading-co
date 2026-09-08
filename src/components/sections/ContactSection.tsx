@@ -50,11 +50,14 @@ export default function ContactSection() {
     } catch { setStatus('error'); setErrorMsg(''); }
   };
 
+  // No outline:none here — the global :focus-visible ring in globals.css is a
+  // deliberately engineered two-ring halo (a single accent color failed 3:1
+  // contrast on one of the two backgrounds this site uses); inputs keep it
+  // instead of substituting a border-color swap.
   const inputStyle: React.CSSProperties = {
     width: '100%', padding: '14px 18px', borderRadius: 'var(--radius-md)',
     border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.06)',
-    color: '#fff', fontSize: '0.95rem', outline: 'none',
-    transition: 'border-color 200ms ease',
+    color: '#fff', fontSize: '0.95rem',
     fontFamily: isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif',
     minHeight: '48px',
   };
@@ -75,11 +78,17 @@ export default function ContactSection() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexDirection: isAr ? 'row-reverse' : 'row' }}>
                 <span style={{ display: 'flex' }}><Lock size={18} color="var(--accent)" /></span>
-                <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.85rem' }}>{t('form.privacy')}</span>
+                {/* 0.65 not 0.5 — this section's gradient passes through the
+                    lighter deep-forest midpoint, where 0.5 computes to ~4.27:1
+                    (fails WCAG 1.4.3's 4.5:1); 0.65 clears it with margin. */}
+                <span style={{ color: 'rgba(255,255,255,0.65)', fontSize: '0.85rem' }}>{t('form.privacy')}</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexDirection: isAr ? 'row-reverse' : 'row' }}>
                 <span style={{ display: 'flex' }}><Clock size={18} color="var(--accent)" /></span>
-                <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.85rem' }}>{t('form.response')}</span>
+                {/* 0.65 not 0.5 — this section's gradient passes through the
+                    lighter deep-forest midpoint, where 0.5 computes to ~4.27:1
+                    (fails WCAG 1.4.3's 4.5:1); 0.65 clears it with margin. */}
+                <span style={{ color: 'rgba(255,255,255,0.65)', fontSize: '0.85rem' }}>{t('form.response')}</span>
               </div>
             </div>
           </Reveal>
@@ -105,19 +114,13 @@ export default function ContactSection() {
                   onChange={e => setForm(f => ({ ...f, website: e.target.value }))} />
                 <label htmlFor="contact-name" className="sr-only">{t('form.name')}</label>
                 <input id="contact-name" style={inputStyle} placeholder={t('form.name')} required aria-required="true" autoComplete="name" value={form.name}
-                  onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                  onFocus={e => (e.target.style.borderColor = 'var(--accent)')}
-                  onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.15)')} />
+                  onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
                 <label htmlFor="contact-company" className="sr-only">{t('form.company')}</label>
                 <input id="contact-company" style={inputStyle} placeholder={t('form.company')} required aria-required="true" autoComplete="organization" value={form.company}
-                  onChange={e => setForm(f => ({ ...f, company: e.target.value }))}
-                  onFocus={e => (e.target.style.borderColor = 'var(--accent)')}
-                  onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.15)')} />
+                  onChange={e => setForm(f => ({ ...f, company: e.target.value }))} />
                 <label htmlFor="contact-phone" className="sr-only">{t('form.phone')}</label>
                 <input id="contact-phone" style={inputStyle} placeholder={t('form.phone')} type="tel" required aria-required="true" autoComplete="tel" value={form.phone}
-                  onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
-                  onFocus={e => (e.target.style.borderColor = 'var(--accent)')}
-                  onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.15)')} />
+                  onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} />
                 <div className="contact-form-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                   <div>
                     <label htmlFor="contact-country" className="sr-only">{t('form.country')}</label>
@@ -131,9 +134,7 @@ export default function ContactSection() {
                   <div>
                     <label htmlFor="contact-city" className="sr-only">{t('form.city')}</label>
                     <input id="contact-city" style={inputStyle} placeholder={t('form.city')} autoComplete="address-level2" value={form.city}
-                      onChange={e => setForm(f => ({ ...f, city: e.target.value }))}
-                      onFocus={e => (e.target.style.borderColor = 'var(--accent)')}
-                      onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.15)')} />
+                      onChange={e => setForm(f => ({ ...f, city: e.target.value }))} />
                   </div>
                 </div>
                 <div>
