@@ -69,6 +69,20 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async redirects() {
+    return [
+      {
+        source: '/:locale/parts',
+        destination: '/:locale/printer-parts',
+        permanent: true,
+      },
+      {
+        source: '/parts',
+        destination: '/en/printer-parts',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default withNextIntl(nextConfig);
