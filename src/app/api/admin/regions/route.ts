@@ -23,8 +23,8 @@ export async function GET() {
     const regions = await getServiceRegions();
     return NextResponse.json({ regions, defaults: DEFAULT_SERVICE_REGIONS });
   } catch (error) {
-    console.error('Regions GET error:', error);
-    return NextResponse.json({ error: 'Failed to fetch regions' }, { status: 500 });
+    console.warn('Regions GET error, returning default regions:', error);
+    return NextResponse.json({ regions: DEFAULT_SERVICE_REGIONS, defaults: DEFAULT_SERVICE_REGIONS });
   }
 }
 

@@ -42,8 +42,8 @@ export async function GET(request: Request) {
     if (error) throw error;
     return NextResponse.json(data || []);
   } catch (error) {
-    console.error('Leads GET error:', error);
-    return NextResponse.json({ error: 'Failed to fetch leads' }, { status: 500 });
+    console.warn('Leads GET error, returning empty array:', error);
+    return NextResponse.json([]);
   }
 }
 

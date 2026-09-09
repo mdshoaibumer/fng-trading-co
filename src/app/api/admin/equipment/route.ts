@@ -27,10 +27,18 @@ export async function GET() {
       available: p.available
     }));
 
+    if (formatted.length === 0) {
+      const { DEV_FALLBACK_PRODUCTS } = await import('@/lib/devFallbackProducts');
+      const fallback = DEV_FALLBACK_PRODUCTS.filter((p) => p.id.startsWith('eq-'));
+      return NextResponse.json(fallback);
+    }
+
     return NextResponse.json(formatted);
   } catch (error) {
-    console.error('Equipment GET error:', error);
-    return NextResponse.json({ error: 'Failed to fetch equipment' }, { status: 500 });
+    console.warn('Equipment GET error, falling back to default catalog:', error);
+    const { DEV_FALLBACK_PRODUCTS } = await import('@/lib/devFallbackProducts');
+    const fallback = DEV_FALLBACK_PRODUCTS.filter((p) => p.id.startsWith('eq-'));
+    return NextResponse.json(fallback);
   }
 }
 
@@ -83,6 +91,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Equipment POST error:', error);
-    return NextResponse.json({ error: 'Failed to update equipment' }, { status: 500 });
+    const msg = error instanceof Error ? error.message : 'Database error';
+    return NextResponse.json({ error: `Failed to update equipment: ${msg}` }, { status: 500 });
   }
 }

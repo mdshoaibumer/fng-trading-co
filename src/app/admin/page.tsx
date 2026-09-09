@@ -77,7 +77,7 @@ export default function AdminDashboard() {
       if (res.ok) {
         const json = await res.json();
         setData(json);
-        setDbConnected(true);
+        setDbConnected(json.dbConnected !== false);
       } else {
         setDbConnected(false);
       }

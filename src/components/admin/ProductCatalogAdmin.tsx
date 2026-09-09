@@ -93,7 +93,8 @@ export default function ProductCatalogAdmin({ config }: { config: ProductCatalog
         setSavedSnapshot(JSON.stringify(items));
         showToast(config.toasts.saveSuccess, 'success');
       } else {
-        showToast(config.toasts.saveError, 'error');
+        const errJson = await res.json().catch(() => null);
+        showToast(errJson?.error || config.toasts.saveError, 'error');
       }
     } catch {
       showToast(config.toasts.saveException, 'error');

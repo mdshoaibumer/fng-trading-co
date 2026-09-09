@@ -174,6 +174,8 @@ function extractLeafFields(val: unknown, path: string[] = []): LeafField[] {
 function AdminContentEditor() {
   const searchParams = useSearchParams();
   const urlPageParam = searchParams.get('page');
+  const isSourcingMode = urlPageParam === 'sourcing';
+  const defaultCategory: CategoryKey = isSourcingMode ? 'sourcing' : (urlPageParam && CATEGORIES.some((c) => c.key === urlPageParam) ? (urlPageParam as CategoryKey) : 'home');
 
   const [data, setData] = useState<ContentData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -181,7 +183,15 @@ function AdminContentEditor() {
   const [search, setSearch] = useState('');
   const [activeTab, setActiveTab] = useState<'en' | 'ar'>('en');
   const [selectedCategory, setSelectedCategory] = useState<CategoryKey | null>(null);
-  const activeCategory = selectedCategory ?? (urlPageParam && CATEGORIES.some((c) => c.key === urlPageParam) ? (urlPageParam as CategoryKey) : 'sourcing');
+
+  // Reset category selection when navigating between Site Content and Sourcing Content
+  const [prevUrlParam, setPrevUrlParam] = useState(urlPageParam);
+  if (urlPageParam !== prevUrlParam) {
+    setPrevUrlParam(urlPageParam);
+    setSelectedCategory(null);
+  }
+
+  const activeCategory = selectedCategory ?? defaultCategory;
   const setActiveCategory = (cat: CategoryKey) => setSelectedCategory(cat);
   const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
   const { showToast } = useToast();
@@ -273,8 +283,16 @@ function AdminContentEditor() {
     return map;
   }, [allLeafFields]);
 
+  // Determine which categories to show in tabs based on route
+  const displayedCategories = useMemo(() => {
+    if (isSourcingMode) {
+      return CATEGORIES.filter((c) => c.key === 'sourcing' || c.key === 'all');
+    }
+    return CATEGORIES.filter((c) => c.key !== 'sourcing');
+  }, [isSourcingMode]);
+
   // Determine which sections to show based on selected Category and Search
-  const currentCategoryConfig = CATEGORIES.find((c) => c.key === activeCategory) || CATEGORIES[0];
+  const currentCategoryConfig = CATEGORIES.find((c) => c.key === activeCategory) || displayedCategories[0] || CATEGORIES[0];
 
   const visibleSections = useMemo(() => {
     const allKnownSections = Array.from(fieldsBySection.keys());
@@ -345,7 +363,7 @@ function AdminContentEditor() {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
             <h1 style={{ fontSize: '2rem', fontWeight: 800, color: '#0F172A', margin: 0 }}>
-              Site Content & Sourcing CMS
+              {isSourcingMode ? 'Sourcing Content CMS' : 'Site Content CMS'}
             </h1>
             {isDirty && (
               <span
@@ -367,7 +385,9 @@ function AdminContentEditor() {
             )}
           </div>
           <p style={{ color: '#64748B', margin: 0, fontSize: '0.95rem' }}>
-            Live content manager for all bilingual copy, product categories, 7-step sourcing process, and enterprise specs.
+            {isSourcingMode
+              ? 'Live content manager for the 7-step sourcing workflow, verified categories, and enterprise systems.'
+              : 'Live content manager for all bilingual copy across Home, Products, Company, Navigation, and Legal.'}
           </p>
         </div>
 
@@ -448,7 +468,7 @@ function AdminContentEditor() {
             scrollbarWidth: 'thin',
           }}
         >
-          {CATEGORIES.map((cat) => {
+          {displayedCategories.map((cat) => {
             const isActive = activeCategory === cat.key;
             return (
               <button

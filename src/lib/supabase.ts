@@ -7,38 +7,40 @@ import dotenv from 'dotenv';
 // Next has already populated process.env, and the file isn't in the image.
 dotenv.config({ path: '.env.local' });
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key';
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn('Supabase credentials missing. Ensure .env.local is configured.');
+if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  console.warn('Supabase credentials missing. Ensure environment variables are configured.');
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
-export const supabaseAdmin = supabaseServiceRoleKey 
-  ? createClient(supabaseUrl, supabaseServiceRoleKey)
-  : supabase;
+const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || supabaseAnonKey;
+export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey);
 
 // cache() dedupes the fetch within a single server request — the layout and
 // the page both call getSettings(), and product pages call it several times.
 export const getSettings = cache(async () => {
-  const { data } = await supabaseAdmin.from('settings').select('*');
   const settings: Record<string, unknown> = {};
-  data?.forEach(item => {
-    // Never surface the admin password hash to callers. It's only read
-    // server-side, but stripping it here guarantees it can't leak into an RSC
-    // payload if the settings object is ever passed to a Client Component.
-    if (item.key === 'admin_password') return;
-    settings[item.key] = item.value;
-  });
 
-  // Dev-only, never production (see the matching note in getProducts): an
-  // empty settings row silently degrades several homepage sections — the
-  // VideoDivider between HowItWorks and Industries just renders nothing —
-  // which looks like a missing feature rather than an unreachable database.
-  if (!data || data.length === 0) {
+  try {
+    const { data } = await supabaseAdmin.from('settings').select('*');
+    data?.forEach(item => {
+      // Never surface the admin password hash to callers. It's only read
+      // server-side, but stripping it here guarantees it can't leak into an RSC
+      // payload if the settings object is ever passed to a Client Component.
+      if (item.key === 'admin_password') return;
+      settings[item.key] = item.value;
+    });
+
+    if (!data || data.length === 0) {
+      Object.assign(settings, {
+        contact: { whatsapp: '+966 59 338 0390', phone: '+966 59 338 0390', email: 'support@fngtradingco.com' },
+      });
+    }
+  } catch (err) {
+    console.warn('Could not fetch settings from DB, using fallback defaults:', err);
     Object.assign(settings, {
       contact: { whatsapp: '+966 59 338 0390', phone: '+966 59 338 0390', email: 'support@fngtradingco.com' },
     });
@@ -90,43 +92,52 @@ export interface Product {
 // tell "nothing to show" apart from "something broke" instead of collapsing
 // both into an empty array.
 export const getProducts = cache(async (kind: 'printer' | 'equipment'): Promise<{ products: Product[]; error: boolean }> => {
-  const { data, error } = await supabaseAdmin
-    .from('printers')
-    .select('*')
-    .order('created_at', { ascending: true });
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('printers')
+      .select('*')
+      .order('created_at', { ascending: true });
 
-  if (error || !data || data.length === 0) {
+    if (error || !data || data.length === 0) {
+      const { DEV_FALLBACK_PRODUCTS } = await import('./devFallbackProducts');
+      const products = DEV_FALLBACK_PRODUCTS.filter((p) =>
+        kind === 'equipment' ? p.id.startsWith('eq-') : !p.id.startsWith('eq-')
+      );
+      return { products, error: false };
+    }
+
+    const products = data
+      .filter((p) => (kind === 'equipment' ? p.id.startsWith('eq-') : !p.id.startsWith('eq-')))
+      .map((p) => ({
+        id: p.id,
+        name: p.name,
+        descEn: p.desc_en,
+        descAr: p.desc_ar,
+        images: p.images || [],
+        featuresEn: p.features_en || [],
+        featuresAr: p.features_ar || [],
+        specsEn: p.specs_en || {},
+        specsAr: p.specs_ar || {},
+        available: p.available,
+      }));
+
+    if (products.length === 0) {
+      const { DEV_FALLBACK_PRODUCTS } = await import('./devFallbackProducts');
+      const fallback = DEV_FALLBACK_PRODUCTS.filter((p) =>
+        kind === 'equipment' ? p.id.startsWith('eq-') : !p.id.startsWith('eq-')
+      );
+      return { products: fallback, error: false };
+    }
+
+    return { products, error: false };
+  } catch (err) {
+    console.warn('getProducts error, returning fallback products:', err);
     const { DEV_FALLBACK_PRODUCTS } = await import('./devFallbackProducts');
     const products = DEV_FALLBACK_PRODUCTS.filter((p) =>
       kind === 'equipment' ? p.id.startsWith('eq-') : !p.id.startsWith('eq-')
     );
     return { products, error: false };
   }
-
-  const products = data
-    .filter((p) => (kind === 'equipment' ? p.id.startsWith('eq-') : !p.id.startsWith('eq-')))
-    .map((p) => ({
-      id: p.id,
-      name: p.name,
-      descEn: p.desc_en,
-      descAr: p.desc_ar,
-      images: p.images || [],
-      featuresEn: p.features_en || [],
-      featuresAr: p.features_ar || [],
-      specsEn: p.specs_en || {},
-      specsAr: p.specs_ar || {},
-      available: p.available,
-    }));
-
-  if (products.length === 0) {
-    const { DEV_FALLBACK_PRODUCTS } = await import('./devFallbackProducts');
-    const fallback = DEV_FALLBACK_PRODUCTS.filter((p) =>
-      kind === 'equipment' ? p.id.startsWith('eq-') : !p.id.startsWith('eq-')
-    );
-    return { products: fallback, error: false };
-  }
-
-  return { products, error: false };
 });
 
 // Raw row shape (snake_case), matching what printers/[id] and equipment/[id]
@@ -148,13 +159,17 @@ export interface ProductRow {
 
 // Single-product lookup for printers/[id] and equipment/[id], with fallback
 export const getProductById = cache(async (id: string): Promise<ProductRow | null> => {
-  const { data, error } = await supabaseAdmin
-    .from('printers')
-    .select('*')
-    .eq('id', id)
-    .single();
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('printers')
+      .select('*')
+      .eq('id', id)
+      .single();
 
-  if (!error && data) return data as ProductRow;
+    if (!error && data) return data as ProductRow;
+  } catch (err) {
+    console.warn('getProductById query error, falling back to static product:', err);
+  }
 
   const { DEV_FALLBACK_PRODUCTS } = await import('./devFallbackProducts');
   const p = DEV_FALLBACK_PRODUCTS.find((product) => product.id === id);
