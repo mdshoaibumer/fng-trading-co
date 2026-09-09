@@ -54,12 +54,6 @@
       "counter": "Companies Onboarded",
       "desc": "Trusted by a growing base of businesses across Saudi Arabia and the Gulf"
     },
-    "model": {
-      "title": "How It Works",
-      "step1": "Refurbished Printer",
-      "step2": "Eco Inks Subscription",
-      "step3": "Grow Your Business"
-    },
     "pay": {
       "title": "Pay Only for Ink",
       "desc": "Get your refurbished printer and pay only for Eco Inks. No hidden fees."
@@ -108,7 +102,7 @@
       "print": {
         "number": "02",
         "title": "Print",
-        "desc": "Use your Eco Inks subscription. Auto-reorder when ink is low. Never run out. Always eco-certified."
+        "desc": "Use your Eco Inks subscription. Auto-reorder when ink is low, so you never run out."
       },
       "scale": {
         "number": "03",
