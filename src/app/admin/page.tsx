@@ -13,8 +13,10 @@ import {
   CheckCircle2,
   Download,
   Monitor,
+  Tag,
 } from 'lucide-react';
 import { useToast } from '@/components/admin/Toast';
+import { LEAD_CATEGORY_MAP, parseLeadMessage } from './leads/page';
 
 interface RecentLead {
   id: string;
@@ -24,6 +26,7 @@ interface RecentLead {
   company?: string;
   type?: string;
   status?: string;
+  message?: string;
   created_at?: string;
 }
 
@@ -167,25 +170,55 @@ export default function AdminDashboard() {
             ) : (
               recentLeads.map((lead: RecentLead) => {
                 const initials = lead.name.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase();
-                const typeLabel = lead.type === 'printer_request' ? 'Printer Request' : 'Contact Form';
+                const categoryConfig = LEAD_CATEGORY_MAP[lead.type || ''] || LEAD_CATEGORY_MAP.contact;
+                const parsed = parseLeadMessage(lead.message);
+
                 return (
-                  <div key={lead.id} style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px', background: '#F8FAFC', borderRadius: '16px', border: '1px solid #F1F5F9' }}>
-                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#475569', flexShrink: 0 }}>
+                  <div key={lead.id} style={{ display: 'flex', alignItems: 'flex-start', gap: '14px', padding: '14px 16px', background: '#F8FAFC', borderRadius: '14px', border: '1px solid #F1F5F9' }}>
+                    <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: '#E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#475569', fontSize: '0.85rem', flexShrink: 0, marginTop: '2px' }}>
                       {initials}
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{ margin: 0, fontWeight: 700, fontSize: '0.95rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {lead.name} {lead.company ? `(${lead.company})` : ''}
-                      </p>
-                      <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748B', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {typeLabel} • {lead.phone}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
+                        <span style={{ fontWeight: 700, fontSize: '0.92rem', color: '#0F172A' }}>
+                          {lead.name}
+                        </span>
+                        {lead.company && (
+                          <span style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 500 }}>
+                            ({lead.company})
+                          </span>
+                        )}
+                        <span style={{
+                          fontSize: '0.68rem', fontWeight: 700, padding: '2px 8px', borderRadius: '99px',
+                          background: categoryConfig.bg,
+                          color: categoryConfig.color,
+                          border: `1px solid ${categoryConfig.color}25`
+                        }}>
+                          {categoryConfig.label}
+                        </span>
+                      </div>
+                      <p style={{ margin: 0, fontSize: '0.82rem', color: '#64748B', display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                        {lead.phone && <span>{lead.phone}</span>}
+                        {parsed.queryItem && (
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', color: '#1D4ED8', background: '#EFF6FF', padding: '1px 6px', borderRadius: '4px', fontSize: '0.72rem', fontWeight: 700 }}>
+                            <Tag size={10} /> {parsed.queryItem}
+                          </span>
+                        )}
                       </p>
                     </div>
-                    <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                      <p style={{ margin: 0, fontWeight: 600, fontSize: '0.85rem' }}>
+                    <div style={{ textAlign: 'right', flexShrink: 0, minWidth: '80px', marginTop: '2px' }}>
+                      <p style={{ margin: 0, fontWeight: 600, fontSize: '0.82rem', color: '#475569', lineHeight: 1.2 }}>
                         {lead.created_at ? new Date(lead.created_at).toLocaleDateString() : '—'}
                       </p>
-                      <span style={{ fontSize: '0.75rem', color: lead.status === 'new' ? '#10B981' : '#64748B', fontWeight: 700, textTransform: 'uppercase' }}>
+                      <span style={{
+                        display: 'inline-block',
+                        marginTop: '4px',
+                        fontSize: '0.7rem',
+                        color: lead.status === 'new' ? '#10B981' : '#64748B',
+                        fontWeight: 700,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px'
+                      }}>
                         {lead.status || 'NEW'}
                       </span>
                     </div>

@@ -267,6 +267,30 @@ body {
   background: var(--admin-surface);
 }
 
+/* --- TABLET & DESKTOP RESPONSIVENESS --- */
+@media (max-width: 1024px) {
+  .dash-grid-main {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .lead-card-inner {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 16px !important;
+  }
+
+  .lead-card-actions {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 14px;
+    border-top: 1px solid var(--admin-border);
+  }
+}
+
 /* --- MOBILE RESPONSIVENESS --- */
 @media (max-width: 768px) {
   .admin-wrapper {

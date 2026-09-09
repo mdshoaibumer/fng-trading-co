@@ -15,7 +15,8 @@ import {
   RefreshCw,
   MapPin,
   Briefcase,
-  Hash
+  Hash,
+  Tag
 } from 'lucide-react';
 import { useToast } from '@/components/admin/Toast';
 
@@ -27,6 +28,29 @@ const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
   qualified: { bg: 'rgba(245, 158, 11, 0.1)', text: '#F59E0B' },
   closed: { bg: 'rgba(100, 116, 139, 0.1)', text: '#64748B' },
 };
+
+export const LEAD_CATEGORY_MAP: Record<string, { label: string; bg: string; color: string }> = {
+  printer_request: { label: 'Printer Request', bg: 'rgba(99, 102, 241, 0.1)', color: '#6366F1' },
+  printer: { label: 'Printer Inquiry', bg: 'rgba(99, 102, 241, 0.1)', color: '#6366F1' },
+  eco_inks: { label: 'Eco Inks', bg: 'rgba(16, 185, 129, 0.12)', color: '#059669' },
+  printer_parts: { label: 'Spare Parts', bg: 'rgba(245, 158, 11, 0.12)', color: '#D97706' },
+  office_equipment: { label: 'Office Equipment', bg: 'rgba(139, 92, 246, 0.12)', color: '#7C3AED' },
+  sourcing: { label: 'China Sourcing', bg: 'rgba(14, 165, 233, 0.12)', color: '#0284C7' },
+  contact: { label: 'Contact Form', bg: 'rgba(141, 184, 51, 0.14)', color: 'var(--admin-accent-text)' },
+  general: { label: 'General Inquiry', bg: 'rgba(141, 184, 51, 0.14)', color: 'var(--admin-accent-text)' },
+};
+
+export function parseLeadMessage(rawMessage?: string) {
+  if (!rawMessage) return { queryItem: null, messageText: '' };
+  const match = rawMessage.match(/^\[Query:\s*([^\]]+)\]\s*\n?([\s\S]*)$/i);
+  if (match) {
+    return {
+      queryItem: match[1].trim(),
+      messageText: match[2].trim(),
+    };
+  }
+  return { queryItem: null, messageText: rawMessage.trim() };
+}
 
 interface Lead {
   id: string;
@@ -191,7 +215,7 @@ export default function AdminLeadsPage() {
             aria-label="Search leads by name, email, phone, or company"
             placeholder="Search by name, email, phone, or company..."
             className="admin-input"
-            style={{ paddingLeft: '48px', width: '100%' }}
+            style={{ paddingLeft: '48px', width: '100%', height: '44px' }}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -203,7 +227,7 @@ export default function AdminLeadsPage() {
             aria-label="Filter leads by status"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            style={{ paddingLeft: '40px', paddingRight: '40px', minWidth: '160px', cursor: 'pointer', appearance: 'none' }}
+            style={{ paddingLeft: '40px', paddingRight: '40px', minWidth: '160px', height: '44px', cursor: 'pointer', appearance: 'none' }}
           >
             <option value="">All Statuses</option>
             {STATUS_OPTIONS.map(s => (
@@ -246,77 +270,108 @@ export default function AdminLeadsPage() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {leads.map(lead => {
             const initials = (lead.name || 'U').split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase();
-            const typeLabel = lead.type === 'printer_request' ? 'Printer Request' : 'Contact Form';
+            const categoryConfig = LEAD_CATEGORY_MAP[lead.type || ''] || LEAD_CATEGORY_MAP.contact;
             const sc = STATUS_COLORS[lead.status || 'new'] || STATUS_COLORS.new;
+            const parsed = parseLeadMessage(lead.message);
 
             return (
-              <div key={lead.id} className="admin-card" style={{ padding: '16px 20px' }}>
-                <div className="lead-card-inner" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+              <div key={lead.id} className="admin-card" style={{ padding: '18px 22px' }}>
+                <div className="lead-card-inner" style={{ display: 'flex', alignItems: 'flex-start', gap: '18px' }}>
                   {/* Avatar */}
                   <div style={{
-                    width: '48px', height: '48px', borderRadius: '50%',
+                    width: '46px', height: '46px', borderRadius: '12px',
                     background: '#E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontWeight: 800, color: '#475569', fontSize: '0.9rem', flexShrink: 0
+                    fontWeight: 800, color: '#475569', fontSize: '0.92rem', flexShrink: 0,
+                    marginTop: '2px'
                   }}>
                     {initials}
                   </div>
 
                   {/* Info */}
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px', flexWrap: 'wrap' }}>
-                      <span style={{ fontWeight: 800, fontSize: '1rem', color: '#0F172A' }}>{lead.name}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
+                      <span style={{ fontWeight: 800, fontSize: '1.05rem', color: '#0F172A' }}>{lead.name}</span>
                       <span style={{
-                        fontSize: '0.7rem', fontWeight: 700, padding: '3px 10px', borderRadius: '99px',
-                        background: lead.type === 'printer_request' ? 'rgba(99, 102, 241, 0.1)' : 'rgba(141, 184, 51, 0.1)',
-                        color: lead.type === 'printer_request' ? '#6366F1' : 'var(--admin-accent)'
+                        fontSize: '0.72rem', fontWeight: 700, padding: '3px 10px', borderRadius: '99px',
+                        background: categoryConfig.bg,
+                        color: categoryConfig.color,
+                        border: `1px solid ${categoryConfig.color}30`
                       }}>
-                        {typeLabel}
+                        {categoryConfig.label}
                       </span>
-                    </div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', fontSize: '0.85rem', color: '#64748B' }}>
-                      {lead.email && (
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <Mail size={13} /> {lead.email}
+                      {parsed.queryItem && (
+                        <span style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '5px',
+                          fontSize: '0.72rem',
+                          fontWeight: 700,
+                          padding: '3px 10px',
+                          borderRadius: '8px',
+                          background: '#EFF6FF',
+                          color: '#1D4ED8',
+                          border: '1px solid #BFDBFE'
+                        }}>
+                          <Tag size={11} />
+                          {parsed.queryItem}
                         </span>
+                      )}
+                    </div>
+
+                    {/* Metadata tags */}
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px 12px', fontSize: '0.84rem', color: '#475569', marginBottom: parsed.messageText ? '10px' : 0 }}>
+                      {lead.email && (
+                        <a href={`mailto:${lead.email}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', color: '#475569', textDecoration: 'none', background: '#F8FAFC', padding: '3px 8px', borderRadius: '6px', border: '1px solid #E2E8F0' }}>
+                          <Mail size={13} color="#64748B" /> {lead.email}
+                        </a>
                       )}
                       {lead.phone && (
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <PhoneIcon size={13} /> {lead.phone}
-                        </span>
+                        <a href={`tel:${lead.phone}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', color: '#475569', textDecoration: 'none', background: '#F8FAFC', padding: '3px 8px', borderRadius: '6px', border: '1px solid #E2E8F0' }}>
+                          <PhoneIcon size={13} color="#64748B" /> {lead.phone}
+                        </a>
                       )}
                       {lead.company && (
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <Building2 size={13} /> {lead.company}
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', background: '#F8FAFC', padding: '3px 8px', borderRadius: '6px', border: '1px solid #E2E8F0' }}>
+                          <Building2 size={13} color="#64748B" /> {lead.company}
                         </span>
                       )}
                       {(lead.country || lead.city) && (
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <MapPin size={13} /> {[lead.city, lead.country].filter(Boolean).join(', ')}
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', background: '#F8FAFC', padding: '3px 8px', borderRadius: '6px', border: '1px solid #E2E8F0' }}>
+                          <MapPin size={13} color="#64748B" /> {[lead.city, lead.country].filter(Boolean).join(', ')}
                         </span>
                       )}
                       {lead.industry && (
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <Briefcase size={13} /> {lead.industry}
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', background: '#F8FAFC', padding: '3px 8px', borderRadius: '6px', border: '1px solid #E2E8F0' }}>
+                          <Briefcase size={13} color="#64748B" /> {lead.industry}
                         </span>
                       )}
                       {lead.quantity && (
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }} title="Printers requested">
-                          <Hash size={13} /> {lead.quantity}
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', background: '#F8FAFC', padding: '3px 8px', borderRadius: '6px', border: '1px solid #E2E8F0' }} title="Quantity requested">
+                          <Hash size={13} color="#64748B" /> {lead.quantity}
                         </span>
                       )}
                     </div>
-                    {lead.message && (
-                      <p style={{
-                        margin: '8px 0 0', fontSize: '0.85rem', color: '#94A3B8',
-                        whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+
+                    {/* Customer Message */}
+                    {parsed.messageText && (
+                      <div style={{
+                        marginTop: '8px',
+                        padding: '8px 12px',
+                        background: '#FAFBF9',
+                        borderRadius: '8px',
+                        border: '1px solid #F0F2EB',
+                        fontSize: '0.85rem',
+                        color: '#334155',
+                        lineHeight: 1.5,
+                        wordBreak: 'break-word',
                       }}>
-                        &quot;{lead.message}&quot;
-                      </p>
+                        &ldquo;{parsed.messageText}&rdquo;
+                      </div>
                     )}
                   </div>
 
                   {/* Actions - Status + Date + Delete */}
-                  <div className="lead-card-actions" style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
+                  <div className="lead-card-actions" style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0, marginTop: '2px' }}>
                     {/* Status Dropdown */}
                     <div style={{ position: 'relative' }}>
                       <select
@@ -345,11 +400,11 @@ export default function AdminLeadsPage() {
                     </div>
 
                     {/* Date */}
-                    <div style={{ textAlign: 'right', minWidth: '80px' }}>
-                      <p style={{ margin: 0, fontWeight: 600, fontSize: '0.85rem', color: '#475569' }}>
+                    <div style={{ textAlign: 'right', minWidth: '85px' }}>
+                      <p style={{ margin: 0, fontWeight: 600, fontSize: '0.85rem', color: '#475569', lineHeight: 1.2 }}>
                         {lead.created_at ? new Date(lead.created_at).toLocaleDateString() : '—'}
                       </p>
-                      <p style={{ margin: '2px 0 0', fontSize: '0.75rem', color: '#94A3B8' }}>
+                      <p style={{ margin: '3px 0 0', fontSize: '0.75rem', color: '#94A3B8', lineHeight: 1.2 }}>
                         {lead.created_at ? new Date(lead.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
                       </p>
                     </div>
