@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import {
   LayoutDashboard,
   FileText,
@@ -16,13 +16,16 @@ import {
   Monitor,
   Globe2,
   Menu,
-  X
+  X,
+  Layers,
 } from 'lucide-react';
 import { ToastProvider } from '@/components/admin/Toast';
 import { confirmDiscardIfDirty } from '@/lib/adminDirty';
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const pageParam = searchParams.get('page');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -39,6 +42,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
     { name: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/admin' },
     { name: 'Leads', icon: <MessageCircle size={20} />, path: '/admin/leads' },
     { name: 'Site Content', icon: <FileText size={20} />, path: '/admin/content' },
+    { name: 'Sourcing Content', icon: <Layers size={20} />, path: '/admin/content?page=sourcing' },
     { name: 'Printers', icon: <Printer size={20} />, path: '/admin/printers' },
     { name: 'Printer Parts', icon: <Package size={20} />, path: '/admin/parts' },
     { name: 'Office Equipment', icon: <Monitor size={20} />, path: '/admin/equipment' },
@@ -96,7 +100,13 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             {/* Navigation */}
             <nav style={{ flex: 1, padding: '0 12px', overflowY: 'auto' }}>
               {menuItems.map((item) => {
-                const isActive = pathname === item.path;
+                const isSourcingLink = item.path.includes('page=sourcing');
+                const isSiteContentLink = item.path === '/admin/content';
+                const isActive = isSourcingLink
+                  ? pathname === '/admin/content' && pageParam === 'sourcing'
+                  : isSiteContentLink
+                  ? pathname === '/admin/content' && pageParam !== 'sourcing'
+                  : pathname === item.path;
                 return (
                   <Link
                     key={item.path}

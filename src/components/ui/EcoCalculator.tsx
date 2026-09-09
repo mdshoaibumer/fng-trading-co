@@ -26,7 +26,6 @@ export default function EcoCalculator({ isAr = false, locale = 'en' }: EcoCalcul
   const Arrow = isAr ? ArrowLeft : ArrowRight;
 
   return (
-  return (
     <div className="w-full max-w-5xl mx-auto mb-12 sm:mb-16">
       <SpotlightCard
         className="glass"
