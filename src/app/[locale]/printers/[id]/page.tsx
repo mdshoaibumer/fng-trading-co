@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { SITE_URL } from '@/lib/siteContact';
 import ProductPageClient from '@/components/pages/ProductPageClient';
-import { supabaseAdmin, getSettings } from '@/lib/supabase';
+import { getProductById, getSettings } from '@/lib/supabase';
 import type { Metadata } from 'next';
 import { safeJsonLd } from '@/lib/safeJsonLd';
 import { buildAlternates } from '@/lib/metadata';
@@ -17,12 +17,8 @@ export async function generateMetadata({
   params: Promise<{ locale: string; id: string }>;
 }): Promise<Metadata> {
   const { locale, id } = await params;
-  
-  const { data: p } = await supabaseAdmin
-    .from('printers')
-    .select('*')
-    .eq('id', id)
-    .single();
+
+  const p = await getProductById(id);
 
   if (!p) {
     return {
@@ -55,13 +51,9 @@ export default async function PrinterProductPage({
   params: Promise<{ locale: string; id: string }>;
 }) {
   const { locale, id } = await params;
-  
+
   // Fetch printer data from Supabase
-  const { data: p } = await supabaseAdmin
-    .from('printers')
-    .select('*')
-    .eq('id', id)
-    .single();
+  const p = await getProductById(id);
 
   if (!p || p.id.startsWith('eq-')) {
     notFound();

@@ -144,7 +144,7 @@ export default function ProductPageClient({ product, whatsapp, locale, itemType 
           direction: isAr ? 'rtl' : 'ltr'
         }}>
           {/* Left Column: Image Gallery */}
-          <div className="gallery-column" style={{ order: isAr ? 2 : 1 }}>
+          <div className="gallery-column" style={{ order: isAr ? 2 : 1, position: 'sticky', top: '120px', alignSelf: 'start' }}>
             {/* The other half of the catalog card's morph — same name, so the
                 card's image container animates into this one on the way in and
                 back out again on the way out. */}
@@ -260,7 +260,7 @@ export default function ProductPageClient({ product, whatsapp, locale, itemType 
           </div>
 
           {/* Right Column: Info */}
-          <div className="info-column" style={{ position: 'sticky', top: '120px', order: isAr ? 1 : 2, textAlign: isAr ? 'right' : 'left' }}>
+          <div className="info-column" style={{ order: isAr ? 1 : 2, textAlign: isAr ? 'right' : 'left' }}>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '20px', flexDirection: isAr ? 'row-reverse' : 'row' }}>
               <div style={{
                 display: 'inline-flex', alignItems: 'center', gap: '8px',
@@ -389,7 +389,7 @@ export default function ProductPageClient({ product, whatsapp, locale, itemType 
           .product-grid {
             grid-template-columns: 1fr !important;
           }
-          .info-column {
+          .gallery-column {
             position: static !important;
           }
         }

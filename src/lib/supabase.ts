@@ -85,7 +85,21 @@ export const getProducts = cache(async (kind: 'printer' | 'equipment'): Promise<
     .select('*')
     .order('created_at', { ascending: true });
 
-  if (error || !data) return { products: [], error: true };
+  if (error || !data) {
+    // Dev-only, never production: without a real Supabase project locally,
+    // every catalog/product page otherwise only ever renders its error
+    // state, making the catalog itself impossible to visually QA. A real
+    // Supabase outage in production must still surface as an error, not
+    // silently serve stale demo data to real visitors.
+    if (process.env.NODE_ENV === 'development') {
+      const { DEV_FALLBACK_PRODUCTS } = await import('./devFallbackProducts');
+      const products = DEV_FALLBACK_PRODUCTS.filter((p) =>
+        kind === 'equipment' ? p.id.startsWith('eq-') : !p.id.startsWith('eq-')
+      );
+      return { products, error: false };
+    }
+    return { products: [], error: true };
+  }
 
   const products = data
     .filter((p) => (kind === 'equipment' ? p.id.startsWith('eq-') : !p.id.startsWith('eq-')))
@@ -103,4 +117,47 @@ export const getProducts = cache(async (kind: 'printer' | 'equipment'): Promise<
     }));
 
   return { products, error: false };
+});
+
+// Raw row shape (snake_case), matching what printers/[id] and equipment/[id]
+// query directly via supabaseAdmin — kept separate from Product (camelCase)
+// since generateMetadata reads a couple of raw fields (desc_ar, images) before
+// any mapping happens.
+export interface ProductRow {
+  id: string;
+  name: string;
+  desc_en: string;
+  desc_ar: string;
+  images: string[];
+  features_en: string[];
+  features_ar: string[];
+  specs_en: Record<string, string>;
+  specs_ar: Record<string, string>;
+  available: boolean;
+}
+
+// Single-product lookup for printers/[id] and equipment/[id], with the same
+// dev-only fallback as getProducts() — otherwise every product detail page
+// only ever hits notFound() locally instead of rendering.
+export const getProductById = cache(async (id: string): Promise<ProductRow | null> => {
+  const { data, error } = await supabaseAdmin
+    .from('printers')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (!error && data) return data as ProductRow;
+
+  if (process.env.NODE_ENV === 'development') {
+    const { DEV_FALLBACK_PRODUCTS } = await import('./devFallbackProducts');
+    const p = DEV_FALLBACK_PRODUCTS.find((product) => product.id === id);
+    if (!p) return null;
+    return {
+      id: p.id, name: p.name, desc_en: p.descEn, desc_ar: p.descAr,
+      images: p.images, features_en: p.featuresEn, features_ar: p.featuresAr,
+      specs_en: p.specsEn, specs_ar: p.specsAr, available: p.available,
+    };
+  }
+
+  return null;
 });

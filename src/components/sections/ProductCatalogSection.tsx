@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import type { Product } from '@/lib/supabase';
 import ProductCard from './ProductCard';
 import ErrorState from '@/components/ui/ErrorState';
@@ -29,7 +30,7 @@ export default function ProductCatalogSection({
       padding: 'clamp(60px, 10vw, 120px) 0', background: 'linear-gradient(180deg, #FFFFFF 0%, #F4F7F2 100%)',
       position: 'relative', overflow: 'hidden',
     }}>
-      <div style={{
+      <div className="catalog-ambient-blob" style={{
         position: 'absolute', top: '-10%', right: '-5%', width: '600px', height: '600px',
         background: 'radial-gradient(circle, rgba(141,184,51,0.06) 0%, transparent 70%)',
         borderRadius: '50%', pointerEvents: 'none',
@@ -68,10 +69,23 @@ export default function ProductCatalogSection({
             description={isAr ? 'يرجى المراجعة لاحقاً.' : 'Please check back soon.'}
           />
         ) : (
+          // Fixed column counts, not auto-fit: auto-fit sizes the whole grid's
+          // column count once from the container width, so any row short of a
+          // full set (e.g. 6 items in 4 columns = a trailing row of 2) left
+          // visibly empty tracks instead of the cards growing to fill them.
+          // Three columns divides today's catalog evenly and keeps a partial
+          // trailing row short and unremarkable as it grows — capped at the
+          // actual item count too (via --catalog-count, read via CSS min() at
+          // every breakpoint below), so a thin catalog like a single-item
+          // equipment line doesn't strand one card in an otherwise-empty row.
           <div className="catalog-grid" style={{
-            display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            display: 'grid', gridTemplateColumns: `repeat(${Math.min(3, products.length)}, 1fr)`,
             gap: 'clamp(16px, 3vw, 32px)', alignItems: 'stretch',
-          }}>
+            ...(products.length < 3
+              ? { maxWidth: `${products.length * 380 + (products.length - 1) * 32}px`, margin: '0 auto' }
+              : {}),
+            '--catalog-count': products.length,
+          } as CSSProperties}>
             {products.map((product, i) => (
               <Reveal key={product.id} delay={Math.min(i, 5) * 90} style={{ display: 'flex' }}>
                 <ProductCard product={product} isAr={isAr} productUrl={`${basePath}/${product.id}`} />
@@ -81,6 +95,16 @@ export default function ProductCatalogSection({
         )}
       </div>
       <style>{`
+        @media (prefers-reduced-motion: no-preference) {
+          .catalog-ambient-blob { animation: catalogBlobDrift 16s ease-in-out infinite; }
+        }
+        @keyframes catalogBlobDrift {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          50% { transform: translate(-4%, 3%) scale(1.08); }
+        }
+        @media (max-width: 1080px) {
+          .catalog-grid { grid-template-columns: repeat(min(2, var(--catalog-count)), 1fr) !important; }
+        }
         @media (max-width: 768px) {
           .catalog-grid {
             grid-template-columns: 1fr !important;
