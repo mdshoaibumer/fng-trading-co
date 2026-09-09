@@ -1,0 +1,25 @@
+# Vercel Deployment Ignore Rules
+# Speeds up Vercel build time and excludes non-runtime assets
+
+# Documentation & setup guides
+DOCKER-LOCAL.md
+HOSTINGER_DEPLOY.md
+README-DOCKER.md
+
+# Local agent intelligence & tooling
+.agents/
+
+# Local database definitions (managed via Supabase CLI directly)
+supabase/
+
+# Automated test suites (run in CI, not needed for Vercel runtime serverless bundle)
+**/*.test.ts
+**/*.test.tsx
+vitest.config.ts
+
+# Large unreferenced source photography drops superseded by public/
+Printer Products/
+Toner Images/
+Videos/
+Client shared/
+graphify-out/
