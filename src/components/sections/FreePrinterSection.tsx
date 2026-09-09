@@ -57,20 +57,18 @@ export default function FreePrinterSection() {
           <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: '60px', background: 'linear-gradient(90deg,#fff,transparent)', zIndex: 2 }} />
           <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: '60px', background: 'linear-gradient(270deg,#fff,transparent)', zIndex: 2 }} />
           <div className="ticker-track">
-            {[
-              'Elite Business Group',
-              'Horizon Medical Co.',
-              'Modern Construction Est.',
-              'Al-Mansour Enterprises',
-              'Riyadh Logistics Hub',
-              'Saudi Eco Solutions',
-              'Elite Business Group',
-              'Horizon Medical Co.',
-              'Modern Construction Est.',
-              'Al-Mansour Enterprises',
-              'Riyadh Logistics Hub',
-              'Saudi Eco Solutions',
-            ].map((partner, i) => (
+            {/* Industries served, not named clients — reuses the same real
+                categories from the Industries page (messages.industries.items)
+                rather than inventing company names FNG can't actually back. */}
+            {(() => {
+              const industries = isAr
+                ? ['الرعاية الصحية والمستشفيات', 'التعليم والمدارس', 'العقارات والمقاولات', 'الشؤون القانونية والمالية', 'التجزئة والمطاعم', 'الجهات الحكومية', 'الهندسة والتصميم', 'الخدمات اللوجستية والشحن']
+                : ['Healthcare & Clinics', 'Education', 'Real Estate', 'Legal & Finance', 'Retail & F&B', 'Government & Public Sector', 'Architecture & Design', 'Logistics & Operations'];
+              // Whole list repeated once (not each item doubled in place) — the
+              // ticker animates translateX(-50%), so this exact repetition is
+              // what makes the loop seam invisible.
+              return [...industries, ...industries];
+            })().map((partner, i) => (
               <div key={i} style={{ 
                 padding: '0 24px', 
                 height: '44px', 
