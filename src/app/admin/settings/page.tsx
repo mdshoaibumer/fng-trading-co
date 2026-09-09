@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Save, Video, Phone, Mail, MessageSquare, Lock, Shield, Eye, EyeOff, Bot, Globe, Link, AtSign, CheckCircle2 } from 'lucide-react';
+import { Save, Phone, Mail, MessageSquare, Lock, Shield, Eye, EyeOff, Bot, Globe, Link, AtSign, CheckCircle2 } from 'lucide-react';
 import { useToast } from '@/components/admin/Toast';
 import { useUnsavedChanges } from '@/lib/useUnsavedChanges';
 
@@ -10,7 +10,6 @@ interface AdminSettings {
   ai_settings: { welcome_message: string; system_prompt: string };
   social_media: { facebook: string; instagram: string; linkedin: string; twitter: string };
   seo: { title: string; description: string };
-  videos?: { divider1?: string; divider2?: string };
   contact?: { whatsapp?: string; phone?: string; email?: string };
 }
 
@@ -291,32 +290,6 @@ export default function AdminSettingsPage() {
                   onChange={(e) => setSettings({ ...settings, social_media: { ...settings.social_media, twitter: e.target.value } })} 
                 />
               </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Video Settings */}
-        <div className="admin-card">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px', color: 'var(--admin-accent)' }}>
-            <Video size={24} />
-            <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0F172A', margin: 0 }}>Video Backgrounds</h2>
-          </div>
-          <div className="responsive-grid">
-            <div>
-              <label className="admin-label">Forest Animation Divider (MP4 URL)</label>
-              <input 
-                className="admin-input" 
-                value={settings.videos?.divider1 || ''} 
-                onChange={(e) => setSettings({ ...settings, videos: { ...settings.videos, divider1: e.target.value } })} 
-              />
-            </div>
-            <div>
-              <label className="admin-label">Botanical Vortex Divider (MP4 URL)</label>
-              <input 
-                className="admin-input" 
-                value={settings.videos?.divider2 || ''} 
-                onChange={(e) => setSettings({ ...settings, videos: { ...settings.videos, divider2: e.target.value } })} 
-              />
             </div>
           </div>
         </div>

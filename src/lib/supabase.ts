@@ -41,14 +41,12 @@ export const getSettings = cache(async () => {
   if (!data || data.length === 0) {
     Object.assign(settings, {
       contact: { whatsapp: '+966 59 338 0390', phone: '+966 59 338 0390', email: 'support@fngtradingco.com' },
-      videos: { divider1: '/videos/forest-animation.mp4', divider2: '/videos/botanical-vortex.mp4' },
     });
   }
 
   return settings as {
     contact?: { whatsapp?: string; phone?: string; email?: string };
     ai_settings?: { welcome_message?: string; system_prompt?: string };
-    videos?: { divider1?: string; divider2?: string };
     social_media?: { facebook?: string; instagram?: string; linkedin?: string; twitter?: string };
     seo?: { title?: string; description?: string };
     /**

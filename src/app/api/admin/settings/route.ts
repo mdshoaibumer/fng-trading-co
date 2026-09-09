@@ -33,7 +33,6 @@ const settingsSchema = z.object({
   contact: z.object({ whatsapp: shortText, phone: shortText, email: z.string().trim().max(254).optional() }).optional(),
   ai_settings: z.object({ welcome_message: z.string().trim().max(2000).optional(), system_prompt: z.string().trim().max(8000).optional() }).optional(),
   social_media: z.object({ facebook: httpUrl, instagram: httpUrl, linkedin: httpUrl, twitter: httpUrl }).optional(),
-  videos: z.object({ divider1: httpUrl, divider2: httpUrl }).optional(),
   seo: z.object({ title: shortText, description: z.string().trim().max(1000).optional() }).optional(),
   admin_password: z.string().max(200).optional(),
 }).strict();
@@ -59,13 +58,12 @@ export async function GET() {
     // `settings` (e.g. a third-party API key) can never auto-leak.
     const defaultSettings: Record<string, unknown> = {
       contact: { whatsapp: '+966 59 338 0390', phone: '+966 59 338 0390', email: 'support@fngtradingco.com' },
-      videos: { divider1: '/videos/forest-animation.mp4', divider2: '/videos/botanical-vortex.mp4' },
       social_media: { facebook: 'https://facebook.com/fngtradingco', instagram: 'https://instagram.com/fngtradingco', linkedin: 'https://www.linkedin.com/company/fngtradingco', twitter: '' },
       seo: { title: 'Future Next Gen — Refurbished HP Printers & Eco Toner in Saudi Arabia', description: 'FNG supplies professionally refurbished HP printers, eco-friendly toner and genuine printer parts across Saudi Arabia and the Gulf.' },
       ai_settings: { welcome_message: "Hi! I'm Nexia, the FNG assistant. Ask me about refurbished HP printers, eco-toner, parts, or getting a quote." },
     };
 
-    const PUBLIC_KEYS = new Set(['contact', 'ai_settings', 'social_media', 'videos', 'seo']);
+    const PUBLIC_KEYS = new Set(['contact', 'ai_settings', 'social_media', 'seo']);
     const result: Record<string, unknown> = { ...defaultSettings };
     (data || []).forEach(item => {
       if (PUBLIC_KEYS.has(item.key) && item.value && typeof item.value === 'object') {
@@ -88,7 +86,6 @@ export async function GET() {
     console.warn('Settings GET error, falling back to defaults:', error);
     return NextResponse.json({
       contact: { whatsapp: '+966 59 338 0390', phone: '+966 59 338 0390', email: 'support@fngtradingco.com' },
-      videos: { divider1: '/videos/forest-animation.mp4', divider2: '/videos/botanical-vortex.mp4' },
       social_media: { facebook: 'https://facebook.com/fngtradingco', instagram: 'https://instagram.com/fngtradingco', linkedin: 'https://www.linkedin.com/company/fngtradingco', twitter: '' },
       seo: { title: 'Future Next Gen — Refurbished HP Printers & Eco Toner in Saudi Arabia', description: 'FNG supplies professionally refurbished HP printers, eco-friendly toner and genuine printer parts across Saudi Arabia and the Gulf.' },
       ai_settings: { welcome_message: "Hi! I'm Nexia, the FNG assistant. Ask me about refurbished HP printers, eco-toner, parts, or getting a quote." },

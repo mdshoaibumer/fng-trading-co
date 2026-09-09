@@ -11,7 +11,6 @@ import HowItWorksSection from '@/components/sections/HowItWorksSection';
 import IndustriesSection from '@/components/sections/IndustriesSection';
 import TrustSection from '@/components/sections/TrustSection';
 import ContactSection from '@/components/sections/ContactSection';
-import VideoDivider from '@/components/sections/VideoDivider';
 import { getSettings, getProducts } from '@/lib/supabase';
 import { buildAlternates } from '@/lib/metadata';
 import { SITE_EMAIL, SITE_URL } from '@/lib/siteContact';
@@ -50,7 +49,6 @@ export default async function HomePage({
   setRequestLocale(locale);
 
   const settings = await getSettings();
-  const videos = settings.videos || { divider1: '', divider2: '' };
   const { products: printers, error: printersError } = await getProducts('printer');
   const serviceRegions = await getServiceRegions();
 
@@ -182,9 +180,7 @@ export default async function HomePage({
         />
         <FreePrinterSection />
         <HowItWorksSection />
-        <VideoDivider src={videos.divider1 || '/videos/forest-animation.mp4'} />
         <IndustriesSection />
-        <VideoDivider src={videos.divider2 || '/videos/botanical-vortex.mp4'} />
         <TrustSection />
         <ContactSection />
       </main>
