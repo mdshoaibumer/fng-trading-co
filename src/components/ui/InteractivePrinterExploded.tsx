@@ -12,11 +12,9 @@ import {
   RotateCw,
   Scan,
   Cog,
-  CheckCircle2,
   ArrowRight,
   ArrowLeft,
   Sparkles,
-  Info,
   ExternalLink,
 } from 'lucide-react';
 import BorderBeam from '@/components/ui/BorderBeam';

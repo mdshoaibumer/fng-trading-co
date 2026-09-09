@@ -180,16 +180,12 @@ function AdminContentEditor() {
   const [saving, setSaving] = useState(false);
   const [search, setSearch] = useState('');
   const [activeTab, setActiveTab] = useState<'en' | 'ar'>('en');
-  const [activeCategory, setActiveCategory] = useState<CategoryKey>('sourcing');
+  const [selectedCategory, setSelectedCategory] = useState<CategoryKey | null>(null);
+  const activeCategory = selectedCategory ?? (urlPageParam && CATEGORIES.some((c) => c.key === urlPageParam) ? (urlPageParam as CategoryKey) : 'sourcing');
+  const setActiveCategory = (cat: CategoryKey) => setSelectedCategory(cat);
   const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
   const { showToast } = useToast();
   const [savedSnapshot, setSavedSnapshot] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (urlPageParam && CATEGORIES.some((c) => c.key === urlPageParam)) {
-      setActiveCategory(urlPageParam as CategoryKey);
-    }
-  }, [urlPageParam]);
 
   useEffect(() => {
     fetch('/api/admin/content')

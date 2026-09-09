@@ -1,11 +1,9 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   Calculator,
   Printer,
-  Sparkles,
   ShieldCheck,
   CheckCircle2,
   TrendingDown,
@@ -14,12 +12,10 @@ import {
   MessageCircle,
   ArrowRight,
   ArrowLeft,
-  Info,
   Sliders,
   Building,
 } from 'lucide-react';
 import BorderBeam from '@/components/ui/BorderBeam';
-import SpotlightCard from '@/components/ui/SpotlightCard';
 import MagneticButton from '@/components/ui/MagneticButton';
 
 interface EnterpriseBOQConfiguratorProps {

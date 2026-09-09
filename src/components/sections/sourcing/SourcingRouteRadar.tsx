@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -11,14 +11,9 @@ import {
   MapPin,
   Clock,
   CheckCircle2,
-  Navigation2,
   ArrowRight,
   ArrowLeft,
-  Anchor,
-  Sparkles,
-  Layers,
   Radio,
-  Building,
 } from 'lucide-react';
 import BorderBeam from '@/components/ui/BorderBeam';
 import SpotlightCard from '@/components/ui/SpotlightCard';

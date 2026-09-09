@@ -6,6 +6,7 @@ import { useState, useRef, useEffect } from 'react';
 import { CheckCircle2, Lock, Clock, Loader2 } from 'lucide-react';
 import { regionName } from '@/lib/serviceRegions';
 import { useServiceRegions } from '@/components/providers/ServiceRegionsProvider';
+import { useLeadContext } from '@/lib/leadContext';
 import Reveal from '@/components/ui/Reveal';
 
 export default function ContactSection() {
@@ -24,11 +25,24 @@ export default function ContactSection() {
   const isPrinterFunnel = !pathname.includes('/sourcing') && !pathname.includes('/equipment');
   const [status, setStatus] = useState<'idle'|'loading'|'success'|'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
+  const { leadContext, dismiss: dismissLeadContext } = useLeadContext();
+  const defaultMessage = leadContext ? (isAr ? leadContext.messageAr : leadContext.messageEn) : '';
+  const defaultQuantity = leadContext?.quantity || '1';
   const successRef = useRef<HTMLDivElement>(null);
   // `country` stores the English country name so leads read consistently in
   // the admin panel whichever language the visitor used.
   const serviceRegions = useServiceRegions();
-  const [form, setForm] = useState({ name: '', company: '', phone: '', country: serviceRegions[0].nameEn, city: '', quantity: '1', website: '' });
+  const [form, setForm] = useState({
+    name: '',
+    company: '',
+    phone: '',
+    email: '',
+    country: serviceRegions[0].nameEn,
+    city: '',
+    quantity: '1',
+    message: '',
+    website: '',
+  });
 
   // Move focus to the confirmation once the form is replaced, so a screen
   // reader / keyboard user is taken to the result instead of being left on a
@@ -45,7 +59,11 @@ export default function ContactSection() {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          message: form.message.trim() || defaultMessage,
+          quantity: form.quantity || defaultQuantity,
+        }),
       });
       if (res.ok) {
         setStatus('success');
@@ -121,15 +139,60 @@ export default function ContactSection() {
                   style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0, opacity: 0 }}
                   value={form.website}
                   onChange={e => setForm(f => ({ ...f, website: e.target.value }))} />
+                {leadContext && (
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '10px 14px',
+                    borderRadius: 'var(--radius-md)',
+                    background: 'rgba(141,184,51,0.15)',
+                    border: '1px solid rgba(141,184,51,0.3)',
+                    color: '#fff',
+                    fontSize: '0.85rem',
+                    fontWeight: 600,
+                    flexDirection: isAr ? 'row-reverse' : 'row',
+                  }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '8px', flexDirection: isAr ? 'row-reverse' : 'row' }}>
+                      <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent)', display: 'inline-block' }} />
+                      <span>{isAr ? leadContext.badgeAr : leadContext.badgeEn}</span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={dismissLeadContext}
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        color: 'rgba(255,255,255,0.6)',
+                        cursor: 'pointer',
+                        fontSize: '0.85rem',
+                        padding: '2px 6px',
+                        lineHeight: 1,
+                      }}
+                      aria-label={isAr ? 'إلغاء التحديد' : 'Clear selection'}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                )}
                 <label htmlFor="contact-name" className="sr-only">{t('form.name')}</label>
                 <input id="contact-name" style={inputStyle} placeholder={t('form.name')} required aria-required="true" autoComplete="name" value={form.name}
                   onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
                 <label htmlFor="contact-company" className="sr-only">{t('form.company')}</label>
                 <input id="contact-company" style={inputStyle} placeholder={t('form.company')} required aria-required="true" autoComplete="organization" value={form.company}
                   onChange={e => setForm(f => ({ ...f, company: e.target.value }))} />
-                <label htmlFor="contact-phone" className="sr-only">{t('form.phone')}</label>
-                <input id="contact-phone" style={inputStyle} placeholder={t('form.phone')} type="tel" required aria-required="true" autoComplete="tel" value={form.phone}
-                  onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} />
+                <div className="contact-form-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                  <div>
+                    <label htmlFor="contact-phone" className="sr-only">{t('form.phone')}</label>
+                    <input id="contact-phone" style={inputStyle} placeholder={t('form.phone')} type="tel" required aria-required="true" autoComplete="tel" value={form.phone}
+                      onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} />
+                  </div>
+                  <div>
+                    <label htmlFor="contact-email" className="sr-only">{t('form.email')}</label>
+                    <input id="contact-email" style={inputStyle} placeholder={t('form.email')} type="email" autoComplete="email" value={form.email}
+                      onChange={e => setForm(f => ({ ...f, email: e.target.value }))} />
+                  </div>
+                </div>
                 <div className="contact-form-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                   <div>
                     <label htmlFor="contact-country" className="sr-only">{t('form.country')}</label>
@@ -148,10 +211,17 @@ export default function ContactSection() {
                 </div>
                 <div>
                   <label htmlFor="contact-quantity" style={{ display: 'block', color: 'rgba(255,255,255,0.55)', fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', textAlign: isAr ? 'right' : 'left' }}>{isPrinterFunnel ? t('form.quantity') : t('form.quantityGeneric')}</label>
-                  <select id="contact-quantity" style={{ ...inputStyle, cursor: 'pointer' }} value={form.quantity}
+                  <select id="contact-quantity" style={{ ...inputStyle, cursor: 'pointer' }} value={form.quantity || defaultQuantity}
                     onChange={e => setForm(f => ({ ...f, quantity: e.target.value }))}>
                     {[1,2,3,5,10,20].map(n => <option key={n} value={n} style={{ color: '#000' }}>{n}</option>)}
                   </select>
+                </div>
+                <div>
+                  <label htmlFor="contact-message" className="sr-only">{t('form.message')}</label>
+                  <textarea id="contact-message" rows={3} style={{ ...inputStyle, minHeight: '80px', resize: 'vertical' }}
+                    placeholder={t('form.message')}
+                    value={form.message || defaultMessage}
+                    onChange={e => setForm(f => ({ ...f, message: e.target.value }))} />
                 </div>
                 <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '8px', minHeight: '48px' }}
                   disabled={status === 'loading'} aria-busy={status === 'loading'}>

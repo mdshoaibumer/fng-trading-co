@@ -40,6 +40,7 @@ export default function HeroSection() {
   const headlineRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLAnchorElement>(null);
+  const ctaContainerRef = useRef<HTMLDivElement>(null);
   const eyebrowRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotionRef = useRef(false);
 
@@ -51,6 +52,7 @@ export default function HeroSection() {
     if (headlineRef.current) Object.assign(headlineRef.current.style, { transform: `translateY(${p * -50}px)`, opacity });
     if (subtitleRef.current) Object.assign(subtitleRef.current.style, { transform: `translateY(${p * -80}px)`, opacity });
     if (ctaRef.current) Object.assign(ctaRef.current.style, { transform: `translateY(${p * -110}px)`, opacity });
+    if (ctaContainerRef.current) Object.assign(ctaContainerRef.current.style, { transform: `translateY(${p * -110}px)`, opacity });
     if (eyebrowRef.current) eyebrowRef.current.style.opacity = opacity;
   }, []);
 
@@ -250,20 +252,66 @@ export default function HeroSection() {
             )}
           </div>
 
-          <div style={{
+          <div ref={ctaContainerRef} style={{
             opacity: headlineVisible ? 1 : 0, transform: headlineVisible ? 'translateY(0)' : 'translateY(16px)',
             transition: 'opacity 700ms var(--ease-ink) 150ms, transform 700ms var(--ease-ink) 150ms', flexShrink: 0,
+            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: isMobile ? '10px' : '14px',
+            marginTop: isMobile ? '16px' : '22px',
           }}>
-            <MagneticButton magneticPull={10}>
-              <a ref={ctaRef} href={`/${locale}#contact`} className="btn-primary hero-cta" style={{
-                fontSize: isMobile ? 'var(--text-sm)' : 'var(--text-base)',
-                padding: isMobile ? '12px 24px' : '14px 34px',
-                height: 'auto', marginTop: isMobile ? '20px' : '24px',
-                boxShadow: 'var(--shadow-lg)', maxWidth: isMobile ? '260px' : 'none', display: 'inline-block',
-              }}>
-                {t('cta')}
-              </a>
-            </MagneticButton>
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: '12px',
+              flexDirection: isMobile ? 'column' : (isAr ? 'row-reverse' : 'row'),
+              width: isMobile ? '100%' : 'auto', justifyContent: 'center',
+            }}>
+              <MagneticButton magneticPull={10}>
+                <a ref={ctaRef} href={`/${locale}#contact`} className="btn-primary hero-cta" style={{
+                  fontSize: isMobile ? 'var(--text-sm)' : 'var(--text-base)',
+                  padding: isMobile ? '12px 24px' : '14px 34px',
+                  height: 'auto',
+                  boxShadow: 'var(--shadow-lg)', width: isMobile ? '100%' : 'auto', maxWidth: isMobile ? '280px' : 'none', display: 'inline-flex',
+                  alignItems: 'center', justifyContent: 'center',
+                }}>
+                  {t('cta')}
+                </a>
+              </MagneticButton>
+
+              <MagneticButton magneticPull={8}>
+                <a href={`/${locale}/printers`} className="btn-secondary" style={{
+                  fontSize: isMobile ? 'var(--text-sm)' : 'var(--text-base)',
+                  padding: isMobile ? '11px 22px' : '13px 28px',
+                  height: 'auto',
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  backdropFilter: 'blur(8px)',
+                  border: '1px solid rgba(255, 255, 255, 0.18)',
+                  color: '#FFFFFF',
+                  borderRadius: 'var(--radius-pill)',
+                  fontWeight: 600,
+                  textDecoration: 'none',
+                  width: isMobile ? '100%' : 'auto', maxWidth: isMobile ? '280px' : 'none', display: 'inline-flex',
+                  alignItems: 'center', justifyContent: 'center', gap: '8px',
+                  transition: 'all 0.25s ease',
+                  flexDirection: isAr ? 'row-reverse' : 'row',
+                }}>
+                  {isAr ? 'استعراض أسطول الطابعات' : 'Browse Fleet Inventory'}
+                  <span style={{ fontSize: '1.1em', transform: isAr ? 'rotate(180deg)' : 'none' }}>→</span>
+                </a>
+              </MagneticButton>
+            </div>
+
+            {/* Verified B2B trust signals strip */}
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: isMobile ? '8px' : '14px',
+              color: 'rgba(255,255,255,0.68)', fontSize: isMobile ? '0.72rem' : '0.8rem',
+              fontWeight: 500, flexWrap: 'wrap', justifyContent: 'center',
+              letterSpacing: isAr ? '0' : '0.02em',
+              flexDirection: isAr ? 'row-reverse' : 'row',
+            }}>
+              <span>{isAr ? '✓ ضمان FNG لمدة ١٢ شهراً' : '✓ 12-Month FNG Warranty'}</span>
+              <span style={{ opacity: 0.35 }}>•</span>
+              <span>{isAr ? '✓ فحص تقني من ٤٠ نقطة' : '✓ 40-Point Diagnostic'}</span>
+              <span style={{ opacity: 0.35 }}>•</span>
+              <span>{isAr ? '✓ تسليم مباشر في دول الخليج' : '✓ GCC Direct Delivery'}</span>
+            </div>
           </div>
 
           {/* Scroll indicator — always occupies real flex space (never position:absolute

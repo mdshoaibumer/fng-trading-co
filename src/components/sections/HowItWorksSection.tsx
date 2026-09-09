@@ -1,7 +1,6 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useRef, useEffect, useState } from 'react';
 import { Printer, Leaf, TrendingUp } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import Reveal from '@/components/ui/Reveal';
@@ -19,25 +18,10 @@ export default function HowItWorksSection() {
   const t = useTranslations('howItWorks');
   const params = useParams();
   const isAr = params.locale === 'ar';
-  const ref = useRef<HTMLDivElement>(null);
-  const [linesDrawn, setLinesDrawn] = useState(false);
-  useEffect(() => {
-    const node = ref.current;
-    if (!node) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      setLinesDrawn(true);
-      return;
-    }
-    const obs = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) { setLinesDrawn(true); obs.disconnect(); }
-    }, { threshold: 0.2 });
-    obs.observe(node);
-    return () => obs.disconnect();
-  }, []);
 
   return (
     <section id="how-it-works" className="section" style={{ background: 'var(--bg-secondary)', isolation: 'isolate' }}>
-      <div className="container" ref={ref}>
+      <div className="container">
         <div style={{ textAlign: 'center', marginBottom: 'clamp(32px, 6vw, 64px)' }}>
           <span className="section-tag">{t('tag')}</span>
           <h2 style={{ fontSize: 'clamp(1.5rem,4vw,3.5rem)', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px' }}>{t('title')}</h2>

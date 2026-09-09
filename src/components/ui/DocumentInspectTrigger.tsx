@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ShieldCheck, FileCheck } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 import MagneticButton from '@/components/ui/MagneticButton';
 import DocumentVerificationModal from '@/components/ui/DocumentVerificationModal';
 

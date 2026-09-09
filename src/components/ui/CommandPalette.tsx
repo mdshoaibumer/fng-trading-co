@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -9,16 +9,12 @@ import {
   Wrench,
   Recycle,
   Ship,
-  FileCheck,
   Calculator,
   Phone,
   MessageCircle,
-  ArrowRight,
-  ArrowLeft,
   Sparkles,
   Command,
   CornerDownLeft,
-  Compass,
   Building,
   Monitor,
   Cpu,
@@ -62,37 +58,56 @@ export default function CommandPalette({ locale }: CommandPaletteProps) {
 
   const isAr = locale === 'ar';
   const otherLocale = isAr ? 'en' : 'ar';
-  const Arrow = isAr ? ArrowLeft : ArrowRight;
 
-  const navigate = (path: string) => {
+  const closePalette = useCallback(() => {
     setIsOpen(false);
-    router.push(path);
-  };
+    setQuery('');
+    setSelectedIndex(0);
+  }, []);
 
-  const openWhatsApp = () => {
-    setIsOpen(false);
-    window.open('https://wa.me/966548105000', '_blank', 'noopener,noreferrer');
-  };
+  const togglePalette = useCallback(() => {
+    setIsOpen((prev) => {
+      if (prev) {
+        setQuery('');
+        setSelectedIndex(0);
+        return false;
+      }
+      return true;
+    });
+  }, []);
 
-  const callPhone = () => {
-    setIsOpen(false);
-    window.location.href = 'tel:+966548105000';
-  };
+  const navigate = useCallback(
+    (path: string) => {
+      closePalette();
+      router.push(path);
+    },
+    [closePalette, router]
+  );
 
-  const switchLanguage = () => {
-    setIsOpen(false);
+  const openWhatsApp = useCallback(() => {
+    closePalette();
+    window.open('https://wa.me/966593380390', '_blank', 'noopener,noreferrer');
+  }, [closePalette]);
+
+  const callPhone = useCallback(() => {
+    closePalette();
+    window.location.href = 'tel:+966593380390';
+  }, [closePalette]);
+
+  const switchLanguage = useCallback(() => {
+    closePalette();
     const currentPath = window.location.pathname;
     const segments = currentPath.split('/');
     segments[1] = otherLocale;
     router.push(segments.join('/') + window.location.hash);
-  };
+  }, [closePalette, otherLocale, router]);
 
-  const openDocVerification = () => {
-    setIsOpen(false);
+  const openDocVerification = useCallback(() => {
+    closePalette();
     setTimeout(() => {
       setDocModalOpen(true);
     }, 150);
-  };
+  }, [closePalette]);
 
   const items: PaletteItem[] = useMemo(
     () => [
@@ -296,7 +311,7 @@ export default function CommandPalette({ locale }: CommandPaletteProps) {
         keywords: ['faq', 'questions', 'help', 'answers', 'support', 'أسئلة', 'شائعة', 'مساعدة', 'استفسارات'],
       },
     ],
-    [locale, isAr, otherLocale]
+    [locale, isAr, navigate, switchLanguage, openWhatsApp, callPhone, openDocVerification]
   );
 
   // Filter items by query
@@ -312,10 +327,12 @@ export default function CommandPalette({ locale }: CommandPaletteProps) {
     });
   }, [items, query]);
 
-  // Keep selected index within bounds
-  useEffect(() => {
+  const safeSelectedIndex = selectedIndex < filteredItems.length ? selectedIndex : 0;
+
+  const handleQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setQuery(e.target.value);
     setSelectedIndex(0);
-  }, [filteredItems]);
+  };
 
   // Keyboard shortcut listener (Ctrl+K, Cmd+K, /)
   useEffect(() => {
@@ -326,18 +343,18 @@ export default function CommandPalette({ locale }: CommandPaletteProps) {
 
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
-        setIsOpen((prev) => !prev);
+        togglePalette();
       } else if (e.key === '/' && !isInput && !isOpen) {
         e.preventDefault();
         setIsOpen(true);
       } else if (e.key === 'Escape' && isOpen) {
-        setIsOpen(false);
+        closePalette();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen]);
+  }, [isOpen, togglePalette, closePalette]);
 
   // Palette Navigation keyboard listener
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -349,8 +366,8 @@ export default function CommandPalette({ locale }: CommandPaletteProps) {
       setSelectedIndex((prev) => (prev - 1 + filteredItems.length) % Math.max(1, filteredItems.length));
     } else if (e.key === 'Enter') {
       e.preventDefault();
-      if (filteredItems[selectedIndex]) {
-        filteredItems[selectedIndex].action();
+      if (filteredItems[safeSelectedIndex]) {
+        filteredItems[safeSelectedIndex].action();
       }
     }
   };
@@ -359,12 +376,12 @@ export default function CommandPalette({ locale }: CommandPaletteProps) {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         inputRef.current?.focus();
       }, 50);
+      return () => clearTimeout(timer);
     } else {
       document.body.style.overflow = '';
-      setQuery('');
     }
     return () => {
       document.body.style.overflow = '';
@@ -397,7 +414,7 @@ export default function CommandPalette({ locale }: CommandPaletteProps) {
                 backdropFilter: 'blur(24px)',
                 WebkitBackdropFilter: 'blur(24px)',
               }}
-              onClick={() => setIsOpen(false)}
+              onClick={closePalette}
               role="dialog"
               aria-modal="true"
               aria-label={isAr ? 'قائمة الأوامر والبحث الشامل' : 'Command & Navigation Palette'}
@@ -441,7 +458,7 @@ export default function CommandPalette({ locale }: CommandPaletteProps) {
                     ref={inputRef}
                     type="text"
                     value={query}
-                    onChange={(e) => setQuery(e.target.value)}
+                    onChange={handleQueryChange}
                     onKeyDown={handleInputKeyDown}
                     placeholder={
                       isAr
@@ -520,7 +537,7 @@ export default function CommandPalette({ locale }: CommandPaletteProps) {
                     </div>
                   ) : (
                     filteredItems.map((item, index) => {
-                      const isSelected = index === selectedIndex;
+                      const isSelected = index === safeSelectedIndex;
                       const Icon = item.icon;
                       return (
                         <div

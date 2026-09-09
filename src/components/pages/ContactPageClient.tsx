@@ -7,6 +7,7 @@ import { CheckCircle2, MapPin, Mail, Phone, Clock, ShieldCheck, Zap, Loader2 } f
 import { SITE_EMAIL } from '@/lib/siteContact';
 import { officeRegions, regionName, regionHub } from '@/lib/serviceRegions';
 import { useServiceRegions } from '@/components/providers/ServiceRegionsProvider';
+import { useLeadContext } from '@/lib/leadContext';
 import Reveal from '@/components/ui/Reveal';
 
 export default function ContactPageClient({ email }: { email?: string }) {
@@ -17,6 +18,9 @@ export default function ContactPageClient({ email }: { email?: string }) {
   const isAr = locale === 'ar';
   const [status, setStatus] = useState<'idle'|'loading'|'success'|'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
+  const { leadContext, dismiss: dismissLeadContext } = useLeadContext();
+  const defaultMessage = leadContext ? (isAr ? leadContext.messageAr : leadContext.messageEn) : '';
+  const defaultQuantity = leadContext?.quantity || '1';
   const successRef = useRef<HTMLDivElement>(null);
   const serviceRegions = useServiceRegions();
   const [form, setForm] = useState({ name: '', company: '', phone: '', email: '', industry: '', country: serviceRegions[0].nameEn, city: '', message: '', quantity: '1', website: '' });
@@ -33,7 +37,11 @@ export default function ContactPageClient({ email }: { email?: string }) {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          message: form.message.trim() || defaultMessage,
+          quantity: form.quantity || defaultQuantity,
+        }),
       });
       if (res.ok) {
         setStatus('success');
@@ -217,7 +225,44 @@ export default function ContactPageClient({ email }: { email?: string }) {
                   value={form.website}
                   onChange={e => setForm(f => ({ ...f, website: e.target.value }))} />
                 <h3 style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '8px' }}>{isAr ? 'أرسل رسالة' : 'Send a Message'}</h3>
-                <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>{isAr ? 'املأ النموذج أدناه وسنعاود التواصل معك قريباً.' : 'Fill out the form below and we will get back to you shortly.'}</p>
+                <p style={{ color: 'var(--text-secondary)', marginBottom: '16px' }}>{isAr ? 'املأ النموذج أدناه وسنعاود التواصل معك قريباً.' : 'Fill out the form below and we will get back to you shortly.'}</p>
+
+                {leadContext && (
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '12px 18px',
+                    borderRadius: 'var(--radius-md)',
+                    background: 'rgba(141,184,51,0.12)',
+                    border: '1px solid rgba(141,184,51,0.3)',
+                    color: 'var(--primary)',
+                    fontSize: '0.9rem',
+                    fontWeight: 600,
+                    marginBottom: '8px',
+                    flexDirection: isAr ? 'row-reverse' : 'row',
+                  }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '8px', flexDirection: isAr ? 'row-reverse' : 'row' }}>
+                      <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent)', display: 'inline-block' }} />
+                      <span>{isAr ? leadContext.badgeAr : leadContext.badgeEn}</span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={dismissLeadContext}
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        color: 'var(--text-secondary)',
+                        cursor: 'pointer',
+                        fontSize: '0.85rem',
+                        padding: '2px 6px',
+                      }}
+                      aria-label={isAr ? 'إلغاء التحديد' : 'Clear selection'}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                )}
                 
                 <div className="form-row" style={{ gap: '20px' }}>
                   <div>
@@ -264,19 +309,21 @@ export default function ContactPageClient({ email }: { email?: string }) {
 
                 <div>
                   <label htmlFor="contact-page-industry" className="sr-only">{t('form.industry')}</label>
-                  <input id="contact-page-industry" style={inputStyle} placeholder={t('form.industry')} value={form.industry} required
+                  <input id="contact-page-industry" style={inputStyle} placeholder={t('form.industry')} value={form.industry}
                     onChange={e => setForm(f => ({ ...f, industry: e.target.value }))} />
                 </div>
 
                 <div>
                   <label htmlFor="contact-page-message" className="sr-only">{t('form.message')}</label>
-                  <textarea id="contact-page-message" style={{ ...inputStyle, minHeight: '120px', resize: 'vertical' }} placeholder={t('form.message')} value={form.message}
+                  <textarea id="contact-page-message" style={{ ...inputStyle, minHeight: '120px', resize: 'vertical' }}
+                    placeholder={t('form.message')}
+                    value={form.message || defaultMessage}
                     onChange={e => setForm(f => ({ ...f, message: e.target.value }))} />
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <label htmlFor="contact-page-quantity" style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: 600 }}>{t('form.quantity')}</label>
-                  <select id="contact-page-quantity" style={{ ...inputStyle, cursor: 'pointer' }} value={form.quantity}
+                  <select id="contact-page-quantity" style={{ ...inputStyle, cursor: 'pointer' }} value={form.quantity || defaultQuantity}
                     onChange={e => setForm(f => ({ ...f, quantity: e.target.value }))}>
                     {[1, 2, 3, 5, 10, 20, '50+'].map(n => <option key={n} value={n} style={{ color: '#000' }}>{n}</option>)}
                   </select>

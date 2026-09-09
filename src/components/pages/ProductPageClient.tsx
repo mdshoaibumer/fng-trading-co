@@ -345,7 +345,7 @@ export default function ProductPageClient({ product, whatsapp, locale, itemType 
               </a>
 
               <Link
-                href={product.available === false ? '#' : `/${locale}/contact`}
+                href={product.available === false ? '#' : `/${locale}/contact?product=${encodeURIComponent(product.name)}`}
                 aria-disabled={product.available === false}
                 tabIndex={product.available === false ? -1 : undefined}
                 style={{

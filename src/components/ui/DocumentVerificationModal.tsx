@@ -4,7 +4,6 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ShieldCheck,
-  Building2,
   FileCheck,
   CheckCircle2,
   Copy,
@@ -14,8 +13,6 @@ import {
   Lock,
   Stamp,
   QrCode,
-  Award,
-  Globe2,
 } from 'lucide-react';
 import BorderBeam from '@/components/ui/BorderBeam';
 
