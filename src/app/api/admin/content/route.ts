@@ -6,20 +6,28 @@ import enMessages from '../../../../../messages/en.json';
 import arMessages from '../../../../../messages/ar.json';
 
 export async function GET() {
+  let enOverrides: Record<string, unknown> = {};
+  let arOverrides: Record<string, unknown> = {};
+
   try {
     const { data: enData } = await supabaseAdmin.from('settings').select('value').eq('key', 'content_en').single();
-    const { data: arData } = await supabaseAdmin.from('settings').select('value').eq('key', 'content_ar').single();
-
-    // The editor shows the same thing the site renders: the shipped
-    // messages/*.json with any saved edits layered on top. Before this, a
-    // fresh database (no content_* rows) produced an empty editor.
-    const en = deepMerge(enMessages as Record<string, unknown>, isPlainObject(enData?.value) ? enData.value : {});
-    const ar = deepMerge(arMessages as Record<string, unknown>, isPlainObject(arData?.value) ? arData.value : {});
-    return NextResponse.json({ en, ar });
-  } catch (error) {
-    console.error('Failed to read translations from DB:', error);
-    return NextResponse.json({ error: 'Failed to read translations' }, { status: 500 });
+    if (isPlainObject(enData?.value)) enOverrides = enData.value;
+  } catch (err) {
+    console.warn('Could not fetch content_en overrides from DB:', err);
   }
+
+  try {
+    const { data: arData } = await supabaseAdmin.from('settings').select('value').eq('key', 'content_ar').single();
+    if (isPlainObject(arData?.value)) arOverrides = arData.value;
+  } catch (err) {
+    console.warn('Could not fetch content_ar overrides from DB:', err);
+  }
+
+  // The editor shows the same thing the site renders: the shipped
+  // messages/*.json with any saved edits layered on top.
+  const en = deepMerge(enMessages as Record<string, unknown>, enOverrides);
+  const ar = deepMerge(arMessages as Record<string, unknown>, arOverrides);
+  return NextResponse.json({ en, ar });
 }
 
 export async function POST(request: Request) {

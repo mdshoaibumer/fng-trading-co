@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { useDialogA11y } from '@/lib/useDialogA11y';
 import { homeHref, isCurrentPage, scrollToTop } from '@/lib/navigation';
 import { markGateSeen } from '@/lib/entryGate';
+import { CommandPaletteTrigger } from '@/components/ui/CommandPalette';
 
 // Printers and sourcing are run as two separate businesses, so the only way
 // between them is the entry gate on the landing page. `?gate=1` is what asks
@@ -253,9 +254,14 @@ export default function Navbar() {
         <div style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '16px',
+          gap: '12px',
           flexShrink: 0,
         }}>
+          {/* Quick Search / Command Palette Trigger */}
+          <div className="nav-search-desktop">
+            <CommandPaletteTrigger isAr={isAr} />
+          </div>
+
           {/* Language Toggle. A <Link>, not a plain <a>: a full document load
               repaints the white body between pages, which flashed on every
               language switch. See the note on the chooser's toggle. */}
@@ -449,6 +455,14 @@ export default function Navbar() {
           overflowY: 'auto',
         }}
       >
+        {/* Mobile Quick Search Trigger */}
+        <div
+          style={{ marginBottom: '12px', width: '100%', maxWidth: '280px', display: 'flex', justifyContent: 'center' }}
+          onClick={() => setMobileOpen(false)}
+        >
+          <CommandPaletteTrigger isAr={isAr} />
+        </div>
+
         {navLinks.map((link, i) => {
           const active = !link.href.includes('#') && isCurrentPage(pathname, link.href);
           return (
@@ -648,6 +662,11 @@ export default function Navbar() {
           }
           #main-nav :global(.nav-logo-img) {
             height: 38px !important;
+          }
+        }
+        @media (max-width: 640px) {
+          .nav-search-desktop {
+            display: none !important;
           }
         }
         @media (max-width: 480px) {

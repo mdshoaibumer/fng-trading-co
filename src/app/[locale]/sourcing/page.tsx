@@ -2,6 +2,7 @@ import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { SITE_URL } from '@/lib/siteContact';
 import type { Metadata } from 'next';
 import SourcingHeroSection from '@/components/sections/sourcing/SourcingHeroSection';
+import SourcingRouteRadar from '@/components/sections/sourcing/SourcingRouteRadar';
 import SourcingProcessSection from '@/components/sections/sourcing/SourcingProcessSection';
 import SourcingCategoriesSection from '@/components/sections/sourcing/SourcingCategoriesSection';
 import SourcingSystemsSection from '@/components/sections/sourcing/SourcingSystemsSection';
@@ -78,6 +79,7 @@ export default async function SourcingPage({
           dangerouslySetInnerHTML={{ __html: safeJsonLd(serviceSchema) }}
         />
         <SourcingHeroSection />
+        <SourcingRouteRadar isAr={isAr} locale={locale} />
         <SourcingProcessSection />
         <SourcingCategoriesSection />
         <SourcingSystemsSection />

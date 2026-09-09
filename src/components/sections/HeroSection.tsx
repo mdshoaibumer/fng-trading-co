@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { usePrinterCinematic, type CinematicPhaseKey } from '@/lib/usePrinterCinematic';
+import MagneticButton from '@/components/ui/MagneticButton';
 
 const DESKTOP_TOTAL_FRAMES = 1120;
 const MOBILE_TOTAL_FRAMES = 700;
@@ -253,14 +254,16 @@ export default function HeroSection() {
             opacity: headlineVisible ? 1 : 0, transform: headlineVisible ? 'translateY(0)' : 'translateY(16px)',
             transition: 'opacity 700ms var(--ease-ink) 150ms, transform 700ms var(--ease-ink) 150ms', flexShrink: 0,
           }}>
-            <a ref={ctaRef} href={`/${locale}#contact`} className="btn-primary hero-cta" style={{
-              fontSize: isMobile ? 'var(--text-sm)' : 'var(--text-base)',
-              padding: isMobile ? '12px 24px' : '14px 34px',
-              height: 'auto', marginTop: isMobile ? '20px' : '24px',
-              boxShadow: 'var(--shadow-lg)', maxWidth: isMobile ? '260px' : 'none', display: 'inline-block',
-            }}>
-              {t('cta')}
-            </a>
+            <MagneticButton magneticPull={10}>
+              <a ref={ctaRef} href={`/${locale}#contact`} className="btn-primary hero-cta" style={{
+                fontSize: isMobile ? 'var(--text-sm)' : 'var(--text-base)',
+                padding: isMobile ? '12px 24px' : '14px 34px',
+                height: 'auto', marginTop: isMobile ? '20px' : '24px',
+                boxShadow: 'var(--shadow-lg)', maxWidth: isMobile ? '260px' : 'none', display: 'inline-block',
+              }}>
+                {t('cta')}
+              </a>
+            </MagneticButton>
           </div>
 
           {/* Scroll indicator — always occupies real flex space (never position:absolute

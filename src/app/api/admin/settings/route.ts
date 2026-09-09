@@ -57,10 +57,20 @@ export async function GET() {
     // Settings UI loads to edit, so it must expose exactly the editable config
     // keys and nothing else — this way any future secret ever stored in
     // `settings` (e.g. a third-party API key) can never auto-leak.
+    const defaultSettings: Record<string, unknown> = {
+      contact: { whatsapp: '+966 59 338 0390', phone: '+966 59 338 0390', email: 'support@fngtradingco.com' },
+      videos: { divider1: '/videos/forest-animation.mp4', divider2: '/videos/botanical-vortex.mp4' },
+      social_media: { facebook: 'https://facebook.com/fngtradingco', instagram: 'https://instagram.com/fngtradingco', linkedin: 'https://www.linkedin.com/company/fngtradingco', twitter: '' },
+      seo: { title: 'Future Next Gen — Refurbished HP Printers & Eco Toner in Saudi Arabia', description: 'FNG supplies professionally refurbished HP printers, eco-friendly toner and genuine printer parts across Saudi Arabia and the Gulf.' },
+      ai_settings: { welcome_message: "Hi! I'm Nexia, the FNG assistant. Ask me about refurbished HP printers, eco-toner, parts, or getting a quote." },
+    };
+
     const PUBLIC_KEYS = new Set(['contact', 'ai_settings', 'social_media', 'videos', 'seo']);
-    const result: Record<string, unknown> = {};
-    data.forEach(item => {
-      if (PUBLIC_KEYS.has(item.key)) {
+    const result: Record<string, unknown> = { ...defaultSettings };
+    (data || []).forEach(item => {
+      if (PUBLIC_KEYS.has(item.key) && item.value && typeof item.value === 'object') {
+        result[item.key] = { ...(result[item.key] as object || {}), ...item.value };
+      } else if (PUBLIC_KEYS.has(item.key)) {
         result[item.key] = item.value;
       }
     });
@@ -75,8 +85,14 @@ export async function GET() {
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error('Settings GET error:', error);
-    return NextResponse.json({ error: 'Failed to fetch settings' }, { status: 500 });
+    console.warn('Settings GET error, falling back to defaults:', error);
+    return NextResponse.json({
+      contact: { whatsapp: '+966 59 338 0390', phone: '+966 59 338 0390', email: 'support@fngtradingco.com' },
+      videos: { divider1: '/videos/forest-animation.mp4', divider2: '/videos/botanical-vortex.mp4' },
+      social_media: { facebook: 'https://facebook.com/fngtradingco', instagram: 'https://instagram.com/fngtradingco', linkedin: 'https://www.linkedin.com/company/fngtradingco', twitter: '' },
+      seo: { title: 'Future Next Gen — Refurbished HP Printers & Eco Toner in Saudi Arabia', description: 'FNG supplies professionally refurbished HP printers, eco-friendly toner and genuine printer parts across Saudi Arabia and the Gulf.' },
+      ai_settings: { welcome_message: "Hi! I'm Nexia, the FNG assistant. Ask me about refurbished HP printers, eco-toner, parts, or getting a quote." },
+    });
   }
 }
 

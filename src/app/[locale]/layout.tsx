@@ -12,6 +12,7 @@ import ChatWidgetLoader from '@/components/chat/ChatWidgetLoader';
 import TransitionErrorGuard from '@/components/ui/TransitionErrorGuard';
 import ScrollProgress from '@/components/ui/ScrollProgress';
 import BackToTop from '@/components/ui/BackToTop';
+import CommandPalette from '@/components/ui/CommandPalette';
 import { getSettings } from '@/lib/supabase';
 import { getServiceRegions } from '@/lib/getServiceRegions';
 import { ServiceRegionsProvider } from '@/components/providers/ServiceRegionsProvider';
@@ -113,6 +114,7 @@ export default async function LocaleLayout({
               {isRTL(locale) ? 'تخطَّ إلى المحتوى' : 'Skip to content'}
             </a>
             <Navbar />
+            <CommandPalette locale={locale} />
             {/* tabIndex=-1 so the skip link can move focus here even though a
                 div is not focusable by default. */}
             <div id="main-content" tabIndex={-1} style={{ outline: 'none' }}>{children}</div>
