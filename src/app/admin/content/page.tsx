@@ -363,7 +363,7 @@ function AdminContentEditor() {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
             <h1 style={{ fontSize: '2rem', fontWeight: 800, color: '#0F172A', margin: 0 }}>
-              {isSourcingMode ? 'Sourcing Content CMS' : 'Site Content CMS'}
+              {isSourcingMode ? 'Sourcing Content CMS' : 'Fleet Content CMS'}
             </h1>
             {isDirty && (
               <span

@@ -41,7 +41,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const menuItems = [
     { name: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/admin' },
     { name: 'Leads', icon: <MessageCircle size={20} />, path: '/admin/leads' },
-    { name: 'Site Content', icon: <FileText size={20} />, path: '/admin/content' },
+    { name: 'Fleet Content', icon: <FileText size={20} />, path: '/admin/content' },
     { name: 'Sourcing Content', icon: <Layers size={20} />, path: '/admin/content?page=sourcing' },
     { name: 'Printers', icon: <Printer size={20} />, path: '/admin/printers' },
     { name: 'Printer Parts', icon: <Package size={20} />, path: '/admin/parts' },
