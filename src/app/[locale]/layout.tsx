@@ -7,10 +7,12 @@ import { routing } from '@/i18n/routing';
 import { isRTL } from '@/i18n/config';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import React, { Suspense } from 'react';
 import WhatsAppButton from '@/components/layout/WhatsAppButton';
 import ChatWidgetLoader from '@/components/chat/ChatWidgetLoader';
 import TransitionErrorGuard from '@/components/ui/TransitionErrorGuard';
 import ScrollProgress from '@/components/ui/ScrollProgress';
+import PageNavigationTransition from '@/components/ui/PageNavigationTransition';
 import CommandPalette from '@/components/ui/CommandPalette';
 import { getSettings } from '@/lib/supabase';
 import { getServiceRegions } from '@/lib/getServiceRegions';
@@ -105,6 +107,9 @@ export default async function LocaleLayout({
       suppressHydrationWarning
     >
       <body suppressHydrationWarning>
+        <Suspense fallback={null}>
+          <PageNavigationTransition />
+        </Suspense>
         <ScrollProgress />
         <NextIntlClientProvider messages={messages}>
           <ServiceRegionsProvider regions={serviceRegions}>
@@ -116,7 +121,7 @@ export default async function LocaleLayout({
             <CommandPalette locale={locale} />
             {/* tabIndex=-1 so the skip link can move focus here even though a
                 div is not focusable by default. */}
-            <div id="main-content" tabIndex={-1} style={{ outline: 'none' }}>{children}</div>
+            <div id="main-content" className="page-enter-from-top" tabIndex={-1} style={{ outline: 'none' }}>{children}</div>
             <Footer email={settings.contact?.email} />
             <WhatsAppButton whatsapp={settings.contact?.whatsapp} />
             <ChatWidgetLoader welcomeMessage={settings.ai_settings?.welcome_message} />

@@ -1,14 +1,11 @@
 'use client';
 
-import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { ShieldCheck, Truck, BadgeCheck } from 'lucide-react';
 import Reveal from '@/components/ui/Reveal';
 import SpotlightCard from '@/components/ui/SpotlightCard';
 import BorderBeam from '@/components/ui/BorderBeam';
-import MagneticButton from '@/components/ui/MagneticButton';
-import DocumentVerificationModal from '@/components/ui/DocumentVerificationModal';
 
 // Replaces the previous testimonial cards, which carried invented names and
 // content-free quotes ("Highly recommended.") under a "Trust & Credibility"
@@ -20,7 +17,6 @@ export default function TrustSection() {
   const t = useTranslations('trust');
   const params = useParams();
   const isAr = params.locale === 'ar';
-  const [docModalOpen, setDocModalOpen] = useState(false);
   const certs = ['ISO 14001', 'ISO 9001', 'SASO', 'Vision 2030 Partner'];
 
   const guarantees = [
@@ -119,56 +115,6 @@ export default function TrustSection() {
             </Reveal>
           ))}
         </div>
-
-        {/* Enterprise Document Verification Interactive Trigger */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 'clamp(24px, 4vw, 36px)' }}>
-          <Reveal delay={700} from="up">
-            <MagneticButton magneticPull={8}>
-              <button
-                type="button"
-                onClick={() => setDocModalOpen(true)}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  padding: '12px 28px',
-                  borderRadius: 'var(--radius-pill)',
-                  background: 'linear-gradient(135deg, rgba(26,61,43,0.06) 0%, rgba(141,184,51,0.12) 100%)',
-                  border: '1.5px solid rgba(141,184,51,0.45)',
-                  color: 'var(--deep-forest)',
-                  fontSize: 'var(--text-sm)',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.04)',
-                  transition: 'all 200ms ease',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = 'var(--accent)';
-                  e.currentTarget.style.boxShadow = '0 6px 24px rgba(141, 184, 51, 0.22)';
-                  e.currentTarget.style.transform = 'translateY(-1px)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = 'rgba(141,184,51,0.45)';
-                  e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.04)';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                }}
-              >
-                <ShieldCheck size={18} color="var(--accent-text)" />
-                <span>
-                  {isAr
-                    ? 'التحقق التفاعلي من السجل التجاري والتراخيص الرسمية'
-                    : 'Inspect Official Saudi CR & Enterprise Credentials'}
-                </span>
-              </button>
-            </MagneticButton>
-          </Reveal>
-        </div>
-
-        <DocumentVerificationModal
-          isOpen={docModalOpen}
-          onClose={() => setDocModalOpen(false)}
-          isAr={isAr}
-        />
       </div>
       <style jsx>{`
         @media (max-width: 768px) {
