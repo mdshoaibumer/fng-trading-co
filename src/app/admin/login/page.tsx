@@ -110,7 +110,7 @@ export default function AdminLoginPage() {
                 }}
               />
             </div>
-            {error && <p id="admin-password-error" role="alert" style={{ color: '#EF4444', fontSize: '0.8rem', marginTop: '8px', marginLeft: '4px' }}>{error}</p>}
+            {error && <p id="admin-password-error" role="alert" style={{ color: '#F87171', fontSize: '0.8rem', marginTop: '8px', marginLeft: '4px' }}>{error}</p>}
           </div>
 
           <button
@@ -135,7 +135,7 @@ export default function AdminLoginPage() {
           </button>
         </form>
 
-        <p style={{ color: '#64748B', fontSize: '0.8rem', marginTop: '32px' }}>
+        <p style={{ color: '#94A3B8', fontSize: '0.8rem', marginTop: '32px' }}>
           &copy; 2026 Future Next Gen. All Rights Reserved.
         </p>
       </div>

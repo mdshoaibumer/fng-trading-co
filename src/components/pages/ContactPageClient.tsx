@@ -72,7 +72,7 @@ export default function ContactPageClient({ email }: { email?: string }) {
       </div>
 
       <div className="container">
-        <div className="contact-grid-outer" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(350px, 100%), 1fr))', gap: 'clamp(40px, 6vw, 64px)', paddingBottom: '120px' }}>
+        <div className="contact-grid-outer" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(350px, 100%), 1fr))', gap: 'clamp(40px, 6vw, 64px)', paddingBottom: '120px', alignItems: 'start' }}>
           
           {/* Left Column - Contact Information */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '48px' }}>

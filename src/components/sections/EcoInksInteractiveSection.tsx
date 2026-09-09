@@ -54,7 +54,7 @@ export default function EcoInksInteractiveSection() {
               }} />
             </div>
           )}
-          <canvas ref={canvasRef} style={{
+          <canvas ref={canvasRef} aria-hidden="true" style={{
             width: '100%', aspectRatio: '16 / 10', display: imagesLoaded ? 'block' : 'none',
             // A static shadow: a filter whose value changes with scroll forces
             // the canvas to be re-filtered on every frame, which is the single
@@ -74,7 +74,7 @@ export default function EcoInksInteractiveSection() {
                 pointerEvents: 'none', flexDirection: isAr ? 'row-reverse' : 'row',
               }}>
                 <span style={{ color: '#111827', fontWeight: 700, fontSize: 'clamp(0.75rem, 1.5vw, 1.1rem)' }}>
-                  {isAr ? 'الغلاف المعاد تدويره' : 'Recycled Cartridge Shell'}
+                  {isAr ? 'مواد نباتية المصدر' : 'Plant-Based Materials'}
                 </span>
                 <div style={{ width: 'clamp(20px, 5vw, 80px)', height: '2px', background: `linear-gradient(${isAr ? '270deg' : '90deg'}, var(--accent), transparent)` }} />
               </div>
@@ -86,7 +86,7 @@ export default function EcoInksInteractiveSection() {
                 pointerEvents: 'none', flexDirection: isAr ? 'row' : 'row-reverse',
               }}>
                 <span style={{ color: '#111827', fontWeight: 700, fontSize: 'clamp(0.75rem, 1.5vw, 1.1rem)' }}>
-                  {isAr ? 'قلب الحبر الحيوي' : 'Bio-based Toner Core'}
+                  {isAr ? 'نظيفة بطبيعتها' : 'Clean by Nature'}
                 </span>
                 <div style={{ width: 'clamp(20px, 5vw, 80px)', height: '2px', background: `linear-gradient(${isAr ? '90deg' : '270deg'}, var(--accent), transparent)` }} />
               </div>
@@ -98,7 +98,7 @@ export default function EcoInksInteractiveSection() {
                 pointerEvents: 'none', flexDirection: isAr ? 'row-reverse' : 'row',
               }}>
                 <span style={{ color: '#111827', fontWeight: 700, fontSize: 'clamp(0.75rem, 1.5vw, 1.1rem)' }}>
-                  {isAr ? 'نظام منع التسرب' : 'Zero-Spill Seal System'}
+                  {isAr ? 'تُغلق في حلقة واحدة' : 'Closed Into a Loop'}
                 </span>
                 <div style={{ width: 'clamp(20px, 5vw, 80px)', height: '2px', background: `linear-gradient(${isAr ? '270deg' : '90deg'}, var(--accent), transparent)` }} />
               </div>
@@ -112,10 +112,10 @@ export default function EcoInksInteractiveSection() {
             color: '#111827', fontSize: 'clamp(1.1rem, 4vw, 2.5rem)', fontWeight: 800, marginBottom: '8px',
             fontFamily: isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif',
           }}>
-            {isAr ? 'هندسة فائقة الدقة' : 'Precision Engineering'}
+            {isAr ? 'دورة مغلقة، بالتصميم' : 'A Closed Loop, By Design'}
           </h2>
           <p style={{ color: '#4B5563', fontSize: 'clamp(0.85rem, 2vw, 1.1rem)' }}>
-            {isAr ? 'مصممة لتوفير أداء مثالي مع الحفاظ على البيئة' : 'Designed to deliver optimal performance while preserving the environment.'}
+            {isAr ? 'مصدرها الطبيعة، ومصمّمة لتعود إلى الدورة نفسها.' : 'Sourced from nature, engineered to go back into the cycle.'}
           </p>
         </div>
       </div>

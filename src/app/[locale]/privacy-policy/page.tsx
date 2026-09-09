@@ -106,7 +106,10 @@ export default async function PrivacyPolicyPage({
               <h2 style={{ fontSize: 'var(--text-xl)', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px' }}>
                 {t('section4Title')}
               </h2>
-              <p>{t('section4Desc', { email: contactEmail })}</p>
+              <p>{t.rich('section4Desc', {
+                email: contactEmail,
+                link: (chunks) => <a href={`mailto:${contactEmail}`} style={{ color: 'var(--accent-text)' }}>{chunks}</a>,
+              })}</p>
             </div>
           </div>
 

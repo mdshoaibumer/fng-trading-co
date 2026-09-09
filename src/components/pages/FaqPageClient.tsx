@@ -56,15 +56,18 @@ export default function FaqPageClient() {
                 aria-controls={`faq-answer-${i}`}
                 style={{
                   width: '100%',
-                  padding: 'clamp(16px, 4vw, 24px) clamp(20px, 4vw, 32px)', 
-                  display: 'flex', 
-                  alignItems: 'center', 
+                  padding: 'clamp(16px, 4vw, 24px) clamp(20px, 4vw, 32px)',
+                  display: 'flex',
+                  alignItems: 'center',
                   justifyContent: 'space-between',
                   background: 'transparent',
                   border: 'none',
                   cursor: 'pointer',
-                  textAlign: isAr ? 'right' : 'left'
+                  textAlign: isAr ? 'right' : 'left',
+                  transition: 'background 180ms ease',
                 }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(0,0,0,0.025)')}
+                onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
               >
                 <span style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--primary)' }}>
                   {faq.q}

@@ -207,12 +207,27 @@ export default function Footer({ email }: { email?: string }) {
             {t('copyright')}
           </span>
           <div style={{ display: 'flex', gap: '24px' }}>
-            <a href={`/${locale}/privacy-policy`} style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.8rem', textDecoration: 'none' }}>
-              {t('links.privacy')}
-            </a>
-            <a href={`/${locale}/terms`} style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.8rem', textDecoration: 'none' }}>
-              {t('links.terms')}
-            </a>
+            {[
+              { href: `/${locale}/privacy-policy`, label: t('links.privacy') },
+              { href: `/${locale}/terms`, label: t('links.terms') },
+            ].map((link) => {
+              const active = isCurrentPage(pathname, link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  aria-current={active ? 'page' : undefined}
+                  style={{
+                    color: active ? 'var(--accent)' : 'rgba(255,255,255,0.6)',
+                    fontSize: '0.8rem',
+                    fontWeight: active ? 700 : 400,
+                    textDecoration: 'none',
+                  }}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </div>
         </div>
       </div>

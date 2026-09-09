@@ -72,11 +72,11 @@
     "features": {
       "bio": {
         "title": "Bio-derived Pigments",
-        "desc": "Sustainable sourcing, no petroleum base"
+        "desc": "Sustainably sourced, plant-based formulation"
       },
       "voc": {
         "title": "Zero VOC Emissions",
-        "desc": "Indoor air quality certified"
+        "desc": "Formulated for cleaner indoor air quality"
       },
       "recycle": {
         "title": "Recyclable Cartridge",
@@ -237,15 +237,15 @@
       "title": "The Eco Inks Cycle",
       "bio": {
         "title": "Bio-Derived",
-        "desc": "We use plant-based resins and sustainable sourcing instead of petroleum bases for all our toner powders."
+        "desc": "Our toner powders are formulated with plant-based resins and sustainably sourced materials, replacing petroleum bases wherever possible."
       },
       "voc": {
         "title": "Zero VOC",
-        "desc": "Our toners emit zero Volatile Organic Compounds, ensuring safe and clean air quality in your office."
+        "desc": "Our toners are formulated to be low-VOC, supporting cleaner indoor air quality in your office."
       },
       "loop": {
         "title": "Closed-Loop",
-        "desc": "We collect all empty cartridges directly from your office. Plastics are melted down and reused for new supplies."
+        "desc": "Empty cartridges are collected directly from your office as part of our subscription service, then melted down and reused in new supplies."
       }
     }
   },
@@ -293,6 +293,7 @@
       "city": "City",
       "message": "Additional Details (Optional)",
       "quantity": "Number of Printers Needed",
+      "quantityGeneric": "Estimated Order Quantity",
       "submit": "Submit Request",
       "privacy": "Your data is secure — Saudi PDPL compliant",
       "response": "We respond within 24 hours",
@@ -959,7 +960,7 @@
     "section3Title": "3. Data Sharing & Security",
     "section3Desc": "We do not sell your personal data. Your data is stored securely and processed in accordance with the security standards set out by the KSA authorities. We only share data with service providers who assist in delivery, technical maintenance, or payment processing.",
     "section4Title": "4. Your Rights",
-    "section4Desc": "Under the Saudi PDPL, you have the right to access, correct, destroy, or restrict the processing of your personal data. You may contact us at {email} to exercise these rights at any time."
+    "section4Desc": "Under the Saudi PDPL, you have the right to access, correct, destroy, or restrict the processing of your personal data. You may contact us at <link>{email}</link> to exercise these rights at any time."
   },
   "termsPage": {
     "title": "Terms & Conditions",

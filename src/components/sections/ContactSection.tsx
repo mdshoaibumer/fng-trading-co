@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useParams } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
 import { CheckCircle2, Lock, Clock, Loader2 } from 'lucide-react';
 import { regionName } from '@/lib/serviceRegions';
@@ -11,8 +11,17 @@ import Reveal from '@/components/ui/Reveal';
 export default function ContactSection() {
   const t = useTranslations('contact');
   const params = useParams();
+  const pathname = usePathname();
   const locale = params.locale as string;
   const isAr = locale === 'ar';
+  // This form is shared across every business page (home, printers,
+  // printer-parts, eco-inks, equipment, sourcing) via a single
+  // useTranslations('contact') namespace. "Number of Printers Needed" only
+  // makes sense on the printer-refurbishment funnel — Sourcing (electronics)
+  // and Equipment (office furniture/hardware) get a neutral quantity label
+  // instead, so the lead form doesn't ask an out-of-context question on its
+  // own primary CTA destination.
+  const isPrinterFunnel = !pathname.includes('/sourcing') && !pathname.includes('/equipment');
   const [status, setStatus] = useState<'idle'|'loading'|'success'|'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
   const successRef = useRef<HTMLDivElement>(null);
@@ -138,7 +147,7 @@ export default function ContactSection() {
                   </div>
                 </div>
                 <div>
-                  <label htmlFor="contact-quantity" style={{ display: 'block', color: 'rgba(255,255,255,0.55)', fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', textAlign: isAr ? 'right' : 'left' }}>{t('form.quantity')}</label>
+                  <label htmlFor="contact-quantity" style={{ display: 'block', color: 'rgba(255,255,255,0.55)', fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', textAlign: isAr ? 'right' : 'left' }}>{isPrinterFunnel ? t('form.quantity') : t('form.quantityGeneric')}</label>
                   <select id="contact-quantity" style={{ ...inputStyle, cursor: 'pointer' }} value={form.quantity}
                     onChange={e => setForm(f => ({ ...f, quantity: e.target.value }))}>
                     {[1,2,3,5,10,20].map(n => <option key={n} value={n} style={{ color: '#000' }}>{n}</option>)}

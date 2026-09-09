@@ -34,7 +34,7 @@ export default function ProductCard({ product, isAr, productUrl }: { product: Pr
           interactive content inside a link). So the link wraps only the image
           and badge; the controls are siblings stacked above it. */}
       <div style={{ position: 'relative', width: '100%', height: '320px' }}>
-        <Link href={productUrl} transitionTypes={['nav-forward']} aria-label={product.name} style={{ display: 'block', position: 'relative', width: '100%', height: '100%', pointerEvents: product.available === false ? 'none' : 'auto' }}>
+        <Link href={productUrl} transitionTypes={['nav-forward']} aria-label={product.name} aria-disabled={product.available === false} tabIndex={product.available === false ? -1 : undefined} style={{ display: 'block', position: 'relative', width: '100%', height: '100%', pointerEvents: product.available === false ? 'none' : 'auto' }}>
           {/* Named so it pairs with the same container on the detail page and
               morphs across the navigation — one object moving rather than two
               swapping. default="none" stops it cross-fading on unrelated
@@ -128,7 +128,7 @@ export default function ProductCard({ product, isAr, productUrl }: { product: Pr
         textAlign: isAr ? 'right' : 'left',
         opacity: product.available === false ? 0.7 : 1
       }}>
-        <Link href={productUrl} transitionTypes={['nav-forward']} style={{ textDecoration: 'none', pointerEvents: product.available === false ? 'none' : 'auto' }}>
+        <Link href={productUrl} transitionTypes={['nav-forward']} aria-disabled={product.available === false} tabIndex={product.available === false ? -1 : undefined} style={{ textDecoration: 'none', pointerEvents: product.available === false ? 'none' : 'auto' }}>
           <h3 style={{
             color: 'var(--primary)',
             fontSize: 'clamp(1.1rem, 3vw, 1.4rem)',
@@ -178,6 +178,8 @@ export default function ProductCard({ product, isAr, productUrl }: { product: Pr
           href={productUrl}
           transitionTypes={['nav-forward']}
           className="btn-primary"
+          aria-disabled={product.available === false}
+          tabIndex={product.available === false ? -1 : undefined}
           style={{
             width: '100%',
             justifyContent: 'center',

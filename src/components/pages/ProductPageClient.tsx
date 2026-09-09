@@ -141,6 +141,9 @@ export default function ProductPageClient({ product, whatsapp, locale, itemType 
             <ViewTransition name={`product-image-${product.id}`} share="morph" default="none">
             <div
               className="main-image-container"
+              role="button"
+              tabIndex={0}
+              aria-label={isZoomed ? (isAr ? 'تصغير الصورة' : 'Zoom out') : (isAr ? 'تكبير الصورة' : 'Zoom in')}
               style={{
                 background: 'white', borderRadius: '32px', border: '1px solid #E0E7DE',
                 position: 'relative', overflow: 'hidden', height: 'clamp(400px, 50vh, 600px)',
@@ -150,6 +153,7 @@ export default function ProductPageClient({ product, whatsapp, locale, itemType 
                 touchAction: isZoomed ? 'none' : 'pan-y'
               }}
               onClick={() => setIsZoomed(!isZoomed)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setIsZoomed(!isZoomed); } }}
               onMouseMove={handleMouseMove}
               onMouseLeave={() => setIsZoomed(false)}
               onTouchStart={handleTouchStart}
@@ -295,6 +299,8 @@ export default function ProductPageClient({ product, whatsapp, locale, itemType 
                 href={product.available === false ? '#' : whatsappLink}
                 target={product.available === false ? '_self' : '_blank'}
                 rel="noopener noreferrer"
+                aria-disabled={product.available === false}
+                tabIndex={product.available === false ? -1 : undefined}
                 className="btn-primary"
                 style={{
                   background: product.available === false ? '#9CA3AF' : '#25D366', color: 'white', border: 'none',
@@ -317,6 +323,8 @@ export default function ProductPageClient({ product, whatsapp, locale, itemType 
 
               <Link
                 href={product.available === false ? '#' : `/${locale}/contact`}
+                aria-disabled={product.available === false}
+                tabIndex={product.available === false ? -1 : undefined}
                 style={{
                   background: 'white', color: 'var(--primary)', border: '1px solid #E0E7DE',
                   padding: '18px 32px', fontSize: '1.1rem', borderRadius: 'var(--radius-lg)',

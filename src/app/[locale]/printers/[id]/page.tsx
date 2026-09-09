@@ -26,7 +26,7 @@ export async function generateMetadata({
 
   if (!p) {
     return {
-      title: 'Product Not Found | Future Next Gen',
+      title: { absolute: 'Product Not Found | Future Next Gen' },
     };
   }
 
