@@ -39,7 +39,12 @@ export default function TrustSection() {
   ];
 
   return (
-    <section id="trust" className="section" style={{ background: '#fff' }}>
+    <section id="trust" className="section" style={{ background: '#fff', position: 'relative', overflow: 'hidden' }}>
+      <div className="trust-ambient-blob" style={{
+        position: 'absolute', bottom: '-15%', [isAr ? 'right' : 'left']: '-8%', width: '520px', height: '520px',
+        background: 'radial-gradient(circle, rgba(47,109,176,0.05) 0%, transparent 70%)',
+        borderRadius: '50%', pointerEvents: 'none',
+      }} />
       <div className="container">
         <div style={{ textAlign: 'center', marginBottom: 'clamp(32px, 6vw, 64px)' }}>
           <span className="section-tag">{t('tag')}</span>
@@ -48,8 +53,12 @@ export default function TrustSection() {
         <div className="trust-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(280px,100%),1fr))', gap: 'clamp(16px, 3vw, 24px)', marginBottom: 'clamp(32px, 6vw, 64px)' }}>
           {guarantees.map((g, i) => {
             const Icon = g.icon;
+            // Same start/scale/end trio FreePrinterSection uses for its own
+            // row of cards — a deliberate alternation, not the single 'up'
+            // fade every other grid on the page defaults to.
+            const directions = ['start', 'scale', 'end'] as const;
             return (
-              <Reveal key={i} delay={i * 120}>
+              <Reveal key={i} delay={i * 120} from={directions[i % 3]}>
               <div className="card-lift" style={{
                 padding: 'clamp(24px, 4vw, 32px) clamp(20px, 3vw, 28px)', borderRadius: 'var(--radius-lg)', background: '#fff', height: '100%',
                 border: '1px solid var(--light-grey)', borderBottom: '3px solid var(--primary)',
@@ -78,13 +87,20 @@ export default function TrustSection() {
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '12px' }}>
           {certs.map((c, i) => (
-            <Reveal key={c} delay={300 + i * 90} from="scale" style={{
-              padding: '8px 16px', borderRadius: 'var(--radius-pill)',
-              background: 'var(--bg-secondary)', border: '1px solid rgba(47,109,176,0.2)',
-              color: 'var(--info-strong)', fontSize: 'var(--text-xs)', fontWeight: 600,
-              fontFamily: 'var(--font-mono)', letterSpacing: '0.05em',
-            }}>
-              {c}
+            <Reveal key={c} delay={300 + i * 90} from="scale">
+              {/* A brief ring-pulse once each badge lands, timed to start after
+                  Reveal's own 700ms fade+scale finishes — reads as the badge
+                  "confirming" itself rather than just appearing, which fits
+                  what this row is actually claiming (verified, not decorative). */}
+              <div className="cert-badge-stamp" style={{
+                padding: '8px 16px', borderRadius: 'var(--radius-pill)',
+                background: 'var(--bg-secondary)', border: '1px solid rgba(47,109,176,0.2)',
+                color: 'var(--info-strong)', fontSize: 'var(--text-xs)', fontWeight: 600,
+                fontFamily: 'var(--font-mono)', letterSpacing: '0.05em',
+                animationDelay: `${300 + i * 90 + 650}ms`,
+              }}>
+                {c}
+              </div>
             </Reveal>
           ))}
         </div>
@@ -92,6 +108,25 @@ export default function TrustSection() {
       <style jsx>{`
         @media (max-width: 768px) {
           .trust-grid { grid-template-columns: 1fr !important; }
+        }
+        @media (prefers-reduced-motion: no-preference) {
+          .trust-ambient-blob { animation: trustBlobDrift 18s ease-in-out infinite; }
+        }
+        @keyframes trustBlobDrift {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          50% { transform: translate(3%, -4%) scale(1.1); }
+        }
+      `}</style>
+      <style jsx global>{`
+        @media (prefers-reduced-motion: no-preference) {
+          .cert-badge-stamp {
+            animation: certBadgeStamp 900ms ease-out both;
+          }
+        }
+        @keyframes certBadgeStamp {
+          0% { box-shadow: 0 0 0 0 rgba(47,109,176,0.4); border-color: rgba(47,109,176,0.5); }
+          70% { box-shadow: 0 0 0 8px rgba(47,109,176,0); }
+          100% { box-shadow: 0 0 0 0 rgba(47,109,176,0); border-color: rgba(47,109,176,0.2); }
         }
       `}</style>
     </section>

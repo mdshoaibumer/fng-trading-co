@@ -49,7 +49,11 @@ export default function IndustriesSection() {
         </Reveal>
         <div className="industries-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(260px,1fr))', gap: '24px' }}>
           {INDUSTRIES.map((ind, i) => (
-            <Reveal key={ind} delay={(i % 4) * 80} from="scale" threshold={0.1}>
+            // A true diagonal cascade (row + column, assuming the common
+            // 4-column desktop layout) rather than every row sweeping
+            // left-to-right in lockstep — one more grid on the page with its
+            // own stagger identity instead of the same reveal repeated.
+            <Reveal key={ind} delay={(Math.floor(i / 4) + (i % 4)) * 70} from="scale" threshold={0.1}>
             <div role="button" tabIndex={0} aria-haspopup="dialog"
               aria-label={t(`items.${ind}.name`)}
               className="card-lift"
