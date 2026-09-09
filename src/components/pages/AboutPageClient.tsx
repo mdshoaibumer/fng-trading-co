@@ -69,7 +69,7 @@ export default async function AboutPageClient({ locale }: { locale: string }) {
         </Reveal>
 
         {/* Mission / Vision / Leadership */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(280px,100%), 1fr))', gap: '24px', marginBottom: 'clamp(56px, 8vw, 88px)' }}>
+        <div className="about-mvl-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px', marginBottom: 'clamp(56px, 8vw, 88px)' }}>
           {[
             { icon: Target, title: t('missionTitle'), desc: t('missionDesc') },
             { icon: Eye, title: t('visionTitle'), desc: t('visionDesc') },
@@ -96,7 +96,7 @@ export default async function AboutPageClient({ locale }: { locale: string }) {
               {isAr ? 'أربعة مجالات، معيار واحد للجودة' : 'Four lines, one standard of quality'}
             </h2>
           </Reveal>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(240px,100%), 1fr))', gap: '20px' }}>
+          <div className="about-pillars-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
             {pillars.map((p, i) => {
               const Icon = p.icon;
               return (
@@ -124,7 +124,7 @@ export default async function AboutPageClient({ locale }: { locale: string }) {
               {isAr ? 'مكاتب في أربع مدن، وتوصيل عبر المنطقة' : 'Offices in four cities, delivery across the region'}
             </h2>
           </Reveal>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(220px,100%), 1fr))', gap: '20px', marginBottom: '28px' }}>
+          <div className="about-offices-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', marginBottom: '28px' }}>
             {offices.map((o, i) => (
               <Reveal key={o.code} delay={i * 80} style={{ display: 'flex' }}>
                 <div className="card-lift" style={{ ...cardBase, padding: 'clamp(20px, 3vw, 28px)' }}>
@@ -170,7 +170,6 @@ export default async function AboutPageClient({ locale }: { locale: string }) {
           </div>
         </Reveal>
       </div>
-
     </main>
   );
 }

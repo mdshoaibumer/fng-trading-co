@@ -26,14 +26,17 @@ export default function EcoInksSection() {
       <div className="container" style={{ position: 'relative', zIndex: 2 }}>
         <div style={{ textAlign: 'center', marginBottom: 'clamp(32px, 6vw, 64px)' }}>
           <span className="section-tag" style={{ background: 'rgba(141,184,51,0.1)', color: 'var(--accent-text)', border: '1px solid rgba(141,184,51,0.2)' }}>{t('tag')}</span>
-          <h2 style={{ fontSize: 'clamp(1.5rem,4vw,3.5rem)', fontWeight: 800, color: '#111827', marginBottom: '16px' }}>{t('title')}</h2>
-          <p style={{ color: '#4B5563', fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', maxWidth: '600px', margin: '0 auto' }}>{t('subtitle')}</p>
+          <h2 style={{ fontSize: 'clamp(1.5rem,4vw,3.5rem)', fontWeight: 800, color: 'var(--primary)', marginBottom: '16px' }}>{t('title')}</h2>
+          <p style={{ color: 'var(--text-secondary)', fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', maxWidth: '600px', margin: '0 auto' }}>{t('subtitle')}</p>
         </div>
-        <div className="eco-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: 'clamp(12px, 3vw, 24px)' }}>
+        {/* 320px min (not 260px) so 6 items resolve to a clean 3+3 rather than
+            4+2 at typical desktop widths — same orphaned-trailing-row failure
+            already fixed on the printers catalog earlier this session. */}
+        <div className="eco-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(320px,1fr))', gap: 'clamp(12px, 3vw, 24px)' }}>
           {FEATURES.map((f, i) => (
             <Reveal key={f} delay={(i % 3) * 90} threshold={0.1}>
             <div className="card-lift eco-card" style={{ height: '100%',
-              background: '#F9FAFB', border: '1px solid #F3F4F6', borderRadius: 'var(--radius-2xl)',
+              background: 'var(--bg-secondary)', border: '1px solid var(--light-grey)', borderRadius: 'var(--radius-2xl)',
               padding: 'clamp(20px, 4vw, 32px) clamp(16px, 3vw, 28px)',
               boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
               textAlign: isAr ? 'right' : 'left',
@@ -50,7 +53,7 @@ export default function EcoInksSection() {
                 {ICONS[i]}
               </div>
               <h3 style={{ color: 'var(--accent-text)', fontSize: 'clamp(0.95rem, 2vw, 1.15rem)', fontWeight: 700, marginBottom: '8px' }}>{t(`features.${f}.title`)}</h3>
-              <p style={{ color: '#4B5563', fontSize: '0.85rem', lineHeight: 1.6 }}>{t(`features.${f}.desc`)}</p>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', lineHeight: 1.6 }}>{t(`features.${f}.desc`)}</p>
             </div>
             </Reveal>
           ))}

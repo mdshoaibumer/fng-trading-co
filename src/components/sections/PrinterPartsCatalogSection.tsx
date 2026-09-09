@@ -67,7 +67,7 @@ export default function PrinterPartsCatalogSection() {
           <span style={{display:'inline-block',color:'var(--accent-text)',background:'rgba(141,184,51,0.1)',padding:'8px 20px',borderRadius:'var(--radius-2xl)',fontSize:'0.85rem',fontWeight:700,textTransform:'uppercase',letterSpacing:isAr?'0':'1px',marginBottom:'16px',border:'1px solid rgba(141,184,51,0.2)'}}>
             {isAr?'كتالوج القطع':'Parts Catalog'}
           </span>
-          <h2 style={{fontSize:'clamp(1.5rem,4vw,3rem)',fontWeight:800,color:'var(--primary)',marginBottom:'16px',fontFamily:isAr?'var(--font-ibm-plex-arabic), sans-serif':'var(--font-inter), sans-serif'}}>
+          <h2 style={{fontSize:'clamp(1.8rem,5vw,4rem)',fontWeight:800,color:'var(--primary)',marginBottom:'16px',fontFamily:isAr?'var(--font-ibm-plex-arabic), sans-serif':'var(--font-inter), sans-serif'}}>
             {isAr?'٨ فئات — ٣٠+ قطعة غيار':'8 Categories — 30+ Parts'}
           </h2>
           <p style={{fontSize:'clamp(0.9rem,2vw,1.1rem)',color:'var(--text-secondary)',maxWidth:'600px',margin:'0 auto',lineHeight:1.6}}>
@@ -92,13 +92,16 @@ export default function PrinterPartsCatalogSection() {
             return (
               <Reveal key={key} delay={CATEGORY_KEYS.indexOf(key) * 60} distance={16}>
               <div style={{background:isOpen?'#FFFFFF':'#FAFBF9',border:`1px solid ${isOpen?'rgba(141,184,51,0.3)':'#F3F4F6'}`,borderRadius:'var(--radius-lg)',overflow:'hidden',transition:'all 300ms var(--ease-ink)',boxShadow:isOpen?'0 12px 32px rgba(0,0,0,0.06)':'0 2px 4px rgba(0,0,0,0.02)'}}>
-                <button onClick={()=>setExpanded(p=>p===key?null:key)} style={{width:'100%',display:'flex',alignItems:'center',gap:'16px',padding:'clamp(16px,3vw,24px) clamp(16px,3vw,28px)',background:'none',border:'none',cursor:'pointer',textAlign:isAr?'right':'left',flexDirection:isAr?'row-reverse':'row'}}>
+                <button onClick={()=>setExpanded(p=>p===key?null:key)}
+                  onMouseEnter={e=>{e.currentTarget.style.background='rgba(141,184,51,0.03)';}}
+                  onMouseLeave={e=>{e.currentTarget.style.background='none';}}
+                  style={{width:'100%',display:'flex',alignItems:'center',gap:'16px',padding:'clamp(16px,3vw,24px) clamp(16px,3vw,28px)',background:'none',border:'none',cursor:'pointer',textAlign:isAr?'right':'left',flexDirection:isAr?'row-reverse':'row',transition:'background 200ms ease'}}>
                   <div style={{width:'48px',height:'48px',borderRadius:'14px',background:isOpen?'rgba(141,184,51,0.15)':'rgba(141,184,51,0.08)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,border:`1px solid ${isOpen?'rgba(141,184,51,0.3)':'rgba(141,184,51,0.1)'}`}}>
                     {ICONS[key]}
                   </div>
                   <div style={{flex:1}}>
                     <h3 style={{color:'var(--primary)',fontSize:'clamp(1rem,2.5vw,1.2rem)',fontWeight:700,marginBottom:'2px',fontFamily:isAr?'var(--font-ibm-plex-arabic), sans-serif':'var(--font-inter), sans-serif'}}>{t(`categories.${key}.name`)}</h3>
-                    <p style={{color:'#777',fontSize:'0.8rem',lineHeight:1.4}}>{t(`categories.${key}.desc`)}</p>
+                    <p style={{color:'var(--text-tertiary)',fontSize:'0.8rem',lineHeight:1.4}}>{t(`categories.${key}.desc`)}</p>
                   </div>
                   <div style={{width:'32px',height:'32px',borderRadius:'var(--radius-sm)',background:'rgba(141,184,51,0.08)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,transition:'transform 200ms ease',transform:isOpen?'rotate(180deg)':'rotate(0)'}}>
                     {isOpen?<ChevronUp size={18} color="var(--accent)"/>:<ChevronDown size={18} color="var(--accent)"/>}
@@ -108,9 +111,16 @@ export default function PrinterPartsCatalogSection() {
                     magic max-height cap, no reflow proportional to an unused
                     range) instead of transitioning max-height. */}
                 <div style={{display:'grid',gridTemplateRows:isOpen?'1fr':'0fr',transition:'grid-template-rows 400ms var(--ease-ink)'}}>
-                  <div style={{overflow:'hidden',minHeight:0,padding:'0 clamp(16px,3vw,28px) clamp(16px,3vw,24px)',display:'flex',flexDirection:'column',gap:'8px'}}>
+                  {/* Padding must live on this inner, padding-free-when-collapsed
+                      wrapper rather than the overflow:hidden/minHeight:0 div
+                      itself — padding is part of a box's own size and overflow:hidden
+                      only clips descendant content, so padding on that div meant the
+                      "closed" 0fr track never actually reached 0px (it sat at a fixed
+                      24px, leaking a sliver of the hidden content underneath). */}
+                  <div style={{overflow:'hidden',minHeight:0}}>
+                  <div style={{padding:'0 clamp(16px,3vw,28px) clamp(16px,3vw,24px)',display:'flex',flexDirection:'column',gap:'8px'}}>
                     {categoryParts.length===0 && (
-                      <p style={{color:'#999',fontSize:'0.85rem',textAlign:isAr?'right':'left',padding:'8px 0'}}>{t('noPartsYet')}</p>
+                      <p style={{color:'var(--text-tertiary)',fontSize:'0.85rem',textAlign:isAr?'right':'left',padding:'8px 0'}}>{t('noPartsYet')}</p>
                     )}
                     {categoryParts.map((p,i)=>(
                       <div key={i} className="part-row" style={{display:'flex',alignItems:'center',gap:'16px',padding:'14px 16px',borderRadius:'var(--radius-md)',background:i%2===0?'#F9FAFB':'#FFFFFF',border:'1px solid #F3F4F6',transition:'all 200ms ease',flexDirection:isAr?'row-reverse':'row',flexWrap:'wrap'}}
@@ -128,6 +138,7 @@ export default function PrinterPartsCatalogSection() {
                         </a>
                       </div>
                     ))}
+                  </div>
                   </div>
                 </div>
               </div>

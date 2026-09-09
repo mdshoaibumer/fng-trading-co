@@ -38,14 +38,14 @@ export default function EcoInksHeroSection() {
           />
         </div>
         <h1 style={{
-          fontSize: 'clamp(1.8rem, 6vw, 5.5rem)', fontWeight: 800, color: '#111827', lineHeight: 1.1,
+          fontSize: 'clamp(1.8rem, 6vw, 5.5rem)', fontWeight: 800, color: 'var(--primary)', lineHeight: 1.1,
           marginBottom: 'clamp(12px, 3vw, 24px)', letterSpacing: isAr ? '0' : '-2px',
           fontFamily: isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif',
         }}>
           {headline}
         </h1>
         <p style={{
-          fontSize: 'clamp(0.95rem, 2vw, 1.4rem)', color: '#4B5563',
+          fontSize: 'clamp(0.95rem, 2vw, 1.4rem)', color: 'var(--text-secondary)',
           maxWidth: '800px', margin: '0 auto', lineHeight: 1.6,
         }}>
           {subtitle}

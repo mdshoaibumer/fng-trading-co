@@ -7,6 +7,7 @@ import { CheckCircle2, MapPin, Mail, Phone, Clock, ShieldCheck, Zap, Loader2 } f
 import { SITE_EMAIL } from '@/lib/siteContact';
 import { officeRegions, regionName, regionHub } from '@/lib/serviceRegions';
 import { useServiceRegions } from '@/components/providers/ServiceRegionsProvider';
+import Reveal from '@/components/ui/Reveal';
 
 export default function ContactPageClient({ email }: { email?: string }) {
   const t = useTranslations('contact');
@@ -52,30 +53,30 @@ export default function ContactPageClient({ email }: { email?: string }) {
   // instead of substituting a border/background swap.
   const inputStyle: React.CSSProperties = {
     width: '100%', padding: '16px 20px', borderRadius: 'var(--radius-lg)',
-    border: '1px solid #E5E7EB', background: '#F9FAFB',
-    color: '#111827', fontSize: 'var(--text-base)',
+    border: '1px solid var(--light-grey)', background: 'var(--bg-secondary)',
+    color: 'var(--text-primary)', fontSize: 'var(--text-base)',
     fontFamily: isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif',
   };
 
   return (
     <main style={{ background: '#FFFFFF', minHeight: '100vh', paddingTop: 'var(--page-top)' }}>
-      
+
       {/* Page Header */}
       <div className="container" style={{ textAlign: 'center', marginBottom: '80px' }}>
         <span className="section-tag" style={{ margin: '0 auto 16px' }}>{tp('title')}</span>
         <h1 style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', fontWeight: 900, color: 'var(--primary)', marginBottom: '24px', letterSpacing: '-0.02em' }}>
           {t('title')}
         </h1>
-        <p style={{ color: '#4B5563', fontSize: '1.2rem', maxWidth: '600px', margin: '0 auto', lineHeight: 1.6 }}>
+        <p style={{ color: 'var(--text-secondary)', fontSize: 'var(--text-md)', maxWidth: '600px', margin: '0 auto', lineHeight: 1.6 }}>
           {tp('subtitle')}
         </p>
       </div>
 
       <div className="container">
-        <div className="contact-grid-outer" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(350px, 100%), 1fr))', gap: 'clamp(40px, 6vw, 64px)', paddingBottom: '120px', alignItems: 'start' }}>
+        <div className="contact-grid-outer" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(350px, 100%), 1fr))', gap: 'clamp(40px, 6vw, 64px)', paddingBottom: 'clamp(60px, 10vh, 120px)', alignItems: 'start' }}>
           
           {/* Left Column - Contact Information */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '48px' }}>
+          <Reveal from="start" style={{ display: 'flex', flexDirection: 'column', gap: '48px' }}>
             
             {/* Benefits Section */}
             <div>
@@ -120,7 +121,7 @@ export default function ContactPageClient({ email }: { email?: string }) {
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
                         <span aria-hidden="true" style={{
                           fontFamily: 'var(--font-ibm-plex-mono), monospace', fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.08em',
-                          padding: '4px 8px', borderRadius: 'var(--radius-sm)', background: 'rgba(141,184,51,0.14)', color: '#5C7F1F', border: '1px solid rgba(141,184,51,0.3)',
+                          padding: '4px 8px', borderRadius: 'var(--radius-sm)', background: 'rgba(141,184,51,0.14)', color: 'var(--accent-text)', border: '1px solid rgba(141,184,51,0.3)',
                         }}>{r.code}</span>
                         <h4 style={{ fontWeight: 800, color: 'var(--primary)', fontSize: '1.02rem', margin: 0 }}>
                           {titleKey ? tp(titleKey as Parameters<typeof tp>[0]) : regionName(r, locale)}
@@ -142,7 +143,7 @@ export default function ContactPageClient({ email }: { email?: string }) {
                     border: `1px solid ${r.presence === 'office' ? 'rgba(141,184,51,0.4)' : 'var(--light-grey)'}`,
                     color: 'var(--primary)', fontSize: '0.82rem', fontWeight: 600,
                   }}>
-                    <span aria-hidden="true" style={{ fontFamily: 'var(--font-ibm-plex-mono), monospace', fontSize: '0.68rem', fontWeight: 800, letterSpacing: '0.06em', color: r.presence === 'office' ? '#5C7F1F' : '#6B7280' }}>{r.code}</span>{regionName(r, locale)}
+                    <span aria-hidden="true" style={{ fontFamily: 'var(--font-ibm-plex-mono), monospace', fontSize: '0.68rem', fontWeight: 800, letterSpacing: '0.06em', color: r.presence === 'office' ? 'var(--accent-text)' : 'var(--text-tertiary)' }}>{r.code}</span>{regionName(r, locale)}
                   </span>
                 ))}
               </div>
@@ -186,12 +187,12 @@ export default function ContactPageClient({ email }: { email?: string }) {
               </div>
             </div>
 
-          </div>
+          </Reveal>
 
           {/* Right Column - The Form */}
-          <div style={{
+          <Reveal from="end" delay={150} style={{
             background: '#FFFFFF',
-            borderRadius: '32px',
+            borderRadius: 'var(--radius-xl)',
             padding: '48px 40px',
             boxShadow: '0 20px 60px rgba(0,0,0,0.05)',
             border: '1px solid var(--light-grey)',
@@ -296,7 +297,7 @@ export default function ContactPageClient({ email }: { email?: string }) {
                 </div>
               </form>
             )}
-          </div>
+          </Reveal>
         </div>
       </div>
       <style jsx>{`

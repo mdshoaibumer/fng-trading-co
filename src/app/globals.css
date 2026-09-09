@@ -881,3 +881,27 @@ p {
     border-radius: var(--radius-md);
   }
 }
+
+/* ─── ABOUT PAGE GRIDS ──────────────────────────────────────────────────────
+   AboutPageClient.tsx is an async Server Component (uses next-intl/server's
+   getTranslations), so styled-jsx isn't available there — these breakpoints
+   live here instead. Fixed column counts, not auto-fit: auto-fit orphaned a
+   trailing card alone on a half-empty row at tablet widths (3 items in a
+   grid that resolved to 2 columns, or 4 items in one that resolved to 3). */
+@media (max-width: 1024px) {
+  .about-pillars-grid,
+  .about-offices-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+@media (max-width: 700px) {
+  .about-mvl-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+@media (max-width: 640px) {
+  .about-pillars-grid,
+  .about-offices-grid {
+    grid-template-columns: 1fr !important;
+  }
+}

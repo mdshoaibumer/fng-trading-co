@@ -73,31 +73,31 @@ export default function EcoInksInteractiveSection() {
                 transition: 'all 150ms ease-out', display: 'flex', alignItems: 'center', gap: '8px',
                 pointerEvents: 'none', flexDirection: isAr ? 'row-reverse' : 'row',
               }}>
-                <span style={{ color: '#111827', fontWeight: 700, fontSize: 'clamp(0.75rem, 1.5vw, 1.1rem)' }}>
+                <span style={{ color: 'var(--primary)', fontWeight: 700, fontSize: 'clamp(0.75rem, 1.5vw, 1.1rem)' }}>
                   {isAr ? 'مواد نباتية المصدر' : 'Plant-Based Materials'}
                 </span>
                 <div style={{ width: 'clamp(20px, 5vw, 80px)', height: '2px', background: `linear-gradient(${isAr ? '270deg' : '90deg'}, var(--accent), transparent)` }} />
               </div>
               <div style={{
-                position: 'absolute', top: '45%', [isAr ? 'left' : 'right']: '-5%',
+                position: 'absolute', top: '45%', [isAr ? 'left' : 'right']: 'clamp(0px, 2vw, 24px)',
                 opacity: scrollProgress >= 0.2 && scrollProgress < 0.35 ? 1 : 0,
                 transform: `translateX(${scrollProgress >= 0.2 && scrollProgress < 0.35 ? '0' : (isAr ? slideDistance : -slideDistance)}px)`,
                 transition: 'all 150ms ease-out', display: 'flex', alignItems: 'center', gap: '8px',
                 pointerEvents: 'none', flexDirection: isAr ? 'row' : 'row-reverse',
               }}>
-                <span style={{ color: '#111827', fontWeight: 700, fontSize: 'clamp(0.75rem, 1.5vw, 1.1rem)' }}>
+                <span style={{ color: 'var(--primary)', fontWeight: 700, fontSize: 'clamp(0.75rem, 1.5vw, 1.1rem)' }}>
                   {isAr ? 'نظيفة بطبيعتها' : 'Clean by Nature'}
                 </span>
                 <div style={{ width: 'clamp(20px, 5vw, 80px)', height: '2px', background: `linear-gradient(${isAr ? '90deg' : '270deg'}, var(--accent), transparent)` }} />
               </div>
               <div style={{
-                position: 'absolute', bottom: '20%', [isAr ? 'right' : 'left']: '-5%',
+                position: 'absolute', bottom: '20%', [isAr ? 'right' : 'left']: 'clamp(0px, 2vw, 24px)',
                 opacity: scrollProgress >= 0.35 && scrollProgress < 0.5 ? 1 : 0,
                 transform: `translateX(${scrollProgress >= 0.35 && scrollProgress < 0.5 ? '0' : (isAr ? -slideDistance : slideDistance)}px)`,
                 transition: 'all 150ms ease-out', display: 'flex', alignItems: 'center', gap: '8px',
                 pointerEvents: 'none', flexDirection: isAr ? 'row-reverse' : 'row',
               }}>
-                <span style={{ color: '#111827', fontWeight: 700, fontSize: 'clamp(0.75rem, 1.5vw, 1.1rem)' }}>
+                <span style={{ color: 'var(--primary)', fontWeight: 700, fontSize: 'clamp(0.75rem, 1.5vw, 1.1rem)' }}>
                   {isAr ? 'تُغلق في حلقة واحدة' : 'Closed Into a Loop'}
                 </span>
                 <div style={{ width: 'clamp(20px, 5vw, 80px)', height: '2px', background: `linear-gradient(${isAr ? '270deg' : '90deg'}, var(--accent), transparent)` }} />
@@ -109,7 +109,7 @@ export default function EcoInksInteractiveSection() {
         {/* Caption */}
         <div style={{ textAlign: 'center', maxWidth: '90%', padding: '0 16px', opacity: Math.min(1, scrollProgress * 4) }}>
           <h2 style={{
-            color: '#111827', fontSize: 'clamp(1.1rem, 4vw, 2.5rem)', fontWeight: 800, marginBottom: '8px',
+            color: 'var(--primary)', fontSize: 'clamp(1.1rem, 4vw, 2.5rem)', fontWeight: 800, marginBottom: '8px',
             fontFamily: isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif',
           }}>
             {isAr ? 'دورة مغلقة، بالتصميم' : 'A Closed Loop, By Design'}

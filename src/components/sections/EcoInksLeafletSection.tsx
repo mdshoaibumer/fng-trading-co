@@ -28,10 +28,10 @@ export default function EcoInksLeafletSection() {
           <span style={{ color: 'var(--accent-text)', fontSize: 'clamp(0.7rem, 2vw, 0.9rem)', fontWeight: 600, letterSpacing: isAr ? '0' : '0.1em', textTransform: 'uppercase', display: 'block', marginBottom: '16px' }}>
             {isAr ? 'كتيب المواصفات' : 'Product Specifications'}
           </span>
-          <h2 style={{ color: '#111827', fontSize: 'clamp(1.5rem, 5vw, 3.5rem)', fontWeight: 800, fontFamily: isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif', marginBottom: '20px' }}>
+          <h2 style={{ color: 'var(--primary)', fontSize: 'clamp(1.5rem, 5vw, 3.5rem)', fontWeight: 800, fontFamily: isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif', marginBottom: '20px' }}>
             {isAr ? 'لماذا تختار حبر إيكو؟' : 'Why Choose Eco Inks?'}
           </h2>
-          <p style={{ color: '#4B5563', fontSize: 'clamp(0.85rem, 2vw, 1.1rem)', maxWidth: '600px', margin: '0 auto', lineHeight: 1.6 }}>
+          <p style={{ color: 'var(--text-secondary)', fontSize: 'clamp(0.85rem, 2vw, 1.1rem)', maxWidth: '600px', margin: '0 auto', lineHeight: 1.6 }}>
             {isAr ? 'صممت أحبار إيكو لتلبي أعلى المعايير العالمية في الجودة والاستدامة، لتوفر لك حلاً متكاملاً يجمع بين الأداء والمسؤولية البيئية.' : 'Eco Inks are engineered to meet the highest global standards in quality and sustainability, providing a seamless solution for performance and ecological responsibility.'}
           </p>
         </div>
@@ -39,7 +39,7 @@ export default function EcoInksLeafletSection() {
           {features.map((feat, idx) => (
             <Reveal key={idx} delay={idx * 90} threshold={0.1}>
             <div className="card-lift leaflet-card" style={{ height: '100%',
-              background: '#F9FAFB', border: '1px solid #F3F4F6', borderRadius: 'var(--radius-2xl)',
+              background: 'var(--bg-secondary)', border: '1px solid var(--light-grey)', borderRadius: 'var(--radius-2xl)',
               padding: 'clamp(20px, 4vw, 40px) clamp(16px, 3vw, 32px)',
               cursor: 'default', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
               ['--lift' as string]: '-5px',
@@ -48,10 +48,10 @@ export default function EcoInksLeafletSection() {
               <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'rgba(141,184,51,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px', border: '1px solid rgba(141,184,51,0.2)' }}>
                 {feat.icon}
               </div>
-              <h3 style={{ color: '#111827', fontSize: 'clamp(1rem, 2.5vw, 1.25rem)', fontWeight: 700, marginBottom: '10px', fontFamily: isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif' }}>
+              <h3 style={{ color: 'var(--primary)', fontSize: 'clamp(1rem, 2.5vw, 1.25rem)', fontWeight: 700, marginBottom: '10px', fontFamily: isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif' }}>
                 {feat.title}
               </h3>
-              <p style={{ color: '#4B5563', lineHeight: 1.6, fontSize: '0.9rem' }}>{feat.description}</p>
+              <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, fontSize: '0.9rem' }}>{feat.description}</p>
             </div>
             </Reveal>
           ))}

@@ -22,21 +22,30 @@ export default function FaqPageClient() {
   ];
 
   return (
-    <main style={{ background: 'var(--bg-secondary)', minHeight: '100vh', paddingTop: 'clamp(120px, 15vh, 160px)', paddingBottom: 'clamp(60px, 10vh, 120px)' }}>
-      
+    <main style={{ background: 'var(--bg-secondary)', minHeight: '100vh', paddingTop: 'var(--page-top)', paddingBottom: 'clamp(60px, 10vh, 120px)', position: 'relative', overflow: 'hidden' }}>
+      {/* A single-column page on a full-width canvas otherwise leaves 200px+
+          of flat, undecorated background on each side at wide viewports —
+          reuses the same brand-tinted glow ContactSection.tsx already
+          establishes for exactly this situation, not a new color. */}
+      <div aria-hidden="true" style={{
+        position: 'absolute', top: '10%', insetInlineEnd: '-10%', width: '500px', height: '500px',
+        borderRadius: '50%', background: 'radial-gradient(circle, rgba(141,184,51,0.10) 0%, transparent 70%)',
+        pointerEvents: 'none',
+      }} />
+
       {/* Page Header */}
-      <Reveal as="div" className="container" style={{ textAlign: 'center', marginBottom: '80px' }}>
+      <Reveal as="div" className="container" style={{ textAlign: 'center', marginBottom: 'clamp(48px, 8vw, 80px)', position: 'relative' }}>
         <span className="section-tag" style={{ margin: '0 auto 16px' }}>{t('title')}</span>
         <h1 style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', fontWeight: 900, color: 'var(--primary)', marginBottom: '24px', letterSpacing: '-0.02em' }}>
           {t('title')}
         </h1>
-        <p style={{ color: '#4B5563', fontSize: '1.2rem', maxWidth: '700px', margin: '0 auto', lineHeight: 1.6 }}>
+        <p style={{ color: 'var(--text-secondary)', fontSize: 'var(--text-md)', maxWidth: '700px', margin: '0 auto', lineHeight: 1.6 }}>
           {t('subtitle')}
         </p>
       </Reveal>
 
       {/* Accordion */}
-      <div className="container" style={{ maxWidth: '800px' }}>
+      <div className="container" style={{ maxWidth: '800px', position: 'relative' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {faqs.map((faq, i) => (
             <Reveal key={i} delay={i * 70} distance={18}>
