@@ -171,9 +171,19 @@ export default function SourcingRouteRadar({
 }) {
   const [activeStageId, setActiveStageId] = useState<string>('factory');
   const [freightMode, setFreightMode] = useState<'sea' | 'air'>('sea');
-  const activeStage = STAGES.find((s) => s.id === activeStageId) || STAGES[0];
+  const [isHovered, setIsHovered] = useState<boolean>(false);
+  const [isAutoPlaying, setIsAutoPlaying] = useState<boolean>(true);
+
+  const activeIdx = Math.max(0, STAGES.findIndex((s) => s.id === activeStageId));
+  const activeStage = STAGES[activeIdx] || STAGES[0];
   const Arrow = isAr ? ArrowLeft : ArrowRight;
+
   const cycleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isHoveredRef = useRef<boolean>(false);
+
+  useEffect(() => {
+    isHoveredRef.current = isHovered;
+  }, [isHovered]);
 
   const clearCycle = useCallback(() => {
     if (cycleTimerRef.current) {
@@ -182,23 +192,31 @@ export default function SourcingRouteRadar({
     }
   }, []);
 
-  // Auto-cycle through all 5 stages sequentially, then stop.
+  // Auto-cycle through all 5 stages sequentially with comfortable 3.5s pacing
   const startAutoCycle = useCallback(() => {
     clearCycle();
+    setIsAutoPlaying(true);
     let currentIdx = 0;
     setActiveStageId(STAGES[0].id);
 
     const advanceStep = () => {
+      if (isHoveredRef.current) {
+        // Paused while user is reading — check again in 500ms
+        cycleTimerRef.current = setTimeout(advanceStep, 500);
+        return;
+      }
       currentIdx++;
       if (currentIdx < STAGES.length) {
         setActiveStageId(STAGES[currentIdx].id);
-        cycleTimerRef.current = setTimeout(advanceStep, 1800);
+        cycleTimerRef.current = setTimeout(advanceStep, 3500);
       } else {
+        // Stop gracefully at destination
+        setIsAutoPlaying(false);
         cycleTimerRef.current = null;
       }
     };
 
-    cycleTimerRef.current = setTimeout(advanceStep, 1800);
+    cycleTimerRef.current = setTimeout(advanceStep, 3500);
   }, [clearCycle]);
 
   // Clean up timer on unmount
@@ -208,6 +226,10 @@ export default function SourcingRouteRadar({
     setFreightMode(mode);
     startAutoCycle();
   };
+
+  // Position math for 5-node grid: centers are 10%, 30%, 50%, 70%, 90%
+  const beaconPositionPercent = 10 + (activeIdx / 4) * 80;
+  const progressLinePercent = (activeIdx / 4) * 100;
 
   return (
     <section
@@ -241,19 +263,19 @@ export default function SourcingRouteRadar({
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '6px',
-                padding: '4px 14px',
+                gap: '8px',
+                padding: '5px 16px',
                 borderRadius: 'var(--radius-pill)',
-                background: 'rgba(141, 184, 51, 0.15)',
-                color: 'var(--accent)',
+                background: 'rgba(141, 184, 51, 0.14)',
+                color: 'var(--accent-text, #5C7A1E)',
                 fontSize: '0.8rem',
                 fontWeight: 800,
                 letterSpacing: '1px',
                 textTransform: 'uppercase',
-                border: '1px solid rgba(141, 184, 51, 0.3)',
+                border: '1px solid rgba(141, 184, 51, 0.35)',
               }}
             >
-              <Radio size={14} className="animate-pulse" />
+              <Radio size={14} className={isAutoPlaying ? 'animate-pulse' : ''} />
               {isAr ? 'رادار سلاسل الإمداد اللحظي' : 'Live Supply Chain Radar Telemetry'}
             </span>
           </div>
@@ -297,6 +319,7 @@ export default function SourcingRouteRadar({
             }}
           >
             <button
+              type="button"
               onClick={() => handleFreightModeChange('sea')}
               style={{
                 display: 'inline-flex',
@@ -305,8 +328,8 @@ export default function SourcingRouteRadar({
                 padding: '8px 22px',
                 borderRadius: 'var(--radius-pill)',
                 border: 'none',
-                background: freightMode === 'sea' ? 'var(--accent)' : 'transparent',
-                color: freightMode === 'sea' ? '#fff' : 'var(--text-secondary)',
+                background: freightMode === 'sea' ? 'var(--accent, #8DB833)' : 'transparent',
+                color: freightMode === 'sea' ? '#FFFFFF' : 'var(--text-secondary)',
                 fontWeight: 800,
                 fontSize: '0.88rem',
                 cursor: 'pointer',
@@ -317,6 +340,7 @@ export default function SourcingRouteRadar({
               <span>{isAr ? 'شحن بحري حاويات (الأكثر توفيراً)' : 'Ocean Freight (Best TCO)'}</span>
             </button>
             <button
+              type="button"
               onClick={() => handleFreightModeChange('air')}
               style={{
                 display: 'inline-flex',
@@ -325,8 +349,8 @@ export default function SourcingRouteRadar({
                 padding: '8px 22px',
                 borderRadius: 'var(--radius-pill)',
                 border: 'none',
-                background: freightMode === 'air' ? 'var(--accent)' : 'transparent',
-                color: freightMode === 'air' ? '#fff' : 'var(--text-secondary)',
+                background: freightMode === 'air' ? 'var(--accent, #8DB833)' : 'transparent',
+                color: freightMode === 'air' ? '#FFFFFF' : 'var(--text-secondary)',
                 fontWeight: 800,
                 fontSize: '0.88rem',
                 cursor: 'pointer',
@@ -339,50 +363,93 @@ export default function SourcingRouteRadar({
           </div>
         </div>
 
-        {/* Visual Corridor Radar Timeline (Desktop & Tablet) */}
+        {/* Visual Corridor Radar Timeline */}
         <div
+          className="sourcing-radar-timeline-wrap"
           style={{
             marginBottom: '40px',
             position: 'relative',
-            padding: '24px 0',
+            padding: '24px 0 12px',
           }}
         >
-          {/* Connector Beam between stages */}
+          {/* Connector Beam Track (spanning 10% to 90%) */}
           <div
+            className="sourcing-radar-track-base"
             style={{
               position: 'absolute',
-              top: '48px',
-              left: '5%',
-              right: '5%',
-              height: '3px',
-              background: 'rgba(26, 61, 43, 0.1)',
+              top: '49px',
+              left: '10%',
+              right: '10%',
+              height: '4px',
+              background: 'rgba(26, 61, 43, 0.12)',
+              borderRadius: '999px',
               zIndex: 1,
             }}
           >
+            {/* Active Filled Beam with smooth width transition */}
             <motion.div
               style={{
                 height: '100%',
-                background: 'linear-gradient(90deg, var(--accent), #38BDF8, var(--accent))',
-                borderRadius: '2px',
+                background: 'linear-gradient(90deg, var(--accent, #8DB833) 0%, #38BDF8 50%, var(--accent, #8DB833) 100%)',
+                borderRadius: '999px',
+                boxShadow: '0 0 12px rgba(141, 184, 51, 0.65)',
+                transformOrigin: isAr ? 'right' : 'left',
               }}
               animate={{
-                width:
-                  activeStage.id === 'factory'
-                    ? '10%'
-                    : activeStage.id === 'port-origin'
-                    ? '32%'
-                    : activeStage.id === 'maritime-transit'
-                    ? '55%'
-                    : activeStage.id === 'saudi-customs'
-                    ? '75%'
-                    : '100%',
+                width: `${progressLinePercent}%`,
               }}
-              transition={{ duration: 0.5, ease: 'easeOut' }}
+              transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
             />
           </div>
 
+          {/* Gliding Cargo Vehicle Beacon along the Track */}
+          <motion.div
+            className="sourcing-radar-beacon"
+            style={{
+              position: 'absolute',
+              top: '49px',
+              left: isAr ? 'auto' : `${beaconPositionPercent}%`,
+              right: isAr ? `${beaconPositionPercent}%` : 'auto',
+              transform: 'translate(-50%, -50%)',
+              zIndex: 4,
+              pointerEvents: 'none',
+            }}
+            animate={{
+              left: isAr ? 'auto' : `${beaconPositionPercent}%`,
+              right: isAr ? `${beaconPositionPercent}%` : 'auto',
+            }}
+            transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '4px 10px',
+                borderRadius: '999px',
+                background: 'var(--primary, #1A3D2B)',
+                border: '1.5px solid var(--accent, #8DB833)',
+                boxShadow: '0 0 18px rgba(141, 184, 51, 0.75), 0 4px 12px rgba(0,0,0,0.25)',
+                color: '#FFFFFF',
+                fontSize: '0.68rem',
+                fontWeight: 800,
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {freightMode === 'sea' ? (
+                <Ship size={13} color="var(--accent, #8DB833)" />
+              ) : (
+                <Plane size={13} color="#38BDF8" />
+              )}
+              <span style={{ letterSpacing: '0.04em', fontFamily: 'monospace' }}>
+                {freightMode === 'sea' ? (isAr ? 'شحنة بحرية' : 'VESSEL') : (isAr ? 'شحن جوي' : 'AIR EXPRESS')}
+              </span>
+            </div>
+          </motion.div>
+
           {/* 5 Stage Checkpoint Nodes */}
           <div
+            className="sourcing-radar-nodes-grid"
             style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(5, 1fr)',
@@ -391,12 +458,19 @@ export default function SourcingRouteRadar({
               zIndex: 2,
             }}
           >
-            {STAGES.map((stage) => {
+            {STAGES.map((stage, idx) => {
               const isActive = stage.id === activeStageId;
+              const isCompleted = idx < activeIdx;
+
               return (
                 <button
                   key={stage.id}
-                  onClick={() => { clearCycle(); setActiveStageId(stage.id); }}
+                  type="button"
+                  onClick={() => {
+                    clearCycle();
+                    setIsAutoPlaying(false);
+                    setActiveStageId(stage.id);
+                  }}
                   style={{
                     background: 'none',
                     border: 'none',
@@ -406,38 +480,89 @@ export default function SourcingRouteRadar({
                     flexDirection: 'column',
                     alignItems: 'center',
                     outline: 'none',
+                    position: 'relative',
                   }}
                 >
                   {/* Node Circle */}
                   <div
+                    className="sourcing-radar-node-circle"
                     style={{
                       width: '50px',
                       height: '50px',
                       borderRadius: '50%',
-                      background: isActive ? 'var(--accent)' : '#FFFFFF',
-                      border: `2px solid ${isActive ? 'var(--accent)' : 'rgba(26, 61, 43, 0.2)'}`,
-                      color: isActive ? '#FFFFFF' : 'var(--primary)',
+                      background: isActive
+                        ? 'var(--accent, #8DB833)'
+                        : isCompleted
+                        ? 'rgba(141, 184, 51, 0.15)'
+                        : '#FFFFFF',
+                      border: isActive
+                        ? '2.5px solid #FFFFFF'
+                        : isCompleted
+                        ? '2px solid var(--accent, #8DB833)'
+                        : '2px solid rgba(26, 61, 43, 0.2)',
+                      color: isActive
+                        ? '#FFFFFF'
+                        : isCompleted
+                        ? 'var(--accent-text, #5C7A1E)'
+                        : 'var(--primary)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       fontWeight: 900,
                       fontFamily: 'monospace',
-                      fontSize: '1rem',
-                      boxShadow: isActive ? '0 0 24px rgba(141, 184, 51, 0.5)' : '0 4px 12px rgba(0,0,0,0.08)',
+                      fontSize: '0.95rem',
+                      boxShadow: isActive
+                        ? '0 0 24px rgba(141, 184, 51, 0.75), 0 4px 14px rgba(0,0,0,0.15)'
+                        : '0 4px 12px rgba(0,0,0,0.06)',
                       marginBottom: '12px',
-                      transition: 'all 0.25s ease',
+                      transition: 'all 0.3s ease',
                       position: 'relative',
                     }}
                   >
-                    {isActive ? <CheckCircle2 size={24} /> : stage.step}
+                    {/* Concentric Radar Ping Rings around Active Node */}
+                    {isActive && (
+                      <>
+                        <span
+                          style={{
+                            position: 'absolute',
+                            inset: '-6px',
+                            borderRadius: '50%',
+                            border: '2px solid var(--accent, #8DB833)',
+                            animation: 'radarPing 2s cubic-bezier(0, 0, 0.2, 1) infinite',
+                            pointerEvents: 'none',
+                          }}
+                        />
+                        <span
+                          style={{
+                            position: 'absolute',
+                            inset: '-12px',
+                            borderRadius: '50%',
+                            border: '1px solid rgba(141, 184, 51, 0.45)',
+                            animation: 'radarPing 2s cubic-bezier(0, 0, 0.2, 1) 0.6s infinite',
+                            pointerEvents: 'none',
+                          }}
+                        />
+                      </>
+                    )}
+
+                    {isCompleted ? (
+                      <CheckCircle2 size={24} color="var(--accent-text, #5C7A1E)" strokeWidth={2.5} />
+                    ) : (
+                      stage.step
+                    )}
                   </div>
 
                   {/* Node Title */}
                   <span
+                    className="sourcing-radar-node-title"
                     style={{
                       fontSize: '0.85rem',
-                      fontWeight: isActive ? 800 : 600,
-                      color: isActive ? 'var(--primary)' : 'var(--text-secondary)',
+                      fontWeight: isActive ? 800 : isCompleted ? 700 : 600,
+                      color: isActive
+                        ? 'var(--primary)'
+                        : isCompleted
+                        ? 'var(--accent-text)'
+                        : 'var(--text-secondary)',
                       textAlign: 'center',
                       lineHeight: 1.3,
                       maxWidth: '140px',
@@ -448,10 +573,15 @@ export default function SourcingRouteRadar({
 
                   {/* Duration Tag */}
                   <span
+                    className="sourcing-radar-node-duration"
                     style={{
                       marginTop: '6px',
                       fontSize: '0.72rem',
-                      color: isActive ? 'var(--accent-text)' : 'var(--text-tertiary)',
+                      color: isActive
+                        ? 'var(--accent-text)'
+                        : isCompleted
+                        ? 'var(--accent-text)'
+                        : 'var(--text-tertiary)',
                       fontFamily: 'monospace',
                       fontWeight: 700,
                     }}
@@ -470,183 +600,294 @@ export default function SourcingRouteRadar({
           </div>
         </div>
 
-        {/* Detailed Stage Telemetry Card */}
-        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeStage.id + freightMode}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -16 }}
-              transition={{ duration: 0.25 }}
+        {/* Detailed Stage Telemetry Card — STABLE CONTAINER, ZERO BLINKING */}
+        <div
+          style={{ maxWidth: '1000px', margin: '0 auto' }}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          <SpotlightCard
+            className="glass"
+            style={{
+              background: 'linear-gradient(145deg, var(--primary, #1A3D2B) 0%, #153324 55%, var(--header-bg, #0F2A1C) 100%)',
+              border: '1px solid rgba(141, 184, 51, 0.35)',
+              padding: 'clamp(24px, 4vw, 44px)',
+              borderRadius: 'var(--radius-2xl)',
+              boxShadow: '0 25px 65px rgba(10, 26, 17, 0.35), 0 0 0 1px rgba(141, 184, 51, 0.2)',
+              position: 'relative',
+              textAlign: isAr ? 'right' : 'left',
+              overflow: 'hidden',
+            }}
+          >
+            <BorderBeam size={340} duration={10} colorFrom="var(--accent)" colorTo="#38BDF8" />
+
+            {/* Stage Telemetry Live Header */}
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                gap: '12px',
+                marginBottom: '20px',
+                paddingBottom: '16px',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+              }}
             >
-              <SpotlightCard
-                className="glass"
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <span
+                  style={{
+                    fontSize: '0.75rem',
+                    fontWeight: 800,
+                    padding: '4px 12px',
+                    borderRadius: 'var(--radius-pill)',
+                    background: 'rgba(141, 184, 51, 0.2)',
+                    color: 'var(--accent, #8DB833)',
+                    border: '1px solid rgba(141, 184, 51, 0.4)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.04em',
+                  }}
+                >
+                  {isAr ? activeStage.complianceBadgeAr : activeStage.complianceBadgeEn}
+                </span>
+                <span style={{ color: '#94A3B8', fontSize: '0.82rem', fontFamily: 'monospace' }}>
+                  {isAr ? `المرحلة ٠${activeIdx + 1} من ٠٥` : `STAGE 0${activeIdx + 1} OF 05`}
+                </span>
+              </div>
+
+              <div
                 style={{
-                  background: 'var(--primary)',
-                  border: '1px solid rgba(141, 184, 51, 0.3)',
-                  padding: 'clamp(24px, 4vw, 44px)',
-                  borderRadius: 'var(--radius-2xl)',
-                  boxShadow: '0 20px 60px rgba(26, 61, 43, 0.15)',
-                  position: 'relative',
-                  textAlign: isAr ? 'right' : 'left',
+                  background: 'rgba(255, 255, 255, 0.06)',
+                  padding: '8px 16px',
+                  borderRadius: 'var(--radius-pill)',
+                  border: '1px solid rgba(255, 255, 255, 0.12)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
                 }}
               >
-                <BorderBeam size={340} duration={10} colorFrom="var(--accent)" colorTo="#38BDF8" />
+                <MapPin size={16} color="var(--accent)" />
+                <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#FFFFFF' }}>
+                  {isAr ? activeStage.hubAr : activeStage.hubEn}
+                </span>
+              </div>
+            </div>
 
-                {/* Card Top Row */}
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'flex-start',
-                    flexWrap: 'wrap',
-                    gap: '16px',
-                    marginBottom: '20px',
-                    paddingBottom: '18px',
-                    borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-                  }}
+            {/* Smooth morphing Stage Content without blinking */}
+            <div style={{ minHeight: '180px', position: 'relative' }}>
+              <AnimatePresence mode="popLayout" initial={false}>
+                <motion.div
+                  key={activeStage.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.32, ease: 'easeOut' }}
                 >
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                      <span
-                        style={{
-                          fontSize: '0.75rem',
-                          fontWeight: 800,
-                          padding: '3px 12px',
-                          borderRadius: 'var(--radius-pill)',
-                          background: 'rgba(141, 184, 51, 0.2)',
-                          color: 'var(--accent)',
-                          border: '1px solid rgba(141, 184, 51, 0.4)',
-                          textTransform: 'uppercase',
-                        }}
-                      >
-                        {isAr ? activeStage.complianceBadgeAr : activeStage.complianceBadgeEn}
-                      </span>
-                      <span style={{ color: '#94A3B8', fontSize: '0.85rem', fontFamily: 'monospace' }}>
-                        {isAr ? `المرحلة ${activeStage.step}` : `CORRIDOR STAGE ${activeStage.step}`}
-                      </span>
-                    </div>
-
-                    <h3 style={{ fontSize: 'clamp(1.4rem, 2.5vw, 2rem)', fontWeight: 800, color: '#FFFFFF', margin: 0 }}>
-                      {isAr ? activeStage.titleAr : activeStage.titleEn}
-                    </h3>
-                  </div>
-
-                  {/* Hub / Location badge */}
-                  <div
+                  <h3
                     style={{
-                      background: 'rgba(255, 255, 255, 0.05)',
-                      padding: '10px 18px',
-                      borderRadius: 'var(--radius-lg)',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                    }}
-                  >
-                    <MapPin size={18} color="var(--accent)" />
-                    <div>
-                      <span style={{ fontSize: '0.72rem', color: '#94A3B8', display: 'block' }}>
-                        {isAr ? 'نطاق التشغيل والموانئ' : 'Operating Hub & Terminal'}
-                      </span>
-                      <span style={{ fontSize: '0.88rem', fontWeight: 800, color: '#FFFFFF' }}>
-                        {isAr ? activeStage.hubAr : activeStage.hubEn}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Stage Narrative Description */}
-                <p style={{ fontSize: '1rem', color: 'rgba(255, 255, 255, 0.85)', lineHeight: 1.7, marginBottom: '28px' }}>
-                  {isAr ? activeStage.descAr : activeStage.descEn}
-                </p>
-
-                {/* Required Verified Documentation Grid */}
-                <div style={{ marginBottom: '28px' }}>
-                  <h4
-                    style={{
-                      fontSize: '0.85rem',
+                      fontSize: 'clamp(1.4rem, 2.5vw, 2.1rem)',
                       fontWeight: 800,
-                      color: 'var(--accent)',
-                      textTransform: 'uppercase',
-                      letterSpacing: '1px',
-                      marginBottom: '14px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
+                      color: '#FFFFFF',
+                      marginBottom: '12px',
                     }}
                   >
-                    <FileCheck2 size={18} />
-                    <span>{isAr ? 'الوثائق المعتمدة والشهادات النظامية في هذه المرحلة' : 'Stage Compliance Deliverables & Paperwork'}</span>
-                  </h4>
+                    {isAr ? activeStage.titleAr : activeStage.titleEn}
+                  </h3>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '12px' }}>
-                    {activeStage.docs.map((doc, idx) => (
-                      <div
-                        key={idx}
-                        style={{
-                          background: 'rgba(0, 0, 0, 0.4)',
-                          padding: '12px 16px',
-                          borderRadius: 'var(--radius-md)',
-                          border: '1px solid rgba(255, 255, 255, 0.08)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '10px',
-                        }}
-                      >
-                        <ShieldCheck size={18} color="#10B981" className="shrink-0" />
-                        <span style={{ fontSize: '0.86rem', color: '#E2E8F0', fontWeight: 600 }}>
-                          {isAr ? doc.ar : doc.en}
-                        </span>
-                      </div>
-                    ))}
+                  <p
+                    style={{
+                      fontSize: '0.98rem',
+                      color: 'rgba(255, 255, 255, 0.86)',
+                      lineHeight: 1.7,
+                      marginBottom: '26px',
+                    }}
+                  >
+                    {isAr ? activeStage.descAr : activeStage.descEn}
+                  </p>
+
+                  {/* Required Verified Documentation Grid */}
+                  <div style={{ marginBottom: '26px' }}>
+                    <h4
+                      style={{
+                        fontSize: '0.8rem',
+                        fontWeight: 800,
+                        color: 'var(--accent)',
+                        textTransform: 'uppercase',
+                        letterSpacing: '1px',
+                        marginBottom: '12px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                      }}
+                    >
+                      <FileCheck2 size={17} />
+                      <span>
+                        {isAr
+                          ? 'الوثائق المعتمدة والشهادات النظامية في هذه المرحلة'
+                          : 'Stage Compliance Deliverables & Paperwork'}
+                      </span>
+                    </h4>
+
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                        gap: '10px',
+                      }}
+                    >
+                      {activeStage.docs.map((doc, idx) => (
+                        <div
+                          key={idx}
+                          style={{
+                            background: 'rgba(0, 0, 0, 0.28)',
+                            padding: '11px 14px',
+                            borderRadius: 'var(--radius-md)',
+                            border: '1px solid rgba(255, 255, 255, 0.09)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '10px',
+                          }}
+                        >
+                          <ShieldCheck size={17} color="#10B981" className="shrink-0" />
+                          <span style={{ fontSize: '0.84rem', color: '#E2E8F0', fontWeight: 600 }}>
+                            {isAr ? doc.ar : doc.en}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
 
-                {/* Bottom CTA Banner */}
-                <div
+            {/* Stage duration & CTA Footer (Permanently Stable) */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '16px',
+                paddingTop: '20px',
+                borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <Clock size={18} color="var(--accent)" />
+                <span style={{ fontSize: '0.88rem', color: '#94A3B8' }}>
+                  {isAr ? 'المدة الإجمالية النموذجية حتى الباب:' : 'End-to-end corridor duration:'}{' '}
+                  <strong style={{ color: '#FFFFFF' }}>
+                    {freightMode === 'sea'
+                      ? (isAr ? '٢٠–٢٥ يوماً بحرياً' : '20–25 Days Ocean')
+                      : (isAr ? '٤–٦ أيام جوياً' : '4–6 Days Air')}
+                  </strong>
+                </span>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (isAutoPlaying) {
+                      clearCycle();
+                      setIsAutoPlaying(false);
+                    } else {
+                      startAutoCycle();
+                    }
+                  }}
                   style={{
-                    display: 'flex',
+                    background: 'rgba(255, 255, 255, 0.08)',
+                    border: '1px solid rgba(255, 255, 255, 0.16)',
+                    color: '#FFFFFF',
+                    borderRadius: 'var(--radius-pill)',
+                    padding: '8px 16px',
+                    fontSize: '0.8rem',
+                    fontWeight: 700,
+                    display: 'inline-flex',
                     alignItems: 'center',
-                    justifyContent: 'space-between',
-                    flexWrap: 'wrap',
-                    gap: '16px',
-                    paddingTop: '20px',
-                    borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+                    gap: '6px',
+                    cursor: 'pointer',
+                    transition: 'all 200ms ease',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255, 255, 255, 0.16)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)')}
+                >
+                  <Radio size={14} color="var(--accent)" className={isAutoPlaying ? 'animate-pulse' : ''} />
+                  <span>
+                    {isAutoPlaying
+                      ? (isAr ? 'إيقاف مؤقت' : 'Pause Radar')
+                      : (isAr ? 'تشغيل الرادار' : 'Auto Scan')}
+                  </span>
+                </button>
+
+                <Link
+                  href={`/${locale}/contact?service=sourcing&stage=${activeStage.id}`}
+                  className="btn-primary"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '12px 24px',
+                    fontSize: '0.9rem',
+                    fontWeight: 800,
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <Clock size={18} color="var(--accent)" />
-                    <span style={{ fontSize: '0.9rem', color: '#94A3B8' }}>
-                      {isAr ? 'المدة الإجمالية النموذجية حتى الباب:' : 'End-to-end corridor duration:'}{' '}
-                      <strong style={{ color: '#FFFFFF' }}>
-                        {freightMode === 'sea' ? (isAr ? '٢٠–٢٥ يوماً بحرياً' : '20–25 Days Ocean') : (isAr ? '٤–٦ أيام جوياً' : '4–6 Days Air')}
-                      </strong>
-                    </span>
-                  </div>
-
-                  <Link
-                    href={`/${locale}/contact?service=sourcing&stage=${activeStage.id}`}
-                    className="btn-primary"
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      padding: '12px 24px',
-                      fontSize: '0.9rem',
-                      fontWeight: 800,
-                    }}
-                  >
-                    <span>{isAr ? 'اطلب تسعيرة توريد للمشروع' : 'Request Sourcing Corridor Quote'}</span>
-                    <Arrow size={18} />
-                  </Link>
-                </div>
-              </SpotlightCard>
-            </motion.div>
-          </AnimatePresence>
+                  <span>{isAr ? 'اطلب تسعيرة توريد للمشروع' : 'Request Sourcing Corridor Quote'}</span>
+                  <Arrow size={18} />
+                </Link>
+              </div>
+            </div>
+          </SpotlightCard>
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes radarPing {
+          0% {
+            transform: scale(1);
+            opacity: 0.85;
+          }
+          70% {
+            transform: scale(1.6);
+            opacity: 0;
+          }
+          100% {
+            transform: scale(1.6);
+            opacity: 0;
+          }
+        }
+        @media (max-width: 768px) {
+          .sourcing-radar-nodes-grid {
+            gap: 6px !important;
+          }
+          .sourcing-radar-node-circle {
+            width: 42px !important;
+            height: 42px !important;
+            font-size: 0.85rem !important;
+          }
+          .sourcing-radar-node-title {
+            font-size: 0.74rem !important;
+          }
+          .sourcing-radar-track-base {
+            top: 45px !important;
+          }
+          .sourcing-radar-beacon {
+            top: 45px !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .sourcing-radar-node-title {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            font-size: 0.68rem !important;
+          }
+          .sourcing-radar-node-duration {
+            display: none;
+          }
+        }
+      `}</style>
     </section>
   );
 }
