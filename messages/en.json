@@ -731,7 +731,8 @@
     "title": "Enterprise Systems Catalog",
     "subtitle": "Networking, structured cabling, security & surveillance, access control, business telephony and power & computing infrastructure — sourced and supplied through our systems-integration partner for projects across Saudi Arabia, and quoted against your bill of quantities rather than a fixed piece count.",
     "complianceNote": "Every shipment is classified against the ZATCA Integrated Customs Tariff before clearance. Radio-transmitting equipment additionally carries CITC type approval and SABER conformity certification.",
-    "quickNavLabel": "Jump to a category",
+    "viewGallery": "View catalog",
+    "galleryLabel": "{group} catalog",
     "itemsCount": "{count} product lines",
     "cta": "Request a BOQ Quote",
     "compliance": {

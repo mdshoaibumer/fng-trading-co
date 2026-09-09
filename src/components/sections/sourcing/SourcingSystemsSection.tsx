@@ -1,10 +1,12 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import Reveal from '@/components/ui/Reveal';
-import { Router, Cable, Camera, Fingerprint, PhoneCall, Server, FileCheck, Radio, ShieldCheck } from 'lucide-react';
+import { useDialogA11y } from '@/lib/useDialogA11y';
+import { Router, Cable, Camera, Fingerprint, PhoneCall, Server, FileCheck, Radio, ShieldCheck, X, Maximize2 } from 'lucide-react';
 
 type SystemsItem = {
   key: string;
@@ -149,8 +151,18 @@ export default function SourcingSystemsSection() {
   const params = useParams();
   const isAr = params.locale === 'ar';
 
+  const [selectedGroup, setSelectedGroup] = useState<GroupKey | null>(null);
+  const activeGroup = GROUPS.find((g) => g.key === selectedGroup) ?? null;
+  const closeModal = () => setSelectedGroup(null);
+  const modalRef = useDialogA11y<HTMLDivElement>(selectedGroup !== null, closeModal);
+
+  useEffect(() => {
+    document.body.style.overflow = selectedGroup ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [selectedGroup]);
+
   return (
-    <section id="sourcing-systems" className="section" style={{ background: 'var(--bg-secondary)', overflow: 'visible' }}>
+    <section id="sourcing-systems" className="section" style={{ background: 'var(--bg-secondary)' }}>
       <div className="container">
         <div style={{ textAlign: 'center', marginBottom: 'clamp(32px, 6vw, 56px)' }}>
           <span className="section-tag">{t('tag')}</span>
@@ -158,128 +170,72 @@ export default function SourcingSystemsSection() {
           <p style={{ color: 'var(--text-secondary)', fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', maxWidth: '700px', margin: '0 auto' }}>{t('subtitle')}</p>
         </div>
 
-        <nav
-          aria-label={t('quickNavLabel')}
-          className="ssys-quicknav"
-          style={{
-            display: 'flex', gap: '10px', overflowX: 'auto', WebkitOverflowScrolling: 'touch',
-            padding: '10px', marginBottom: 'clamp(32px, 5vw, 48px)', borderRadius: 'var(--radius-lg)',
-            background: '#fff', border: '1px solid var(--light-grey)', boxShadow: 'var(--shadow-sm)',
-            position: 'sticky', top: '120px', zIndex: 5, flexDirection: isAr ? 'row-reverse' : 'row',
-          }}
-        >
-          {GROUPS.map((group) => {
-            const NavIcon = group.icon;
+        <div className="ssys-cat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginBottom: 'clamp(40px, 6vw, 64px)' }}>
+          {GROUPS.map((group, i) => {
+            const GroupIcon = group.icon;
             return (
-              <a
-                key={group.key}
-                href={`#ssys-${group.slug}`}
-                className="ssys-nav-chip"
-                style={{
-                  display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0,
-                  padding: '9px 16px', borderRadius: 'var(--radius-pill)',
-                  background: 'var(--bg-secondary)', color: 'var(--primary)',
-                  fontSize: '0.82rem', fontWeight: 700, whiteSpace: 'nowrap',
-                  textDecoration: 'none', border: '1px solid transparent',
-                  flexDirection: isAr ? 'row-reverse' : 'row',
-                }}
-              >
-                <NavIcon size={16} color="var(--accent)" strokeWidth={2} />
-                {t(`groups.${group.key}.name`)}
-                <span style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>{group.items.length}</span>
-              </a>
-            );
-          })}
-        </nav>
-
-        {GROUPS.map((group, gi) => {
-          const GroupIcon = group.icon;
-          return (
-            <div key={group.key} id={`ssys-${group.slug}`} style={{ marginBottom: 'clamp(40px, 6vw, 64px)', scrollMarginTop: '180px' }}>
-              <div className="ssys-group-header" style={{
-                display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(20px, 4vw, 40px)',
-                alignItems: 'center', marginBottom: 'clamp(24px, 4vw, 36px)',
-              }}>
-                <Reveal from={isAr ? 'end' : 'start'} style={{ order: isAr ? 2 : 1, textAlign: isAr ? 'right' : 'left' }}>
-                  <div style={{
-                    width: '48px', height: '48px', borderRadius: 'var(--radius-md)',
-                    background: 'linear-gradient(135deg,rgba(26,61,43,0.08),rgba(141,184,51,0.08))',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '14px',
-                    border: '1px solid rgba(141,184,51,0.12)', marginInlineStart: 0, marginInlineEnd: 'auto',
+              <Reveal key={group.key} delay={i * 80} from="scale" threshold={0.15}>
+                <div
+                  role="button"
+                  tabIndex={0}
+                  aria-haspopup="dialog"
+                  aria-label={`${t('galleryLabel', { group: t(`groups.${group.key}.name`) })} — ${t('itemsCount', { count: group.items.length })}`}
+                  className="ssys-cat-card card-lift"
+                  style={{
+                    position: 'relative', aspectRatio: '4/3', borderRadius: 'var(--radius-2xl)',
+                    overflow: 'hidden', cursor: 'pointer', boxShadow: 'var(--shadow-md)',
+                  }}
+                  onClick={() => setSelectedGroup(group.key)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedGroup(group.key); } }}
+                >
+                  <Image
+                    src={group.lifestyle}
+                    alt=""
+                    fill
+                    sizes="(max-width: 900px) 50vw, 33vw"
+                    className="ssys-cat-img"
+                    style={{ objectFit: 'cover' }}
+                  />
+                  <div className="ssys-cat-overlay" aria-hidden="true" style={{
+                    position: 'absolute', inset: 0,
+                    background: 'linear-gradient(180deg, rgba(26,61,43,0) 30%, rgba(26,61,43,0.55) 68%, rgba(26,61,43,0.9) 100%)',
+                  }} />
+                  <div aria-hidden="true" style={{
+                    position: 'absolute', top: '16px', [isAr ? 'right' : 'left']: '16px',
+                    width: '42px', height: '42px', borderRadius: 'var(--radius-md)',
+                    background: 'rgba(255,255,255,0.16)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
+                    border: '1px solid rgba(255,255,255,0.3)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}>
-                    <GroupIcon size={24} color="var(--accent)" strokeWidth={1.5} />
+                    <GroupIcon size={20} color="#fff" strokeWidth={1.8} />
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px', flexDirection: isAr ? 'row-reverse' : 'row', justifyContent: isAr ? 'flex-end' : 'flex-start' }}>
-                    <h3 style={{ color: 'var(--primary)', margin: 0 }}>{t(`groups.${group.key}.name`)}</h3>
+                  <div style={{
+                    position: 'absolute', insetInlineStart: 0, insetInlineEnd: 0, bottom: 0,
+                    padding: 'clamp(16px, 3vw, 24px)', textAlign: isAr ? 'right' : 'left',
+                  }}>
                     <span style={{
-                      fontSize: '0.72rem', fontWeight: 700, color: 'var(--accent-text)',
-                      background: 'rgba(141,184,51,0.10)', padding: '3px 10px', borderRadius: 'var(--radius-pill)',
-                      whiteSpace: 'nowrap',
+                      display: 'inline-block', marginBottom: '8px', padding: '3px 10px', borderRadius: 'var(--radius-pill)',
+                      background: 'rgba(26,61,43,0.55)', backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)',
+                      color: '#fff', fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.03em',
+                      textShadow: '0 1px 4px rgba(0,0,0,0.3)',
                     }}>
                       {t('itemsCount', { count: group.items.length })}
                     </span>
-                  </div>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.7 }}>{t(`groups.${group.key}.desc`)}</p>
-                </Reveal>
-                <Reveal from="scale" delay={100} style={{ order: isAr ? 1 : 2 }}>
-                  <div style={{ position: 'relative', width: '100%', aspectRatio: '4/3', borderRadius: 'var(--radius-2xl)', overflow: 'hidden', boxShadow: 'var(--shadow-lg)' }}>
-                    <Image
-                      src={group.lifestyle}
-                      alt={t(`groups.${group.key}.name`)}
-                      fill
-                      sizes="(max-width: 900px) 100vw, 45vw"
-                      style={{ objectFit: 'cover' }}
-                    />
-                  </div>
-                </Reveal>
-              </div>
-
-              <div className="ssys-items-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '18px' }}>
-                {group.items.map((item, i) => (
-                  <Reveal key={item.key} delay={(i % 4) * 70} from="scale" threshold={0.1}>
-                    <div className="ssys-card card-lift" style={{
-                      height: '100%', borderRadius: 'var(--radius-lg)', background: '#fff',
-                      border: '1px solid var(--light-grey)', overflow: 'hidden', cursor: 'default',
+                    <h3 style={{ color: '#fff', fontSize: 'clamp(1.05rem, 2.2vw, 1.3rem)', fontWeight: 800, marginBottom: '6px', textShadow: '0 2px 12px rgba(0,0,0,0.25)' }}>
+                      {t(`groups.${group.key}.name`)}
+                    </h3>
+                    <span className="ssys-cat-cta" style={{
+                      display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#fff',
+                      fontSize: '0.8rem', fontWeight: 600, flexDirection: isAr ? 'row-reverse' : 'row',
                     }}>
-                      <div style={{ position: 'relative', width: '100%', aspectRatio: '4/3' }}>
-                        <Image
-                          src={item.primary}
-                          alt={t(`groups.${group.key}.items.${item.key}.name`)}
-                          fill
-                          sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                          className="ssys-img-primary"
-                          style={{ objectFit: 'cover' }}
-                        />
-                        {item.secondary && (
-                          <Image
-                            src={item.secondary}
-                            alt=""
-                            aria-hidden="true"
-                            fill
-                            sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                            className="ssys-img-secondary"
-                            style={{ objectFit: 'cover' }}
-                          />
-                        )}
-                      </div>
-                      <div style={{ padding: '14px 16px', textAlign: isAr ? 'right' : 'left' }}>
-                        <h4 style={{ color: 'var(--primary)', fontSize: '0.9rem', fontWeight: 700, marginBottom: '4px' }}>
-                          {t(`groups.${group.key}.items.${item.key}.name`)}
-                        </h4>
-                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.78rem', lineHeight: 1.6 }}>
-                          {t(`groups.${group.key}.items.${item.key}.desc`)}
-                        </p>
-                      </div>
-                    </div>
-                  </Reveal>
-                ))}
-              </div>
-              {gi < GROUPS.length - 1 && (
-                <div style={{ height: '1px', background: 'rgba(0,0,0,0.06)', marginTop: 'clamp(40px, 6vw, 64px)' }} />
-              )}
-            </div>
-          );
-        })}
+                      {t('viewGallery')} <Maximize2 size={13} />
+                    </span>
+                  </div>
+                </div>
+              </Reveal>
+            );
+          })}
+        </div>
 
         <div className="ssys-compliance-grid" style={{
           display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px',
@@ -308,7 +264,7 @@ export default function SourcingSystemsSection() {
           ))}
         </div>
 
-        <p style={{ color: '#888', fontSize: '0.78rem', lineHeight: 1.7, marginBottom: 'clamp(28px, 4vw, 40px)', textAlign: 'center', maxWidth: '700px', marginInline: 'auto' }}>
+        <p style={{ color: 'var(--text-tertiary)', fontSize: '0.78rem', lineHeight: 1.7, marginBottom: 'clamp(28px, 4vw, 40px)', textAlign: 'center', maxWidth: '700px', marginInline: 'auto' }}>
           {t('complianceNote')}
         </p>
 
@@ -316,26 +272,139 @@ export default function SourcingSystemsSection() {
           <a href="#contact" className="btn-primary">{t('cta')}</a>
         </div>
       </div>
+
+      {/* Gallery modal */}
+      <div className="ssys-modal-backdrop" style={{
+        position: 'fixed', inset: 0, zIndex: 9999,
+        background: 'rgba(26,61,43,0.55)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px',
+        opacity: selectedGroup ? 1 : 0, pointerEvents: selectedGroup ? 'auto' : 'none',
+        visibility: selectedGroup ? 'visible' : 'hidden',
+        transition: 'opacity 350ms ease, visibility 0s linear ' + (selectedGroup ? '0s' : '350ms'),
+      }}
+      onClick={closeModal}
+      >
+        <div ref={modalRef} role="dialog" aria-modal="true" aria-labelledby="ssys-modal-title" tabIndex={-1} className="ssys-modal-content" style={{
+          width: '100%', maxWidth: '1080px', maxHeight: '88vh', overflowY: 'auto',
+          background: '#fff', borderRadius: 'var(--radius-xl)', overflowX: 'hidden',
+          boxShadow: '0 40px 100px rgba(26,61,43,0.25)', position: 'relative',
+          transform: selectedGroup ? 'translateY(0) scale(1)' : 'translateY(30px) scale(0.96)',
+          transition: 'transform 450ms var(--ease-ink)',
+          border: '1px solid rgba(141,184,51,0.2)',
+          direction: isAr ? 'rtl' : 'ltr',
+        }}
+        onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => {
+          // The Close button is the only focusable descendant, so Tab alone
+          // never lands keyboard focus on this scrollable region — without
+          // this, a keyboard-only (non-screen-reader) user has no way to
+          // reach items past the first screenful once body scroll is locked.
+          const el = e.currentTarget;
+          switch (e.key) {
+            case 'ArrowDown': el.scrollBy({ top: 120, behavior: 'smooth' }); break;
+            case 'ArrowUp': el.scrollBy({ top: -120, behavior: 'smooth' }); break;
+            case 'PageDown': e.preventDefault(); el.scrollBy({ top: el.clientHeight * 0.9, behavior: 'smooth' }); break;
+            case 'PageUp': e.preventDefault(); el.scrollBy({ top: -el.clientHeight * 0.9, behavior: 'smooth' }); break;
+            case 'Home': el.scrollTo({ top: 0, behavior: 'smooth' }); break;
+            case 'End': el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' }); break;
+          }
+        }}
+        >
+          {activeGroup && (() => {
+            const ActiveIcon = activeGroup.icon;
+            return (
+              <>
+                <div className="ssys-modal-header" style={{
+                  position: 'sticky', top: 0, zIndex: 2,
+                  background: 'linear-gradient(135deg, var(--primary), #4A5E2A)',
+                  padding: 'clamp(24px, 4vw, 36px) clamp(24px, 4vw, 40px)', color: '#fff',
+                  textAlign: isAr ? 'right' : 'left',
+                }}>
+                  <button onClick={closeModal} aria-label={isAr ? 'إغلاق' : 'Close'} style={{
+                    position: 'absolute', top: '16px', [isAr ? 'left' : 'right']: '16px',
+                    background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)',
+                    color: '#fff', width: '40px', height: '40px', borderRadius: '50%',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
+                    transition: 'background 200ms ease',
+                  }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+                  >
+                    <X size={18} />
+                  </button>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexDirection: isAr ? 'row-reverse' : 'row', marginBottom: '10px' }}>
+                    <div style={{
+                      flexShrink: 0, width: '48px', height: '48px', borderRadius: 'var(--radius-md)',
+                      background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(255,255,255,0.2)',
+                    }}>
+                      <ActiveIcon size={24} color="#fff" strokeWidth={1.8} />
+                    </div>
+                    <div>
+                      <h3 id="ssys-modal-title" style={{ fontSize: 'clamp(1.25rem, 3vw, 1.7rem)', fontWeight: 800, marginBottom: '2px' }}>
+                        {t(`groups.${activeGroup.key}.name`)}
+                      </h3>
+                      <span style={{ fontSize: '0.78rem', opacity: 0.85, fontWeight: 600 }}>{t('itemsCount', { count: activeGroup.items.length })}</span>
+                    </div>
+                  </div>
+                  <p style={{ fontSize: '0.88rem', opacity: 0.9, maxWidth: '680px', lineHeight: 1.6 }}>
+                    {t(`groups.${activeGroup.key}.desc`)}
+                  </p>
+                </div>
+
+                <div style={{ padding: 'clamp(20px, 4vw, 36px)' }}>
+                  <div className="ssys-gallery-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
+                    {activeGroup.items.map((item) => (
+                      <div key={item.key} className="ssys-gallery-card card-lift" style={{
+                        borderRadius: 'var(--radius-lg)', border: '1px solid var(--light-grey)',
+                        overflow: 'hidden', background: '#fff',
+                      }}>
+                        <div style={{ position: 'relative', width: '100%', aspectRatio: '4/3' }}>
+                          <Image
+                            src={item.primary}
+                            alt={t(`groups.${activeGroup.key}.items.${item.key}.name`)}
+                            fill
+                            sizes="(max-width: 480px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                            className="ssys-img-primary"
+                            style={{ objectFit: 'cover' }}
+                          />
+                          {item.secondary && (
+                            <Image
+                              src={item.secondary}
+                              alt=""
+                              aria-hidden="true"
+                              fill
+                              sizes="(max-width: 480px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                              className="ssys-img-secondary"
+                              style={{ objectFit: 'cover' }}
+                            />
+                          )}
+                        </div>
+                        <div style={{ padding: '12px 14px', textAlign: isAr ? 'right' : 'left' }}>
+                          <h4 style={{ color: 'var(--primary)', fontSize: '0.85rem', fontWeight: 700, marginBottom: '4px' }}>
+                            {t(`groups.${activeGroup.key}.items.${item.key}.name`)}
+                          </h4>
+                          <p style={{ color: 'var(--text-secondary)', fontSize: '0.76rem', lineHeight: 1.55 }}>
+                            {t(`groups.${activeGroup.key}.items.${item.key}.desc`)}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </>
+            );
+          })()}
+        </div>
+      </div>
+
       <style jsx>{`
         @media (hover: hover) {
-          .ssys-card:hover .ssys-img-secondary {
-            opacity: 1;
-          }
-          .ssys-nav-chip:hover {
-            background: rgba(141, 184, 51, 0.1) !important;
-            border-color: rgba(141, 184, 51, 0.3) !important;
-          }
+          .ssys-cat-card:hover .ssys-cat-img { transform: scale(1.07); }
+          .ssys-gallery-card:hover .ssys-img-secondary { opacity: 1; }
         }
-        .ssys-nav-chip:focus-visible {
-          outline: 2px solid var(--accent);
-          outline-offset: 2px;
-        }
-        .ssys-quicknav::-webkit-scrollbar {
-          height: 4px;
-        }
-        .ssys-quicknav::-webkit-scrollbar-thumb {
-          background: var(--light-grey);
-          border-radius: 999px;
+        .ssys-cat-img {
+          transition: transform 500ms var(--ease-ink);
         }
         .ssys-img-primary {
           transition: opacity 300ms ease;
@@ -345,18 +414,14 @@ export default function SourcingSystemsSection() {
           transition: opacity 300ms ease;
         }
         @media (max-width: 1024px) {
-          .ssys-items-grid { grid-template-columns: repeat(2, 1fr) !important; }
-        }
-        @media (max-width: 900px) {
-          .ssys-group-header { grid-template-columns: 1fr !important; }
-          .ssys-group-header > :global(div) { order: unset !important; }
-          .ssys-quicknav { position: static !important; }
+          .ssys-cat-grid { grid-template-columns: repeat(2, 1fr) !important; }
+          .ssys-gallery-grid { grid-template-columns: repeat(3, 1fr) !important; }
         }
         @media (max-width: 640px) {
+          .ssys-cat-grid { grid-template-columns: 1fr !important; }
           .ssys-compliance-grid { grid-template-columns: 1fr !important; }
-        }
-        @media (max-width: 480px) {
-          .ssys-items-grid { grid-template-columns: 1fr !important; }
+          .ssys-gallery-grid { grid-template-columns: repeat(2, 1fr) !important; }
+          .ssys-modal-content { max-height: 92vh !important; border-radius: var(--radius-lg) !important; }
         }
       `}</style>
     </section>
