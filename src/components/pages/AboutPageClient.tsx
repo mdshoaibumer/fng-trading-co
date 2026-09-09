@@ -2,6 +2,7 @@ import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { Target, Eye, ShieldCheck, CheckCircle2, Printer, Recycle, Wrench, Ship, MapPin, ArrowRight } from 'lucide-react';
 import Reveal from '@/components/ui/Reveal';
+import FlagIcon from '@/components/ui/FlagIcon';
 import { DEFAULT_SERVICE_REGIONS } from '@/lib/serviceRegions';
 
 export default async function AboutPageClient({ locale }: { locale: string }) {
@@ -129,7 +130,7 @@ export default async function AboutPageClient({ locale }: { locale: string }) {
               <Reveal key={o.code} delay={i * 80} style={{ display: 'flex' }}>
                 <div className="card-lift" style={{ ...cardBase, padding: 'clamp(20px, 3vw, 28px)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexDirection: isAr ? 'row-reverse' : 'row', marginBottom: '10px' }}>
-                    <span style={{ fontSize: '1.6rem', lineHeight: 1 }} aria-hidden="true">{o.flag}</span>
+                    <FlagIcon code={o.code} size={28} />
                     <span style={{ fontSize: 'var(--text-lg)', fontWeight: 700, color: 'var(--primary)' }}>{isAr ? o.nameAr : o.nameEn}</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-secondary)', fontSize: 'var(--text-sm)', flexDirection: isAr ? 'row-reverse' : 'row' }}>
@@ -148,8 +149,9 @@ export default async function AboutPageClient({ locale }: { locale: string }) {
               <span key={m.code} style={{
                 display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 14px', borderRadius: 'var(--radius-pill)',
                 background: '#fff', border: '1px solid var(--light-grey)', fontSize: 'var(--text-sm)', color: 'var(--text-secondary)',
+                flexDirection: isAr ? 'row-reverse' : 'row',
               }}>
-                <span aria-hidden="true">{m.flag}</span>{isAr ? m.nameAr : m.nameEn}
+                <FlagIcon code={m.code} size={18} />{isAr ? m.nameAr : m.nameEn}
               </span>
             ))}
           </Reveal>

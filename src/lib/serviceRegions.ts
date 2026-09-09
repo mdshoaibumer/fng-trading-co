@@ -46,16 +46,7 @@ export const DEFAULT_SERVICE_REGIONS: readonly ServiceRegion[] = [
   { code: 'AE', nameEn: 'United Arab Emirates', nameAr: 'الإمارات العربية المتحدة', flag: '🇦🇪', hubEn: 'Dubai', hubAr: 'دبي', hub: [25.20, 55.27], presence: 'office' },
   { code: 'CN', nameEn: 'China', nameAr: 'الصين', flag: '🇨🇳', hubEn: 'Guangzhou', hubAr: 'قوانغتشو', hub: [23.13, 113.26], presence: 'office' },
   { code: 'OM', nameEn: 'Oman', nameAr: 'سلطنة عُمان', flag: '🇴🇲', hubEn: 'Muscat', hubAr: 'مسقط', hub: [23.59, 58.41], presence: 'office' },
-  { code: 'QA', nameEn: 'Qatar', nameAr: 'قطر', flag: '🇶🇦', hubEn: 'Doha', hubAr: 'الدوحة', hub: [25.29, 51.53], presence: 'market' },
-  { code: 'BH', nameEn: 'Bahrain', nameAr: 'البحرين', flag: '🇧🇭', hubEn: 'Manama', hubAr: 'المنامة', hub: [26.23, 50.59], presence: 'market' },
-  { code: 'KW', nameEn: 'Kuwait', nameAr: 'الكويت', flag: '🇰🇼', hubEn: 'Kuwait City', hubAr: 'مدينة الكويت', hub: [29.38, 47.99], presence: 'market' },
-  { code: 'EG', nameEn: 'Egypt', nameAr: 'مصر', flag: '🇪🇬', hubEn: 'Cairo', hubAr: 'القاهرة', hub: [30.04, 31.24], presence: 'market' },
-  { code: 'JO', nameEn: 'Jordan', nameAr: 'الأردن', flag: '🇯🇴', hubEn: 'Amman', hubAr: 'عمّان', hub: [31.95, 35.93], presence: 'market' },
-  { code: 'IQ', nameEn: 'Iraq', nameAr: 'العراق', flag: '🇮🇶', hubEn: 'Baghdad', hubAr: 'بغداد', hub: [33.31, 44.37], presence: 'market' },
-  { code: 'PK', nameEn: 'Pakistan', nameAr: 'باكستان', flag: '🇵🇰', hubEn: 'Karachi', hubAr: 'كراتشي', hub: [24.86, 67.01], presence: 'market' },
   { code: 'IN', nameEn: 'India', nameAr: 'الهند', flag: '🇮🇳', hubEn: 'Mumbai', hubAr: 'مومباي', hub: [19.08, 72.88], presence: 'market' },
-  { code: 'TR', nameEn: 'Türkiye', nameAr: 'تركيا', flag: '🇹🇷', hubEn: 'Istanbul', hubAr: 'إسطنبول', hub: [41.01, 28.98], presence: 'market' },
-  { code: 'MY', nameEn: 'Malaysia', nameAr: 'ماليزيا', flag: '🇲🇾', hubEn: 'Kuala Lumpur', hubAr: 'كوالالمبور', hub: [3.14, 101.69], presence: 'market' },
 ];
 
 /** Upper bound on a stored list — a guard against a runaway payload, not a business rule. */
