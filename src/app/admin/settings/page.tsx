@@ -301,7 +301,7 @@ export default function AdminSettingsPage() {
             <Video size={24} />
             <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0F172A', margin: 0 }}>Video Backgrounds</h2>
           </div>
-          <div style={{ display: 'grid', gap: '20px' }}>
+          <div className="responsive-grid">
             <div>
               <label className="admin-label">Forest Animation Divider (MP4 URL)</label>
               <input 

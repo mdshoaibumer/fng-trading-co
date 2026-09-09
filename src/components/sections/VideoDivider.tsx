@@ -45,46 +45,56 @@ export default function VideoDivider({
     }
   }, []);
 
-  // Reload when src changes
+  // Reload ONLY when src actually changes after initial mount
+  const prevSrcRef = useRef(src);
   useEffect(() => {
     const video = videoRef.current;
-    if (video && src) {
+    if (video && prevSrcRef.current !== src) {
+      prevSrcRef.current = src;
       video.load();
     }
   }, [src]);
 
-  // Play only while visible, not reduced-motion, not user-paused, and the tab
-  // is foregrounded — and pause when out of view to save CPU/battery.
+  // Play while visible, not user-paused, and the tab is foregrounded
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-    if (reduced || paused) {
+    if (paused) {
       video.pause();
       return;
     }
 
     let visible = false;
 
-    const tryPlay = async () => {
-      if (!video) return;
+    const tryPlay = () => {
+      if (!video || paused) return;
       video.muted = true;
       video.defaultMuted = true;
+      video.playsInline = true;
+
       try {
-        if (visible && !document.hidden && !paused && !reduced) {
+        if (visible && !document.hidden && !paused) {
           const playPromise = video.play();
           if (playPromise !== undefined) {
-            await playPromise;
+            playPromise.catch(() => {
+              const onReady = () => {
+                if (visible && !document.hidden && !paused) {
+                  video.muted = true;
+                  video.play().catch(() => {});
+                }
+              };
+              if (video.readyState >= 2) {
+                video.muted = true;
+                video.play().catch(() => {});
+              } else {
+                video.addEventListener('loadeddata', onReady, { once: true });
+                video.addEventListener('canplay', onReady, { once: true });
+              }
+            });
           }
         }
       } catch {
-        // Fallback retry when enough data has buffered
-        const onCanPlay = () => {
-          if (visible && !document.hidden && !paused && !reduced) {
-            video.muted = true;
-            video.play().catch(() => {});
-          }
-        };
-        video.addEventListener('canplay', onCanPlay, { once: true });
+        // Safe no-op on synchronous failure
       }
     };
 
@@ -97,7 +107,7 @@ export default function VideoDivider({
           video.pause();
         }
       },
-      { rootMargin: '200px 0px' }
+      { rootMargin: '300px 0px' }
     );
 
     observer.observe(video);
@@ -110,13 +120,26 @@ export default function VideoDivider({
       }
     };
 
+    // First interaction fallback to bypass strict browser autoplay restrictions
+    const onGesture = () => {
+      if (visible && !document.hidden && !paused) {
+        tryPlay();
+      }
+    };
+
     document.addEventListener('visibilitychange', onVis);
+    window.addEventListener('scroll', onGesture, { passive: true, once: true });
+    window.addEventListener('touchstart', onGesture, { passive: true, once: true });
+    window.addEventListener('click', onGesture, { passive: true, once: true });
 
     return () => {
       observer.disconnect();
       document.removeEventListener('visibilitychange', onVis);
+      window.removeEventListener('scroll', onGesture);
+      window.removeEventListener('touchstart', onGesture);
+      window.removeEventListener('click', onGesture);
     };
-  }, [reduced, paused]);
+  }, [paused]);
 
   // No configured video — skip rendering
   if (!src) return null;

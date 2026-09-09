@@ -469,6 +469,7 @@ function AdminContentEditor() {
                   whiteSpace: 'nowrap',
                   boxShadow: isActive ? '0 2px 8px rgba(141,184,51,0.25)' : 'none',
                   transition: 'all var(--admin-duration-fast)',
+                  flexShrink: 0,
                 }}
               >
                 <span>{cat.icon}</span>
@@ -726,16 +727,7 @@ function AdminContentEditor() {
                       return (
                         <div
                           key={field.fullPath.join('.')}
-                          style={{
-                            display: 'grid',
-                            gridTemplateColumns: 'minmax(200px, 280px) 1fr',
-                            gap: '20px',
-                            alignItems: 'flex-start',
-                            padding: '12px 14px',
-                            background: '#FAFBF9',
-                            borderRadius: '8px',
-                            border: '1px solid #F0F2EB',
-                          }}
+                          className="cms-field-row"
                         >
                           <div>
                             <label

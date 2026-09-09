@@ -68,9 +68,10 @@ export default function Navbar() {
   };
 
   const handleDropdownLeave = () => {
+    if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current);
     dropdownTimeoutRef.current = setTimeout(() => {
       setActiveDropdown(null);
-    }, 150);
+    }, 220);
   };
 
   const toggleDropdown = (menu: 'fleet' | 'company') => {
@@ -412,28 +413,34 @@ export default function Navbar() {
                 {/* Fleet Flyout Card */}
                 {activeDropdown === 'fleet' && (
                   <div
-                    role="menu"
-                    className="nav-flyout-card"
+                    className="nav-flyout-wrapper"
                     style={{
                       position: 'absolute',
-                      top: 'calc(100% + 8px)',
+                      top: '100%',
                       [isAr ? 'right' : 'left']: '50%',
                       transform: isAr ? 'translateX(50%)' : 'translateX(-50%)',
-                      width: '340px',
-                      background: 'rgba(255, 255, 255, 0.98)',
-                      backdropFilter: 'blur(32px)',
-                      WebkitBackdropFilter: 'blur(32px)',
-                      border: '1px solid rgba(0, 0, 0, 0.08)',
-                      borderRadius: '18px',
-                      padding: '10px',
-                      boxShadow: '0 24px 50px -12px rgba(13, 40, 24, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.04)',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '4px',
+                      paddingTop: '8px',
                       zIndex: 1010,
-                      animation: 'navDropdownFadeIn 180ms ease-out',
                     }}
                   >
+                    <div
+                      role="menu"
+                      className="nav-flyout-card"
+                      style={{
+                        width: '340px',
+                        background: 'rgba(255, 255, 255, 0.98)',
+                        backdropFilter: 'blur(32px)',
+                        WebkitBackdropFilter: 'blur(32px)',
+                        border: '1px solid rgba(0, 0, 0, 0.08)',
+                        borderRadius: '18px',
+                        padding: '10px',
+                        boxShadow: '0 24px 50px -12px rgba(13, 40, 24, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.04)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '4px',
+                        animation: 'navDropdownFadeIn 180ms cubic-bezier(0.16, 1, 0.3, 1)',
+                      }}
+                    >
                     {fleetItems.map((item) => {
                       const Icon = item.icon;
                       const active = pathname.startsWith(item.href);
@@ -499,6 +506,7 @@ export default function Navbar() {
                         </Link>
                       );
                     })}
+                    </div>
                   </div>
                 )}
               </div>
@@ -625,28 +633,34 @@ export default function Navbar() {
                 {/* Company Flyout Card */}
                 {activeDropdown === 'company' && (
                   <div
-                    role="menu"
-                    className="nav-flyout-card"
+                    className="nav-flyout-wrapper"
                     style={{
                       position: 'absolute',
-                      top: 'calc(100% + 8px)',
+                      top: '100%',
                       [isAr ? 'right' : 'left']: '50%',
                       transform: isAr ? 'translateX(50%)' : 'translateX(-50%)',
-                      width: '320px',
-                      background: 'rgba(255, 255, 255, 0.98)',
-                      backdropFilter: 'blur(32px)',
-                      WebkitBackdropFilter: 'blur(32px)',
-                      border: '1px solid rgba(0, 0, 0, 0.08)',
-                      borderRadius: '18px',
-                      padding: '10px',
-                      boxShadow: '0 24px 50px -12px rgba(13, 40, 24, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.04)',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '4px',
+                      paddingTop: '8px',
                       zIndex: 1010,
-                      animation: 'navDropdownFadeIn 180ms ease-out',
                     }}
                   >
+                    <div
+                      role="menu"
+                      className="nav-flyout-card"
+                      style={{
+                        width: '320px',
+                        background: 'rgba(255, 255, 255, 0.98)',
+                        backdropFilter: 'blur(32px)',
+                        WebkitBackdropFilter: 'blur(32px)',
+                        border: '1px solid rgba(0, 0, 0, 0.08)',
+                        borderRadius: '18px',
+                        padding: '10px',
+                        boxShadow: '0 24px 50px -12px rgba(13, 40, 24, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.04)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '4px',
+                        animation: 'navDropdownFadeIn 180ms cubic-bezier(0.16, 1, 0.3, 1)',
+                      }}
+                    >
                     {companyItems.map((item) => {
                       const Icon = item.icon;
                       const active = pathname.startsWith(item.href);
@@ -712,6 +726,7 @@ export default function Navbar() {
                         </Link>
                       );
                     })}
+                    </div>
                   </div>
                 )}
               </div>
@@ -1158,11 +1173,11 @@ export default function Navbar() {
         @keyframes navDropdownFadeIn {
           from {
             opacity: 0;
-            transform: translateY(6px) scale(0.98);
+            transform: translateY(6px);
           }
           to {
             opacity: 1;
-            transform: translateY(0) scale(1);
+            transform: translateY(0);
           }
         }
 
