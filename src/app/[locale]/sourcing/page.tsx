@@ -7,6 +7,7 @@ import SourcingCategoriesSection from '@/components/sections/sourcing/SourcingCa
 import SourcingSystemsSection from '@/components/sections/sourcing/SourcingSystemsSection';
 import SourcingServicesSection from '@/components/sections/sourcing/SourcingServicesSection';
 import SourcingWhySection from '@/components/sections/sourcing/SourcingWhySection';
+import OperatingCountriesSection from '@/components/sections/OperatingCountriesSection';
 import ContactSection from '@/components/sections/ContactSection';
 import { buildAlternates } from '@/lib/metadata';
 import { safeJsonLd } from '@/lib/safeJsonLd';
@@ -82,6 +83,7 @@ export default async function SourcingPage({
         <SourcingSystemsSection />
         <SourcingServicesSection />
         <SourcingWhySection />
+        <OperatingCountriesSection />
         <ContactSection />
       </main>
     </PageTransition>

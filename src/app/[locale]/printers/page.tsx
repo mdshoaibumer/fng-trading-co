@@ -1,5 +1,6 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import ProductCatalogSection from '@/components/sections/ProductCatalogSection';
+import OperatingCountriesSection from '@/components/sections/OperatingCountriesSection';
 import ContactSection from '@/components/sections/ContactSection';
 import type { Metadata } from 'next';
 import { buildAlternates } from '@/lib/metadata';
@@ -51,6 +52,7 @@ export default async function PrintersPage({
             ? 'كل طابعة يتم فحصها وتنظيفها وتجديدها باحترافية واختبارها لتعمل بمعايير المصنع. جودة HP بجزء بسيط من تكلفة الجديدة.'
             : 'Every printer is professionally inspected, cleaned, refurbished, and tested to factory standards. HP quality at a fraction of the new price.'}
         />
+        <OperatingCountriesSection />
         <ContactSection />
       </main>
     </PageTransition>

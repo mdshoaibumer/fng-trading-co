@@ -298,6 +298,13 @@
     "whatsappPrefillPrinter": "Hello, I'd like to inquire about refurbished HP printers & Eco Inks",
     "whatsappPrefillSourcing": "Hello, I'd like to inquire about electronics sourcing"
   },
+  "operatingCountries": {
+    "tag": "Regional Presence",
+    "title": "We Do Business Across 5 Countries",
+    "subtitle": "Headquartered in Saudi Arabia, with offices in the UAE, China and Oman, plus active delivery and support in India — FNG is close to wherever your operation runs.",
+    "officeLabel": "Office",
+    "marketLabel": "Delivery & Support"
+  },
   "contactPage": {
     "title": "Get in Touch",
     "subtitle": "We're here to help you transition to sustainable printing. Reach out to our team.",
