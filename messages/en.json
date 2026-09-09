@@ -300,7 +300,9 @@
       "success": "Request submitted successfully! We'll be in touch soon.",
       "error": "Something went wrong. Please try again."
     },
-    "whatsapp": "Chat with us directly"
+    "whatsapp": "Chat with us directly",
+    "whatsappPrefillPrinter": "Hello, I'd like to inquire about refurbished HP printers & Eco Inks",
+    "whatsappPrefillSourcing": "Hello, I'd like to inquire about electronics sourcing"
   },
   "contactPage": {
     "title": "Get in Touch",
