@@ -96,11 +96,11 @@ export default function SustainabilityPageClient() {
           <div style={{ maxWidth: '850px', margin: '0 auto' }}>
             <Reveal delay={150} from="scale">
               <ImageComparison
-                beforeImage="/eco-inks-frames/01.webp"
-                afterImage="/eco-inks-frames/10.webp"
-                beforeLabel={isAr ? 'خراطيش بترولية تقليدية' : 'Standard Petroleum Cartridge'}
-                afterLabel={isAr ? 'حبر إيكو نباتي معتمد' : 'FNG Plant-Based Eco Toner'}
-                aspectRatio="16 / 10"
+                beforeImage="/sustainability/before-oem-shell.webp"
+                afterImage="/sustainability/after-certified-eco.webp"
+                beforeLabel={isAr ? 'خراطيش مستهلكة غير معالجة' : 'Spent OEM Shell (Pre-Inspection)'}
+                afterLabel={isAr ? 'معتمد إيكو FNG مُعاد هندستها' : 'FNG Certified Re-Engineered Eco Toner'}
+                aspectRatio="16 / 9"
                 isAr={isAr}
               />
             </Reveal>

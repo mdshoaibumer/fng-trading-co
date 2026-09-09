@@ -37,9 +37,9 @@ const csp = [
 
 const nextConfig: NextConfig = {
   // Self-contained server output for a small, production-only Docker image
-  // (see the multi-stage Dockerfile) instead of shipping the full source tree
-  // and devDependencies.
-  output: 'standalone',
+  // (see the multi-stage Dockerfile). On Vercel (process.env.VERCEL), Vercel
+  // handles native serverless bundling and standalone output causes ENOENT NFT tracing errors.
+  output: process.env.VERCEL ? undefined : 'standalone',
   // Product images uploaded via the admin panel are stored in Supabase Storage
   // and served from *.supabase.co; next/image refuses remote hosts that aren't
   // allowlisted here (matches the CSP img-src). Without this, admin-uploaded
