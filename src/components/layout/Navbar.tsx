@@ -1,20 +1,26 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { usePathname, useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import {
+  Printer,
+  Droplets,
+  Cog,
+  Monitor,
+  Building2,
+  HelpCircle,
+  Phone,
+  ChevronDown,
+  ArrowUpRight,
+  MessageSquare,
+} from 'lucide-react';
 import { useDialogA11y } from '@/lib/useDialogA11y';
 import { homeHref, isCurrentPage, scrollToTop } from '@/lib/navigation';
 import { markGateSeen } from '@/lib/entryGate';
-import { CommandPaletteTrigger } from '@/components/ui/CommandPalette';
 
-// Printers and sourcing are run as two separate businesses, so the only way
-// between them is the entry gate on the landing page. `?gate=1` is what asks
-// the landing page to put the chooser back up (see src/app/[locale]/page.tsx);
-// without it the gate stays dismissed for the rest of the session and sourcing
-// would be unreachable once a visitor picked printers.
 export const gateHref = (locale: string) => `/${locale}?gate=1`;
 
 export default function Navbar() {
@@ -27,12 +33,14 @@ export default function Navbar() {
   const isSourcing = pathname.startsWith(`/${locale}/sourcing`);
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<'fleet' | 'company' | null>(null);
+  const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const navRef = useRef<HTMLElement>(null);
   const mobileOverlayRef = useDialogA11y<HTMLDivElement>(mobileOpen, () => setMobileOpen(false));
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 100);
+      setScrolled(window.scrollY > 40);
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
@@ -47,29 +55,51 @@ export default function Navbar() {
     return () => { document.body.style.overflow = ''; };
   }, [mobileOpen]);
 
-  // The two link sets stay separate — the printers nav lists only printer
-  // pages, the sourcing nav only sourcing anchors. The one crossing point is
-  // the Sourcing pill next to the CTA (see below): the logo/gate route was the
-  // only way across, and nothing about a logo tells a visitor that a second
-  // business lives behind it.
-  //
-  // Home is a plain link to this track's home page. When that page is already
-  // on screen it scrolls back to the top instead of reloading (see
-  // handleHomeClick) — it never re-opens the chooser.
-  const printerLinks = [
-    { href: homeHref(locale, false), label: t('home'), isHome: true },
-    { href: `/${locale}/about`, label: t('about') },
-    { href: `/${locale}/sustainability`, label: t('sustainability') },
-    { href: `/${locale}/eco-inks`, label: t('ecoInks') },
-    { href: `/${locale}/industries`, label: t('industries') },
-    { href: `/${locale}/printer-parts`, label: t('printerParts') },
-    { href: `/${locale}/equipment`, label: t('officeEquipment') },
-    { href: `/${locale}/faq`, label: t('faq') },
-    { href: `/${locale}/contact`, label: t('contact') },
-  ];
+  // Reset dropdown when pathname changes (React-blessed state-during-render pattern)
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (prevPathname !== pathname) {
+    setPrevPathname(pathname);
+    setActiveDropdown(null);
+  }
 
-  // The sourcing site is a single page, so these are in-page anchors — apart
-  // from Home, which is the top of the sourcing page itself.
+  const handleDropdownEnter = (menu: 'fleet' | 'company') => {
+    if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current);
+    setActiveDropdown(menu);
+  };
+
+  const handleDropdownLeave = () => {
+    dropdownTimeoutRef.current = setTimeout(() => {
+      setActiveDropdown(null);
+    }, 150);
+  };
+
+  const toggleDropdown = (menu: 'fleet' | 'company') => {
+    setActiveDropdown((prev) => (prev === menu ? null : menu));
+  };
+
+  const otherLocale = isAr ? 'en' : 'ar';
+
+  const [hash, setHash] = useState('');
+  useEffect(() => {
+    const sync = () => setHash(window.location.hash);
+    sync();
+    window.addEventListener('hashchange', sync);
+    return () => window.removeEventListener('hashchange', sync);
+  }, [pathname]);
+
+  const segments = pathname.split('/');
+  segments[1] = otherLocale;
+  const switchPath = segments.join('/') + hash;
+
+  const handleHomeClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    markGateSeen();
+    if (isCurrentPage(pathname, href)) {
+      e.preventDefault();
+      scrollToTop();
+    }
+  };
+
+  // Sourcing track links (single-page section anchors)
   const sourcingLinks = [
     { href: homeHref(locale, true), label: t('home'), isHome: true },
     { href: `/${locale}/sourcing#sourcing-process`, label: tSourcing('process') },
@@ -80,46 +110,100 @@ export default function Navbar() {
     { href: `/${locale}/sourcing#contact`, label: tSourcing('contact') },
   ];
 
-  const navLinks = isSourcing ? sourcingLinks : printerLinks;
+  // Fleet & Hardware submenu items
+  const fleetItems = [
+    {
+      href: `/${locale}/printers`,
+      label: t('printers'),
+      desc: t('printersDesc'),
+      icon: Printer,
+      iconBg: 'rgba(26, 61, 43, 0.08)',
+      iconColor: 'var(--primary)',
+    },
+    {
+      href: `/${locale}/eco-inks`,
+      label: t('ecoInks'),
+      desc: t('ecoInksDesc'),
+      icon: Droplets,
+      iconBg: 'rgba(16, 185, 129, 0.1)',
+      iconColor: '#059669',
+    },
+    {
+      href: `/${locale}/printer-parts`,
+      label: t('printerParts'),
+      desc: t('printerPartsDesc'),
+      icon: Cog,
+      iconBg: 'rgba(217, 119, 6, 0.1)',
+      iconColor: '#D97706',
+    },
+    {
+      href: `/${locale}/equipment`,
+      label: t('officeEquipment'),
+      desc: t('officeEquipmentDesc'),
+      icon: Monitor,
+      iconBg: 'rgba(37, 99, 235, 0.1)',
+      iconColor: '#2563EB',
+    },
+  ];
 
-  // Home on the page you are already on: scroll to the top rather than doing
-  // a full navigation. Anywhere else, remember the chooser as answered so the
-  // home page renders straight away instead of greeting the visitor again.
-  const handleHomeClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    markGateSeen();
-    if (isCurrentPage(pathname, href)) {
-      e.preventDefault();
-      scrollToTop();
-    }
-  };
+  // Company submenu items
+  const companyItems = [
+    {
+      href: `/${locale}/about`,
+      label: t('about'),
+      desc: t('aboutDesc'),
+      icon: Building2,
+      iconBg: 'rgba(26, 61, 43, 0.08)',
+      iconColor: 'var(--primary)',
+    },
+    {
+      href: `/${locale}/faq`,
+      label: t('faq'),
+      desc: t('faqDesc'),
+      icon: HelpCircle,
+      iconBg: 'rgba(99, 102, 241, 0.1)',
+      iconColor: '#4F46E5',
+    },
+    {
+      href: `/${locale}/contact`,
+      label: t('contact'),
+      desc: t('contactDesc'),
+      icon: Phone,
+      iconBg: 'rgba(16, 185, 129, 0.1)',
+      iconColor: '#059669',
+    },
+  ];
 
-  // Where the bar gives up and hands everything to the hamburger. The two
-  // navs are very different widths, so one shared number short-changes one of
-  // them: the printers nav carries nine English links plus two pills and a
-  // long CTA and needs ~1280px, while the sourcing nav's six short links leave
-  // ~285px spare at that width. Keeping sourcing at its original 1100px stops
-  // the printers nav's requirement from collapsing a nav that fits fine.
-  const collapseAt = isSourcing ? 1099 : 1279;
+  // Check section active states for the printer track
+  const isFleetActive =
+    pathname.startsWith(`/${locale}/printers`) ||
+    pathname.startsWith(`/${locale}/eco-inks`) ||
+    pathname.startsWith(`/${locale}/printer-parts`) ||
+    pathname.startsWith(`/${locale}/equipment`);
 
-  const otherLocale = isAr ? 'en' : 'ar';
+  const isIndustriesActive = pathname.startsWith(`/${locale}/industries`);
+  const isSustainabilityActive = pathname.startsWith(`/${locale}/sustainability`);
 
-  // Preserve the in-page hash when switching language, so a reader deep in the
-  // single-page sourcing site (whose nav is all #anchors) stays on the same
-  // section instead of being dropped at the top of the translated page. Hash is
-  // client-only — it fills in after mount and updates as the visitor moves
-  // between anchors.
-  const [hash, setHash] = useState('');
-  useEffect(() => {
-    const sync = () => setHash(window.location.hash);
-    sync();
-    window.addEventListener('hashchange', sync);
-    return () => window.removeEventListener('hashchange', sync);
-  }, [pathname]);
+  const isCompanyActive =
+    pathname.startsWith(`/${locale}/about`) ||
+    pathname.startsWith(`/${locale}/faq`) ||
+    pathname.startsWith(`/${locale}/contact`);
 
-  // Logic to switch locale while preserving path (and hash)
-  const segments = pathname.split('/');
-  segments[1] = otherLocale;
-  const switchPath = segments.join('/') + hash;
+  // Keyboard navigation for dropdown menu
+  const handleDropdownKeyDown = useCallback(
+    (e: React.KeyboardEvent, menu: 'fleet' | 'company') => {
+      if (e.key === 'Escape') {
+        setActiveDropdown(null);
+      } else if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleDropdown(menu);
+      } else if (e.key === 'ArrowDown' && activeDropdown !== menu) {
+        e.preventDefault();
+        setActiveDropdown(menu);
+      }
+    },
+    [activeDropdown]
+  );
 
   return (
     <>
@@ -128,46 +212,33 @@ export default function Navbar() {
         id="main-nav"
         style={{
           position: 'fixed',
-          // Was `top: 16px/24px` (a reflow on every scroll-threshold crossing) —
-          // pinned at top:0 and moved via transform, which is compositor-only.
           top: 0,
           left: '50%',
-          transform: `translate(-50%, ${scrolled ? '16px' : '24px'})`,
+          transform: `translate(-50%, ${scrolled ? '14px' : '22px'})`,
           width: 'calc(100% - 48px)',
-          maxWidth: '1400px',
+          maxWidth: '1420px',
           zIndex: 1000,
-          // Pulls the bar out of the page's view-transition snapshot so it
-          // stays put while content slides underneath it. See the
-          // persistent-nav rules in globals.css.
           viewTransitionName: 'persistent-nav',
-          // Condenses once past the fold. The bar is position:fixed, so its
-          // own height change cannot reflow the page behind it — it is one
-          // transition on a threshold crossing, not a per-scroll-frame value.
-          height: scrolled ? '68px' : '80px',
+          height: scrolled ? '66px' : '76px',
           display: 'flex',
           alignItems: 'center',
-          padding: '0 32px',
-          // The links group is `flex: 1`, so without a gap its edge sits flush
-          // against the language pill and the last link ("Contact") reads as
-          // part of it. This keeps the three groups apart at every width; the
-          // centred links then always have at least this much breathing room.
-          gap: '24px',
-          transition: 'transform 400ms var(--ease-primary), box-shadow 400ms var(--ease-primary), height 400ms var(--ease-primary)',
+          justifyContent: 'space-between',
+          padding: '0 28px',
+          gap: '20px',
+          transition:
+            'transform 350ms var(--ease-primary), box-shadow 350ms var(--ease-primary), height 350ms var(--ease-primary), background 350ms ease, border-color 350ms ease',
           willChange: 'transform',
-          background: 'rgba(255, 255, 255, 0.75)',
-          backdropFilter: 'blur(32px) saturate(200%)',
-          WebkitBackdropFilter: 'blur(32px) saturate(200%)',
-          border: '1px solid rgba(255, 255, 255, 0.6)',
-          borderRadius: 'var(--radius-pill)',
-          boxShadow: scrolled ? '0 20px 40px rgba(0, 0, 0, 0.08)' : '0 10px 30px rgba(0, 0, 0, 0.04)',
+          background: scrolled ? 'rgba(255, 255, 255, 0.90)' : 'rgba(255, 255, 255, 0.82)',
+          backdropFilter: 'blur(28px) saturate(190%)',
+          WebkitBackdropFilter: 'blur(28px) saturate(190%)',
+          border: '1px solid rgba(255, 255, 255, 0.85)',
+          borderRadius: '22px',
+          boxShadow: scrolled
+            ? '0 20px 45px -12px rgba(13, 40, 24, 0.10), 0 0 0 1px rgba(0, 0, 0, 0.04)'
+            : '0 12px 36px -10px rgba(13, 40, 24, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.03)',
         }}
       >
-        {/* Logo — the way back to the gate, and so the only route between the
-            printers and sourcing sides. A plain <a>, like every other link in
-            this nav: a soft navigation from /{locale} to /{locale}?gate=1 keeps
-            the already-dismissed EntryGate instance mounted, so React preserves
-            its closed state and the chooser never reappears. A full load
-            remounts it. */}
+        {/* Brand Logo */}
         <a
           href={gateHref(locale)}
           style={{
@@ -176,6 +247,7 @@ export default function Navbar() {
             textDecoration: 'none',
             flexShrink: 0,
           }}
+          aria-label="FNG Trading Co Home"
         >
           <Image
             src="/FNG_LOGO.png"
@@ -184,199 +256,530 @@ export default function Navbar() {
             height={96}
             style={{
               objectFit: 'contain',
-              height: '56px',
+              height: scrolled ? '46px' : '52px',
               width: 'auto',
-              // Scale rather than a second height animation: the logo shrinking
-              // with the bar is the whole effect, and a transform costs the
-              // compositor nothing while a height would relayout the nav's
-              // flex row alongside it.
-              transform: scrolled ? 'scale(0.82)' : 'scale(1)',
               transformOrigin: isAr ? 'right center' : 'left center',
-              transition: 'transform 400ms var(--ease-primary)',
+              transition: 'height 350ms var(--ease-primary)',
             }}
             className="nav-logo-img"
             priority
           />
         </a>
 
-        {/* Center Nav Links */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '20px',
-          flex: 1,
-          justifyContent: 'center',
-          // A flex item defaults to min-width:auto, so this container refused to
-          // shrink below its links and pushed the CTA out past the nav's rounded
-          // edge instead. These let it give way first. The labels are editable
-          // from Admin → Settings, so overly long ones stay contained rather
-          // than breaking the bar apart.
-          minWidth: 0,
-          overflow: 'hidden',
-        }}
+        {/* Center Desktop Navigation */}
+        <div
           className="nav-links-desktop"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '28px',
+            flex: 1,
+            justifyContent: 'center',
+            minWidth: 0,
+          }}
         >
-          {navLinks.map((link) => {
-            // Anchor links (#…) all resolve to the same page path, so only
-            // flag whole-page links as current — a scrollspy would be needed
-            // to light up individual sourcing sections and is out of scope.
-            const active = !link.href.includes('#') && isCurrentPage(pathname, link.href);
-            const baseColor = active ? 'var(--accent-text)' : '#4B5563';
-            return (
-            <Link
-              key={link.href}
-              href={link.href}
-              // Sibling pages: a cross-fade, not a slide. Typed explicitly
-              // because PageTransition leaves the untyped default at 'none'.
-              transitionTypes={['nav-lateral']}
-              onClick={link.isHome ? (e) => handleHomeClick(e, link.href) : undefined}
-              aria-current={active ? 'page' : undefined}
-              style={{
-                color: baseColor,
-                textDecoration: 'none',
-                fontSize: '0.85rem',
-                fontWeight: active ? 700 : 600,
-                transition: 'color 180ms ease',
-                position: 'relative',
-                whiteSpace: 'nowrap',
-                borderBottom: active ? '2px solid var(--accent-text)' : '2px solid transparent',
-                paddingBottom: '3px',
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--accent-text)')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = baseColor)}
-            >
-              {link.label}
-            </Link>
-          );})}
+          {isSourcing ? (
+            // Sourcing track anchors
+            sourcingLinks.map((link) => {
+              const active = !link.href.includes('#') && isCurrentPage(pathname, link.href);
+              const baseColor = active ? 'var(--accent-text)' : '#374151';
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  transitionTypes={['nav-lateral']}
+                  onClick={link.isHome ? (e) => handleHomeClick(e, link.href) : undefined}
+                  aria-current={active ? 'page' : undefined}
+                  className="nav-link-item"
+                  style={{
+                    color: baseColor,
+                    textDecoration: 'none',
+                    fontSize: '0.92rem',
+                    fontWeight: active ? 700 : 600,
+                    transition: 'color 180ms ease',
+                    position: 'relative',
+                    whiteSpace: 'nowrap',
+                    padding: '8px 2px',
+                  }}
+                >
+                  {link.label}
+                  {active && (
+                    <span
+                      style={{
+                        position: 'absolute',
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        height: '2px',
+                        background: 'var(--accent-text)',
+                        borderRadius: '2px',
+                      }}
+                    />
+                  )}
+                </Link>
+              );
+            })
+          ) : (
+            // Printer Track: Refined 4-Pillar Categorized Navigation
+            <>
+              {/* Pillar 1: Fleet & Hardware Dropdown */}
+              <div
+                className="nav-dropdown-anchor"
+                onMouseEnter={() => handleDropdownEnter('fleet')}
+                onMouseLeave={handleDropdownLeave}
+                style={{ position: 'relative' }}
+              >
+                <button
+                  type="button"
+                  aria-haspopup="true"
+                  aria-expanded={activeDropdown === 'fleet'}
+                  onClick={() => toggleDropdown('fleet')}
+                  onKeyDown={(e) => handleDropdownKeyDown(e, 'fleet')}
+                  className="nav-item-trigger"
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '8px 4px',
+                    fontSize: '0.92rem',
+                    fontWeight: isFleetActive ? 700 : 600,
+                    color: isFleetActive ? 'var(--accent-text)' : '#374151',
+                    fontFamily: 'inherit',
+                    position: 'relative',
+                    transition: 'color 180ms ease',
+                    flexDirection: isAr ? 'row-reverse' : 'row',
+                  }}
+                >
+                  <span>{t('fleetHardware')}</span>
+                  <ChevronDown
+                    size={15}
+                    style={{
+                      transform: activeDropdown === 'fleet' ? 'rotate(180deg)' : 'none',
+                      transition: 'transform 220ms cubic-bezier(0.16, 1, 0.3, 1)',
+                      color: isFleetActive ? 'var(--accent-text)' : '#6B7280',
+                    }}
+                  />
+                  {isFleetActive && (
+                    <span
+                      style={{
+                        position: 'absolute',
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        height: '2px',
+                        background: 'var(--accent-text)',
+                        borderRadius: '2px',
+                      }}
+                    />
+                  )}
+                </button>
+
+                {/* Fleet Flyout Card */}
+                {activeDropdown === 'fleet' && (
+                  <div
+                    role="menu"
+                    className="nav-flyout-card"
+                    style={{
+                      position: 'absolute',
+                      top: 'calc(100% + 8px)',
+                      [isAr ? 'right' : 'left']: '50%',
+                      transform: isAr ? 'translateX(50%)' : 'translateX(-50%)',
+                      width: '340px',
+                      background: 'rgba(255, 255, 255, 0.98)',
+                      backdropFilter: 'blur(32px)',
+                      WebkitBackdropFilter: 'blur(32px)',
+                      border: '1px solid rgba(0, 0, 0, 0.08)',
+                      borderRadius: '18px',
+                      padding: '10px',
+                      boxShadow: '0 24px 50px -12px rgba(13, 40, 24, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.04)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '4px',
+                      zIndex: 1010,
+                      animation: 'navDropdownFadeIn 180ms ease-out',
+                    }}
+                  >
+                    {fleetItems.map((item) => {
+                      const Icon = item.icon;
+                      const active = pathname.startsWith(item.href);
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          role="menuitem"
+                          onClick={() => setActiveDropdown(null)}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px',
+                            padding: '10px 12px',
+                            borderRadius: '12px',
+                            textDecoration: 'none',
+                            background: active ? 'rgba(26, 61, 43, 0.05)' : 'transparent',
+                            transition: 'background 160ms ease, transform 160ms ease',
+                            flexDirection: isAr ? 'row-reverse' : 'row',
+                            textAlign: isAr ? 'right' : 'left',
+                          }}
+                          className="flyout-item"
+                        >
+                          <div
+                            style={{
+                              width: '38px',
+                              height: '38px',
+                              borderRadius: '10px',
+                              background: item.iconBg,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              flexShrink: 0,
+                            }}
+                          >
+                            <Icon size={20} color={item.iconColor} />
+                          </div>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div
+                              style={{
+                                color: active ? 'var(--accent-text)' : '#111827',
+                                fontSize: '0.9rem',
+                                fontWeight: 700,
+                                lineHeight: 1.3,
+                              }}
+                            >
+                              {item.label}
+                            </div>
+                            <div
+                              style={{
+                                color: '#6B7280',
+                                fontSize: '0.76rem',
+                                lineHeight: 1.3,
+                                marginTop: '2px',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                              }}
+                            >
+                              {item.desc}
+                            </div>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+              {/* Pillar 2: Industries */}
+              <Link
+                href={`/${locale}/industries`}
+                transitionTypes={['nav-lateral']}
+                style={{
+                  color: isIndustriesActive ? 'var(--accent-text)' : '#374151',
+                  textDecoration: 'none',
+                  fontSize: '0.92rem',
+                  fontWeight: isIndustriesActive ? 700 : 600,
+                  transition: 'color 180ms ease',
+                  position: 'relative',
+                  whiteSpace: 'nowrap',
+                  padding: '8px 4px',
+                }}
+                className="nav-link-item"
+              >
+                {t('industries')}
+                {isIndustriesActive && (
+                  <span
+                    style={{
+                      position: 'absolute',
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      height: '2px',
+                      background: 'var(--accent-text)',
+                      borderRadius: '2px',
+                    }}
+                  />
+                )}
+              </Link>
+
+              {/* Pillar 3: Sustainability */}
+              <Link
+                href={`/${locale}/sustainability`}
+                transitionTypes={['nav-lateral']}
+                style={{
+                  color: isSustainabilityActive ? 'var(--accent-text)' : '#374151',
+                  textDecoration: 'none',
+                  fontSize: '0.92rem',
+                  fontWeight: isSustainabilityActive ? 700 : 600,
+                  transition: 'color 180ms ease',
+                  position: 'relative',
+                  whiteSpace: 'nowrap',
+                  padding: '8px 4px',
+                }}
+                className="nav-link-item"
+              >
+                {t('sustainability')}
+                {isSustainabilityActive && (
+                  <span
+                    style={{
+                      position: 'absolute',
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      height: '2px',
+                      background: 'var(--accent-text)',
+                      borderRadius: '2px',
+                    }}
+                  />
+                )}
+              </Link>
+
+              {/* Pillar 4: Company Dropdown */}
+              <div
+                className="nav-dropdown-anchor"
+                onMouseEnter={() => handleDropdownEnter('company')}
+                onMouseLeave={handleDropdownLeave}
+                style={{ position: 'relative' }}
+              >
+                <button
+                  type="button"
+                  aria-haspopup="true"
+                  aria-expanded={activeDropdown === 'company'}
+                  onClick={() => toggleDropdown('company')}
+                  onKeyDown={(e) => handleDropdownKeyDown(e, 'company')}
+                  className="nav-item-trigger"
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '8px 4px',
+                    fontSize: '0.92rem',
+                    fontWeight: isCompanyActive ? 700 : 600,
+                    color: isCompanyActive ? 'var(--accent-text)' : '#374151',
+                    fontFamily: 'inherit',
+                    position: 'relative',
+                    transition: 'color 180ms ease',
+                    flexDirection: isAr ? 'row-reverse' : 'row',
+                  }}
+                >
+                  <span>{t('company')}</span>
+                  <ChevronDown
+                    size={15}
+                    style={{
+                      transform: activeDropdown === 'company' ? 'rotate(180deg)' : 'none',
+                      transition: 'transform 220ms cubic-bezier(0.16, 1, 0.3, 1)',
+                      color: isCompanyActive ? 'var(--accent-text)' : '#6B7280',
+                    }}
+                  />
+                  {isCompanyActive && (
+                    <span
+                      style={{
+                        position: 'absolute',
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        height: '2px',
+                        background: 'var(--accent-text)',
+                        borderRadius: '2px',
+                      }}
+                    />
+                  )}
+                </button>
+
+                {/* Company Flyout Card */}
+                {activeDropdown === 'company' && (
+                  <div
+                    role="menu"
+                    className="nav-flyout-card"
+                    style={{
+                      position: 'absolute',
+                      top: 'calc(100% + 8px)',
+                      [isAr ? 'right' : 'left']: '50%',
+                      transform: isAr ? 'translateX(50%)' : 'translateX(-50%)',
+                      width: '320px',
+                      background: 'rgba(255, 255, 255, 0.98)',
+                      backdropFilter: 'blur(32px)',
+                      WebkitBackdropFilter: 'blur(32px)',
+                      border: '1px solid rgba(0, 0, 0, 0.08)',
+                      borderRadius: '18px',
+                      padding: '10px',
+                      boxShadow: '0 24px 50px -12px rgba(13, 40, 24, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.04)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '4px',
+                      zIndex: 1010,
+                      animation: 'navDropdownFadeIn 180ms ease-out',
+                    }}
+                  >
+                    {companyItems.map((item) => {
+                      const Icon = item.icon;
+                      const active = pathname.startsWith(item.href);
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          role="menuitem"
+                          onClick={() => setActiveDropdown(null)}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px',
+                            padding: '10px 12px',
+                            borderRadius: '12px',
+                            textDecoration: 'none',
+                            background: active ? 'rgba(26, 61, 43, 0.05)' : 'transparent',
+                            transition: 'background 160ms ease, transform 160ms ease',
+                            flexDirection: isAr ? 'row-reverse' : 'row',
+                            textAlign: isAr ? 'right' : 'left',
+                          }}
+                          className="flyout-item"
+                        >
+                          <div
+                            style={{
+                              width: '38px',
+                              height: '38px',
+                              borderRadius: '10px',
+                              background: item.iconBg,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              flexShrink: 0,
+                            }}
+                          >
+                            <Icon size={20} color={item.iconColor} />
+                          </div>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div
+                              style={{
+                                color: active ? 'var(--accent-text)' : '#111827',
+                                fontSize: '0.9rem',
+                                fontWeight: 700,
+                                lineHeight: 1.3,
+                              }}
+                            >
+                              {item.label}
+                            </div>
+                            <div
+                              style={{
+                                color: '#6B7280',
+                                fontSize: '0.76rem',
+                                lineHeight: 1.3,
+                                marginTop: '2px',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                              }}
+                            >
+                              {item.desc}
+                            </div>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </>
+          )}
         </div>
 
-        {/* Right Side */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px',
-          flexShrink: 0,
-        }}>
-          {/* Quick Search / Command Palette Trigger */}
-          <div className="nav-search-desktop">
-            <CommandPaletteTrigger isAr={isAr} />
-          </div>
-
-          {/* Language Toggle. A <Link>, not a plain <a>: a full document load
-              repaints the white body between pages, which flashed on every
-              language switch. See the note on the chooser's toggle. */}
+        {/* Right Desktop Action Cluster */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            flexShrink: 0,
+            flexDirection: isAr ? 'row-reverse' : 'row',
+          }}
+        >
+          {/* Language Switcher */}
           <Link
             href={switchPath}
-            className="nav-lang-desktop"
+            className="nav-lang-btn"
             style={{
-              height: '44px',
+              height: '40px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              padding: '0 24px',
-              borderRadius: 'var(--radius-pill)',
+              padding: '0 16px',
+              borderRadius: '12px',
               border: '1px solid rgba(17, 24, 39, 0.1)',
-              background: 'rgba(255, 255, 255, 0.5)',
-              color: '#111827',
-              fontSize: '0.9rem',
+              background: 'rgba(255, 255, 255, 0.65)',
+              color: '#374151',
+              fontSize: '0.86rem',
               fontWeight: 700,
               textDecoration: 'none',
               transition: 'all 200ms ease',
-              letterSpacing: '0.05em',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = 'var(--accent)';
-              e.currentTarget.style.color = 'var(--accent)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = 'rgba(17, 24, 39, 0.1)';
-              e.currentTarget.style.color = '#111827';
+              letterSpacing: isAr ? '0' : '0.02em',
             }}
           >
             {t('lang')}
           </Link>
 
-          {/* CTA */}
+          {/* Sourcing Cross-Track Switcher (Refined Secondary Ghost Pill) */}
           <a
-            href={isSourcing ? `/${locale}/sourcing#contact` : `/${locale}/contact`}
-            className="nav-cta-desktop"
+            href={isSourcing ? `/${locale}` : `/${locale}/sourcing`}
+            onClick={isSourcing ? markGateSeen : undefined}
+            className="nav-sourcing-btn"
             style={{
-              height: '44px',
+              height: '40px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              padding: '0 28px',
-              borderRadius: 'var(--radius-pill)',
+              gap: '6px',
+              padding: '0 16px',
+              borderRadius: '12px',
+              background: 'rgba(26, 61, 43, 0.05)',
+              border: '1px solid rgba(26, 61, 43, 0.14)',
+              color: 'var(--primary)',
+              fontSize: '0.86rem',
+              fontWeight: 600,
+              textDecoration: 'none',
+              whiteSpace: 'nowrap',
+              transition: 'all 200ms ease',
+              flexDirection: isAr ? 'row-reverse' : 'row',
+            }}
+          >
+            <span>{isSourcing ? t('refurbishedPrinters') : t('sourcing')}</span>
+            <ArrowUpRight
+              size={14}
+              style={{
+                transform: isAr ? 'rotate(-90deg)' : 'none',
+                opacity: 0.8,
+              }}
+            />
+          </a>
+
+          {/* Primary Enterprise CTA (Hero Focal Action) */}
+          <a
+            href={isSourcing ? `/${locale}/sourcing#contact` : `/${locale}/contact`}
+            className="nav-primary-cta"
+            style={{
+              height: '42px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '0 22px',
+              borderRadius: '12px',
               background: 'var(--accent)',
               color: 'var(--deep-forest)',
-              fontSize: '0.9rem',
+              fontSize: '0.88rem',
               fontWeight: 700,
               textDecoration: 'none',
               transition: 'all 200ms var(--ease-spring)',
               whiteSpace: 'nowrap',
-              boxShadow: '0 4px 12px rgba(141, 184, 51, 0.3)',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'scale(1.05)';
-              e.currentTarget.style.boxShadow = '0 8px 20px rgba(141,184,51,0.5)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'scale(1)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(141, 184, 51, 0.3)';
+              boxShadow: '0 4px 14px rgba(141, 184, 51, 0.35)',
             }}
           >
             {isSourcing ? tSourcing('cta') : t('getFreePrinter')}
           </a>
 
-          {/* The crossing point between the two tracks, sitting after the CTA —
-              so it is to its right in English and, because the bar mirrors
-              with the document direction, to its left in Arabic. Carries the
-              same solid accent fill as the CTA rather than an outline, so the
-              two read as a matched pair.
-              Present on both sides and pointing at the other one: sourcing
-              from the printers nav, refurbished printers from the sourcing
-              nav. Before this the logo/gate was the only route across, and
-              nothing about a logo tells a visitor a second business is behind
-              it — which was as true landing on sourcing as it was here.
-              Going to the printers home marks the gate answered, the same
-              choice the chooser's "Explore Printers" records: without that, a
-              visitor who deep-linked straight to /sourcing would get the
-              chooser thrown up in front of the page they just asked for. */}
-          <a
-            href={isSourcing ? `/${locale}` : `/${locale}/sourcing`}
-            onClick={isSourcing ? markGateSeen : undefined}
-            className="nav-sourcing-desktop"
-            style={{
-              height: '44px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '6px',
-              padding: '0 24px',
-              borderRadius: 'var(--radius-pill)',
-              background: 'var(--accent)',
-              color: 'var(--deep-forest)',
-              fontSize: '0.9rem',
-              fontWeight: 700,
-              textDecoration: 'none',
-              whiteSpace: 'nowrap',
-              transition: 'all 200ms var(--ease-spring)',
-              boxShadow: '0 4px 12px rgba(141, 184, 51, 0.3)',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'scale(1.05)';
-              e.currentTarget.style.boxShadow = '0 8px 20px rgba(141,184,51,0.5)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'scale(1)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(141, 184, 51, 0.3)';
-            }}
-          >
-            {isSourcing ? t('refurbishedPrinters') : t('sourcing')}
-            <span aria-hidden="true" style={{ fontSize: 'var(--text-base)', lineHeight: 1 }}>{isAr ? '←' : '→'}</span>
-          </a>
-
-          {/* Mobile Hamburger */}
+          {/* Mobile Hamburger Toggle */}
           <button
             className="mobile-menu-btn"
             onClick={() => setMobileOpen(!mobileOpen)}
@@ -390,39 +793,45 @@ export default function Navbar() {
               background: 'none',
               border: 'none',
               cursor: 'pointer',
-              padding: '12px',
-              minWidth: '48px',
-              minHeight: '48px',
+              padding: '8px',
+              minWidth: '44px',
+              minHeight: '44px',
               alignItems: 'center',
               justifyContent: 'center',
             }}
           >
-            <span style={{
-              width: '22px',
-              height: '2px',
-              background: '#111827',
-              transition: 'all 300ms ease',
-              transform: mobileOpen ? 'rotate(45deg) translateY(7px)' : 'none',
-            }} />
-            <span style={{
-              width: '22px',
-              height: '2px',
-              background: '#111827',
-              transition: 'all 300ms ease',
-              opacity: mobileOpen ? 0 : 1,
-            }} />
-            <span style={{
-              width: '22px',
-              height: '2px',
-              background: '#111827',
-              transition: 'all 300ms ease',
-              transform: mobileOpen ? 'rotate(-45deg) translateY(-7px)' : 'none',
-            }} />
+            <span
+              style={{
+                width: '22px',
+                height: '2px',
+                background: '#111827',
+                transition: 'all 300ms ease',
+                transform: mobileOpen ? 'rotate(45deg) translateY(7px)' : 'none',
+              }}
+            />
+            <span
+              style={{
+                width: '22px',
+                height: '2px',
+                background: '#111827',
+                transition: 'all 300ms ease',
+                opacity: mobileOpen ? 0 : 1,
+              }}
+            />
+            <span
+              style={{
+                width: '22px',
+                height: '2px',
+                background: '#111827',
+                transition: 'all 300ms ease',
+                transform: mobileOpen ? 'rotate(-45deg) translateY(-7px)' : 'none',
+              }}
+            />
           </button>
         </div>
       </nav>
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile Overlay Menu */}
       <div
         ref={mobileOverlayRef}
         id="mobile-nav-overlay"
@@ -441,244 +850,343 @@ export default function Navbar() {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'center',
-          gap: '24px',
-          transition: 'opacity 400ms var(--ease-ink), transform 400ms var(--ease-ink), visibility 0s linear ' + (mobileOpen ? '0s' : '400ms'),
+          justifyContent: 'flex-start',
+          gap: '20px',
+          transition:
+            'opacity 350ms var(--ease-ink), transform 350ms var(--ease-ink), visibility 0s linear ' +
+            (mobileOpen ? '0s' : '350ms'),
           opacity: mobileOpen ? 1 : 0,
-          // visibility (not just pointer-events) so the closed menu's links are
-          // not focusable / read by screen readers. Delayed on close so the
-          // fade-out still plays.
           visibility: mobileOpen ? 'visible' : 'hidden',
           pointerEvents: mobileOpen ? 'all' : 'none',
-          transform: mobileOpen ? 'translateX(0)' : (isAr ? 'translateX(100%)' : 'translateX(-100%)'),
-          padding: '100px 32px 48px',
+          transform: mobileOpen ? 'translateX(0)' : isAr ? 'translateX(100%)' : 'translateX(-100%)',
+          padding: '96px 24px 40px',
           overflowY: 'auto',
         }}
       >
-        {/* Mobile Quick Search Trigger */}
+        {/* Top Mobile Utilities: WhatsApp hotline & Language */}
         <div
-          style={{ marginBottom: '12px', width: '100%', maxWidth: '280px', display: 'flex', justifyContent: 'center' }}
-          onClick={() => setMobileOpen(false)}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            width: '100%',
+            maxWidth: '360px',
+            paddingBottom: '16px',
+            borderBottom: '1px solid #E5E7EB',
+            flexDirection: isAr ? 'row-reverse' : 'row',
+          }}
         >
-          <CommandPaletteTrigger isAr={isAr} />
-        </div>
-
-        {navLinks.map((link, i) => {
-          const active = !link.href.includes('#') && isCurrentPage(pathname, link.href);
-          return (
-          <Link
-            key={link.href}
-            href={link.href}
-            transitionTypes={['nav-lateral']}
-            onClick={(e) => { setMobileOpen(false); if (link.isHome) handleHomeClick(e, link.href); }}
-            aria-current={active ? 'page' : undefined}
+          <a
+            href="https://wa.me/966593380390"
+            target="_blank"
+            rel="noopener noreferrer"
             style={{
-              color: active ? 'var(--accent-text)' : '#111827',
-              textDecoration: 'none',
-              fontSize: 'clamp(1.1rem, 4vw, 1.5rem)',
-              fontWeight: 700,
-              transition: `all 300ms ease ${i * 40}ms`,
-              opacity: mobileOpen ? 1 : 0,
-              transform: mobileOpen ? 'translateY(0)' : 'translateY(20px)',
-              padding: '8px 0',
-              minHeight: '48px',
-              display: 'flex',
+              display: 'inline-flex',
               alignItems: 'center',
+              gap: '8px',
+              color: '#059669',
+              fontSize: '0.88rem',
+              fontWeight: 700,
+              textDecoration: 'none',
+              flexDirection: isAr ? 'row-reverse' : 'row',
             }}
           >
-            {link.label}
+            <MessageSquare size={16} />
+            <span>+966 59 338 0390</span>
+          </a>
+
+          <Link
+            href={switchPath}
+            onClick={() => setMobileOpen(false)}
+            style={{
+              padding: '6px 14px',
+              borderRadius: '8px',
+              border: '1px solid #D1D5DB',
+              color: '#111827',
+              fontSize: '0.84rem',
+              fontWeight: 700,
+              textDecoration: 'none',
+            }}
+          >
+            {t('lang')}
           </Link>
-        );})}
+        </div>
 
-        {/* No language toggle here: it lives in the bar itself at every size,
-            the way it does on desktop, so changing language does not require
-            opening the menu first. Removing the duplicate also shortens this
-            list, which has to fit a phone screen. */}
+        {/* Mobile Categorized Grid: Fleet & Hardware */}
+        {!isSourcing && (
+          <div style={{ width: '100%', maxWidth: '360px' }}>
+            <div
+              style={{
+                fontSize: '0.78rem',
+                fontWeight: 700,
+                color: '#6B7280',
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
+                marginBottom: '10px',
+                textAlign: isAr ? 'right' : 'left',
+              }}
+            >
+              {t('fleetHardware')}
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+              {fleetItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileOpen(false)}
+                    style={{
+                      padding: '12px',
+                      borderRadius: '12px',
+                      background: '#F9FAFB',
+                      border: '1px solid #E5E7EB',
+                      textDecoration: 'none',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '6px',
+                      textAlign: isAr ? 'right' : 'left',
+                    }}
+                  >
+                    <Icon size={18} color={item.iconColor} />
+                    <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#111827' }}>
+                      {item.label}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
-        {/* CTA in mobile overlay */}
-        <a
-          href={isSourcing ? `/${locale}/sourcing#contact` : `/${locale}/contact`}
-          onClick={() => setMobileOpen(false)}
+        {/* Primary Link List */}
+        <div
           style={{
-            padding: '16px 32px',
-            borderRadius: 'var(--radius-pill)',
-            background: 'var(--accent)',
-            color: 'var(--deep-forest)',
-            fontWeight: 700,
-            textDecoration: 'none',
-            fontSize: 'var(--text-base)',
-            minHeight: '52px',
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            flexDirection: 'column',
             width: '100%',
-            maxWidth: '280px',
-            boxShadow: '0 4px 12px rgba(141,184,51,0.3)',
+            maxWidth: '360px',
+            gap: '12px',
+            textAlign: isAr ? 'right' : 'left',
           }}
         >
-          {isSourcing ? tSourcing('cta') : t('getFreePrinter')}
-        </a>
+          {isSourcing ? (
+            sourcingLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={(e) => {
+                  setMobileOpen(false);
+                  if (link.isHome) handleHomeClick(e, link.href);
+                }}
+                style={{
+                  color: '#111827',
+                  textDecoration: 'none',
+                  fontSize: '1.05rem',
+                  fontWeight: 700,
+                  padding: '8px 0',
+                }}
+              >
+                {link.label}
+              </Link>
+            ))
+          ) : (
+            <>
+              <Link
+                href={`/${locale}/industries`}
+                onClick={() => setMobileOpen(false)}
+                style={{
+                  color: '#111827',
+                  textDecoration: 'none',
+                  fontSize: '1.05rem',
+                  fontWeight: 700,
+                  padding: '6px 0',
+                }}
+              >
+                {t('industries')}
+              </Link>
+              <Link
+                href={`/${locale}/sustainability`}
+                onClick={() => setMobileOpen(false)}
+                style={{
+                  color: '#111827',
+                  textDecoration: 'none',
+                  fontSize: '1.05rem',
+                  fontWeight: 700,
+                  padding: '6px 0',
+                }}
+              >
+                {t('sustainability')}
+              </Link>
+              <Link
+                href={`/${locale}/about`}
+                onClick={() => setMobileOpen(false)}
+                style={{
+                  color: '#111827',
+                  textDecoration: 'none',
+                  fontSize: '1.05rem',
+                  fontWeight: 700,
+                  padding: '6px 0',
+                }}
+              >
+                {t('about')}
+              </Link>
+              <Link
+                href={`/${locale}/faq`}
+                onClick={() => setMobileOpen(false)}
+                style={{
+                  color: '#111827',
+                  textDecoration: 'none',
+                  fontSize: '1.05rem',
+                  fontWeight: 700,
+                  padding: '6px 0',
+                }}
+              >
+                {t('faq')}
+              </Link>
+            </>
+          )}
+        </div>
 
-        {/* The desktop pill is hidden under 1280px, so the crossing point has
-            to exist here too or the other track is unreachable on a phone. */}
-        <a
-          href={isSourcing ? `/${locale}` : `/${locale}/sourcing`}
-          onClick={() => { setMobileOpen(false); if (isSourcing) markGateSeen(); }}
+        {/* Mobile Actions Container */}
+        <div
           style={{
-            padding: '16px 32px',
-            borderRadius: 'var(--radius-pill)',
-            background: 'var(--accent)',
-            color: 'var(--deep-forest)',
-            fontWeight: 700,
-            textDecoration: 'none',
-            fontSize: 'var(--text-base)',
-            minHeight: '52px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '8px',
+            marginTop: 'auto',
             width: '100%',
-            maxWidth: '280px',
-            boxShadow: '0 4px 12px rgba(141,184,51,0.3)',
+            maxWidth: '360px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '10px',
+            paddingTop: '20px',
           }}
         >
-          {isSourcing ? t('refurbishedPrinters') : t('sourcing')}
-          <span aria-hidden="true">{isAr ? '←' : '→'}</span>
-        </a>
+          <a
+            href={isSourcing ? `/${locale}` : `/${locale}/sourcing`}
+            onClick={() => {
+              setMobileOpen(false);
+              if (isSourcing) markGateSeen();
+            }}
+            style={{
+              padding: '14px',
+              borderRadius: '12px',
+              background: 'rgba(26, 61, 43, 0.06)',
+              border: '1px solid rgba(26, 61, 43, 0.15)',
+              color: 'var(--primary)',
+              fontWeight: 700,
+              textDecoration: 'none',
+              fontSize: '0.92rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              flexDirection: isAr ? 'row-reverse' : 'row',
+            }}
+          >
+            <span>{isSourcing ? t('refurbishedPrinters') : t('sourcing')}</span>
+            <ArrowUpRight size={16} />
+          </a>
+
+          <a
+            href={isSourcing ? `/${locale}/sourcing#contact` : `/${locale}/contact`}
+            onClick={() => setMobileOpen(false)}
+            style={{
+              padding: '15px',
+              borderRadius: '12px',
+              background: 'var(--accent)',
+              color: 'var(--deep-forest)',
+              fontWeight: 800,
+              textDecoration: 'none',
+              fontSize: '0.98rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 4px 14px rgba(141, 184, 51, 0.35)',
+            }}
+          >
+            {isSourcing ? tSourcing('cta') : t('getFreePrinter')}
+          </a>
+        </div>
       </div>
 
       <style jsx>{`
-        /* Between the hamburger breakpoint and ~1440px the English printers nav
-           — nine links plus the Sourcing pill and a long CTA — is wider than
-           the bar containing it, so the CTA spilled past the rounded edge and
-           the links ran into the language pill. Tighten spacing across this
-           band rather than dropping to the hamburger, which would cost the
-           desktop nav on ordinary 1280px laptops. The Arabic nav and the
-           five-link sourcing nav both fit without this, but sharing the rule
-           keeps them consistent. */
-        @media (min-width: ${collapseAt + 1}px) and (max-width: 1440px) {
-          #main-nav {
-            padding: 0 20px !important;
-            gap: 16px !important;
+        @keyframes navDropdownFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(6px) scale(0.98);
           }
-          .nav-links-desktop {
-            gap: 10px !important;
-          }
-          /* :global(a) — these are next/link <Link>s now, which styled-jsx
-             cannot scope (see the note on .nav-lang-desktop below). */
-          .nav-links-desktop :global(a) {
-            font-size: 0.76rem !important;
-          }
-          /* :global() — see the note on the mobile rule below. */
-          #main-nav :global(.nav-lang-desktop) {
-            padding: 0 14px !important;
-            font-size: 0.8rem !important;
-          }
-          .nav-cta-desktop {
-            padding: 0 16px !important;
-            font-size: 0.78rem !important;
-          }
-          .nav-sourcing-desktop {
-            padding: 0 12px !important;
-            font-size: 0.78rem !important;
-          }
-          /* The arrow is affordance, not information — the first thing the
-             pill can give back when the row is short of room. */
-          .nav-sourcing-desktop :global(span) {
-            display: none !important;
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
           }
         }
-        /* The overlay centres its items, but once they are taller than the
-           screen — nine printer links plus the language toggle and CTA come to
-           870px against an 812px phone — centring overflows both ends equally:
-           the first link slid up behind the floating nav bar and the CTA fell
-           below the fold, with neither reachable by scrolling. "safe" falls
-           back to flex-start exactly when that happens, so the list starts
-           below the bar and the rest scrolls normally. Browsers without it drop
-           the declaration and keep the plain centring set inline, which is fine
-           on the shorter sourcing menu. */
-        #mobile-nav-overlay {
-          justify-content: safe center !important;
-          gap: 18px !important;
+
+        .nav-link-item:hover,
+        .nav-item-trigger:hover {
+          color: var(--accent-text) !important;
         }
-        /* Hamburger below collapseAt (1280px on printers, 1100px on
-           sourcing — see the note where it is defined). The nine English
-           printer links need ~619px even fully tightened, and the right-hand
-           group (language pill + cross-link pill + CTA) takes the rest of the
-           bar. Measured: at 1150px the printers row fit with exactly zero
-           slack BEFORE the cross-link pill existed, and the pill costs 120px;
-           trimming it inside the band buys back ~36px, so that row needs
-           ~1280px to fit with real slack. Below the cutoff the whole set, both
-           pills included, lives in the overlay instead of being silently
-           clipped by the links container's overflow:hidden. */
-        @media (max-width: ${collapseAt}px) {
-          .nav-links-desktop {
+
+        .flyout-item:hover {
+          background: rgba(26, 61, 43, 0.05) !important;
+          transform: translateX(${isAr ? '-2px' : '2px'});
+        }
+
+        .nav-lang-btn:hover {
+          border-color: rgba(17, 24, 39, 0.3) !important;
+          color: #111827 !important;
+          background: rgba(255, 255, 255, 0.95) !important;
+        }
+
+        .nav-sourcing-btn:hover {
+          background: rgba(26, 61, 43, 0.12) !important;
+          border-color: rgba(26, 61, 43, 0.25) !important;
+          transform: translateY(-1px);
+        }
+
+        .nav-primary-cta:hover {
+          transform: translateY(-1px) scale(1.02);
+          boxShadow: 0 8px 24px rgba(141, 184, 51, 0.45) !important;
+        }
+
+        /* Desktop Collapse point: 1024px */
+        @media (max-width: 1024px) {
+          .nav-links-desktop,
+          .nav-lang-btn,
+          .nav-sourcing-btn,
+          .nav-primary-cta {
             display: none !important;
-          }
-          .nav-cta-desktop {
-            display: none !important;
-          }
-          .nav-sourcing-desktop {
-            display: none !important;
-          }
-          /* The language pill stays in the bar at every size, so switching
-             language never costs a trip through the menu. It is deliberately
-             not repeated inside the overlay. :global() because this class sits
-             on a next/link <Link> rather than an element styled-jsx compiles,
-             so a plain selector is emitted as .nav-lang-desktop.jsx-xxx and
-             never matches. */
-          #main-nav :global(.nav-lang-desktop) {
-            height: 44px !important;
-            padding: 0 16px !important;
-            font-size: 0.8rem !important;
           }
           .mobile-menu-btn {
             display: flex !important;
           }
           #main-nav {
-            width: calc(100% - 32px) !important;
-            padding: 0 20px !important;
-            height: 68px !important;
-            /* The centre links group is the flex-1 spacer holding the two ends
-               apart; hidden, it stops laying out at all and the hamburger
-               collapses back against the logo, leaving the bar's whole right
-               half empty. space-between restores the split, and stays correct
-               under RTL. */
-            justify-content: space-between !important;
-          }
-          /* :global() for the same reason — this class is on a next/image
-             <Image>. Unscoped, the logo kept its 56px desktop height inside a
-             56px bar. */
-          #main-nav :global(.nav-logo-img) {
-            height: 44px !important;
+            height: 64px !important;
+            padding: 0 18px !important;
+            border-radius: 18px !important;
           }
         }
+
         @media (max-width: 768px) {
           #main-nav {
             width: calc(100% - 24px) !important;
             padding: 0 16px !important;
             height: 60px !important;
-            top: 12px !important;
+            transform: translate(-50%, 12px) !important;
           }
           #main-nav :global(.nav-logo-img) {
-            height: 38px !important;
+            height: 40px !important;
           }
         }
-        @media (max-width: 640px) {
-          .nav-search-desktop {
-            display: none !important;
-          }
-        }
+
         @media (max-width: 480px) {
           #main-nav {
             width: calc(100% - 16px) !important;
-            padding: 0 12px !important;
+            padding: 0 14px !important;
             height: 56px !important;
-            top: 8px !important;
-            border-radius: var(--radius-2xl) !important;
+            transform: translate(-50%, 8px) !important;
+            border-radius: 16px !important;
           }
           #main-nav :global(.nav-logo-img) {
-            height: 32px !important;
+            height: 34px !important;
           }
         }
       `}</style>
