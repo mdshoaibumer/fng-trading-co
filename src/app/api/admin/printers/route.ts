@@ -14,7 +14,7 @@ export async function GET() {
     // Map back to camelCase for the frontend if needed, 
     // but the frontend is already using the JSON structure.
     // Let's ensure compatibility. Exclude equipment IDs.
-    const formatted = data.filter(p => !p.id.startsWith('eq-')).map(p => ({
+    const formatted = (data || []).filter((p) => !p.id?.startsWith('eq-')).map((p) => ({
       id: p.id,
       name: p.name,
       descEn: p.desc_en,

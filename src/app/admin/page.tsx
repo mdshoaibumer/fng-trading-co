@@ -11,7 +11,8 @@ import {
   AlertCircle,
   Loader2,
   CheckCircle2,
-  Download
+  Download,
+  Monitor,
 } from 'lucide-react';
 import { useToast } from '@/components/admin/Toast';
 
@@ -27,7 +28,7 @@ interface RecentLead {
 }
 
 interface DashboardData {
-  stats: { totalLeads: number; printers: number; parts: number };
+  stats: { totalLeads: number; printers: number; equipment?: number; parts: number };
   recentLeads: RecentLead[];
 }
 
@@ -145,11 +146,12 @@ export default function AdminDashboard() {
       </div>
 
       {/* Stats Grid */}
-      <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '24px', marginBottom: '40px' }}>
+      <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '40px' }}>
         <StatCard title="Total Leads" value={stats.totalLeads} change="Live Data" icon={<MessageCircle size={24} />} color="var(--admin-accent)" />
         <StatCard title="Printer Inventory" value={stats.printers} change="Live Data" icon={<Printer size={24} />} color="#3B82F6" />
+        <StatCard title="Office Equipment" value={stats.equipment ?? 0} change="Live Data" icon={<Monitor size={24} />} color="#8B5CF6" />
         <StatCard title="Parts Available" value={stats.parts} change="Live Data" icon={<Package size={24} />} color="#F59E0B" />
-        <StatCard title="Active Status" value="Online" icon={<Clock size={24} />} color="#6366F1" />
+        <StatCard title="System Status" value="Online" icon={<Clock size={24} />} color="#10B981" />
       </div>
 
       <div className="dash-grid-main" style={{ display: 'grid', gridTemplateColumns: '2fr 1.2fr', gap: '24px' }}>

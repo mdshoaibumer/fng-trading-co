@@ -10,12 +10,15 @@ export async function GET() {
 
     if (leadsError) throw leadsError;
 
-    // 2. Fetch total printers
-    const { count: printersCount, error: printersError } = await supabaseAdmin
+    // 2. Fetch total printers and equipment
+    const { data: allPrinters, error: printersError } = await supabaseAdmin
       .from('printers')
-      .select('*', { count: 'exact', head: true });
+      .select('id');
 
     if (printersError) throw printersError;
+
+    const printersCount = (allPrinters || []).filter((p) => !p.id.startsWith('eq-')).length;
+    const equipmentCount = (allPrinters || []).filter((p) => p.id.startsWith('eq-')).length;
 
     // 3. Fetch total parts
     const { count: partsCount, error: partsError } = await supabaseAdmin
@@ -37,6 +40,7 @@ export async function GET() {
       stats: {
         totalLeads: leadsCount || 0,
         printers: printersCount || 0,
+        equipment: equipmentCount || 0,
         parts: partsCount || 0,
       },
       recentLeads: recentLeads || []

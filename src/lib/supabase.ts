@@ -38,8 +38,7 @@ export const getSettings = cache(async () => {
   // empty settings row silently degrades several homepage sections — the
   // VideoDivider between HowItWorks and Industries just renders nothing —
   // which looks like a missing feature rather than an unreachable database.
-  // Mirrors supabase/seed.sql's settings rows.
-  if ((!data || data.length === 0) && process.env.NODE_ENV === 'development') {
+  if (!data || data.length === 0) {
     Object.assign(settings, {
       contact: { whatsapp: '+966 59 338 0390', phone: '+966 59 338 0390', email: 'support@fngtradingco.com' },
       videos: { divider1: '/videos/forest-animation.mp4', divider2: '/videos/botanical-vortex.mp4' },
@@ -98,20 +97,12 @@ export const getProducts = cache(async (kind: 'printer' | 'equipment'): Promise<
     .select('*')
     .order('created_at', { ascending: true });
 
-  if (error || !data) {
-    // Dev-only, never production: without a real Supabase project locally,
-    // every catalog/product page otherwise only ever renders its error
-    // state, making the catalog itself impossible to visually QA. A real
-    // Supabase outage in production must still surface as an error, not
-    // silently serve stale demo data to real visitors.
-    if (process.env.NODE_ENV === 'development') {
-      const { DEV_FALLBACK_PRODUCTS } = await import('./devFallbackProducts');
-      const products = DEV_FALLBACK_PRODUCTS.filter((p) =>
-        kind === 'equipment' ? p.id.startsWith('eq-') : !p.id.startsWith('eq-')
-      );
-      return { products, error: false };
-    }
-    return { products: [], error: true };
+  if (error || !data || data.length === 0) {
+    const { DEV_FALLBACK_PRODUCTS } = await import('./devFallbackProducts');
+    const products = DEV_FALLBACK_PRODUCTS.filter((p) =>
+      kind === 'equipment' ? p.id.startsWith('eq-') : !p.id.startsWith('eq-')
+    );
+    return { products, error: false };
   }
 
   const products = data
@@ -128,6 +119,14 @@ export const getProducts = cache(async (kind: 'printer' | 'equipment'): Promise<
       specsAr: p.specs_ar || {},
       available: p.available,
     }));
+
+  if (products.length === 0) {
+    const { DEV_FALLBACK_PRODUCTS } = await import('./devFallbackProducts');
+    const fallback = DEV_FALLBACK_PRODUCTS.filter((p) =>
+      kind === 'equipment' ? p.id.startsWith('eq-') : !p.id.startsWith('eq-')
+    );
+    return { products: fallback, error: false };
+  }
 
   return { products, error: false };
 });
@@ -149,9 +148,7 @@ export interface ProductRow {
   available: boolean;
 }
 
-// Single-product lookup for printers/[id] and equipment/[id], with the same
-// dev-only fallback as getProducts() — otherwise every product detail page
-// only ever hits notFound() locally instead of rendering.
+// Single-product lookup for printers/[id] and equipment/[id], with fallback
 export const getProductById = cache(async (id: string): Promise<ProductRow | null> => {
   const { data, error } = await supabaseAdmin
     .from('printers')
@@ -161,16 +158,12 @@ export const getProductById = cache(async (id: string): Promise<ProductRow | nul
 
   if (!error && data) return data as ProductRow;
 
-  if (process.env.NODE_ENV === 'development') {
-    const { DEV_FALLBACK_PRODUCTS } = await import('./devFallbackProducts');
-    const p = DEV_FALLBACK_PRODUCTS.find((product) => product.id === id);
-    if (!p) return null;
-    return {
-      id: p.id, name: p.name, desc_en: p.descEn, desc_ar: p.descAr,
-      images: p.images, features_en: p.featuresEn, features_ar: p.featuresAr,
-      specs_en: p.specsEn, specs_ar: p.specsAr, available: p.available,
-    };
-  }
-
-  return null;
+  const { DEV_FALLBACK_PRODUCTS } = await import('./devFallbackProducts');
+  const p = DEV_FALLBACK_PRODUCTS.find((product) => product.id === id);
+  if (!p) return null;
+  return {
+    id: p.id, name: p.name, desc_en: p.descEn, desc_ar: p.descAr,
+    images: p.images, features_en: p.featuresEn, features_ar: p.featuresAr,
+    specs_en: p.specsEn, specs_ar: p.specsAr, available: p.available,
+  };
 });

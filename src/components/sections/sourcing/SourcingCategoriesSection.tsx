@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import Reveal from '@/components/ui/Reveal';
+import SpotlightCard from '@/components/ui/SpotlightCard';
 import { Laptop, Smartphone, BatteryCharging, Headphones, Watch, Router, Home, Gamepad2 } from 'lucide-react';
 
 const CATEGORY_KEYS = ['computers', 'mobileAccessories', 'chargers', 'audio', 'wearables', 'networking', 'smartHome', 'gaming'] as const;
@@ -34,30 +35,39 @@ export default function SourcingCategoriesSection() {
         <div className="sc-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
           {CATEGORY_KEYS.map((key, i) => (
             <Reveal key={key} delay={(i % 4) * 80} from="scale" threshold={0.1}>
-            <div className="card-lift category-card" style={{ height: '100%',
-              padding: 'clamp(18px, 3vw, 24px)', borderRadius: 'var(--radius-lg)', background: '#fff', border: '1px solid var(--light-grey)',
-              textAlign: isAr ? 'right' : 'left', cursor: 'default',
-              ['--lift-shadow' as string]: '0 12px 40px rgba(26,61,43,0.1)',
-            }}>
-              <div style={{
-                width: '44px', height: '44px', borderRadius: 'var(--radius-md)',
-                background: 'linear-gradient(135deg,rgba(26,61,43,0.08),rgba(141,184,51,0.08))',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '14px',
-                border: '1px solid rgba(141,184,51,0.12)', marginLeft: isAr ? 'auto' : '0', marginRight: isAr ? '0' : 'auto',
+              <SpotlightCard className="category-card" style={{
+                height: '100%',
+                padding: 'clamp(20px, 3vw, 26px)',
+                borderRadius: 'var(--radius-lg)',
+                background: '#fff',
+                border: '1px solid var(--light-grey)',
+                textAlign: isAr ? 'right' : 'left',
+                cursor: 'default',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
               }}>
-                {ICONS[key]}
-              </div>
-              <h3 style={{ color: 'var(--primary)', fontSize: '0.95rem', fontWeight: 700, marginBottom: '6px' }}>{t(`items.${key}.name`)}</h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', lineHeight: 1.6, marginBottom: '14px' }}>{t(`items.${key}.desc`)}</p>
-              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                <span style={{ padding: '4px 10px', borderRadius: 'var(--radius-pill)', background: 'var(--bg-secondary)', color: '#4A5E2A', fontSize: '0.7rem', fontWeight: 600, fontFamily: 'var(--font-ibm-plex-mono), monospace' }}>
-                  {t(`items.${key}.moq`)}
-                </span>
-                <span style={{ padding: '4px 10px', borderRadius: 'var(--radius-pill)', background: 'var(--bg-secondary)', color: '#4A5E2A', fontSize: '0.7rem', fontWeight: 600, fontFamily: 'var(--font-ibm-plex-mono), monospace' }}>
-                  {t(`items.${key}.lead`)}
-                </span>
-              </div>
-            </div>
+                <div>
+                  <div style={{
+                    width: '46px', height: '46px', borderRadius: 'var(--radius-md)',
+                    background: 'linear-gradient(135deg,rgba(26,61,43,0.08),rgba(141,184,51,0.12))',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px',
+                    border: '1px solid rgba(141,184,51,0.18)', marginLeft: isAr ? 'auto' : '0', marginRight: isAr ? '0' : 'auto',
+                  }}>
+                    {ICONS[key]}
+                  </div>
+                  <h3 style={{ color: 'var(--primary)', fontSize: '1rem', fontWeight: 800, marginBottom: '8px' }}>{t(`items.${key}.name`)}</h3>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.82rem', lineHeight: 1.6, marginBottom: '16px' }}>{t(`items.${key}.desc`)}</p>
+                </div>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', paddingTop: '12px', borderTop: '1px solid rgba(0,0,0,0.04)' }}>
+                  <span style={{ padding: '4px 10px', borderRadius: 'var(--radius-pill)', background: 'var(--bg-secondary)', color: 'var(--accent-text)', fontSize: '0.72rem', fontWeight: 700, fontFamily: 'var(--font-ibm-plex-mono), monospace' }}>
+                    {t(`items.${key}.moq`)}
+                  </span>
+                  <span style={{ padding: '4px 10px', borderRadius: 'var(--radius-pill)', background: 'var(--bg-secondary)', color: 'var(--accent-text)', fontSize: '0.72rem', fontWeight: 700, fontFamily: 'var(--font-ibm-plex-mono), monospace' }}>
+                    {t(`items.${key}.lead`)}
+                  </span>
+                </div>
+              </SpotlightCard>
             </Reveal>
           ))}
         </div>

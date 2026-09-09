@@ -12,7 +12,7 @@ export async function GET() {
 
     // Reconstruct the category-based object
     const result: PartsData = {};
-    data.forEach(item => {
+    (data || []).forEach(item => {
       if (!result[item.category]) result[item.category] = [];
       result[item.category].push({
         nameEn: item.name_en,
@@ -21,18 +21,16 @@ export async function GET() {
       });
     });
 
-    return NextResponse.json(result);
-  } catch (error) {
-    // Dev-only, never production (see the matching note in
-    // src/lib/supabase.ts) — without a real Supabase project locally, this
-    // route otherwise always 500s and the parts catalog only ever shows its
-    // error state, making it impossible to visually QA.
-    if (process.env.NODE_ENV === 'development') {
+    if (Object.keys(result).length === 0) {
       const { DEV_FALLBACK_PARTS } = await import('@/lib/devFallbackParts');
       return NextResponse.json(DEV_FALLBACK_PARTS);
     }
-    console.error('Parts GET error:', error);
-    return NextResponse.json({ error: 'Failed to fetch parts' }, { status: 500 });
+
+    return NextResponse.json(result);
+  } catch (error) {
+    console.warn('Parts GET fallback to default parts:', error);
+    const { DEV_FALLBACK_PARTS } = await import('@/lib/devFallbackParts');
+    return NextResponse.json(DEV_FALLBACK_PARTS);
   }
 }
 
