@@ -8,7 +8,10 @@ import { rateLimit, globalRateLimit, getClientIp, tooManyRequests } from '@/lib/
 const contactSchema = z.object({
   name: z.string().trim().min(2, 'Name must be at least 2 characters').max(120),
   company: z.string().trim().min(2, 'Company must be at least 2 characters').max(160),
-  phone: z.string().trim().min(5, 'Phone number must be at least 5 digits').max(40),
+  phone: z.string().trim()
+    .min(7, 'Phone number must be at least 7 digits')
+    .max(40, 'Phone number is too long')
+    .refine((val) => /^\+?[\d\s\-()]{7,30}$/.test(val), 'Invalid phone number format'),
   country: z.string().trim().max(80).optional(),
   city: z.string().trim().max(120).optional(),
   quantity: z.string().trim().max(20).optional(),

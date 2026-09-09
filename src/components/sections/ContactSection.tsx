@@ -3,11 +3,18 @@
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
-import { CheckCircle2, Lock, Clock, Loader2 } from 'lucide-react';
+import { CheckCircle2, Lock, Clock, Loader2, AlertCircle } from 'lucide-react';
 import { regionName } from '@/lib/serviceRegions';
 import { useServiceRegions } from '@/components/providers/ServiceRegionsProvider';
 import { useLeadContext, CATEGORY_CONFIG } from '@/lib/leadContext';
 import Reveal from '@/components/ui/Reveal';
+import PhoneInput from '@/components/ui/PhoneInput';
+import {
+  validateEmail,
+  validatePhone,
+  formatFullPhone,
+  findCountryConfig,
+} from '@/lib/formValidation';
 
 export default function ContactSection() {
   const t = useTranslations('contact');
@@ -28,12 +35,19 @@ export default function ContactSection() {
   // `country` stores the English country name so leads read consistently in
   // the admin panel whichever language the visitor used.
   const serviceRegions = useServiceRegions();
+  const initialCountry = serviceRegions[0]?.nameEn || 'Saudi Arabia';
+  const initialDialCode = findCountryConfig(initialCountry).dialCode;
+
+  const [dialCode, setDialCode] = useState(initialDialCode);
+  const [phoneError, setPhoneError] = useState<string | null>(null);
+  const [emailError, setEmailError] = useState<string | null>(null);
+
   const [form, setForm] = useState({
     name: '',
     company: '',
     phone: '',
     email: '',
-    country: serviceRegions[0].nameEn,
+    country: initialCountry,
     city: '',
     quantity: '1',
     message: '',
@@ -47,16 +61,61 @@ export default function ContactSection() {
     if (status === 'success') successRef.current?.focus();
   }, [status]);
 
+  const handleCountryChange = (countryName: string) => {
+    setForm(f => ({ ...f, country: countryName }));
+    const cfg = findCountryConfig(countryName);
+    if (cfg && cfg.dialCode !== dialCode) {
+      setDialCode(cfg.dialCode);
+      if (form.phone) {
+        setPhoneError(validatePhone(form.phone, cfg.dialCode, locale));
+      }
+    }
+  };
+
+  const handleDialCodeChange = (newDialCode: string) => {
+    setDialCode(newDialCode);
+    if (form.phone) {
+      setPhoneError(validatePhone(form.phone, newDialCode, locale));
+    }
+  };
+
+  const handlePhoneChange = (newPhone: string) => {
+    setForm(f => ({ ...f, phone: newPhone }));
+    if (phoneError) {
+      setPhoneError(validatePhone(newPhone, dialCode, locale));
+    }
+  };
+
+  const handleEmailChange = (newEmail: string) => {
+    setForm(f => ({ ...f, email: newEmail }));
+    if (emailError) {
+      setEmailError(validateEmail(newEmail, false, locale));
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Client-side validation before submission
+    const pErr = validatePhone(form.phone, dialCode, locale);
+    const eErr = validateEmail(form.email, false, locale);
+
+    if (pErr || eErr) {
+      setPhoneError(pErr);
+      setEmailError(eErr);
+      return;
+    }
+
     setStatus('loading');
     setErrorMsg('');
     try {
+      const fullPhone = formatFullPhone(dialCode, form.phone);
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...form,
+          phone: fullPhone,
           message: form.message.trim() || defaultMessage,
           quantity: form.quantity || defaultQuantity,
           category: activeCategory,
@@ -183,20 +242,60 @@ export default function ContactSection() {
                 <div className="contact-form-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                   <div>
                     <label htmlFor="contact-phone" className="sr-only">{t('form.phone')}</label>
-                    <input id="contact-phone" style={inputStyle} placeholder={t('form.phone')} type="tel" required aria-required="true" autoComplete="tel" value={form.phone}
-                      onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} />
+                    <PhoneInput
+                      id="contact-phone"
+                      theme="dark"
+                      locale={locale}
+                      dialCode={dialCode}
+                      onDialCodeChange={handleDialCodeChange}
+                      value={form.phone}
+                      onChange={handlePhoneChange}
+                      error={phoneError}
+                      placeholder={t('form.phone')}
+                    />
                   </div>
                   <div>
                     <label htmlFor="contact-email" className="sr-only">{t('form.email')}</label>
-                    <input id="contact-email" style={inputStyle} placeholder={t('form.email')} type="email" autoComplete="email" value={form.email}
-                      onChange={e => setForm(f => ({ ...f, email: e.target.value }))} />
+                    <input
+                      id="contact-email"
+                      style={{
+                        ...inputStyle,
+                        border: emailError ? '1px solid #FF6B6B' : inputStyle.border,
+                      }}
+                      placeholder={t('form.email')}
+                      type="email"
+                      autoComplete="email"
+                      value={form.email}
+                      onChange={e => handleEmailChange(e.target.value)}
+                      onBlur={() => setEmailError(validateEmail(form.email, false, locale))}
+                      aria-invalid={Boolean(emailError)}
+                    />
+                    {emailError && (
+                      <div
+                        role="alert"
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          marginTop: '6px',
+                          color: '#FF8A80',
+                          fontSize: '0.82rem',
+                          fontWeight: 600,
+                          textAlign: isAr ? 'right' : 'left',
+                          flexDirection: isAr ? 'row-reverse' : 'row',
+                        }}
+                      >
+                        <AlertCircle size={14} style={{ flexShrink: 0 }} />
+                        <span>{emailError}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="contact-form-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                   <div>
                     <label htmlFor="contact-country" className="sr-only">{t('form.country')}</label>
                     <select id="contact-country" style={{ ...inputStyle, cursor: 'pointer' }} value={form.country}
-                      onChange={e => setForm(f => ({ ...f, country: e.target.value }))}>
+                      onChange={e => handleCountryChange(e.target.value)}>
                       {serviceRegions.map(r => (
                         <option key={r.code} value={r.nameEn} style={{ color: '#000' }}>{regionName(r, locale)}</option>
                       ))}
