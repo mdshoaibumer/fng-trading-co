@@ -46,7 +46,7 @@ export default function FreePrinterSection() {
         </div>
 
         {/* Interactive 21st.dev inspired Eco ROI & Sustainability Calculator */}
-        <Reveal delay={200} from="up">
+        <Reveal delay={200} from="up" className="w-full" style={{ width: '100%' }}>
           <EcoCalculator isAr={isAr} locale={params.locale as string} />
         </Reveal>
 

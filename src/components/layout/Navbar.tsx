@@ -27,8 +27,9 @@ export default function Navbar() {
   const t = useTranslations('nav');
   const tSourcing = useTranslations('navSourcing');
   const params = useParams();
-  const pathname = usePathname();
-  const locale = params.locale as string;
+  const rawPathname = usePathname();
+  const locale = (params?.locale as string) || 'en';
+  const pathname = rawPathname || `/${locale}`;
   const isAr = locale === 'ar';
   const isSourcing = pathname.startsWith(`/${locale}/sourcing`);
   const [scrolled, setScrolled] = useState(false);
@@ -1127,7 +1128,11 @@ export default function Navbar() {
 
         .flyout-item:hover {
           background: rgba(26, 61, 43, 0.05) !important;
-          transform: translateX(${isAr ? '-2px' : '2px'});
+          transform: translateX(2px);
+        }
+
+        :global([dir="rtl"]) .flyout-item:hover {
+          transform: translateX(-2px) !important;
         }
 
         .nav-lang-btn:hover {
@@ -1144,7 +1149,7 @@ export default function Navbar() {
 
         .nav-primary-cta:hover {
           transform: translateY(-1px) scale(1.02);
-          boxShadow: 0 8px 24px rgba(141, 184, 51, 0.45) !important;
+          box-shadow: 0 8px 24px rgba(141, 184, 51, 0.45) !important;
         }
 
         /* Desktop Collapse point: 1024px */
