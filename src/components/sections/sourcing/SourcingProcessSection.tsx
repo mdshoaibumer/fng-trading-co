@@ -21,7 +21,13 @@ export default function SourcingProcessSection() {
         </div>
         <div className="sp-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'clamp(16px, 2.5vw, 24px)' }}>
           {STEP_KEYS.map((key, i) => (
-            <Reveal key={key} delay={(i % 4) * 90} threshold={0.1}>
+            <Reveal key={key} delay={(i % 4) * 90} threshold={0.1}
+              // 7 items in 4 columns leaves row 2 at 3 of 4 filled — span the
+              // last card across the remaining two columns instead of leaving
+              // an empty trailing cell. On the 2-col tablet grid this also
+              // resolves to a full-width row (2 of 2), and is a no-op on the
+              // 1-col mobile grid.
+              style={i === STEP_KEYS.length - 1 ? { gridColumn: 'span 2' } : undefined}>
             {/* Deliberately no borderColor change on hover: these cards carry
                 a green top rule as their identity, and setting borderColor
                 would repaint all four sides and wipe it out. The lift itself

@@ -8,9 +8,9 @@ import { UserCheck, BadgeCheck, ShieldCheck, CheckCircle2, ExternalLink } from '
 
 const POINT_KEYS = ['accountability', 'verified', 'compliance'] as const;
 const POINT_ICONS = {
-  accountability: <UserCheck size={24} color="var(--accent)" strokeWidth={1.5} />,
-  verified: <BadgeCheck size={24} color="var(--accent)" strokeWidth={1.5} />,
-  compliance: <ShieldCheck size={24} color="var(--accent)" strokeWidth={1.5} />,
+  accountability: <UserCheck size={24} color="var(--accent-text)" strokeWidth={1.5} />,
+  verified: <BadgeCheck size={24} color="var(--accent-text)" strokeWidth={1.5} />,
+  compliance: <ShieldCheck size={24} color="var(--accent-text)" strokeWidth={1.5} />,
 };
 
 // Each card previews the document it links to. The Saudi pair are PDFs, so the
@@ -46,7 +46,7 @@ export default function SourcingWhySection() {
           <div className="why-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(32px, 6vw, 64px)', alignItems: 'center' }}>
             <Reveal from="start" style={{ textAlign: isAr ? 'right' : 'left' }}>
               <span className="section-tag">{t('tag')}</span>
-              <h2 style={{ fontSize: 'clamp(1.6rem,3.5vw,2.75rem)', fontWeight: 800, color: 'var(--primary)', marginBottom: '16px' }}>{t('title')}</h2>
+              <h2 style={{ fontSize: 'clamp(1.5rem,4vw,3.5rem)', fontWeight: 800, color: 'var(--primary)', marginBottom: '16px' }}>{t('title')}</h2>
               <p style={{ color: 'var(--text-secondary)', fontSize: 'clamp(0.9rem, 2vw, 1.05rem)', lineHeight: 1.7 }}>{t('subtitle')}</p>
             </Reveal>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -85,8 +85,8 @@ export default function SourcingWhySection() {
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: 'clamp(32px, 6vw, 56px)' }}>
             <span className="section-tag">{t('licensing.tag')}</span>
-            <h2 style={{ fontSize: 'clamp(1.4rem,3.5vw,2.5rem)', fontWeight: 800, color: 'var(--bg-darker)', marginBottom: '12px' }}>{t('licensing.title')}</h2>
-            <p style={{ color: '#4B5563', fontSize: 'clamp(0.9rem, 2vw, 1.05rem)', maxWidth: '600px', margin: '0 auto', lineHeight: 1.7 }}>{t('licensing.subtitle')}</p>
+            <h2 style={{ fontSize: 'clamp(1.5rem,4vw,3.5rem)', fontWeight: 800, color: 'var(--bg-darker)', marginBottom: '12px' }}>{t('licensing.title')}</h2>
+            <p style={{ color: 'var(--text-secondary)', fontSize: 'clamp(0.9rem, 2vw, 1.05rem)', maxWidth: '600px', margin: '0 auto', lineHeight: 1.7 }}>{t('licensing.subtitle')}</p>
           </div>
           <div className="lic-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'clamp(16px, 2vw, 24px)' }}>
             {LICENSES.map(({ key, preview, href }, i) => (
@@ -116,13 +116,13 @@ export default function SourcingWhySection() {
 
                 <div style={{ padding: 'clamp(16px, 2vw, 22px)', display: 'flex', flexDirection: 'column', flex: 1 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexDirection: isAr ? 'row-reverse' : 'row', marginBottom: '8px' }}>
-                    <CheckCircle2 size={18} color="var(--accent)" strokeWidth={2} style={{ flexShrink: 0 }} />
+                    <CheckCircle2 size={18} color="var(--accent-text)" strokeWidth={2} style={{ flexShrink: 0 }} />
                     <h3 style={{ color: 'var(--bg-darker)', fontSize: '1.05rem', fontWeight: 800, margin: 0 }}>
                       {t(`licensing.${key}Label`)}
                     </h3>
                   </div>
 
-                  <p style={{ color: '#4B5563', fontSize: '0.85rem', lineHeight: 1.6, margin: 0 }}>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', lineHeight: 1.6, margin: 0 }}>
                     {t(`licensing.${key}Value`)}
                   </p>
 
@@ -133,7 +133,7 @@ export default function SourcingWhySection() {
                       <p style={{ color: 'var(--bg-darker)', fontSize: '0.85rem', fontWeight: 700, lineHeight: 1.6, margin: '12px 0 0' }}>
                         {t('licensing.chinaEntity')}
                       </p>
-                      <div style={{ color: '#6B7280', fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', marginTop: '12px' }}>
+                      <div style={{ color: 'var(--text-tertiary)', fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', marginTop: '12px' }}>
                         {t('licensing.usccLabel')}
                       </div>
                       <div style={{ color: 'var(--bg-darker)', fontSize: '0.85rem', fontWeight: 700, fontFamily: 'IBM Plex Mono, monospace', marginTop: '2px' }}>
@@ -146,7 +146,7 @@ export default function SourcingWhySection() {
                     display: 'inline-flex', alignItems: 'center', gap: '6px',
                     flexDirection: isAr ? 'row-reverse' : 'row',
                     alignSelf: isAr ? 'flex-end' : 'flex-start',
-                    color: '#5C7F1F', fontSize: '0.85rem', fontWeight: 700,
+                    color: 'var(--accent-text)', fontSize: '0.85rem', fontWeight: 700,
                     marginTop: 'auto', paddingTop: '20px',
                   }}>
                     {t('licensing.viewDocument')}

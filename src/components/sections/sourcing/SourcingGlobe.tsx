@@ -108,6 +108,12 @@ export default function SourcingGlobe({ className = '', maxWidth = '480px', inte
     let animationId: number;
     let renderLoopStopped = false;
     let phi = 0;
+    // requestAnimationFrame fires once per display refresh, so a flat
+    // per-frame increment ties rotation speed to the viewer's monitor
+    // (roughly 2x faster on a 120Hz screen than 60Hz). Scaling by real
+    // elapsed time keeps the ~21s/revolution rate identical everywhere.
+    // 0.30 rad/s reproduces the previous 60Hz-implied rate (0.005 * 60).
+    let lastTs = performance.now();
 
     reducedMotionRef.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     isPausedRef.current = reducedMotionRef.current || offscreenRef.current;
@@ -115,7 +121,10 @@ export default function SourcingGlobe({ className = '', maxWidth = '480px', inte
     function animate() {
       if (!globe) return;
       if (offscreenRef.current) { renderLoopStopped = true; return; }
-      if (!isPausedRef.current) phi += 0.005;
+      const now = performance.now();
+      const dt = now - lastTs;
+      lastTs = now;
+      if (!isPausedRef.current) phi += 0.30 * (dt / 1000);
       globe.update({
         phi: phi + phiOffsetRef.current + dragOffset.current.phi,
       });
@@ -133,6 +142,10 @@ export default function SourcingGlobe({ className = '', maxWidth = '480px', inte
         }
         if (!offscreenRef.current && renderLoopStopped) {
           renderLoopStopped = false;
+          // Otherwise the elapsed-time delta since the last frame drawn
+          // before going offscreen (potentially minutes ago) would be read
+          // as real time and spin the globe forward to catch up.
+          lastTs = performance.now();
           animate();
         }
       },

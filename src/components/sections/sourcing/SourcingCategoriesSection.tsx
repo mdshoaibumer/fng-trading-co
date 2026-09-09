@@ -8,14 +8,14 @@ import { Laptop, Smartphone, BatteryCharging, Headphones, Watch, Router, Home, G
 const CATEGORY_KEYS = ['computers', 'mobileAccessories', 'chargers', 'audio', 'wearables', 'networking', 'smartHome', 'gaming'] as const;
 
 const ICONS: Record<typeof CATEGORY_KEYS[number], React.ReactNode> = {
-  computers: <Laptop size={26} color="var(--accent)" strokeWidth={1.5} />,
-  mobileAccessories: <Smartphone size={26} color="var(--accent)" strokeWidth={1.5} />,
-  chargers: <BatteryCharging size={26} color="var(--accent)" strokeWidth={1.5} />,
-  audio: <Headphones size={26} color="var(--accent)" strokeWidth={1.5} />,
-  wearables: <Watch size={26} color="var(--accent)" strokeWidth={1.5} />,
-  networking: <Router size={26} color="var(--accent)" strokeWidth={1.5} />,
-  smartHome: <Home size={26} color="var(--accent)" strokeWidth={1.5} />,
-  gaming: <Gamepad2 size={26} color="var(--accent)" strokeWidth={1.5} />,
+  computers: <Laptop size={26} color="var(--accent-text)" strokeWidth={1.5} />,
+  mobileAccessories: <Smartphone size={26} color="var(--accent-text)" strokeWidth={1.5} />,
+  chargers: <BatteryCharging size={26} color="var(--accent-text)" strokeWidth={1.5} />,
+  audio: <Headphones size={26} color="var(--accent-text)" strokeWidth={1.5} />,
+  wearables: <Watch size={26} color="var(--accent-text)" strokeWidth={1.5} />,
+  networking: <Router size={26} color="var(--accent-text)" strokeWidth={1.5} />,
+  smartHome: <Home size={26} color="var(--accent-text)" strokeWidth={1.5} />,
+  gaming: <Gamepad2 size={26} color="var(--accent-text)" strokeWidth={1.5} />,
 };
 
 export default function SourcingCategoriesSection() {
@@ -61,7 +61,7 @@ export default function SourcingCategoriesSection() {
             </Reveal>
           ))}
         </div>
-        <p style={{ color: '#888', fontSize: '0.8rem', lineHeight: 1.7, marginTop: 'clamp(24px, 4vw, 40px)', textAlign: 'center', maxWidth: '700px', marginInline: 'auto' }}>
+        <p style={{ color: 'var(--text-tertiary)', fontSize: '0.8rem', lineHeight: 1.7, marginTop: 'clamp(24px, 4vw, 40px)', textAlign: 'center', maxWidth: '700px', marginInline: 'auto' }}>
           {t('footnote')}
         </p>
       </div>

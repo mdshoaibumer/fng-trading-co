@@ -31,7 +31,7 @@ export default function SourcingServicesSection() {
         </div>
         <div className="ss-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'clamp(16px, 3vw, 24px)' }}>
           {SERVICE_KEYS.map((key, i) => (
-            <Reveal key={key} delay={(i % 3) * 100} threshold={0.1}>
+            <Reveal key={key} delay={(i % 3) * 100} from="scale" threshold={0.1}>
             <div className="card-lift service-card" style={{ height: '100%',
               padding: 'clamp(20px, 4vw, 28px)', borderRadius: 'var(--radius-2xl)', background: '#fff',
               boxShadow: '0 4px 24px rgba(26,61,43,0.06)', border: '1px solid rgba(141,184,51,0.1)',
@@ -55,6 +55,9 @@ export default function SourcingServicesSection() {
       <style jsx>{`
         @media (hover: hover) {
           .service-card:hover { border-color: rgba(141, 184, 51, 0.35); }
+        }
+        @media (max-width: 1024px) {
+          .ss-grid { grid-template-columns: repeat(2, 1fr) !important; }
         }
         @media (max-width: 768px) {
           .ss-grid { grid-template-columns: 1fr !important; }

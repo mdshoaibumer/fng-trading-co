@@ -905,3 +905,13 @@ p {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* Inline links inside legal-page body copy — no additional affordance
+   beyond color previously marked them as clickable within a paragraph. */
+.legal-inline-link {
+  text-decoration: none;
+}
+.legal-inline-link:hover,
+.legal-inline-link:focus-visible {
+  text-decoration: underline;
+}
