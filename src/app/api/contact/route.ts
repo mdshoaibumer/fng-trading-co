@@ -6,30 +6,25 @@ import { rateLimit, globalRateLimit, getClientIp, tooManyRequests } from '@/lib/
 // Every field is length-capped: these land in the database and in a
 // notification email, so an unbounded body is a storage/spam problem.
 const contactSchema = z.object({
-  name: z.string().trim().min(2).max(120),
-  company: z.string().trim().min(2).max(160),
-  phone: z.string().trim().min(5).max(40),
+  name: z.string().trim().min(2, 'Name must be at least 2 characters').max(120),
+  company: z.string().trim().min(2, 'Company must be at least 2 characters').max(160),
+  phone: z.string().trim().min(5, 'Phone number must be at least 5 digits').max(40),
   country: z.string().trim().max(80).optional(),
   city: z.string().trim().max(120).optional(),
   quantity: z.string().trim().max(20).optional(),
-  email: z.union([z.string().trim().email().max(254), z.literal('')]).optional(),
+  email: z.union([z.string().trim().email('Invalid email address').max(254), z.literal('')]).optional(),
   industry: z.string().trim().max(120).optional(),
   message: z.string().trim().max(4000).optional(),
-  // Honeypot: a field real visitors never see or fill, styled off-screen
-  // in the form. Bots that auto-fill every input tend to fill this one.
   website: z.string().max(500).optional(),
+  _hp_company_fax: z.string().max(500).optional(),
 });
 
 export async function POST(request: Request) {
   try {
-    const { allowed, retryAfterSeconds } = rateLimit(`contact:${getClientIp(request)}`, 5, 10 * 60 * 1000);
+    const { allowed, retryAfterSeconds } = rateLimit(`contact:${getClientIp(request)}`, 30, 10 * 60 * 1000);
     if (!allowed) return tooManyRequests(retryAfterSeconds);
 
-    // Backstop against X-Forwarded-For spoofing (a fresh header value on
-    // every request resets the per-IP bucket above) — ignores the claimed
-    // IP entirely and caps total submissions across everyone, same pattern
-    // as the admin login route.
-    const global = globalRateLimit('contact', 50, 10 * 60 * 1000);
+    const global = globalRateLimit('contact', 100, 10 * 60 * 1000);
     if (!global.allowed) return tooManyRequests(global.retryAfterSeconds);
 
     const body = await request.json();
@@ -37,19 +32,19 @@ export async function POST(request: Request) {
     // Validate request body
     const result = contactSchema.safeParse(body);
     if (!result.success) {
-      return NextResponse.json({ error: 'Invalid or missing required fields' }, { status: 400 });
+      const issueMsg = result.error.issues.map(i => i.message).join('. ');
+      return NextResponse.json({ error: issueMsg || 'Invalid or missing required fields' }, { status: 400 });
     }
 
-    // Honeypot tripped: report success (don't tip off the bot) but skip
-    // the DB write and email — this is not a real submission.
-    if (result.data.website) {
+    // Only trip honeypot if dedicated hidden bot field is filled
+    if (result.data._hp_company_fax) {
       return NextResponse.json({ success: true, message: 'Form submitted successfully' });
     }
 
     const { name, company, phone, country, city, quantity, email, industry, message } = result.data;
 
     // Save to Supabase inquiries table
-    const { error } = await insertInquiry({
+    const { error: dbError } = await insertInquiry({
       type: 'contact',
       name,
       company,
@@ -63,9 +58,9 @@ export async function POST(request: Request) {
       status: 'new',
     });
 
-    if (error) {
-      console.error('Supabase insert error:', error);
-      throw error;
+    if (dbError) {
+      console.error('Supabase insert error:', dbError);
+      return NextResponse.json({ error: `Database error: ${dbError.message}` }, { status: 500 });
     }
 
     // Forward to Web3Forms for email notification (server-side, matching

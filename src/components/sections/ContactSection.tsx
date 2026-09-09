@@ -41,7 +41,7 @@ export default function ContactSection() {
     city: '',
     quantity: '1',
     message: '',
-    website: '',
+    _hp_company_fax: '',
   });
 
   // Move focus to the confirmation once the form is replaced, so a screen
@@ -65,16 +65,20 @@ export default function ContactSection() {
           quantity: form.quantity || defaultQuantity,
         }),
       });
+      const data = await res.json().catch(() => null);
       if (res.ok) {
         setStatus('success');
       } else if (res.status === 429) {
         setStatus('error');
-        setErrorMsg(isAr ? 'محاولات كثيرة جدًا. يرجى المحاولة مرة أخرى بعد دقيقة.' : 'Too many attempts. Please try again in a minute.');
+        setErrorMsg(isAr ? 'محاولات كثيرة جدًا. يرجى المحاولة مرة أخرى بعد دقيقة.' : (data?.error || 'Too many attempts. Please try again in a minute.'));
       } else {
         setStatus('error');
-        setErrorMsg('');
+        setErrorMsg(data?.error || (isAr ? 'فشل إرسال الرسالة. يرجى المحاولة مرة أخرى.' : 'Failed to send message. Please try again.'));
       }
-    } catch { setStatus('error'); setErrorMsg(''); }
+    } catch {
+      setStatus('error');
+      setErrorMsg(isAr ? 'خطأ في الاتصال بالشبكة. يرجى التحقق من اتصالك.' : 'Network connection error. Please check your connection.');
+    }
   };
 
   // No outline:none here — the global :focus-visible ring in globals.css is a
@@ -131,14 +135,11 @@ export default function ContactSection() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                {/* Honeypot: hidden from real visitors, tempting to bots that auto-fill every field.
-                    Clipped to 1x1px in place rather than pushed off-canvas with a huge negative
-                    offset — that older technique still contributes to the page's scrollable area,
-                    and under RTL a mobile browser can expand the whole layout viewport to reach it. */}
-                <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true"
+                {/* Honeypot: hidden from real visitors, tempting to bots that auto-fill every field. */}
+                <input type="text" name="_hp_company_fax" tabIndex={-1} autoComplete="new-password" aria-hidden="true"
                   style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0, opacity: 0 }}
-                  value={form.website}
-                  onChange={e => setForm(f => ({ ...f, website: e.target.value }))} />
+                  value={form._hp_company_fax}
+                  onChange={e => setForm(f => ({ ...f, _hp_company_fax: e.target.value }))} />
                 {leadContext && (
                   <div style={{
                     display: 'flex',
