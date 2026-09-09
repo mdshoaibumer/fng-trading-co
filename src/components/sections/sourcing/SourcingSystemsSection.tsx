@@ -277,7 +277,7 @@ export default function SourcingSystemsSection() {
       <div className="ssys-modal-backdrop" style={{
         position: 'fixed', inset: 0, zIndex: 9999,
         background: 'rgba(26,61,43,0.55)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'clamp(8px, 2vw, 16px)',
         opacity: selectedGroup ? 1 : 0, pointerEvents: selectedGroup ? 'auto' : 'none',
         visibility: selectedGroup ? 'visible' : 'hidden',
         transition: 'opacity 350ms ease, visibility 0s linear ' + (selectedGroup ? '0s' : '350ms'),
@@ -285,7 +285,7 @@ export default function SourcingSystemsSection() {
       onClick={closeModal}
       >
         <div ref={modalRef} role="dialog" aria-modal="true" aria-labelledby="ssys-modal-title" tabIndex={-1} className="ssys-modal-content" style={{
-          width: '100%', maxWidth: '1080px', maxHeight: '88vh', overflowY: 'auto',
+          width: '100%', maxWidth: '1080px', maxHeight: '90dvh', overflowY: 'auto',
           background: '#fff', borderRadius: 'var(--radius-xl)', overflowX: 'hidden',
           boxShadow: '0 40px 100px rgba(26,61,43,0.25)', position: 'relative',
           transform: selectedGroup ? 'translateY(0) scale(1)' : 'translateY(30px) scale(0.96)',
@@ -415,13 +415,14 @@ export default function SourcingSystemsSection() {
         }
         @media (max-width: 1024px) {
           .ssys-cat-grid { grid-template-columns: repeat(2, 1fr) !important; }
-          .ssys-gallery-grid { grid-template-columns: repeat(3, 1fr) !important; }
+          .ssys-gallery-grid { grid-template-columns: repeat(2, 1fr) !important; }
         }
         @media (max-width: 640px) {
           .ssys-cat-grid { grid-template-columns: 1fr !important; }
           .ssys-compliance-grid { grid-template-columns: 1fr !important; }
           .ssys-gallery-grid { grid-template-columns: repeat(2, 1fr) !important; }
-          .ssys-modal-content { max-height: 92vh !important; border-radius: var(--radius-lg) !important; }
+          .ssys-modal-backdrop { padding: 0 !important; }
+          .ssys-modal-content { max-height: 100dvh !important; border-radius: 0 !important; max-width: 100% !important; }
         }
       `}</style>
     </section>

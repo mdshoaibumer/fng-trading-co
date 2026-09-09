@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -169,32 +169,66 @@ export default function SourcingRouteRadar({
   isAr?: boolean;
   locale?: string;
 }) {
-  const [activeStageId, setActiveStageId] = useState<string>('saudi-customs');
+  const [activeStageId, setActiveStageId] = useState<string>('factory');
   const [freightMode, setFreightMode] = useState<'sea' | 'air'>('sea');
-  const activeStage = STAGES.find((s) => s.id === activeStageId) || STAGES[3];
+  const activeStage = STAGES.find((s) => s.id === activeStageId) || STAGES[0];
   const Arrow = isAr ? ArrowLeft : ArrowRight;
+  const cycleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const clearCycle = useCallback(() => {
+    if (cycleTimerRef.current) {
+      clearTimeout(cycleTimerRef.current);
+      cycleTimerRef.current = null;
+    }
+  }, []);
+
+  // Auto-cycle through all 5 stages sequentially, then stop.
+  const startAutoCycle = useCallback(() => {
+    clearCycle();
+    let currentIdx = 0;
+    setActiveStageId(STAGES[0].id);
+
+    const advanceStep = () => {
+      currentIdx++;
+      if (currentIdx < STAGES.length) {
+        setActiveStageId(STAGES[currentIdx].id);
+        cycleTimerRef.current = setTimeout(advanceStep, 1800);
+      } else {
+        cycleTimerRef.current = null;
+      }
+    };
+
+    cycleTimerRef.current = setTimeout(advanceStep, 1800);
+  }, [clearCycle]);
+
+  // Clean up timer on unmount
+  useEffect(() => () => clearCycle(), [clearCycle]);
+
+  const handleFreightModeChange = (mode: 'sea' | 'air') => {
+    setFreightMode(mode);
+    startAutoCycle();
+  };
 
   return (
     <section
       id="sourcing-radar"
       className="section"
       style={{
-        background: 'linear-gradient(180deg, #0A0F1D 0%, #0F172A 100%)',
-        color: '#FFFFFF',
+        background: '#FFFFFF',
+        color: 'var(--primary)',
         position: 'relative',
         overflow: 'hidden',
         padding: 'clamp(60px, 8vw, 110px) 0',
       }}
     >
-      {/* Background Radar Grid & Circuit Beams */}
+      {/* Background Subtle Grid */}
       <div
         style={{
           position: 'absolute',
           inset: 0,
           backgroundImage:
-            'radial-gradient(rgba(141, 184, 51, 0.08) 1px, transparent 1px), radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px)',
-          backgroundSize: '40px 40px, 20px 20px',
-          backgroundPosition: '0 0, 10px 10px',
+            'radial-gradient(rgba(141, 184, 51, 0.06) 1px, transparent 1px)',
+          backgroundSize: '40px 40px',
           pointerEvents: 'none',
         }}
       />
@@ -228,7 +262,7 @@ export default function SourcingRouteRadar({
             style={{
               fontSize: 'clamp(1.8rem, 4vw, 3.4rem)',
               fontWeight: 900,
-              color: '#FFFFFF',
+              color: 'var(--primary)',
               marginBottom: '16px',
               letterSpacing: '-0.02em',
               lineHeight: 1.2,
@@ -241,7 +275,7 @@ export default function SourcingRouteRadar({
 
           <p
             style={{
-              color: '#94A3B8',
+              color: 'var(--text-secondary)',
               fontSize: 'clamp(0.95rem, 2vw, 1.15rem)',
               lineHeight: 1.6,
               margin: '0 auto 28px',
@@ -256,14 +290,14 @@ export default function SourcingRouteRadar({
           <div
             style={{
               display: 'inline-flex',
-              background: 'rgba(255, 255, 255, 0.06)',
+              background: 'rgba(26, 61, 43, 0.06)',
               padding: '4px',
               borderRadius: 'var(--radius-pill)',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
+              border: '1px solid rgba(26, 61, 43, 0.12)',
             }}
           >
             <button
-              onClick={() => setFreightMode('sea')}
+              onClick={() => handleFreightModeChange('sea')}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -272,7 +306,7 @@ export default function SourcingRouteRadar({
                 borderRadius: 'var(--radius-pill)',
                 border: 'none',
                 background: freightMode === 'sea' ? 'var(--accent)' : 'transparent',
-                color: freightMode === 'sea' ? '#0F172A' : '#94A3B8',
+                color: freightMode === 'sea' ? '#fff' : 'var(--text-secondary)',
                 fontWeight: 800,
                 fontSize: '0.88rem',
                 cursor: 'pointer',
@@ -283,7 +317,7 @@ export default function SourcingRouteRadar({
               <span>{isAr ? 'شحن بحري حاويات (الأكثر توفيراً)' : 'Ocean Freight (Best TCO)'}</span>
             </button>
             <button
-              onClick={() => setFreightMode('air')}
+              onClick={() => handleFreightModeChange('air')}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -292,7 +326,7 @@ export default function SourcingRouteRadar({
                 borderRadius: 'var(--radius-pill)',
                 border: 'none',
                 background: freightMode === 'air' ? 'var(--accent)' : 'transparent',
-                color: freightMode === 'air' ? '#0F172A' : '#94A3B8',
+                color: freightMode === 'air' ? '#fff' : 'var(--text-secondary)',
                 fontWeight: 800,
                 fontSize: '0.88rem',
                 cursor: 'pointer',
@@ -321,7 +355,7 @@ export default function SourcingRouteRadar({
               left: '5%',
               right: '5%',
               height: '3px',
-              background: 'rgba(255, 255, 255, 0.1)',
+              background: 'rgba(26, 61, 43, 0.1)',
               zIndex: 1,
             }}
           >
@@ -362,7 +396,7 @@ export default function SourcingRouteRadar({
               return (
                 <button
                   key={stage.id}
-                  onClick={() => setActiveStageId(stage.id)}
+                  onClick={() => { clearCycle(); setActiveStageId(stage.id); }}
                   style={{
                     background: 'none',
                     border: 'none',
@@ -380,16 +414,16 @@ export default function SourcingRouteRadar({
                       width: '50px',
                       height: '50px',
                       borderRadius: '50%',
-                      background: isActive ? 'var(--accent)' : 'rgba(15, 23, 42, 0.9)',
-                      border: `2px solid ${isActive ? 'var(--accent)' : 'rgba(255, 255, 255, 0.2)'}`,
-                      color: isActive ? '#0F172A' : '#FFFFFF',
+                      background: isActive ? 'var(--accent)' : '#FFFFFF',
+                      border: `2px solid ${isActive ? 'var(--accent)' : 'rgba(26, 61, 43, 0.2)'}`,
+                      color: isActive ? '#FFFFFF' : 'var(--primary)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       fontWeight: 900,
                       fontFamily: 'monospace',
                       fontSize: '1rem',
-                      boxShadow: isActive ? '0 0 24px rgba(141, 184, 51, 0.6)' : '0 4px 12px rgba(0,0,0,0.5)',
+                      boxShadow: isActive ? '0 0 24px rgba(141, 184, 51, 0.5)' : '0 4px 12px rgba(0,0,0,0.08)',
                       marginBottom: '12px',
                       transition: 'all 0.25s ease',
                       position: 'relative',
@@ -403,7 +437,7 @@ export default function SourcingRouteRadar({
                     style={{
                       fontSize: '0.85rem',
                       fontWeight: isActive ? 800 : 600,
-                      color: isActive ? '#FFFFFF' : '#94A3B8',
+                      color: isActive ? 'var(--primary)' : 'var(--text-secondary)',
                       textAlign: 'center',
                       lineHeight: 1.3,
                       maxWidth: '140px',
@@ -417,7 +451,7 @@ export default function SourcingRouteRadar({
                     style={{
                       marginTop: '6px',
                       fontSize: '0.72rem',
-                      color: isActive ? 'var(--accent)' : '#64748B',
+                      color: isActive ? 'var(--accent-text)' : 'var(--text-tertiary)',
                       fontFamily: 'monospace',
                       fontWeight: 700,
                     }}
@@ -449,11 +483,11 @@ export default function SourcingRouteRadar({
               <SpotlightCard
                 className="glass"
                 style={{
-                  background: 'rgba(15, 23, 42, 0.85)',
+                  background: 'var(--primary)',
                   border: '1px solid rgba(141, 184, 51, 0.3)',
                   padding: 'clamp(24px, 4vw, 44px)',
                   borderRadius: 'var(--radius-2xl)',
-                  boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
+                  boxShadow: '0 20px 60px rgba(26, 61, 43, 0.15)',
                   position: 'relative',
                   textAlign: isAr ? 'right' : 'left',
                 }}
