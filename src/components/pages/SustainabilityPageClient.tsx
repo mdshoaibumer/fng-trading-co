@@ -16,15 +16,37 @@ import ImageComparison from '@/components/ui/ImageComparison';
  */
 function StatCard({ value, label }: { value: string; label: string }) {
   return (
-    <Reveal style={{ display: 'flex' }}>
-      <div className="card-lift" style={{ background: '#fff', padding: 'clamp(24px, 4vw, 40px)', borderRadius: 'var(--radius-xl)', border: '1px solid var(--light-grey)', textAlign: 'center', boxShadow: '0 10px 30px rgba(0,0,0,0.02)', width: '100%' }}>
+    <div style={{ display: 'flex' }}>
+      <div
+        className="card-lift"
+        style={{
+          background: '#fff',
+          padding: 'clamp(24px, 4vw, 40px)',
+          borderRadius: 'var(--radius-xl)',
+          border: '1px solid var(--light-grey)',
+          textAlign: 'center',
+          boxShadow: '0 10px 30px rgba(0,0,0,0.02)',
+          width: '100%',
+          contain: 'layout paint',
+        }}
+      >
         <CountUp
           value={value}
-          style={{ display: 'block', fontSize: 'clamp(2rem, 6vw, 3.5rem)', fontWeight: 900, color: 'var(--accent-text)', lineHeight: 1, marginBottom: '12px', fontFamily: 'var(--font-inter), sans-serif' }}
+          style={{
+            display: 'inline-block',
+            fontSize: 'clamp(2rem, 6vw, 3.5rem)',
+            fontWeight: 900,
+            color: 'var(--accent-text)',
+            lineHeight: 1.1,
+            marginBottom: '12px',
+            fontFamily: 'var(--font-inter), sans-serif',
+            fontVariantNumeric: 'tabular-nums',
+            fontFeatureSettings: '"tnum"',
+          }}
         />
         <div style={{ fontSize: 'clamp(0.9rem, 2vw, 1.2rem)', fontWeight: 700, color: 'var(--primary)' }}>{label}</div>
       </div>
-    </Reveal>
+    </div>
   );
 }
 
@@ -107,7 +129,6 @@ export default function SustainabilityPageClient() {
           </div>
         </div>
       </div>
-      <style jsx>{`@media(max-width:768px){.sp-stats{grid-template-columns:1fr!important}.sp-cycle{grid-template-columns:1fr!important}}`}</style>
     </main>
   );
 }

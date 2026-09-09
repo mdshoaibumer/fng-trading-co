@@ -964,3 +964,11 @@ p {
     animation: none !important;
   }
 }
+
+/* ─── SUSTAINABILITY PAGE RESPONSIVE GRIDS ─────────────────────────────── */
+@media (max-width: 768px) {
+  .sp-stats,
+  .sp-cycle {
+    grid-template-columns: 1fr !important;
+  }
+}

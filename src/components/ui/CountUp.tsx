@@ -97,7 +97,11 @@ export default function CountUp({
     <span
       ref={ref}
       className={className}
-      style={style}
+      style={{
+        fontVariantNumeric: 'tabular-nums',
+        whiteSpace: 'nowrap',
+        ...style,
+      }}
       // The animating digits are noise to a screen reader, which would
       // otherwise hear the number change dozens of times. It reads the final
       // value once instead.

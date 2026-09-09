@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { Target, Eye, ShieldCheck, CheckCircle2, Printer, Recycle, Wrench, Ship, MapPin, ArrowRight } from 'lucide-react';
 import Reveal from '@/components/ui/Reveal';
 import FlagIcon from '@/components/ui/FlagIcon';
-import DocumentInspectTrigger from '@/components/ui/DocumentInspectTrigger';
 import { DEFAULT_SERVICE_REGIONS } from '@/lib/serviceRegions';
 
 export default async function AboutPageClient({ locale }: { locale: string }) {
@@ -170,10 +169,6 @@ export default async function AboutPageClient({ locale }: { locale: string }) {
                 </div>
               </Reveal>
             ))}
-          </div>
-
-          <div style={{ marginTop: '32px', display: 'flex', justifyContent: 'center' }}>
-            <DocumentInspectTrigger isAr={isAr} variant="dark" />
           </div>
         </Reveal>
       </div>
