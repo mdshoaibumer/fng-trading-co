@@ -215,7 +215,7 @@ export default function TonerProductsSection() {
                   </div>
                 ))}
               </div>
-              <a href={`/${locale}/contact`} className="btn-primary" style={{ width: '100%', justifyContent: 'center', background: '#16A34A' }}>
+              <a href={`/${locale}/contact?category=eco_inks&toner=${encodeURIComponent(t('green.name'))}`} className="btn-primary" style={{ width: '100%', justifyContent: 'center', background: '#16A34A' }}>
                 {t('cta')}
               </a>
             </div>
@@ -276,7 +276,7 @@ export default function TonerProductsSection() {
                   </div>
                 ))}
               </div>
-              <a href={`/${locale}/contact`} className="btn-primary" style={{ width: '100%', justifyContent: 'center', background: '#7C3AED' }}>
+              <a href={`/${locale}/contact?category=eco_inks&toner=${encodeURIComponent(t('premium.name'))}`} className="btn-primary" style={{ width: '100%', justifyContent: 'center', background: '#7C3AED' }}>
                 {t('cta')}
               </a>
             </div>

@@ -3,7 +3,6 @@ import { SITE_URL } from '@/lib/siteContact';
 import type { Metadata } from 'next';
 import { safeJsonLd } from '@/lib/safeJsonLd';
 import PrinterPartsHeroSection from '@/components/sections/PrinterPartsHeroSection';
-import InteractivePrinterExploded from '@/components/ui/InteractivePrinterExploded';
 import PrinterPartsCatalogSection from '@/components/sections/PrinterPartsCatalogSection';
 import MaintenanceTeaser from '@/components/sections/MaintenanceTeaser';
 import ContactSection from '@/components/sections/ContactSection';
@@ -94,7 +93,6 @@ export default async function PrinterPartsPage({
           dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
         />
         <PrinterPartsHeroSection locale={locale} />
-        <InteractivePrinterExploded isAr={isAr} locale={locale} />
         <PrinterPartsCatalogSection />
         <MaintenanceTeaser />
         <ContactSection />

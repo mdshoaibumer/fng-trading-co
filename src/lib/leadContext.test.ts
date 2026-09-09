@@ -41,4 +41,20 @@ describe('parseLeadContext', () => {
     expect(ctx?.badgeEn).toContain('Inspection');
     expect(ctx?.badgeAr).toContain('كوانزو');
   });
+
+  it('detects eco inks inquiries and provides specialized toner quantity labels', () => {
+    const ctx = parseLeadContext('?category=eco_inks&toner=Premium%20Bio-Toner');
+    expect(ctx).not.toBeNull();
+    expect(ctx?.category).toBe('eco_inks');
+    expect(ctx?.badgeEn).toContain('Premium Bio-Toner');
+    expect(ctx?.quantityLabelEn).toContain('Cartridges');
+  });
+
+  it('detects office equipment inquiries and provides specialized workstation labels', () => {
+    const ctx = parseLeadContext('?category=office_equipment&product=Ergonomic%20Mesh%20Chair');
+    expect(ctx).not.toBeNull();
+    expect(ctx?.category).toBe('office_equipment');
+    expect(ctx?.badgeEn).toContain('Ergonomic Mesh Chair');
+    expect(ctx?.quantityLabelEn).toContain('Workstations');
+  });
 });

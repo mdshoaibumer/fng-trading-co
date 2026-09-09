@@ -1,7 +1,7 @@
 import { supabaseAdmin } from './supabase';
 
 export interface InquiryRow {
-  type: 'contact' | 'printer_request';
+  type: 'contact' | 'printer_request' | 'printer' | 'eco_inks' | 'printer_parts' | 'office_equipment' | 'sourcing' | 'general';
   name: string;
   company: string;
   phone: string;

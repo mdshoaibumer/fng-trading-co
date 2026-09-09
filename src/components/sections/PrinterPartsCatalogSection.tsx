@@ -134,7 +134,12 @@ export default function PrinterPartsCatalogSection() {
                         <a href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(isAr?`مرحباً، أريد الاستفسار عن: ${p.nameAr}`:`Hello, I'd like to inquire about: ${p.nameEn}`)}`} target="_blank" rel="noopener noreferrer"
                           style={{display:'inline-flex',alignItems:'center',justifyContent:'center',minHeight:'40px',padding:'8px 16px',borderRadius:'var(--radius-sm)',background:'var(--accent)',color:'var(--deep-forest)',fontSize:'0.75rem',fontWeight:700,textDecoration:'none',flexShrink:0,transition:'all 200ms ease',whiteSpace:'nowrap'}}
                           onMouseEnter={e=>{e.currentTarget.style.background='#7AA52D';}} onMouseLeave={e=>{e.currentTarget.style.background='var(--accent)';}}>
-                          {isAr?'استفسار':'Inquire'}
+                          {isAr?'واتساب':'WhatsApp'}
+                        </a>
+                        <a href={`/${locale}/contact?category=parts&part=${encodeURIComponent(p.nameEn)}`}
+                          style={{display:'inline-flex',alignItems:'center',justifyContent:'center',minHeight:'40px',padding:'8px 16px',borderRadius:'var(--radius-sm)',background:'rgba(26,61,43,0.08)',color:'var(--primary)',fontSize:'0.75rem',fontWeight:700,textDecoration:'none',flexShrink:0,transition:'all 200ms ease',whiteSpace:'nowrap',border:'1px solid rgba(26,61,43,0.15)'}}
+                          onMouseEnter={e=>{e.currentTarget.style.background='rgba(26,61,43,0.14)';}} onMouseLeave={e=>{e.currentTarget.style.background='rgba(26,61,43,0.08)';}}>
+                          {isAr?'نموذج طلب':'Inquire'}
                         </a>
                       </div>
                     ))}

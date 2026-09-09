@@ -17,6 +17,8 @@ const contactSchema = z.object({
   message: z.string().trim().max(4000).optional(),
   website: z.string().max(500).optional(),
   _hp_company_fax: z.string().max(500).optional(),
+  category: z.string().trim().max(60).optional(),
+  queryItem: z.string().trim().max(200).optional(),
 });
 
 export async function POST(request: Request) {
@@ -41,17 +43,23 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true, message: 'Form submitted successfully' });
     }
 
-    const { name, company, phone, country, city, quantity, email, industry, message } = result.data;
+    const { name, company, phone, country, city, quantity, email, industry, message, category, queryItem } = result.data;
+    const leadType = (category || 'contact') as import('@/lib/inquiries').InquiryRow['type'];
+
+    let finalMessage = message || '';
+    if (queryItem && !finalMessage.includes(queryItem)) {
+      finalMessage = `[Query: ${queryItem}]\n${finalMessage}`.trim();
+    }
 
     // Save to Supabase inquiries table
     const { error: dbError } = await insertInquiry({
-      type: 'contact',
+      type: leadType,
       name,
       company,
       phone,
       email: email || null,
       industry: industry || null,
-      message: message || null,
+      message: finalMessage || null,
       country: country || null,
       city: city || null,
       quantity: quantity || null,
@@ -82,14 +90,16 @@ export async function POST(request: Request) {
           },
           body: JSON.stringify({
             access_key: web3Key,
-            subject: `New Contact Lead - ${name} (${company})`,
+            subject: `New Lead [${leadType.toUpperCase()}] - ${name} (${company})`,
             from_name: 'FNG Website',
+            category: leadType,
+            query_item: queryItem || 'N/A',
             name,
             company,
             phone,
             email: email || 'N/A',
             industry: industry || 'N/A',
-            message: message || 'N/A',
+            message: finalMessage || 'N/A',
             country: country || 'N/A',
             city: city || 'N/A',
             quantity: quantity || '1'

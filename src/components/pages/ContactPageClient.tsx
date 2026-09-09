@@ -7,7 +7,7 @@ import { CheckCircle2, MapPin, Mail, Phone, Clock, ShieldCheck, Zap, Loader2 } f
 import { SITE_EMAIL } from '@/lib/siteContact';
 import { officeRegions, regionName, regionHub } from '@/lib/serviceRegions';
 import { useServiceRegions } from '@/components/providers/ServiceRegionsProvider';
-import { useLeadContext } from '@/lib/leadContext';
+import { useLeadContext, CATEGORY_CONFIG } from '@/lib/leadContext';
 import Reveal from '@/components/ui/Reveal';
 
 export default function ContactPageClient({ email }: { email?: string }) {
@@ -18,9 +18,11 @@ export default function ContactPageClient({ email }: { email?: string }) {
   const isAr = locale === 'ar';
   const [status, setStatus] = useState<'idle'|'loading'|'success'|'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
-  const { leadContext, dismiss: dismissLeadContext } = useLeadContext();
+  const { leadContext, categoryFromPath, dismiss: dismissLeadContext } = useLeadContext();
   const defaultMessage = leadContext ? (isAr ? leadContext.messageAr : leadContext.messageEn) : '';
   const defaultQuantity = leadContext?.quantity || '1';
+  const activeCategory = leadContext?.category || categoryFromPath;
+  const categoryConfig = CATEGORY_CONFIG[activeCategory];
   const successRef = useRef<HTMLDivElement>(null);
   const serviceRegions = useServiceRegions();
   const [form, setForm] = useState({ name: '', company: '', phone: '', email: '', industry: '', country: serviceRegions[0].nameEn, city: '', message: '', quantity: '1', _hp_company_fax: '' });
@@ -41,6 +43,8 @@ export default function ContactPageClient({ email }: { email?: string }) {
           ...form,
           message: form.message.trim() || defaultMessage,
           quantity: form.quantity || defaultQuantity,
+          category: activeCategory,
+          queryItem: leadContext ? (isAr ? leadContext.badgeAr : leadContext.badgeEn) : undefined,
         }),
       });
       const data = await res.json().catch(() => null);
@@ -323,10 +327,10 @@ export default function ContactPageClient({ email }: { email?: string }) {
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label htmlFor="contact-page-quantity" style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: 600 }}>{t('form.quantity')}</label>
+                  <label htmlFor="contact-page-quantity" style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: 600 }}>{isAr ? categoryConfig.quantityLabelAr : categoryConfig.quantityLabelEn}</label>
                   <select id="contact-page-quantity" style={{ ...inputStyle, cursor: 'pointer' }} value={form.quantity || defaultQuantity}
                     onChange={e => setForm(f => ({ ...f, quantity: e.target.value }))}>
-                    {[1, 2, 3, 5, 10, 20, '50+'].map(n => <option key={n} value={n} style={{ color: '#000' }}>{n}</option>)}
+                    {categoryConfig.options.map(n => <option key={n} value={n} style={{ color: '#000' }}>{n}</option>)}
                   </select>
                 </div>
 

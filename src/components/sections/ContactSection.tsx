@@ -1,33 +1,29 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useParams, usePathname } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
 import { CheckCircle2, Lock, Clock, Loader2 } from 'lucide-react';
 import { regionName } from '@/lib/serviceRegions';
 import { useServiceRegions } from '@/components/providers/ServiceRegionsProvider';
-import { useLeadContext } from '@/lib/leadContext';
+import { useLeadContext, CATEGORY_CONFIG } from '@/lib/leadContext';
 import Reveal from '@/components/ui/Reveal';
 
 export default function ContactSection() {
   const t = useTranslations('contact');
   const params = useParams();
-  const pathname = usePathname();
   const locale = params.locale as string;
   const isAr = locale === 'ar';
-  // This form is shared across every business page (home, printers,
-  // printer-parts, eco-inks, equipment, sourcing) via a single
-  // useTranslations('contact') namespace. "Number of Printers Needed" only
-  // makes sense on the printer-refurbishment funnel — Sourcing (electronics)
-  // and Equipment (office furniture/hardware) get a neutral quantity label
-  // instead, so the lead form doesn't ask an out-of-context question on its
-  // own primary CTA destination.
-  const isPrinterFunnel = !pathname.includes('/sourcing') && !pathname.includes('/equipment');
   const [status, setStatus] = useState<'idle'|'loading'|'success'|'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
-  const { leadContext, dismiss: dismissLeadContext } = useLeadContext();
+  const { leadContext, categoryFromPath, dismiss: dismissLeadContext } = useLeadContext();
   const defaultMessage = leadContext ? (isAr ? leadContext.messageAr : leadContext.messageEn) : '';
   const defaultQuantity = leadContext?.quantity || '1';
+  // Use the category from lead context (query params) or fall back to
+  // pathname-based detection so that the quantity label/options always match
+  // the page context even without explicit query parameters.
+  const activeCategory = leadContext?.category || categoryFromPath;
+  const categoryConfig = CATEGORY_CONFIG[activeCategory];
   const successRef = useRef<HTMLDivElement>(null);
   // `country` stores the English country name so leads read consistently in
   // the admin panel whichever language the visitor used.
@@ -63,6 +59,8 @@ export default function ContactSection() {
           ...form,
           message: form.message.trim() || defaultMessage,
           quantity: form.quantity || defaultQuantity,
+          category: activeCategory,
+          queryItem: leadContext ? (isAr ? leadContext.badgeAr : leadContext.badgeEn) : undefined,
         }),
       });
       const data = await res.json().catch(() => null);
@@ -211,10 +209,10 @@ export default function ContactSection() {
                   </div>
                 </div>
                 <div>
-                  <label htmlFor="contact-quantity" style={{ display: 'block', color: 'rgba(255,255,255,0.55)', fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', textAlign: isAr ? 'right' : 'left' }}>{isPrinterFunnel ? t('form.quantity') : t('form.quantityGeneric')}</label>
+                  <label htmlFor="contact-quantity" style={{ display: 'block', color: 'rgba(255,255,255,0.55)', fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', textAlign: isAr ? 'right' : 'left' }}>{isAr ? categoryConfig.quantityLabelAr : categoryConfig.quantityLabelEn}</label>
                   <select id="contact-quantity" style={{ ...inputStyle, cursor: 'pointer' }} value={form.quantity || defaultQuantity}
                     onChange={e => setForm(f => ({ ...f, quantity: e.target.value }))}>
-                    {[1,2,3,5,10,20].map(n => <option key={n} value={n} style={{ color: '#000' }}>{n}</option>)}
+                    {categoryConfig.options.map(n => <option key={n} value={n} style={{ color: '#000' }}>{n}</option>)}
                   </select>
                 </div>
                 <div>
