@@ -182,9 +182,9 @@ export default async function HomePage({
         />
         <FreePrinterSection />
         <HowItWorksSection />
-        <VideoDivider src={videos.divider1 || ''} />
+        <VideoDivider src={videos.divider1 || '/videos/forest-animation.mp4'} />
         <IndustriesSection />
-        <VideoDivider src={videos.divider2 || ''} />
+        <VideoDivider src={videos.divider2 || '/videos/botanical-vortex.mp4'} />
         <TrustSection />
         <ContactSection />
       </main>

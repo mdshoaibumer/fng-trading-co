@@ -14,7 +14,6 @@ import {
   HelpCircle,
   Phone,
   ChevronDown,
-  ArrowUpRight,
   MessageSquare,
 } from 'lucide-react';
 import { useDialogA11y } from '@/lib/useDialogA11y';
@@ -321,8 +320,40 @@ export default function Navbar() {
               );
             })
           ) : (
-            // Printer Track: Refined 4-Pillar Categorized Navigation
+            // Printer Track: Refined Navigation with Home & 4 Pillars
             <>
+              {/* Home Link */}
+              <Link
+                href={homeHref(locale, false)}
+                onClick={(e) => handleHomeClick(e, homeHref(locale, false))}
+                style={{
+                  color: isCurrentPage(pathname, homeHref(locale, false)) ? 'var(--accent-text)' : '#374151',
+                  textDecoration: 'none',
+                  fontSize: '0.92rem',
+                  fontWeight: isCurrentPage(pathname, homeHref(locale, false)) ? 700 : 600,
+                  transition: 'color 180ms ease',
+                  position: 'relative',
+                  whiteSpace: 'nowrap',
+                  padding: '8px 4px',
+                }}
+                className="nav-link-item"
+              >
+                {t('home')}
+                {isCurrentPage(pathname, homeHref(locale, false)) && (
+                  <span
+                    style={{
+                      position: 'absolute',
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      height: '2px',
+                      background: 'var(--accent-text)',
+                      borderRadius: '2px',
+                    }}
+                  />
+                )}
+              </Link>
+
               {/* Pillar 1: Fleet & Hardware Dropdown */}
               <div
                 className="nav-dropdown-anchor"
@@ -722,38 +753,34 @@ export default function Navbar() {
             {t('lang')}
           </Link>
 
-          {/* Sourcing Cross-Track Switcher (Refined Secondary Ghost Pill) */}
+          {/* Sourcing Cross-Track Switcher (Green Highlighted Pill) */}
           <a
             href={isSourcing ? `/${locale}` : `/${locale}/sourcing`}
             onClick={isSourcing ? markGateSeen : undefined}
             className="nav-sourcing-btn"
             style={{
-              height: '40px',
+              height: '42px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               gap: '6px',
-              padding: '0 16px',
-              borderRadius: '12px',
-              background: 'rgba(26, 61, 43, 0.05)',
-              border: '1px solid rgba(26, 61, 43, 0.14)',
-              color: 'var(--primary)',
-              fontSize: '0.86rem',
-              fontWeight: 600,
+              padding: '0 20px',
+              borderRadius: 'var(--radius-pill)',
+              background: 'var(--accent)',
+              color: 'var(--deep-forest)',
+              fontSize: '0.88rem',
+              fontWeight: 700,
               textDecoration: 'none',
               whiteSpace: 'nowrap',
-              transition: 'all 200ms ease',
+              transition: 'all 200ms var(--ease-spring)',
+              boxShadow: '0 4px 12px rgba(141, 184, 51, 0.35)',
               flexDirection: isAr ? 'row-reverse' : 'row',
             }}
           >
             <span>{isSourcing ? t('refurbishedPrinters') : t('sourcing')}</span>
-            <ArrowUpRight
-              size={14}
-              style={{
-                transform: isAr ? 'rotate(-90deg)' : 'none',
-                opacity: 0.8,
-              }}
-            />
+            <span aria-hidden="true" style={{ fontSize: '1rem', lineHeight: 1 }}>
+              {isAr ? '←' : '→'}
+            </span>
           </a>
 
           {/* Primary Enterprise CTA (Hero Focal Action) */}
@@ -994,6 +1021,22 @@ export default function Navbar() {
           ) : (
             <>
               <Link
+                href={homeHref(locale, false)}
+                onClick={(e) => {
+                  setMobileOpen(false);
+                  handleHomeClick(e, homeHref(locale, false));
+                }}
+                style={{
+                  color: isCurrentPage(pathname, homeHref(locale, false)) ? 'var(--accent-text)' : '#111827',
+                  textDecoration: 'none',
+                  fontSize: '1.05rem',
+                  fontWeight: 700,
+                  padding: '8px 0',
+                }}
+              >
+                {t('home')}
+              </Link>
+              <Link
                 href={`/${locale}/industries`}
                 onClick={() => setMobileOpen(false)}
                 style={{
@@ -1069,22 +1112,24 @@ export default function Navbar() {
             }}
             style={{
               padding: '14px',
-              borderRadius: '12px',
-              background: 'rgba(26, 61, 43, 0.06)',
-              border: '1px solid rgba(26, 61, 43, 0.15)',
-              color: 'var(--primary)',
-              fontWeight: 700,
+              borderRadius: 'var(--radius-pill)',
+              background: 'var(--accent)',
+              color: 'var(--deep-forest)',
+              fontWeight: 800,
               textDecoration: 'none',
-              fontSize: '0.92rem',
+              fontSize: '0.94rem',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               gap: '8px',
+              boxShadow: '0 4px 14px rgba(141, 184, 51, 0.35)',
               flexDirection: isAr ? 'row-reverse' : 'row',
             }}
           >
             <span>{isSourcing ? t('refurbishedPrinters') : t('sourcing')}</span>
-            <ArrowUpRight size={16} />
+            <span aria-hidden="true" style={{ fontSize: '1rem', lineHeight: 1 }}>
+              {isAr ? '←' : '→'}
+            </span>
           </a>
 
           <a
@@ -1142,9 +1187,8 @@ export default function Navbar() {
         }
 
         .nav-sourcing-btn:hover {
-          background: rgba(26, 61, 43, 0.12) !important;
-          border-color: rgba(26, 61, 43, 0.25) !important;
-          transform: translateY(-1px);
+          transform: translateY(-1px) scale(1.03);
+          box-shadow: 0 8px 22px rgba(141, 184, 51, 0.5) !important;
         }
 
         .nav-primary-cta:hover {

@@ -35,51 +35,109 @@ export default function VideoDivider({
     return () => mq.removeEventListener('change', sync);
   }, []);
 
+  // Ensure DOM video properties are explicitly set for autoplay compliance
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+      video.muted = true;
+      video.defaultMuted = true;
+      video.playsInline = true;
+    }
+  }, []);
+
+  // Reload when src changes
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video && src) {
+      video.load();
+    }
+  }, [src]);
+
   // Play only while visible, not reduced-motion, not user-paused, and the tab
-  // is foregrounded — and actually pause() when it scrolls out of view (the old
-  // observer disconnected after the first play and looped forever off-screen,
-  // burning data/battery on a homepage that guarantees scrolling past it).
+  // is foregrounded — and pause when out of view to save CPU/battery.
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-    if (reduced || paused) { video.pause(); return; }
+    if (reduced || paused) {
+      video.pause();
+      return;
+    }
 
     let visible = false;
-    const tryPlay = () => { if (visible && !document.hidden) video.play().catch(() => {}); };
+
+    const tryPlay = async () => {
+      if (!video) return;
+      video.muted = true;
+      video.defaultMuted = true;
+      try {
+        if (visible && !document.hidden && !paused && !reduced) {
+          const playPromise = video.play();
+          if (playPromise !== undefined) {
+            await playPromise;
+          }
+        }
+      } catch {
+        // Fallback retry when enough data has buffered
+        const onCanPlay = () => {
+          if (visible && !document.hidden && !paused && !reduced) {
+            video.muted = true;
+            video.play().catch(() => {});
+          }
+        };
+        video.addEventListener('canplay', onCanPlay, { once: true });
+      }
+    };
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         visible = entry.isIntersecting;
-        if (visible) tryPlay(); else video.pause();
+        if (visible) {
+          tryPlay();
+        } else {
+          video.pause();
+        }
       },
       { rootMargin: '200px 0px' }
     );
+
     observer.observe(video);
-    const onVis = () => { if (document.hidden) video.pause(); else tryPlay(); };
+
+    const onVis = () => {
+      if (document.hidden) {
+        video.pause();
+      } else if (visible) {
+        tryPlay();
+      }
+    };
+
     document.addEventListener('visibilitychange', onVis);
+
     return () => {
       observer.disconnect();
       document.removeEventListener('visibilitychange', onVis);
     };
   }, [reduced, paused]);
 
-  // No configured video (e.g. a fresh install before Settings has been
-  // filled in) — skip rendering rather than emit a <source src=""> that
-  // triggers a full unnecessary network re-fetch of the page.
+  // No configured video — skip rendering
   if (!src) return null;
 
   return (
-    <div style={{
-      position: 'relative',
-      width: '100%',
-      height,
-      overflow: 'hidden',
-    }}>
+    <div
+      style={{
+        position: 'relative',
+        width: '100%',
+        height,
+        overflow: 'hidden',
+      }}
+    >
       <video
         ref={videoRef}
+        src={src}
+        autoPlay
         loop
         muted
         playsInline
-        preload="metadata"
+        preload="auto"
         poster={poster}
         aria-hidden="true"
         style={{
@@ -96,24 +154,33 @@ export default function VideoDivider({
       >
         <source src={src} type="video/mp4" />
       </video>
-      {/* Dark overlay */}
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        background: overlay || `linear-gradient(180deg, rgba(15,42,28,${darken}) 0%, rgba(15,42,28,${darken * 0.7}) 50%, rgba(15,42,28,${darken}) 100%)`,
-        pointerEvents: 'none',
-      }} />
 
-      {/* Pause / play control — WCAG 2.2.2: any auto-playing motion that lasts
-          more than 5s must be stoppable. Hidden under reduced motion, where the
-          clip never plays. */}
+      {/* Dark overlay */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background:
+            overlay ||
+            `linear-gradient(180deg, rgba(15,42,28,${darken}) 0%, rgba(15,42,28,${darken * 0.7}) 50%, rgba(15,42,28,${darken}) 100%)`,
+          pointerEvents: 'none',
+        }}
+      />
+
+      {/* Pause / play control — WCAG 2.2.2 */}
       {!reduced && (
         <button
           type="button"
-          onClick={() => setPaused(p => !p)}
-          aria-label={paused
-            ? (isAr ? 'تشغيل الفيديو الخلفي' : 'Play background video')
-            : (isAr ? 'إيقاف الفيديو الخلفي' : 'Pause background video')}
+          onClick={() => setPaused((p) => !p)}
+          aria-label={
+            paused
+              ? isAr
+                ? 'تشغيل الفيديو الخلفي'
+                : 'Play background video'
+              : isAr
+                ? 'إيقاف الفيديو الخلفي'
+                : 'Pause background video'
+          }
           style={{
             position: 'absolute',
             bottom: '12px',
