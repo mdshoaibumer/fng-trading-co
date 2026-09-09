@@ -110,11 +110,11 @@ export default function TonerProductsSection() {
   ];
 
   const premiumFeatures = [
-    { icon: <Sparkles size={16} color="#7C3AED" />, text: t('premium.features.0') },
-    { icon: <Zap size={16} color="#7C3AED" />, text: t('premium.features.1') },
-    { icon: <BarChart3 size={16} color="#7C3AED" />, text: t('premium.features.2') },
-    { icon: <Award size={16} color="#7C3AED" />, text: t('premium.features.3') },
-    { icon: <DollarSign size={16} color="#7C3AED" />, text: t('premium.features.4') },
+    { icon: <Sparkles size={16} color="var(--primary)" />, text: t('premium.features.0') },
+    { icon: <Zap size={16} color="var(--primary)" />, text: t('premium.features.1') },
+    { icon: <BarChart3 size={16} color="var(--primary)" />, text: t('premium.features.2') },
+    { icon: <Award size={16} color="var(--primary)" />, text: t('premium.features.3') },
+    { icon: <DollarSign size={16} color="var(--primary)" />, text: t('premium.features.4') },
   ];
 
   return (
@@ -224,24 +224,24 @@ export default function TonerProductsSection() {
           {/* PREMIUM TONER CARD */}
           <div style={{
             borderRadius: 'var(--radius-xl)', overflow: 'hidden',
-            border: '2px solid rgba(124, 58, 237, 0.2)',
+            border: '2px solid rgba(26, 61, 43, 0.16)',
             background: '#FFFFFF',
             transition: 'all 300ms ease',
             boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
           }}
-            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-6px)'; e.currentTarget.style.boxShadow = '0 20px 40px rgba(124,58,237,0.12)'; }}
+            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-6px)'; e.currentTarget.style.boxShadow = '0 20px 40px rgba(26,61,43,0.12)'; }}
             onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.04)'; }}
           >
             {/* Image area */}
             <div style={{
-              height: '280px', background: 'linear-gradient(135deg, #EFF6FF, #DBEAFE)',
+              height: '280px', background: 'linear-gradient(135deg, #F7F8F5, #E8F0E4)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               position: 'relative',
             }}>
               <ImageCarousel images={PREMIUM_IMAGES} alt="EcoInks Premium Toner" isAr={isAr} />
               <div style={{
                 position: 'absolute', top: '16px', left: isAr ? 'auto' : '16px', right: isAr ? '16px' : 'auto',
-                background: 'linear-gradient(135deg, #7C3AED, #6D28D9)', color: '#fff',
+                background: 'linear-gradient(135deg, var(--primary, #1A3D2B), #4A5E2A)', color: '#fff',
                 padding: '6px 16px', borderRadius: 'var(--radius-2xl)', fontSize: 'var(--text-xs)', fontWeight: 700,
                 display: 'flex', alignItems: 'center', gap: '5px', zIndex: 4,
               }}>
@@ -252,7 +252,7 @@ export default function TonerProductsSection() {
             {/* Content */}
             <div style={{ padding: 'clamp(20px, 4vw, 32px)' }}>
               <div style={{ marginBottom: '4px' }}>
-                <span style={{ color: '#7C3AED', fontSize: 'var(--text-xs)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                <span style={{ color: 'var(--primary-light, #4A5E2A)', fontSize: 'var(--text-xs)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                   {t('premium.type')}
                 </span>
               </div>
@@ -269,14 +269,14 @@ export default function TonerProductsSection() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px' }}>
                 {premiumFeatures.map((f, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', flexDirection: isAr ? 'row-reverse' : 'row' }}>
-                    <div style={{ width: '28px', height: '28px', borderRadius: 'var(--radius-sm)', background: 'rgba(124,58,237,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <div style={{ width: '28px', height: '28px', borderRadius: 'var(--radius-sm)', background: 'rgba(26,61,43,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                       {f.icon}
                     </div>
                     <span style={{ color: '#333', fontSize: '0.85rem', fontWeight: 500 }}>{f.text}</span>
                   </div>
                 ))}
               </div>
-              <a href={`/${locale}/contact?category=eco_inks&toner=${encodeURIComponent(t('premium.name'))}`} className="btn-primary" style={{ width: '100%', justifyContent: 'center', background: '#7C3AED' }}>
+              <a href={`/${locale}/contact?category=eco_inks&toner=${encodeURIComponent(t('premium.name'))}`} className="btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
                 {t('cta')}
               </a>
             </div>

@@ -258,7 +258,7 @@ Please prepare official quotation.`;
                   <label style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--primary)' }}>
                     {isAr ? 'نسبة الطباعة الملونة إلى الأبيض والأسود:' : 'Color vs Mono Print Ratio:'}
                   </label>
-                  <span style={{ fontSize: '0.95rem', fontWeight: 800, color: '#3B82F6', fontFamily: 'var(--font-mono)' }}>
+                  <span style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--accent-text)', fontFamily: 'var(--font-mono)' }}>
                     {colorRatio}% {isAr ? 'ألوان' : 'Color'} / {100 - colorRatio}% {isAr ? 'أبيض وأسود' : 'Mono'}
                   </span>
                 </div>
@@ -273,7 +273,7 @@ Please prepare official quotation.`;
                     width: '100%',
                     height: '8px',
                     borderRadius: '4px',
-                    accentColor: '#3B82F6',
+                    accentColor: 'var(--accent-text)',
                     cursor: 'pointer',
                   }}
                 />
@@ -336,16 +336,16 @@ Please prepare official quotation.`;
           {/* Right Panel: Instant Telemetry & BOQ Output */}
           <div
             style={{
-              background: 'linear-gradient(135deg, #0D162B 0%, #080D1A 100%)',
+              background: 'linear-gradient(135deg, var(--deep-forest, #1A3D2B) 0%, #153324 50%, var(--header-bg, #0F2A1C) 100%)',
               borderRadius: '20px',
               padding: 'clamp(20px, 3vw, 32px)',
               color: '#FFFFFF',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
-              boxShadow: '0 16px 40px rgba(0, 0, 0, 0.25)',
+              boxShadow: '0 16px 40px rgba(10, 26, 17, 0.35)',
               position: 'relative',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
+              border: '1px solid rgba(141, 184, 51, 0.22)',
             }}
           >
             <div>

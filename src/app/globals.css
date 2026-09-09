@@ -955,8 +955,7 @@ p {
 }
 
 .page-enter-from-top {
-  animation: fngPageEnterFromTop 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
-  will-change: transform, opacity;
+  animation: fngPageEnterFromTop 280ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {

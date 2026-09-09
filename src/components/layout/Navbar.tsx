@@ -126,8 +126,8 @@ export default function Navbar() {
       label: t('ecoInks'),
       desc: t('ecoInksDesc'),
       icon: Droplets,
-      iconBg: 'rgba(16, 185, 129, 0.1)',
-      iconColor: '#059669',
+      iconBg: 'rgba(141, 184, 51, 0.14)',
+      iconColor: 'var(--accent-text)',
     },
     {
       href: `/${locale}/printer-parts`,
@@ -142,8 +142,8 @@ export default function Navbar() {
       label: t('officeEquipment'),
       desc: t('officeEquipmentDesc'),
       icon: Monitor,
-      iconBg: 'rgba(37, 99, 235, 0.1)',
-      iconColor: '#2563EB',
+      iconBg: 'rgba(74, 94, 42, 0.12)',
+      iconColor: '#4A5E2A',
     },
   ];
 
@@ -162,16 +162,16 @@ export default function Navbar() {
       label: t('faq'),
       desc: t('faqDesc'),
       icon: HelpCircle,
-      iconBg: 'rgba(99, 102, 241, 0.1)',
-      iconColor: '#4F46E5',
+      iconBg: 'rgba(141, 184, 51, 0.14)',
+      iconColor: 'var(--accent-text)',
     },
     {
       href: `/${locale}/contact`,
       label: t('contact'),
       desc: t('contactDesc'),
       icon: Phone,
-      iconBg: 'rgba(16, 185, 129, 0.1)',
-      iconColor: '#059669',
+      iconBg: 'rgba(26, 61, 43, 0.08)',
+      iconColor: 'var(--primary)',
     },
   ];
 

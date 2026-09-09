@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
@@ -152,14 +153,51 @@ export default function SourcingSystemsSection() {
   const isAr = params.locale === 'ar';
 
   const [selectedGroup, setSelectedGroup] = useState<GroupKey | null>(null);
+  const [mounted, setMounted] = useState(false);
   const activeGroup = GROUPS.find((g) => g.key === selectedGroup) ?? null;
   const closeModal = () => setSelectedGroup(null);
   const modalRef = useDialogA11y<HTMLDivElement>(selectedGroup !== null, closeModal);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
     document.body.style.overflow = selectedGroup ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [selectedGroup]);
+
+  const handleModalKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    const scrollTarget = e.currentTarget.querySelector('.ssys-modal-body') as HTMLElement | null;
+    if (!scrollTarget) return;
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        scrollTarget.scrollBy({ top: 120, behavior: 'smooth' });
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        scrollTarget.scrollBy({ top: -120, behavior: 'smooth' });
+        break;
+      case 'PageDown':
+        e.preventDefault();
+        scrollTarget.scrollBy({ top: scrollTarget.clientHeight * 0.85, behavior: 'smooth' });
+        break;
+      case 'PageUp':
+        e.preventDefault();
+        scrollTarget.scrollBy({ top: -scrollTarget.clientHeight * 0.85, behavior: 'smooth' });
+        break;
+      case 'Home':
+        e.preventDefault();
+        scrollTarget.scrollTo({ top: 0, behavior: 'smooth' });
+        break;
+      case 'End':
+        e.preventDefault();
+        scrollTarget.scrollTo({ top: scrollTarget.scrollHeight, behavior: 'smooth' });
+        break;
+    }
+  };
 
   return (
     <section id="sourcing-systems" className="section" style={{ background: 'var(--bg-secondary)' }}>
@@ -273,130 +311,308 @@ export default function SourcingSystemsSection() {
         </div>
       </div>
 
-      {/* Gallery modal */}
-      <div className="ssys-modal-backdrop" style={{
-        position: 'fixed', inset: 0, zIndex: 9999,
-        background: 'rgba(26,61,43,0.55)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'clamp(8px, 2vw, 16px)',
-        opacity: selectedGroup ? 1 : 0, pointerEvents: selectedGroup ? 'auto' : 'none',
-        visibility: selectedGroup ? 'visible' : 'hidden',
-        transition: 'opacity 350ms ease, visibility 0s linear ' + (selectedGroup ? '0s' : '350ms'),
-      }}
-      onClick={closeModal}
-      >
-        <div ref={modalRef} role="dialog" aria-modal="true" aria-labelledby="ssys-modal-title" tabIndex={-1} className="ssys-modal-content" style={{
-          width: '100%', maxWidth: '1080px', maxHeight: '90dvh', overflowY: 'auto',
-          background: '#fff', borderRadius: 'var(--radius-xl)', overflowX: 'hidden',
-          boxShadow: '0 40px 100px rgba(26,61,43,0.25)', position: 'relative',
-          transform: selectedGroup ? 'translateY(0) scale(1)' : 'translateY(30px) scale(0.96)',
-          transition: 'transform 450ms var(--ease-ink)',
-          border: '1px solid rgba(141,184,51,0.2)',
-          direction: isAr ? 'rtl' : 'ltr',
-        }}
-        onClick={(e) => e.stopPropagation()}
-        onKeyDown={(e) => {
-          // The Close button is the only focusable descendant, so Tab alone
-          // never lands keyboard focus on this scrollable region — without
-          // this, a keyboard-only (non-screen-reader) user has no way to
-          // reach items past the first screenful once body scroll is locked.
-          const el = e.currentTarget;
-          switch (e.key) {
-            case 'ArrowDown': el.scrollBy({ top: 120, behavior: 'smooth' }); break;
-            case 'ArrowUp': el.scrollBy({ top: -120, behavior: 'smooth' }); break;
-            case 'PageDown': e.preventDefault(); el.scrollBy({ top: el.clientHeight * 0.9, behavior: 'smooth' }); break;
-            case 'PageUp': e.preventDefault(); el.scrollBy({ top: -el.clientHeight * 0.9, behavior: 'smooth' }); break;
-            case 'Home': el.scrollTo({ top: 0, behavior: 'smooth' }); break;
-            case 'End': el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' }); break;
-          }
-        }}
+      {/* Gallery modal rendered via portal directly to body for true viewport centering */}
+      {mounted && createPortal(
+        <div
+          className="ssys-modal-backdrop"
+          role="presentation"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 99999,
+            background: 'rgba(10, 26, 17, 0.72)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 'clamp(12px, 3vw, 28px)',
+            overflowY: 'auto',
+            overscrollBehavior: 'contain',
+            opacity: selectedGroup ? 1 : 0,
+            pointerEvents: selectedGroup ? 'auto' : 'none',
+            visibility: selectedGroup ? 'visible' : 'hidden',
+            transition: 'opacity 280ms ease, visibility 0s linear ' + (selectedGroup ? '0s' : '280ms'),
+          }}
+          onClick={closeModal}
         >
-          {activeGroup && (() => {
-            const ActiveIcon = activeGroup.icon;
-            return (
-              <>
-                <div className="ssys-modal-header" style={{
-                  position: 'sticky', top: 0, zIndex: 2,
-                  background: 'linear-gradient(135deg, var(--primary), #4A5E2A)',
-                  padding: 'clamp(24px, 4vw, 36px) clamp(24px, 4vw, 40px)', color: '#fff',
-                  textAlign: isAr ? 'right' : 'left',
-                }}>
-                  <button onClick={closeModal} aria-label={isAr ? 'إغلاق' : 'Close'} style={{
-                    position: 'absolute', top: '16px', [isAr ? 'left' : 'right']: '16px',
-                    background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)',
-                    color: '#fff', width: '40px', height: '40px', borderRadius: '50%',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
-                    transition: 'background 200ms ease',
-                  }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
-                    onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+          <div
+            ref={modalRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="ssys-modal-title"
+            tabIndex={-1}
+            className="ssys-modal-content"
+            style={{
+              width: '100%',
+              maxWidth: '1120px',
+              maxHeight: 'min(88vh, 88dvh)',
+              margin: 'auto',
+              background: '#FFFFFF',
+              borderRadius: 'var(--radius-xl)',
+              display: 'flex',
+              flexDirection: 'column',
+              overflow: 'hidden',
+              boxShadow: '0 30px 90px rgba(10, 26, 17, 0.45), 0 0 0 1px rgba(141, 184, 51, 0.25)',
+              position: 'relative',
+              transform: selectedGroup ? 'translateY(0) scale(1)' : 'translateY(24px) scale(0.97)',
+              transition: 'transform 360ms var(--ease-ink)',
+              direction: isAr ? 'rtl' : 'ltr',
+            }}
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={handleModalKeyDown}
+          >
+            {activeGroup && (() => {
+              const ActiveIcon = activeGroup.icon;
+              return (
+                <>
+                  <div
+                    className="ssys-modal-header"
+                    style={{
+                      flexShrink: 0,
+                      background: 'linear-gradient(135deg, var(--primary, #1A3D2B) 0%, #264531 60%, var(--primary-light, #4A5E2A) 100%)',
+                      padding: 'clamp(20px, 3vw, 28px) clamp(20px, 3.5vw, 36px) clamp(16px, 2.5vw, 20px)',
+                      color: '#FFFFFF',
+                      position: 'relative',
+                      textAlign: isAr ? 'right' : 'left',
+                      borderBottom: '1px solid rgba(141, 184, 51, 0.25)',
+                    }}
                   >
-                    <X size={18} />
-                  </button>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexDirection: isAr ? 'row-reverse' : 'row', marginBottom: '10px' }}>
-                    <div style={{
-                      flexShrink: 0, width: '48px', height: '48px', borderRadius: 'var(--radius-md)',
-                      background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(255,255,255,0.2)',
-                    }}>
-                      <ActiveIcon size={24} color="#fff" strokeWidth={1.8} />
+                    <button
+                      type="button"
+                      onClick={closeModal}
+                      aria-label={isAr ? 'إغلاق' : 'Close'}
+                      style={{
+                        position: 'absolute',
+                        top: '16px',
+                        [isAr ? 'left' : 'right']: '16px',
+                        background: 'rgba(255,255,255,0.12)',
+                        border: '1px solid rgba(255,255,255,0.25)',
+                        color: '#FFFFFF',
+                        width: '40px',
+                        height: '40px',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        transition: 'all 200ms ease',
+                        zIndex: 10,
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'rgba(255,255,255,0.25)';
+                        e.currentTarget.style.transform = 'scale(1.06)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'rgba(255,255,255,0.12)';
+                        e.currentTarget.style.transform = 'scale(1)';
+                      }}
+                    >
+                      <X size={19} />
+                    </button>
+
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '14px',
+                        flexDirection: isAr ? 'row-reverse' : 'row',
+                        marginBottom: '8px',
+                        paddingInlineEnd: '48px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          flexShrink: 0,
+                          width: '46px',
+                          height: '46px',
+                          borderRadius: 'var(--radius-md)',
+                          background: 'rgba(255,255,255,0.14)',
+                          backdropFilter: 'blur(10px)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          border: '1px solid rgba(255,255,255,0.3)',
+                        }}
+                      >
+                        <ActiveIcon size={24} color="#FFFFFF" strokeWidth={1.8} />
+                      </div>
+                      <div>
+                        <h3
+                          id="ssys-modal-title"
+                          style={{
+                            color: '#FFFFFF',
+                            fontSize: 'clamp(1.2rem, 2.5vw, 1.6rem)',
+                            fontWeight: 800,
+                            marginBottom: '2px',
+                          }}
+                        >
+                          {t(`groups.${activeGroup.key}.name`)}
+                        </h3>
+                        <span style={{ fontSize: '0.76rem', color: 'var(--accent, #8DB833)', fontWeight: 700 }}>
+                          {t('itemsCount', { count: activeGroup.items.length })}
+                        </span>
+                      </div>
                     </div>
-                    <div>
-                      <h3 id="ssys-modal-title" style={{ color: '#fff', fontSize: 'clamp(1.25rem, 3vw, 1.7rem)', fontWeight: 800, marginBottom: '2px' }}>
-                        {t(`groups.${activeGroup.key}.name`)}
-                      </h3>
-                      <span style={{ fontSize: '0.78rem', opacity: 0.85, fontWeight: 600 }}>{t('itemsCount', { count: activeGroup.items.length })}</span>
+
+                    <p
+                      style={{
+                        color: 'rgba(255,255,255,0.88)',
+                        fontSize: '0.84rem',
+                        maxWidth: '720px',
+                        lineHeight: 1.55,
+                        marginBottom: '14px',
+                      }}
+                    >
+                      {t(`groups.${activeGroup.key}.desc`)}
+                    </p>
+
+                    {/* Category Navigation Menu Tabs */}
+                    <div
+                      className="ssys-modal-tabs"
+                      role="tablist"
+                      aria-label={isAr ? 'أقسام كتالوج الأنظمة' : 'Enterprise Catalog Categories'}
+                      style={{
+                        display: 'flex',
+                        gap: '8px',
+                        overflowX: 'auto',
+                        paddingBottom: '2px',
+                        scrollbarWidth: 'none',
+                      }}
+                    >
+                      {GROUPS.map((g) => {
+                        const isCurrent = g.key === activeGroup.key;
+                        const GIcon = g.icon;
+                        return (
+                          <button
+                            key={g.key}
+                            type="button"
+                            role="tab"
+                            aria-selected={isCurrent}
+                            onClick={() => setSelectedGroup(g.key)}
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '7px',
+                              padding: '7px 13px',
+                              borderRadius: 'var(--radius-pill)',
+                              border: isCurrent
+                                ? '1.5px solid var(--accent, #8DB833)'
+                                : '1px solid rgba(255, 255, 255, 0.22)',
+                              background: isCurrent
+                                ? 'rgba(141, 184, 51, 0.28)'
+                                : 'rgba(255, 255, 255, 0.09)',
+                              color: isCurrent ? '#FFFFFF' : 'rgba(255, 255, 255, 0.82)',
+                              fontWeight: isCurrent ? 700 : 500,
+                              fontSize: '0.78rem',
+                              whiteSpace: 'nowrap',
+                              cursor: 'pointer',
+                              transition: 'all 180ms ease',
+                              backdropFilter: 'blur(8px)',
+                              WebkitBackdropFilter: 'blur(8px)',
+                            }}
+                            onMouseEnter={(e) => {
+                              if (!isCurrent) {
+                                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.18)';
+                                e.currentTarget.style.color = '#FFFFFF';
+                              }
+                            }}
+                            onMouseLeave={(e) => {
+                              if (!isCurrent) {
+                                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.09)';
+                                e.currentTarget.style.color = 'rgba(255, 255, 255, 0.82)';
+                              }
+                            }}
+                          >
+                            <GIcon size={14} color={isCurrent ? 'var(--accent, #8DB833)' : '#FFFFFF'} />
+                            <span>{t(`groups.${g.key}.name`)}</span>
+                            <span
+                              style={{
+                                fontSize: '0.68rem',
+                                padding: '1px 5px',
+                                borderRadius: '999px',
+                                background: isCurrent ? 'var(--accent, #8DB833)' : 'rgba(255, 255, 255, 0.16)',
+                                color: isCurrent ? '#0E2318' : '#FFFFFF',
+                                fontWeight: 700,
+                              }}
+                            >
+                              {g.items.length}
+                            </span>
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
-                  <p style={{ color: '#fff', fontSize: '0.88rem', opacity: 0.9, maxWidth: '680px', lineHeight: 1.6 }}>
-                    {t(`groups.${activeGroup.key}.desc`)}
-                  </p>
-                </div>
 
-                <div style={{ padding: 'clamp(20px, 4vw, 36px)' }}>
-                  <div className="ssys-gallery-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
-                    {activeGroup.items.map((item) => (
-                      <div key={item.key} className="ssys-gallery-card card-lift" style={{
-                        borderRadius: 'var(--radius-lg)', border: '1px solid var(--light-grey)',
-                        overflow: 'hidden', background: '#fff',
-                      }}>
-                        <div style={{ position: 'relative', width: '100%', aspectRatio: '4/3' }}>
-                          <Image
-                            src={item.primary}
-                            alt={t(`groups.${activeGroup.key}.items.${item.key}.name`)}
-                            fill
-                            sizes="(max-width: 480px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                            className="ssys-img-primary"
-                            style={{ objectFit: 'cover' }}
-                          />
-                          {item.secondary && (
+                  <div
+                    className="ssys-modal-body"
+                    style={{
+                      flex: '1 1 auto',
+                      overflowY: 'auto',
+                      overscrollBehavior: 'contain',
+                      padding: 'clamp(20px, 3.5vw, 36px)',
+                    }}
+                  >
+                    <div
+                      className="ssys-gallery-grid"
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(4, 1fr)',
+                        gap: '16px',
+                      }}
+                    >
+                      {activeGroup.items.map((item) => (
+                        <div
+                          key={item.key}
+                          className="ssys-gallery-card card-lift"
+                          style={{
+                            borderRadius: 'var(--radius-lg)',
+                            border: '1px solid var(--light-grey)',
+                            overflow: 'hidden',
+                            background: '#FFFFFF',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
+                          }}
+                        >
+                          <div style={{ position: 'relative', width: '100%', aspectRatio: '4/3', background: '#F8FAF7' }}>
                             <Image
-                              src={item.secondary}
-                              alt=""
-                              aria-hidden="true"
+                              src={item.primary}
+                              alt={t(`groups.${activeGroup.key}.items.${item.key}.name`)}
                               fill
                               sizes="(max-width: 480px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                              className="ssys-img-secondary"
+                              className="ssys-img-primary"
                               style={{ objectFit: 'cover' }}
                             />
-                          )}
+                            {item.secondary && (
+                              <Image
+                                src={item.secondary}
+                                alt=""
+                                aria-hidden="true"
+                                fill
+                                sizes="(max-width: 480px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                                className="ssys-img-secondary"
+                                style={{ objectFit: 'cover' }}
+                              />
+                            )}
+                          </div>
+                          <div style={{ padding: '12px 14px', textAlign: isAr ? 'right' : 'left' }}>
+                            <h4 style={{ color: 'var(--primary)', fontSize: '0.85rem', fontWeight: 700, marginBottom: '4px' }}>
+                              {t(`groups.${activeGroup.key}.items.${item.key}.name`)}
+                            </h4>
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.76rem', lineHeight: 1.55 }}>
+                              {t(`groups.${activeGroup.key}.items.${item.key}.desc`)}
+                            </p>
+                          </div>
                         </div>
-                        <div style={{ padding: '12px 14px', textAlign: isAr ? 'right' : 'left' }}>
-                          <h4 style={{ color: 'var(--primary)', fontSize: '0.85rem', fontWeight: 700, marginBottom: '4px' }}>
-                            {t(`groups.${activeGroup.key}.items.${item.key}.name`)}
-                          </h4>
-                          <p style={{ color: 'var(--text-secondary)', fontSize: '0.76rem', lineHeight: 1.55 }}>
-                            {t(`groups.${activeGroup.key}.items.${item.key}.desc`)}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
-              </>
-            );
-          })()}
-        </div>
-      </div>
+                </>
+              );
+            })()}
+          </div>
+        </div>,
+        document.body
+      )}
 
       <style jsx>{`
         @media (hover: hover) {
@@ -413,6 +629,9 @@ export default function SourcingSystemsSection() {
           opacity: 0;
           transition: opacity 300ms ease;
         }
+        .ssys-modal-tabs::-webkit-scrollbar {
+          display: none;
+        }
         @media (max-width: 1024px) {
           .ssys-cat-grid { grid-template-columns: repeat(2, 1fr) !important; }
           .ssys-gallery-grid { grid-template-columns: repeat(2, 1fr) !important; }
@@ -421,8 +640,8 @@ export default function SourcingSystemsSection() {
           .ssys-cat-grid { grid-template-columns: 1fr !important; }
           .ssys-compliance-grid { grid-template-columns: 1fr !important; }
           .ssys-gallery-grid { grid-template-columns: repeat(2, 1fr) !important; }
-          .ssys-modal-backdrop { padding: 0 !important; }
-          .ssys-modal-content { max-height: 100dvh !important; border-radius: 0 !important; max-width: 100% !important; }
+          .ssys-modal-backdrop { padding: 8px !important; }
+          .ssys-modal-content { max-height: 96dvh !important; border-radius: var(--radius-lg) !important; }
         }
       `}</style>
     </section>
