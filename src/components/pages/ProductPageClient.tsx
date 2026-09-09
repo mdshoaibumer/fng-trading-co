@@ -11,6 +11,7 @@ import {
   CheckCircle2,
   XCircle,
   ShieldCheck,
+  Shield,
   Zap,
   MessageCircle,
   Phone,
@@ -93,6 +94,15 @@ export default function ProductPageClient({ product, whatsapp, locale, itemType 
 
   const inquiryText = isAr ? INQUIRY_TEXT[itemType].ar(product.name) : INQUIRY_TEXT[itemType].en(product.name);
   const whatsappLink = `https://wa.me/${whatsapp}?text=${encodeURIComponent(inquiryText)}`;
+  // Pulled out of the features list rather than a dedicated field — every
+  // seeded product states its warranty as a feature bullet (e.g. "12-month
+  // FNG refurbishment warranty"), so surfacing it as its own badge next to
+  // the availability status makes the bounded warranty term the numeric
+  // trust signal market research found competitors bury or omit, without
+  // requiring a schema change or inventing a term FNG hasn't actually stated.
+  const warrantyFeature = (isAr ? product.featuresAr : product.featuresEn).find((f) =>
+    isAr ? f.includes('ضمان') : /warranty/i.test(f)
+  );
 
   return (
     <main style={{ minHeight: '100vh', background: '#F8FAF7', paddingTop: '120px', paddingBottom: '80px' }}>
@@ -251,19 +261,32 @@ export default function ProductPageClient({ product, whatsapp, locale, itemType 
 
           {/* Right Column: Info */}
           <div className="info-column" style={{ position: 'sticky', top: '120px', order: isAr ? 1 : 2, textAlign: isAr ? 'right' : 'left' }}>
-            <div style={{
-              display: 'inline-flex', alignItems: 'center', gap: '8px',
-              background: product.available === false ? 'rgba(107, 114, 128, 0.1)' : 'rgba(141, 184, 51, 0.1)',
-              color: product.available === false ? '#6B7280' : 'var(--accent)',
-              padding: '6px 16px', borderRadius: 'var(--radius-2xl)', fontWeight: 700, fontSize: '0.85rem',
-              marginBottom: '20px', textTransform: 'uppercase',
-              flexDirection: isAr ? 'row-reverse' : 'row'
-            }}>
-              {product.available === false ? <XCircle size={16} /> : <ShieldCheck size={16} />}
-              {product.available === false
-                ? (isAr ? 'نفدت الكمية' : 'Out of Stock')
-                : (isAr ? 'مُجددة معتمدة' : 'Certified Refurbished')
-              }
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '20px', flexDirection: isAr ? 'row-reverse' : 'row' }}>
+              <div style={{
+                display: 'inline-flex', alignItems: 'center', gap: '8px',
+                background: product.available === false ? 'rgba(107, 114, 128, 0.1)' : 'rgba(141, 184, 51, 0.1)',
+                color: product.available === false ? '#6B7280' : 'var(--accent)',
+                padding: '6px 16px', borderRadius: 'var(--radius-2xl)', fontWeight: 700, fontSize: '0.85rem',
+                textTransform: 'uppercase',
+                flexDirection: isAr ? 'row-reverse' : 'row'
+              }}>
+                {product.available === false ? <XCircle size={16} /> : <ShieldCheck size={16} />}
+                {product.available === false
+                  ? (isAr ? 'نفدت الكمية' : 'Out of Stock')
+                  : (isAr ? 'مُجددة معتمدة' : 'Certified Refurbished')
+                }
+              </div>
+              {product.available !== false && warrantyFeature && (
+                <div style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '8px',
+                  background: 'rgba(74, 144, 217, 0.1)', color: '#4A90D9',
+                  padding: '6px 16px', borderRadius: 'var(--radius-2xl)', fontWeight: 700, fontSize: '0.85rem',
+                  flexDirection: isAr ? 'row-reverse' : 'row',
+                }}>
+                  <Shield size={16} />
+                  {warrantyFeature}
+                </div>
+              )}
             </div>
 
             <h1 style={{
