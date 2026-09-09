@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import Reveal from '@/components/ui/Reveal';
+import SpotlightCard from '@/components/ui/SpotlightCard';
 
 const STEP_KEYS = ['s1', 's2', 's3', 's4', 's5', 's6', 's7'] as const;
 
@@ -34,19 +35,24 @@ export default function SourcingProcessSection() {
                 is the shared .card-lift class rather than the pair of
                 onMouseEnter/onMouseLeave handlers it used to be — those also
                 fired on a touch tap and left the card stuck up. */}
-            <div className="card-lift" style={{ height: '100%',
-              padding: 'clamp(18px, 3vw, 24px) clamp(16px, 2.5vw, 20px)', borderRadius: 'var(--radius-lg)', background: '#fff',
-              border: '1px solid var(--light-grey)', borderTop: '3px solid var(--accent)',
-              textAlign: isAr ? 'right' : 'left', cursor: 'default',
-              ['--lift-shadow' as string]: '0 12px 40px rgba(26,61,43,0.1)',
-            }}>
+            <SpotlightCard
+              className="card-lift"
+              spotlightColor="rgba(141, 184, 51, 0.16)"
+              borderRadius="var(--radius-lg)"
+              style={{
+                height: '100%',
+                padding: 'clamp(18px, 3vw, 24px) clamp(16px, 2.5vw, 20px)', borderRadius: 'var(--radius-lg)', background: '#fff',
+                border: '1px solid var(--light-grey)', borderTop: '3px solid var(--accent)',
+                textAlign: isAr ? 'right' : 'left', cursor: 'default',
+                ['--lift-shadow' as string]: '0 12px 40px rgba(26,61,43,0.1)',
+              }}
+            >
               <div style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--accent-text)', fontFamily: 'var(--font-ibm-plex-mono), monospace', marginBottom: '10px' }}>
-
                 {t(`steps.${key}.number`)}
               </div>
               <h3 style={{ color: 'var(--primary)', fontSize: 'var(--text-base)', fontWeight: 700, marginBottom: '8px' }}>{t(`steps.${key}.title`)}</h3>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.82rem', lineHeight: 1.65 }}>{t(`steps.${key}.desc`)}</p>
-            </div>
+            </SpotlightCard>
             </Reveal>
           ))}
         </div>

@@ -119,8 +119,18 @@ export default function HeroSection() {
               marginBottom: isMobile ? '10px' : '14px',
               background: 'rgba(141,184,51,0.10)', border: '1px solid rgba(141,184,51,0.28)',
               borderRadius: 'var(--radius-pill)', padding: isMobile ? '5px 14px' : '6px 18px',
+              position: 'relative', overflow: 'hidden',
             }}>
-              <span style={{ color: 'var(--accent)', fontSize: isMobile ? 'var(--text-2xs)' : 'var(--text-xs)', fontWeight: 600, letterSpacing: isAr ? '0' : '0.14em', textTransform: isAr ? 'none' : 'uppercase' }}>
+              <div
+                aria-hidden="true"
+                style={{
+                  position: 'absolute', inset: 0,
+                  background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)',
+                  animation: prefersReducedMotion ? 'none' : 'badge-shimmer 4s ease-in-out infinite',
+                  pointerEvents: 'none',
+                }}
+              />
+              <span style={{ color: 'var(--accent)', fontSize: isMobile ? 'var(--text-2xs)' : 'var(--text-xs)', fontWeight: 600, letterSpacing: isAr ? '0' : '0.14em', textTransform: isAr ? 'none' : 'uppercase', position: 'relative', zIndex: 1 }}>
                 {isAr ? 'مصممة للأداء والدقة' : 'Engineered for performance'}
               </span>
             </div>
@@ -257,24 +267,38 @@ export default function HeroSection() {
               pinned to the viewport bottom) so it can never overlap the CTA above it on
               shorter viewports; it only fades via opacity as the visitor starts scrolling. */}
           <div style={{
-            marginTop: isMobile ? '14px' : '18px', flexShrink: 0,
+            marginTop: isMobile ? '12px' : '16px', flexShrink: 0,
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px',
             opacity: scrollProgress < 0.05 ? 1 : 0,
             transition: 'opacity 300ms ease',
             pointerEvents: 'none',
-            animation: prefersReducedMotion || scrollProgress >= 0.05 ? 'none' : 'heroHint 2.4s ease-in-out infinite',
           }}>
-            <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: isMobile ? 'var(--text-2xs)' : 'var(--text-xs)', letterSpacing: '0.1em' }}>
+            {/* Sleek 21st.dev mouse scroll wheel */}
+            <div style={{
+              width: '18px', height: '28px', borderRadius: '10px',
+              border: '1.5px solid rgba(141, 184, 51, 0.5)',
+              display: 'flex', justifyContent: 'center', padding: '3px 0',
+              boxShadow: '0 0 10px rgba(141,184,51,0.15)',
+            }}>
+              <div style={{
+                width: '3px', height: '6px', borderRadius: '2px', background: 'var(--accent)',
+                animation: prefersReducedMotion ? 'none' : 'mouseScroll 1.8s ease-in-out infinite',
+              }} />
+            </div>
+            <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: isMobile ? 'var(--text-2xs)' : 'var(--text-xs)', letterSpacing: isAr ? '0' : '0.08em', fontWeight: 500 }}>
               {t('scrollHint')}
             </span>
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-              <path d="M3 6l5 5 5-5" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
           </div>
         </div>
       </div>
 
       <style>{`
+        @keyframes mouseScroll {
+          0% { transform: translateY(0); opacity: 1; }
+          60% { transform: translateY(8px); opacity: 0; }
+          61% { transform: translateY(0); opacity: 0; }
+          100% { transform: translateY(0); opacity: 1; }
+        }
         @keyframes heroHint { 0%, 100% { transform: translateY(0); opacity: 0.7; } 50% { transform: translateY(6px); opacity: 1; } }
         @keyframes calloutIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes calloutPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }

@@ -6,6 +6,7 @@ import { ViewTransition } from 'react';
 import Image from 'next/image';
 import type { Product } from '@/lib/supabase';
 import { useCarousel } from '@/hooks/useCarousel';
+import SpotlightCard from '@/components/ui/SpotlightCard';
 
 export default function ProductCard({ product, isAr, productUrl }: { product: Product; isAr: boolean; productUrl: string }) {
   const images = product.images.length > 0 ? product.images : ['/placeholder.png'];
@@ -20,11 +21,16 @@ export default function ProductCard({ product, isAr, productUrl }: { product: Pr
   const prevImage = (e: React.MouseEvent) => { e.stopPropagation(); e.preventDefault(); prev(); };
 
   return (
-    <div className="glass item-card" style={{
-      display: 'flex', flexDirection: 'column', background: 'rgba(255, 255, 255, 0.7)', width: '100%',
-      borderRadius: 'var(--radius-xl)', overflow: 'hidden', border: '1px solid rgba(141, 184, 51, 0.2)',
-      boxShadow: '0 20px 40px rgba(0,0,0,0.05)', transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-    }}>
+    <SpotlightCard
+      className="glass item-card card-lift"
+      spotlightColor="rgba(141, 184, 51, 0.18)"
+      borderRadius="var(--radius-xl)"
+      style={{
+        display: 'flex', flexDirection: 'column', background: 'rgba(255, 255, 255, 0.7)', width: '100%',
+        borderRadius: 'var(--radius-xl)', overflow: 'hidden', border: '1px solid rgba(141, 184, 51, 0.2)',
+        boxShadow: '0 20px 40px rgba(0,0,0,0.05)',
+      }}
+    >
       {/* Image Slider */}
       {/* All three routes into the detail page are the same move — deeper into
           the catalog — so they carry the same direction. PageTransition on each
@@ -196,6 +202,6 @@ export default function ProductCard({ product, isAr, productUrl }: { product: Pr
           }
         </Link>
       </div>
-    </div>
+    </SpotlightCard>
   );
 }

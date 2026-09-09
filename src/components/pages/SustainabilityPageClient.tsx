@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import { Leaf, RefreshCcw, Wind } from 'lucide-react';
 import CountUp from '@/components/ui/CountUp';
 import Reveal from '@/components/ui/Reveal';
+import ImageComparison from '@/components/ui/ImageComparison';
 
 /**
  * Stat card. The counting itself lives in <CountUp>, which — unlike the
@@ -78,6 +79,31 @@ export default function SustainabilityPageClient() {
               <h3 style={{ color: '#fff', fontSize: 'clamp(1rem, 2vw, 1.2rem)', fontWeight: 700, marginBottom: '12px' }}>{t('cycle.loop.title')}</h3>
               <p style={{ color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, fontSize: '0.9rem' }}>{t('cycle.loop.desc')}</p>
             </div>
+          </div>
+        </div>
+
+        {/* Interactive 21st.dev Before / After Comparison */}
+        <div style={{ marginTop: 'clamp(48px, 8vw, 96px)', textAlign: 'center' }}>
+          <span className="section-tag">{isAr ? 'مقارنة الجودة والمطابقة' : 'Precision & Quality Wipe'}</span>
+          <h2 style={{ fontSize: 'clamp(1.5rem, 4vw, 2.5rem)', fontWeight: 800, color: 'var(--primary)', marginBottom: '16px' }}>
+            {isAr ? 'التحول المستدام: من الأصل الخام إلى الاعتماد المصنعي' : 'The Sustainable Transformation: Standard to Certified'}
+          </h2>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', maxWidth: '600px', margin: '0 auto 36px', lineHeight: 1.6 }}>
+            {isAr
+              ? 'اسحب المقبض لمقارنة خراطيش الحبر ومكونات الطابعات قبل وبعد إعادة المعالجة الهندسية والاعتماد البيئي.'
+              : 'Drag the slider to compare standard components against FNG certified re-engineered eco hardware.'}
+          </p>
+          <div style={{ maxWidth: '850px', margin: '0 auto' }}>
+            <Reveal delay={150} from="scale">
+              <ImageComparison
+                beforeImage="/eco-inks-frames/01.webp"
+                afterImage="/eco-inks-frames/10.webp"
+                beforeLabel={isAr ? 'خراطيش بترولية تقليدية' : 'Standard Petroleum Cartridge'}
+                afterLabel={isAr ? 'حبر إيكو نباتي معتمد' : 'FNG Plant-Based Eco Toner'}
+                aspectRatio="16 / 10"
+                isAr={isAr}
+              />
+            </Reveal>
           </div>
         </div>
       </div>

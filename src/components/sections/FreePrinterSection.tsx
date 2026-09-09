@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import { Droplet } from 'lucide-react';
 import Reveal from '@/components/ui/Reveal';
 import CountUp from '@/components/ui/CountUp';
+import EcoCalculator from '@/components/ui/EcoCalculator';
 
 export default function FreePrinterSection() {
   const t = useTranslations('freePrinter');
@@ -43,6 +44,12 @@ export default function FreePrinterSection() {
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', maxWidth: '280px', margin: '0 auto' }}>{t('pay.desc')}</p>
           </Reveal>
         </div>
+
+        {/* Interactive 21st.dev inspired Eco ROI & Sustainability Calculator */}
+        <Reveal delay={200} from="up">
+          <EcoCalculator isAr={isAr} locale={params.locale as string} />
+        </Reveal>
+
         <div style={{ overflow: 'hidden', padding: '24px 0', borderTop: '1px solid #EEE', position: 'relative' }}>
           <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: '60px', background: 'linear-gradient(90deg,#fff,transparent)', zIndex: 2 }} />
           <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: '60px', background: 'linear-gradient(270deg,#fff,transparent)', zIndex: 2 }} />

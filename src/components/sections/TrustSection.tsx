@@ -4,6 +4,8 @@ import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { ShieldCheck, Truck, BadgeCheck } from 'lucide-react';
 import Reveal from '@/components/ui/Reveal';
+import SpotlightCard from '@/components/ui/SpotlightCard';
+import BorderBeam from '@/components/ui/BorderBeam';
 
 // Replaces the previous testimonial cards, which carried invented names and
 // content-free quotes ("Highly recommended.") under a "Trust & Credibility"
@@ -58,19 +60,28 @@ export default function TrustSection() {
             // fade every other grid on the page defaults to.
             const directions = ['start', 'scale', 'end'] as const;
             return (
-              <Reveal key={i} delay={i * 120} from={directions[i % 3]}>
-              <div className="card-lift" style={{
-                padding: 'clamp(24px, 4vw, 32px) clamp(20px, 3vw, 28px)', borderRadius: 'var(--radius-lg)', background: '#fff', height: '100%',
-                border: '1px solid var(--light-grey)', borderBottom: '3px solid var(--primary)',
-                boxShadow: 'var(--shadow-sm)',
-                textAlign: isAr ? 'right' : 'left',
-              }}>
+              <Reveal key={i} delay={i * 120} from={directions[i % 3]} style={{ display: 'flex' }}>
+              <SpotlightCard
+                className="card-lift"
+                spotlightColor="rgba(141, 184, 51, 0.18)"
+                borderRadius="var(--radius-lg)"
+                style={{
+                  padding: 'clamp(24px, 4vw, 32px) clamp(20px, 3vw, 28px)', borderRadius: 'var(--radius-lg)', background: '#fff', height: '100%', width: '100%',
+                  border: '1px solid var(--light-grey)', borderBottom: '3px solid var(--primary)',
+                  boxShadow: 'var(--shadow-sm)',
+                  textAlign: isAr ? 'right' : 'left',
+                  position: 'relative',
+                }}
+              >
+                {i === 0 && <BorderBeam size={220} duration={8} colorFrom="var(--accent)" colorTo="var(--olive-green)" />}
                 <div style={{
                   width: '48px', height: '48px', borderRadius: 'var(--radius-md)',
                   background: 'linear-gradient(135deg, rgba(26,61,43,0.08), rgba(141,184,51,0.10))',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '18px',
                   border: '1px solid rgba(141,184,51,0.14)',
                   marginInlineStart: 0, marginInlineEnd: 'auto',
+                  animation: 'floating-subtle 3.5s ease-in-out infinite',
+                  animationDelay: `${i * 0.3}s`,
                 }}>
                   <Icon size={24} color="var(--accent-text)" strokeWidth={1.8} />
                 </div>
@@ -80,7 +91,7 @@ export default function TrustSection() {
                 <p style={{ color: 'var(--text-secondary)', fontSize: 'var(--text-sm)', lineHeight: 1.7, margin: 0 }}>
                   {isAr ? g.descAr : g.descEn}
                 </p>
-              </div>
+              </SpotlightCard>
               </Reveal>
             );
           })}

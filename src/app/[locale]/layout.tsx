@@ -10,6 +10,8 @@ import Footer from '@/components/layout/Footer';
 import WhatsAppButton from '@/components/layout/WhatsAppButton';
 import ChatWidgetLoader from '@/components/chat/ChatWidgetLoader';
 import TransitionErrorGuard from '@/components/ui/TransitionErrorGuard';
+import ScrollProgress from '@/components/ui/ScrollProgress';
+import BackToTop from '@/components/ui/BackToTop';
 import { getSettings } from '@/lib/supabase';
 import { getServiceRegions } from '@/lib/getServiceRegions';
 import { ServiceRegionsProvider } from '@/components/providers/ServiceRegionsProvider';
@@ -103,6 +105,7 @@ export default async function LocaleLayout({
       suppressHydrationWarning
     >
       <body suppressHydrationWarning>
+        <ScrollProgress />
         <NextIntlClientProvider messages={messages}>
           <ServiceRegionsProvider regions={serviceRegions}>
             <TransitionErrorGuard />
@@ -115,6 +118,7 @@ export default async function LocaleLayout({
             <div id="main-content" tabIndex={-1} style={{ outline: 'none' }}>{children}</div>
             <Footer email={settings.contact?.email} />
             <WhatsAppButton whatsapp={settings.contact?.whatsapp} />
+            <BackToTop />
             <ChatWidgetLoader welcomeMessage={settings.ai_settings?.welcome_message} />
           </ServiceRegionsProvider>
         </NextIntlClientProvider>
