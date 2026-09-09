@@ -33,6 +33,19 @@ export const getSettings = cache(async () => {
     if (item.key === 'admin_password') return;
     settings[item.key] = item.value;
   });
+
+  // Dev-only, never production (see the matching note in getProducts): an
+  // empty settings row silently degrades several homepage sections — the
+  // VideoDivider between HowItWorks and Industries just renders nothing —
+  // which looks like a missing feature rather than an unreachable database.
+  // Mirrors supabase/seed.sql's settings rows.
+  if ((!data || data.length === 0) && process.env.NODE_ENV === 'development') {
+    Object.assign(settings, {
+      contact: { whatsapp: '+966 59 338 0390', phone: '+966 59 338 0390', email: 'Support@fngtradingco.com' },
+      videos: { divider1: '/videos/forest-animation.mp4', divider2: '/videos/botanical-vortex.mp4' },
+    });
+  }
+
   return settings as {
     contact?: { whatsapp?: string; phone?: string; email?: string };
     ai_settings?: { welcome_message?: string; system_prompt?: string };
