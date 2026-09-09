@@ -341,13 +341,13 @@ export default function SourcingSystemsSection() {
                       <ActiveIcon size={24} color="#fff" strokeWidth={1.8} />
                     </div>
                     <div>
-                      <h3 id="ssys-modal-title" style={{ fontSize: 'clamp(1.25rem, 3vw, 1.7rem)', fontWeight: 800, marginBottom: '2px' }}>
+                      <h3 id="ssys-modal-title" style={{ color: '#fff', fontSize: 'clamp(1.25rem, 3vw, 1.7rem)', fontWeight: 800, marginBottom: '2px' }}>
                         {t(`groups.${activeGroup.key}.name`)}
                       </h3>
                       <span style={{ fontSize: '0.78rem', opacity: 0.85, fontWeight: 600 }}>{t('itemsCount', { count: activeGroup.items.length })}</span>
                     </div>
                   </div>
-                  <p style={{ fontSize: '0.88rem', opacity: 0.9, maxWidth: '680px', lineHeight: 1.6 }}>
+                  <p style={{ color: '#fff', fontSize: '0.88rem', opacity: 0.9, maxWidth: '680px', lineHeight: 1.6 }}>
                     {t(`groups.${activeGroup.key}.desc`)}
                   </p>
                 </div>

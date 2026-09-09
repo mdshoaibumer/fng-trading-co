@@ -134,10 +134,10 @@ export default function IndustriesSection() {
                 }}>
                   {(() => { const icon = ICONS[selectedIndustry]; return <icon.type {...icon.props} color="#fff" size={28} />; })()}
                 </div>
-                <h3 id="industry-modal-title" style={{ fontSize: 'clamp(1.4rem, 4vw, 2rem)', fontWeight: 800, marginBottom: '8px' }}>
+                <h3 id="industry-modal-title" style={{ color: '#fff', fontSize: 'clamp(1.4rem, 4vw, 2rem)', fontWeight: 800, marginBottom: '8px' }}>
                   {t(`items.${selectedIndustry}.name`)}
                 </h3>
-                <p style={{ fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', opacity: 0.9, maxWidth: '80%', marginLeft: isAr ? 'auto' : '0', marginRight: isAr ? '0' : 'auto' }}>
+                <p style={{ color: '#fff', fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', opacity: 0.9, maxWidth: '80%', marginLeft: isAr ? 'auto' : '0', marginRight: isAr ? '0' : 'auto' }}>
                   {t(`items.${selectedIndustry}.desc`)}
                 </p>
               </div>
