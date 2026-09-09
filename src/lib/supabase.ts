@@ -41,7 +41,7 @@ export const getSettings = cache(async () => {
   // Mirrors supabase/seed.sql's settings rows.
   if ((!data || data.length === 0) && process.env.NODE_ENV === 'development') {
     Object.assign(settings, {
-      contact: { whatsapp: '+966 59 338 0390', phone: '+966 59 338 0390', email: 'Support@fngtradingco.com' },
+      contact: { whatsapp: '+966 59 338 0390', phone: '+966 59 338 0390', email: 'support@fngtradingco.com' },
       videos: { divider1: '/videos/forest-animation.mp4', divider2: '/videos/botanical-vortex.mp4' },
     });
   }

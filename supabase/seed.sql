@@ -5,7 +5,7 @@
 truncate table printers, parts, settings restart identity cascade;
 
 -- Settings
-insert into settings (key, value) values ('contact', '{"whatsapp": "+966 59 338 0390", "phone": "+966 59 338 0390", "email": "Support@fngtradingco.com"}'::jsonb);
+insert into settings (key, value) values ('contact', '{"whatsapp": "+966 59 338 0390", "phone": "+966 59 338 0390", "email": "support@fngtradingco.com"}'::jsonb);
 insert into settings (key, value) values ('videos', '{"divider1": "/videos/forest-animation.mp4", "divider2": "/videos/botanical-vortex.mp4"}'::jsonb);
 insert into settings (key, value) values ('social_media', '{"facebook": "https://facebook.com/fngtradingco", "instagram": "https://instagram.com/fngtradingco", "linkedin": "https://www.linkedin.com/company/fngtradingco", "twitter": ""}'::jsonb);
 insert into settings (key, value) values ('seo', '{"title": "Future Next Gen — Refurbished HP Printers & Eco Toner in Saudi Arabia", "description": "FNG supplies professionally refurbished HP printers, eco-friendly toner and genuine printer parts across Saudi Arabia and the Gulf."}'::jsonb);

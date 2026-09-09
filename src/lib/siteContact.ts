@@ -9,7 +9,7 @@
 // NOTE: this is NOT the lead-notification recipient. Where the "New Lead" email
 // is delivered is configured on the Web3Forms account tied to the
 // WEB3FORMS_ACCESS_KEY env var — see src/app/api/contact/route.ts.
-export const SITE_EMAIL = 'Support@fngtradingco.com';
+export const SITE_EMAIL = 'support@fngtradingco.com';
 
 // Canonical public origin, used for canonical URLs, hreflang alternates,
 // JSON-LD `url`/`image` fields, the sitemap, and robots. Single source of
