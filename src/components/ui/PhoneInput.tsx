@@ -74,7 +74,7 @@ export default function PhoneInput({
   };
 
   return (
-    <div style={{ width: '100%' }}>
+    <div style={{ width: '100%', maxWidth: '100%', minWidth: 0, boxSizing: 'border-box' }}>
       {label && (
         <label
           htmlFor={inputId}
@@ -104,6 +104,9 @@ export default function PhoneInput({
           transition: 'all var(--transition-fast)',
           overflow: 'hidden',
           flexDirection: isAr ? 'row-reverse' : 'row',
+          width: '100%',
+          maxWidth: '100%',
+          boxSizing: 'border-box',
         }}
       >
         {/* Country Dial Code Selector */}

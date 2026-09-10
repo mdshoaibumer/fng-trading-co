@@ -138,14 +138,14 @@ export default function ContactPageClient({ email }: { email?: string }) {
   // contrast on one of the two backgrounds this site uses); inputs keep it
   // instead of substituting a border/background swap.
   const inputStyle: React.CSSProperties = {
-    width: '100%', padding: '16px 20px', borderRadius: 'var(--radius-lg)',
+    width: '100%', maxWidth: '100%', boxSizing: 'border-box', padding: '16px 20px', borderRadius: 'var(--radius-lg)',
     border: '1px solid var(--light-grey)', background: 'var(--bg-secondary)',
     color: 'var(--text-primary)', fontSize: 'var(--text-base)',
     fontFamily: isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif',
   };
 
   return (
-    <main style={{ background: '#FFFFFF', minHeight: '100vh', paddingTop: 'var(--page-top)' }}>
+    <main style={{ background: '#FFFFFF', minHeight: '100vh', paddingTop: 'var(--page-top)', overflowX: 'clip' }}>
 
       {/* Page Header */}
       <div className="container" style={{ textAlign: 'center', marginBottom: '80px' }}>
@@ -159,7 +159,7 @@ export default function ContactPageClient({ email }: { email?: string }) {
       </div>
 
       <div className="container">
-        <div className="contact-grid-outer" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(350px, 100%), 1fr))', gap: 'clamp(40px, 6vw, 64px)', paddingBottom: 'clamp(60px, 10vh, 120px)', alignItems: 'start' }}>
+        <div className="contact-grid-outer" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(300px, 100%), 1fr))', gap: 'clamp(32px, 5vw, 64px)', paddingBottom: 'clamp(60px, 10vh, 120px)', alignItems: 'start' }}>
           
           {/* Left Column - Contact Information */}
           <Reveal from="start" style={{ display: 'flex', flexDirection: 'column', gap: '48px' }}>
@@ -279,10 +279,12 @@ export default function ContactPageClient({ email }: { email?: string }) {
           <Reveal from="end" delay={150} style={{
             background: '#FFFFFF',
             borderRadius: 'var(--radius-xl)',
-            padding: '48px 40px',
+            padding: 'clamp(28px, 5vw, 48px) clamp(16px, 4vw, 40px)',
             boxShadow: '0 20px 60px rgba(0,0,0,0.05)',
             border: '1px solid var(--light-grey)',
-            position: 'relative'
+            position: 'relative',
+            maxWidth: '100%',
+            boxSizing: 'border-box',
           }}>
             {status === 'success' ? (
               <div role="status" ref={successRef} tabIndex={-1} style={{ textAlign: 'center', padding: '60px 0', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', outline: 'none' }}>
@@ -465,11 +467,12 @@ export default function ContactPageClient({ email }: { email?: string }) {
         </div>
       </div>
       <style jsx>{`
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; min-width: 0; }
+        .form-row > * { min-width: 0; max-width: 100%; }
         .office-card:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(26,61,43,0.08); border-color: rgba(141,184,51,0.4) !important; }
         @media (max-width: 768px) {
-          .form-row { grid-template-columns: 1fr; }
-          .office-grid { grid-template-columns: 1fr !important; }
+          .form-row { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+          .office-grid { grid-template-columns: minmax(0, 1fr) !important; }
         }
       `}</style>
     </main>

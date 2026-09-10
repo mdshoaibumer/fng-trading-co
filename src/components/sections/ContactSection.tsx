@@ -334,18 +334,18 @@ export default function ContactSection() {
         </div>
       </div>
       <style jsx>{`
+        .contact-form-row { min-width: 0; }
+        .contact-form-row > * { min-width: 0; max-width: 100%; }
         @media (max-width: 768px) {
           .contact-grid {
-            grid-template-columns: 1fr !important;
+            grid-template-columns: minmax(0, 1fr) !important;
             gap: 32px !important;
           }
           .contact-accent {
             display: none !important;
           }
-        }
-        @media (max-width: 480px) {
           .contact-form-row {
-            grid-template-columns: 1fr !important;
+            grid-template-columns: minmax(0, 1fr) !important;
           }
         }
       `}</style>
