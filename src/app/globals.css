@@ -670,9 +670,13 @@ p {
    transition layer — which paints above the page, and therefore above the
    chooser — and the nav bar flashed in and out when switching language on it.
    display:none means no snapshot is captured at all. !important because both
-   elements set `display` inline. */
+   elements set `display` inline. The AI chat launcher and panel go too: they
+   sit at the document root, outside the page's stacking context, so they
+   painted over the chooser despite its z-index. */
 [data-gate-open] #main-nav,
-[data-gate-open] #whatsapp-btn {
+[data-gate-open] #whatsapp-btn,
+[data-gate-open] #chat-launcher,
+[data-gate-open] #chat-panel {
   display: none !important;
 }
 

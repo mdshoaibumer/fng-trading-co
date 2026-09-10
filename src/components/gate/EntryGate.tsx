@@ -15,24 +15,25 @@ import { markGateSeen } from '@/lib/entryGate';
 const PRINTER_IMAGE = '/gate-printer.webp';
 const SOURCING_IMAGE = '/sourcing-ship.webp';
 
-// Both panels frame their photo identically: fill the square, then grade the
-// lower edge into the card so the shot reads as part of the panel rather than
-// a rectangle pasted onto it.
+// Both panels frame their photo identically, then grade the lower edge into
+// the card so the shot reads as part of the panel rather than a rectangle
+// pasted onto it. The photo takes whatever height the card has left after its
+// text — not a fixed square — which is what lets the whole chooser fit in one
+// viewport without scrolling, whatever the screen's height.
 function PanelPhoto({ src }: { src: string }) {
   return (
-    <div style={{
-      position: 'relative', width: '100%', aspectRatio: '1 / 1', borderRadius: 'var(--radius-md)',
+    <div className="gate-photo" style={{
+      position: 'relative', width: '100%', flex: '1 1 0', minHeight: 0, borderRadius: 'var(--radius-md)',
       overflow: 'hidden', background: 'linear-gradient(135deg, rgba(141,184,51,0.18), rgba(74,144,217,0.12))',
-      marginBottom: '20px', border: '1px solid rgba(255,255,255,0.08)',
+      marginBottom: 'clamp(12px, 2vh, 20px)', border: '1px solid rgba(255,255,255,0.08)',
     }}>
       <Image
         src={src}
         alt=""
-        width={1000}
-        height={1333}
+        fill
         priority
         sizes="(max-width: 768px) 90vw, 45vw"
-        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+        style={{ objectFit: 'cover' }}
       />
       <div style={{
         position: 'absolute', inset: 0, pointerEvents: 'none',
@@ -52,18 +53,11 @@ export default function EntryGate() {
   const Arrow = isAr ? ArrowLeft : ArrowRight;
   const [open, setOpen] = useState(true);
   const [mounted, setMounted] = useState(true);
-  // Starts false so the first paint is the pre-entrance state; a rAF later
-  // flips it, which is what actually makes the fade/scale-in transition play
-  // instead of starting and ending at the same value. Separate from `open` —
-  // that one also drives the post-dismiss unmount timer below, which must not
-  // fire on mount.
-  const [entered, setEntered] = useState(false);
+  // The entrance fade/rise is a CSS animation (see the stylesheet below), not
+  // state flipped after mount: this is the landing page, and a JS-driven
+  // entrance left the server-rendered gate at opacity 0 until hydration —
+  // on a slow load the hero underneath showed first.
   const markSeen = markGateSeen;
-
-  useEffect(() => {
-    const raf = requestAnimationFrame(() => setEntered(true));
-    return () => cancelAnimationFrame(raf);
-  }, []);
 
   const dismiss = () => {
     markSeen();
@@ -89,12 +83,16 @@ export default function EntryGate() {
   // vanish again. An element that is display:none is never captured, so there
   // is nothing to lift.
   useEffect(() => {
-    document.body.style.overflow = open ? 'hidden' : '';
     const root = document.documentElement;
+    // Locked on <html> as well as <body>: whichever one ends up as the
+    // scrolling element, the page underneath must not scroll behind the gate.
+    document.body.style.overflow = open ? 'hidden' : '';
+    root.style.overflow = open ? 'hidden' : '';
     if (open) root.setAttribute('data-gate-open', '');
     else root.removeAttribute('data-gate-open');
     return () => {
       document.body.style.overflow = '';
+      root.style.overflow = '';
       root.removeAttribute('data-gate-open');
     };
   }, [open]);
@@ -118,15 +116,24 @@ export default function EntryGate() {
       aria-modal="true"
       aria-labelledby="entry-gate-heading"
       tabIndex={-1}
+      className="gate-overlay"
       style={{
-        position: 'fixed', inset: 0, zIndex: 2000,
+        // `inset: 0` alone doesn't reliably derive a height for this fixed +
+        // flex box — measured live in Chrome, it sized to the underlying
+        // page's full scroll height instead of the viewport, pushing the
+        // chooser thousands of pixels below the fold. An explicit viewport
+        // height forces the correct box (dvh, set in the stylesheet below,
+        // tracks mobile browser chrome; 100vh is the fallback).
+        position: 'fixed', inset: 0, height: '100vh', zIndex: 2000,
         background: 'linear-gradient(160deg, var(--bg-darker) 0%, var(--primary) 55%, #12301F 100%)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        opacity: entered && open ? 1 : 0,
-        transform: entered ? 'scale(1)' : 'scale(0.98)',
+        opacity: open ? 1 : 0,
         pointerEvents: open ? 'auto' : 'none',
-        transition: 'opacity 500ms var(--ease-ink), transform 500ms var(--ease-ink)',
-        overflowY: 'auto', padding: 'clamp(24px, 6vw, 48px) clamp(16px, 5vw, 24px)',
+        transition: 'opacity 500ms var(--ease-ink)',
+        // The chooser is a single, non-scrolling screen: the layout below
+        // shrinks the photos to fit rather than letting the content overflow.
+        overflow: 'hidden', overscrollBehavior: 'none',
+        padding: 'clamp(16px, 4vh, 48px) clamp(16px, 5vw, 24px)',
       }}
     >
       <div style={{
@@ -168,37 +175,35 @@ export default function EntryGate() {
         {tNav('lang')}
       </Link>
 
-      <div style={{ position: 'relative', width: '100%', maxWidth: '1100px', margin: 'auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: 'clamp(28px, 5vw, 48px)' }}>
-          <span style={{
+      <div className="gate-inner" style={{
+        position: 'relative', width: '100%', maxWidth: '1100px', height: '100%', maxHeight: '900px',
+        display: 'flex', flexDirection: 'column',
+      }}>
+        <div className="gate-header" style={{ flex: 'none', textAlign: 'center', marginBottom: 'clamp(16px, 4vh, 48px)' }}>
+          <span className="gate-rise" style={{
             display: 'inline-block', color: 'var(--accent)', fontFamily: 'var(--font-ibm-plex-mono), monospace',
             fontSize: 'var(--text-xs)', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase',
             marginBottom: '14px',
-            opacity: entered ? 1 : 0,
-            transform: entered ? 'translateY(0)' : 'translateY(10px)',
-            transition: 'opacity 450ms var(--ease-ink), transform 450ms var(--ease-ink)',
           }}>
             {t('eyebrow')}
           </span>
           <h2
             id="entry-gate-heading"
+            className="gate-rise"
             style={{
               fontSize: 'clamp(1.6rem, 4vw, 2.75rem)', fontWeight: 800, color: '#fff', margin: 0,
               fontFamily: isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif',
-              opacity: entered ? 1 : 0,
-              transform: entered ? 'translateY(0)' : 'translateY(10px)',
-              transition: 'opacity 450ms var(--ease-ink) 80ms, transform 450ms var(--ease-ink) 80ms',
+              animationDelay: '80ms',
             }}
           >
             {t('title')}
           </h2>
         </div>
 
-        <div className="gate-grid" style={{
-          display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(16px, 3vw, 32px)',
-          opacity: entered ? 1 : 0,
-          transform: entered ? 'translateY(0)' : 'translateY(10px)',
-          transition: 'opacity 450ms var(--ease-ink) 160ms, transform 450ms var(--ease-ink) 160ms',
+        <div className="gate-grid gate-rise" style={{
+          display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'minmax(0, 1fr)',
+          gap: 'clamp(12px, 3vw, 32px)', flex: '1 1 auto', minHeight: 0,
+          animationDelay: '160ms',
         }}>
           {/* Printers panel */}
           <a
@@ -208,7 +213,8 @@ export default function EntryGate() {
             className="glass-dark gate-card"
             style={{
               display: 'flex', flexDirection: 'column', textDecoration: 'none', cursor: 'pointer',
-              padding: 'clamp(20px, 3vw, 28px)', textAlign: isAr ? 'right' : 'left',
+              minHeight: 0, overflow: 'hidden',
+              padding: 'clamp(14px, 2.5vh, 28px) clamp(16px, 3vw, 28px)', textAlign: isAr ? 'right' : 'left',
             }}
           >
             <PanelPhoto src={PRINTER_IMAGE} />
@@ -216,7 +222,7 @@ export default function EntryGate() {
             <h2 style={{ fontSize: 'clamp(1.3rem, 2.5vw, 1.8rem)', fontWeight: 800, color: '#fff', marginBottom: '10px' }}>
               {t('printers.title')}
             </h2>
-            <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: '0.9rem', lineHeight: 1.7, marginBottom: '20px', flex: 1 }}>
+            <p className="gate-desc" style={{ color: 'rgba(255,255,255,0.65)', fontSize: '0.9rem', lineHeight: 1.7, marginBottom: 'clamp(12px, 2vh, 20px)', flex: 'none' }}>
               {t('printers.desc')}
             </p>
             <span className="btn-primary" style={{ alignSelf: isAr ? 'flex-end' : 'flex-start' }}>
@@ -233,7 +239,8 @@ export default function EntryGate() {
             className="glass-dark gate-card"
             style={{
               display: 'flex', flexDirection: 'column', textDecoration: 'none', cursor: 'pointer',
-              padding: 'clamp(20px, 3vw, 28px)', textAlign: isAr ? 'right' : 'left',
+              minHeight: 0, overflow: 'hidden',
+              padding: 'clamp(14px, 2.5vh, 28px) clamp(16px, 3vw, 28px)', textAlign: isAr ? 'right' : 'left',
             }}
           >
             <PanelPhoto src={SOURCING_IMAGE} />
@@ -241,7 +248,7 @@ export default function EntryGate() {
             <h2 style={{ fontSize: 'clamp(1.3rem, 2.5vw, 1.8rem)', fontWeight: 800, color: '#fff', marginBottom: '10px' }}>
               {t('sourcing.title')}
             </h2>
-            <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: '0.9rem', lineHeight: 1.7, marginBottom: '20px', flex: 1 }}>
+            <p className="gate-desc" style={{ color: 'rgba(255,255,255,0.65)', fontSize: '0.9rem', lineHeight: 1.7, marginBottom: 'clamp(12px, 2vh, 20px)', flex: 'none' }}>
               {t('sourcing.desc')}
             </p>
             <span className="btn-primary" style={{ alignSelf: isAr ? 'flex-end' : 'flex-start' }}>
@@ -253,9 +260,50 @@ export default function EntryGate() {
       </div>
 
       <style jsx>{`
+        .gate-overlay {
+          height: 100dvh !important;
+          animation: gate-in 500ms var(--ease-ink) backwards;
+        }
+        /* 'backwards' fill only: once the entrance ends, the inline opacity
+           takes over again, so the dismiss fade still transitions. */
+        .gate-rise { animation: gate-rise 450ms var(--ease-ink) backwards; }
+        @keyframes gate-in {
+          from { opacity: 0; transform: scale(0.98); }
+          to { opacity: 1; transform: none; }
+        }
+        @keyframes gate-rise {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: none; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .gate-overlay, .gate-rise { animation: none; }
+        }
         .gate-card:hover { border-color: var(--accent-glow); }
+        .gate-card h2 { flex: none; }
+        /* Shorter screens: trim the copy to two lines so the photos keep a
+           usable height instead of being squeezed to a sliver. */
+        @media (max-height: 820px) {
+          .gate-desc {
+            display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;
+            overflow: hidden;
+          }
+        }
         @media (max-width: 768px) {
-          .gate-grid { grid-template-columns: 1fr !important; }
+          .gate-grid {
+            grid-template-columns: 1fr !important;
+            grid-template-rows: repeat(2, minmax(0, 1fr)) !important;
+          }
+          /* Leave room for the language pill above the heading. */
+          .gate-header { padding-top: 40px; }
+          /* Stacked, both cards share one phone screen: the description is
+             the part to drop — the tag, title and button still say it all. */
+          .gate-desc { display: none !important; }
+        }
+        /* Landscape phones: there is no height for photos at all. :global
+           because the photo is rendered by PanelPhoto, outside this
+           component's styled-jsx scope. */
+        @media (max-height: 520px) {
+          :global(.gate-photo) { display: none !important; }
         }
       `}</style>
     </div>
