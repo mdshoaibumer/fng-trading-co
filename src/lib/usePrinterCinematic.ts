@@ -4,10 +4,11 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 /**
  * Drives the M428fdw cinematic hero: a single continuous scroll-scrubbed
- * camera sequence (hero -> reveal -> inspect -> engineering macro -> exploded
- * view -> component-by-component descent -> reassembly -> final hero),
- * rendered as a linear frame sequence on a canvas. Unlike `usePrinterStory`
- * (a 4-photo crossfade), every frame here comes from real generated footage,
+ * engineering sequence (assembled -> controlled opening -> internal reveal ->
+ * exploded view -> inspection -> reassembly -> ready), rendered as a linear
+ * frame sequence of alpha-cut WebP frames on a transparent canvas, so the
+ * printer composites straight over the hero's green ground. Every frame
+ * comes from real generated footage (see scripts/build-printer-frames.mjs),
  * so scroll position maps directly to a frame index — no blending needed.
  *
  * Frame counts can differ between desktop/mobile (mobile samples fewer
@@ -18,16 +19,10 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 export type CinematicPhaseKey =
   | 'hero'
+  | 'open'
   | 'reveal'
-  | 'inspect'
-  | 'architecture'
   | 'exploded'
-  | 'scanner'
-  | 'imaging'
-  | 'fuser'
-  | 'paperFeed'
-  | 'electronics'
-  | 'cassette'
+  | 'inspect'
   | 'reassembly'
   | 'ready';
 
@@ -40,67 +35,76 @@ export interface CinematicPhaseLabel {
 }
 
 // Breakpoints are fractions of total scroll progress, tuned against the
-// actual rendered clip durations (see PrinterCinematicSection's frame
-// manifest) — not evenly spaced, since the source clips aren't equal length.
-// The six component sub-phases (scanner..cassette) split the "component
-// descent" clip evenly, matching a steady top-to-bottom camera move.
+// segment ends in public/printer-hero/manifest.json: open 0.1857, explode
+// 0.4328, inspect 0.5672, reassemble (explode reversed) 0.8143, close (open
+// reversed) 1. 'reveal' and 'exploded' split the explode segment where the
+// scanner lifts clear and the stack starts separating; 'reassembly' runs
+// through the door closing and 'ready' holds the final assembled frames.
 const PHASES: { end: number; label: CinematicPhaseLabel }[] = [
-  { end: 0.10, label: { key: 'hero', en: '', ar: '' } },
-  { end: 0.20, label: { key: 'reveal', en: 'Reveal', ar: 'الكشف' } },
-  { end: 0.3143, label: { key: 'inspect', en: 'Inspect', ar: 'الفحص' } },
-  { end: 0.4429, label: { key: 'architecture', en: 'Internal Architecture', ar: 'البنية الداخلية' } },
-  { end: 0.5857, label: { key: 'exploded', en: 'Exploded View', ar: 'العرض المفكك' } },
   {
-    end: 0.6143,
+    end: 0.04,
     label: {
-      key: 'scanner', en: 'ADF / Scanner', ar: 'وحدة المسح الضوئي',
-      descEn: 'Automatic document feeding and scanning assembly',
-      descAr: 'مجموعة التغذية التلقائية للمستندات والمسح الضوئي',
+      key: 'hero', en: 'Assembled', ar: 'مُجمّعة',
+      descEn: 'HP LaserJet Pro MFP M428fdw, as it ships',
+      descAr: 'طابعة HP LaserJet Pro MFP M428fdw كما تُشحن',
     },
   },
   {
-    end: 0.6429,
+    end: 0.1857,
     label: {
-      key: 'imaging', en: 'Imaging System', ar: 'نظام التصوير',
-      descEn: 'Photosensitive drum and toner imaging components',
-      descAr: 'أسطوانة التصوير الحساسة للضوء ومكونات الحبر',
+      key: 'open', en: 'Open', ar: 'الفتح',
+      descEn: 'Front access opens on its service hinge',
+      descAr: 'باب الوصول الأمامي يفتح على مفصل الصيانة',
     },
   },
   {
-    end: 0.6714,
+    end: 0.29,
     label: {
-      key: 'fuser', en: 'Fuser', ar: 'وحدة التثبيت',
-      descEn: 'Heat and pressure assembly that bonds toner to paper',
-      descAr: 'وحدة الحرارة والضغط التي تثبت الحبر على الورق',
+      key: 'reveal', en: 'Reveal', ar: 'الكشف',
+      descEn: 'Toner bay, gear train and feed path exposed',
+      descAr: 'حجرة الحبر ومجموعة التروس ومسار الورق مكشوفة',
     },
   },
   {
-    end: 0.70,
+    end: 0.4328,
     label: {
-      key: 'paperFeed', en: 'Paper Feed', ar: 'تغذية الورق',
-      descEn: 'Rollers and mechanical feed path',
-      descAr: 'الأسطوانات ومسار التغذية الميكانيكي',
+      key: 'exploded', en: 'Explode', ar: 'التفكيك',
+      descEn: 'Each serviceable assembly on its own axis',
+      descAr: 'كل وحدة قابلة للصيانة على محورها الخاص',
     },
   },
   {
-    end: 0.7286,
+    end: 0.5672,
     label: {
-      key: 'electronics', en: 'Control Electronics', ar: 'الدوائر الإلكترونية',
-      descEn: 'Core control and processing electronics',
-      descAr: 'لوحة التحكم والمعالجة الأساسية',
+      key: 'inspect', en: 'Inspect', ar: 'الفحص',
+      descEn: 'Scanner, imaging, fuser, rollers and electronics checked one by one',
+      descAr: 'فحص الماسح والتصوير والتثبيت والأسطوانات والإلكترونيات كلٌ على حدة',
     },
   },
   {
-    end: 0.7571,
+    end: 0.95,
     label: {
-      key: 'cassette', en: 'Paper Cassette', ar: 'درج الورق',
-      descEn: 'Input paper storage and feed assembly',
-      descAr: 'مجموعة تخزين وتغذية الورق',
+      key: 'reassembly', en: 'Reassemble', ar: 'إعادة التجميع',
+      descEn: 'Rebuilt to factory tolerances',
+      descAr: 'إعادة البناء وفق معايير المصنع',
     },
   },
-  { end: 0.90, label: { key: 'reassembly', en: 'Reassembly', ar: 'إعادة التجميع' } },
-  { end: 1.001, label: { key: 'ready', en: 'Ready', ar: 'جاهزة' } },
+  {
+    end: 1.001,
+    label: {
+      key: 'ready', en: 'Ready', ar: 'جاهزة',
+      descEn: 'Tested, certified, 12-month warranty',
+      descAr: 'مختبرة ومعتمدة مع ضمان ١٢ شهراً',
+    },
+  },
 ];
+
+/** Story beats in order, with their scroll-progress span — for step rails / progress UI. */
+export const CINEMATIC_PHASES: readonly (CinematicPhaseLabel & { start: number; end: number })[] = PHASES.map((p, i) => ({
+  ...p.label,
+  start: i === 0 ? 0 : PHASES[i - 1].end,
+  end: Math.min(1, p.end),
+}));
 
 /** Pure + testable: which phase label is active at a given scroll progress. */
 export function phaseForProgress(progress: number): CinematicPhaseLabel {

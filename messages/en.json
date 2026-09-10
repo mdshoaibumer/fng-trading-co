@@ -38,6 +38,19 @@
     "cta": "Request a Quote"
   },
   "hero": {
+    "eyebrow": "Refurbished HP Printers",
+    "headlineLine1": "Professional Performance.",
+    "headlineLine2": "A Greener Tomorrow.",
+    "lede": "Reliable refurbished HP printers, genuine parts and end-to-end support for businesses across Saudi Arabia and the Gulf region.",
+    "ctaQuote": "Get a Quote",
+    "ctaExplore": "Explore Printers",
+    "stageAlt": "HP LaserJet Pro MFP M428fdw opening, separating into its internal assemblies and reassembling as you scroll",
+    "stageHint": "Scroll to look inside",
+    "features": {
+      "warranty": { "title": "12-Month Warranty", "desc": "Peace of mind" },
+      "inspection": { "title": "40-Point Inspection", "desc": "Certified quality" },
+      "sustainable": { "title": "Sustainable Choice", "desc": "Reduce e-waste" }
+    },
     "headline": "The Future in Every Print",
     "subtitle": "Your Trusted Partner for Refurbished Office Equipment — Specialized in HP Printers, Eco-Friendly Toners & Genuine Parts.",
     "cta": "Get Your Refurbished Printer",

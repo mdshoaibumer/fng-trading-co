@@ -1,0 +1,44 @@
+{
+  "fps": 24,
+  "crop": {
+    "left": 387,
+    "top": 0,
+    "width": 1533,
+    "height": 1059,
+    "of": {
+      "width": 1920,
+      "height": 1080
+    }
+  },
+  "frames": {
+    "desktop": 781,
+    "mobile": 391
+  },
+  "segments": [
+    {
+      "label": "open",
+      "frames": 145,
+      "end": 0.1857
+    },
+    {
+      "label": "explode",
+      "frames": 193,
+      "end": 0.4328
+    },
+    {
+      "label": "inspect",
+      "frames": 105,
+      "end": 0.5672
+    },
+    {
+      "label": "reassemble",
+      "frames": 193,
+      "end": 0.8143
+    },
+    {
+      "label": "close",
+      "frames": 145,
+      "end": 1
+    }
+  ]
+}

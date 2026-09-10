@@ -4,38 +4,36 @@ import {
   frameIndexForProgress,
   getSparseKeyframeIndices,
   getLookaheadWindowIndices,
+  CINEMATIC_PHASES,
 } from './usePrinterCinematic';
 
 describe('phaseForProgress', () => {
-  it('starts on the blank hero phase', () => {
+  it('starts on the assembled hero phase', () => {
     expect(phaseForProgress(0).key).toBe('hero');
-    expect(phaseForProgress(0.05).key).toBe('hero');
+    expect(phaseForProgress(0.03).key).toBe('hero');
   });
 
   it('walks through the story beats in order', () => {
-    expect(phaseForProgress(0.15).key).toBe('reveal');
-    expect(phaseForProgress(0.25).key).toBe('inspect');
-    expect(phaseForProgress(0.40).key).toBe('architecture');
-    expect(phaseForProgress(0.50).key).toBe('exploded');
+    expect(phaseForProgress(0.12).key).toBe('open');
+    expect(phaseForProgress(0.24).key).toBe('reveal');
+    expect(phaseForProgress(0.38).key).toBe('exploded');
+    expect(phaseForProgress(0.50).key).toBe('inspect');
+    expect(phaseForProgress(0.70).key).toBe('reassembly');
+    expect(phaseForProgress(0.90).key).toBe('reassembly');
   });
 
-  it('names each component during the descent, in top-to-bottom order', () => {
-    expect(phaseForProgress(0.60).key).toBe('scanner');
-    expect(phaseForProgress(0.63).key).toBe('imaging');
-    expect(phaseForProgress(0.66).key).toBe('fuser');
-    expect(phaseForProgress(0.685).key).toBe('paperFeed');
-    expect(phaseForProgress(0.715).key).toBe('electronics');
-    expect(phaseForProgress(0.75).key).toBe('cassette');
-  });
-
-  it('ends on reassembly, then ready', () => {
-    expect(phaseForProgress(0.85).key).toBe('reassembly');
+  it('ends on ready', () => {
+    expect(phaseForProgress(0.97).key).toBe('ready');
     expect(phaseForProgress(1).key).toBe('ready');
   });
 
   it('clamps out-of-range input', () => {
     expect(phaseForProgress(-0.5).key).toBe('hero');
     expect(phaseForProgress(1.5).key).toBe('ready');
+  });
+
+  it('exposes every beat once, in order, for step-rail UI', () => {
+    expect(CINEMATIC_PHASES.map((p) => p.key)).toEqual(['hero', 'open', 'reveal', 'exploded', 'inspect', 'reassembly', 'ready']);
   });
 });
 
@@ -97,4 +95,3 @@ describe('getLookaheadWindowIndices', () => {
     expect(endWindow[endWindow.length - 1]).toBe(99);
   });
 });
-

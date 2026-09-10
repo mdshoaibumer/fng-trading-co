@@ -1,0 +1,9 @@
+{
+  "segments": [
+    { "label": "open", "src": "clips/open.mp4", "matte": "clips/open.bg.mp4" },
+    { "label": "explode", "src": "clips/explode.mp4", "matte": "clips/explode.bg.mp4" },
+    { "label": "inspect", "src": "clips/inspect.mp4", "matte": "clips/inspect.bg.mp4", "to": 52, "pingpong": true },
+    { "label": "reassemble", "src": "clips/explode.mp4", "matte": "clips/explode.bg.mp4", "reverse": true },
+    { "label": "close", "src": "clips/open.mp4", "matte": "clips/open.bg.mp4", "reverse": true }
+  ]
+}

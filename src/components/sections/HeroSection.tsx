@@ -1,358 +1,277 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
-import { usePrinterCinematic, type CinematicPhaseKey } from '@/lib/usePrinterCinematic';
+import { usePrinterCinematic, CINEMATIC_PHASES } from '@/lib/usePrinterCinematic';
 import MagneticButton from '@/components/ui/MagneticButton';
 
-const DESKTOP_TOTAL_FRAMES = 1120;
-const MOBILE_TOTAL_FRAMES = 700;
-const cinematicFramePath = (dir: string) => (index: number) => `/${dir}/${String(index + 1).padStart(4, '0')}.webp`;
-const desktopFramePath = cinematicFramePath('printer-cinematic/desktop');
-const mobileFramePath = cinematicFramePath('printer-cinematic/mobile');
+// Frame counts come from public/printer-hero/manifest.json, written by
+// scripts/build-printer-frames.mjs from assets-source/printer-story/hero-sequence.json.
+const DESKTOP_TOTAL_FRAMES = 781;
+const MOBILE_TOTAL_FRAMES = 391;
+const heroFramePath = (dir: string) => (index: number) => `/printer-hero/${dir}/${String(index + 1).padStart(4, '0')}.webp`;
+const desktopFramePath = heroFramePath('desktop');
+const mobileFramePath = heroFramePath('mobile');
 
-// Where each serviceable assembly sits in the exploded-stack composition
-// (percent of the canvas box) — the camera holds this same vertical stack
-// throughout the component-descent shot, so a fixed anchor per part tracks
-// it closely without per-frame vision analysis. `side` picks which canvas
-// edge the leader line runs to, alternating so labels don't stack.
-const CALLOUT_ANCHORS: Partial<Record<CinematicPhaseKey, { x: number; y: number; side: 'left' | 'right' }>> = {
-  scanner: { x: 47, y: 15, side: 'right' },
-  imaging: { x: 53, y: 34, side: 'left' },
-  fuser: { x: 46, y: 45, side: 'right' },
-  paperFeed: { x: 54, y: 55, side: 'left' },
-  electronics: { x: 58, y: 67, side: 'right' },
-  cassette: { x: 50, y: 87, side: 'left' },
-};
+const FEATURES: { key: 'warranty' | 'inspection' | 'sustainable'; icon: ReactNode }[] = [
+  {
+    key: 'warranty',
+    icon: <><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6l7-3z" /><path d="M9 12l2 2 4-4" /></>,
+  },
+  {
+    key: 'inspection',
+    icon: <><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" /></>,
+  },
+  {
+    key: 'sustainable',
+    icon: <><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" /><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" /></>,
+  },
+];
 
 export default function HeroSection() {
   const t = useTranslations('hero');
   const params = useParams();
   const locale = params.locale as string;
   const isAr = locale === 'ar';
-  const [headlineVisible, setHeadlineVisible] = useState(false);
+  const fontFamily = isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif';
 
-  // Headline/subtitle/CTA transform+fade is driven straight from scroll
-  // position on every rAF tick via refs, skipping a render+diff pass for the
-  // whole hero subtree 60x/sec — the printer's own motion lives inside the
-  // canvas via usePrinterCinematic.
-  const headlineRef = useRef<HTMLHeadingElement>(null);
-  const subtitleRef = useRef<HTMLParagraphElement>(null);
-  const ctaRef = useRef<HTMLAnchorElement>(null);
-  const ctaContainerRef = useRef<HTMLDivElement>(null);
-  const eyebrowRef = useRef<HTMLDivElement>(null);
-  const prefersReducedMotionRef = useRef(false);
-
-  const applyScrollTransforms = useCallback((progress: number) => {
-    const p = prefersReducedMotionRef.current ? 0 : progress;
-    // Fully faded out by 12% scroll — the headline stack is a hero-moment
-    // intro, not something that should compete with the cinematic sequence.
-    const opacity = String(Math.max(0, 1 - p / 0.12));
-    if (headlineRef.current) Object.assign(headlineRef.current.style, { transform: `translateY(${p * -50}px)`, opacity });
-    if (subtitleRef.current) Object.assign(subtitleRef.current.style, { transform: `translateY(${p * -80}px)`, opacity });
-    if (ctaRef.current) Object.assign(ctaRef.current.style, { transform: `translateY(${p * -110}px)`, opacity });
-    if (ctaContainerRef.current) Object.assign(ctaContainerRef.current.style, { transform: `translateY(${p * -110}px)`, opacity });
-    if (eyebrowRef.current) eyebrowRef.current.style.opacity = opacity;
-  }, []);
-
-  const { sectionRef, canvasRef, scrollProgress, firstFrameReady, frameRect, isMobile, prefersReducedMotion, phase } =
+  const { sectionRef, canvasRef, scrollProgress, firstFrameReady, isMobile, prefersReducedMotion, phase } =
     usePrinterCinematic({
       desktopTotalFrames: DESKTOP_TOTAL_FRAMES,
       mobileTotalFrames: MOBILE_TOTAL_FRAMES,
       desktopFramePath,
       mobileFramePath,
-      onProgress: applyScrollTransforms,
     });
-  useEffect(() => { prefersReducedMotionRef.current = prefersReducedMotion; }, [prefersReducedMotion]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => setHeadlineVisible(true), 300);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // A soft spotlight that brightens through the engineering/examine window
-  // (internal architecture through reassembly) and settles back down for the
-  // hero bookends — ties the studio lighting to "you're inspecting the
-  // machine now," not a perpetual decorative loop.
-  const distanceToExamineCenter = Math.abs(scrollProgress - 0.55);
-  const examineGlow = Math.max(0, 1 - distanceToExamineCenter / 0.45);
-
+  // The copy column stays put while the section is pinned — it's the value
+  // proposition, not an intro to fade away. Only the printer column scrubs,
+  // and the step readout + segmented rail under it give the long pin a
+  // visible sense of progress. Reduced motion drops the pin entirely: the hook
+  // holds the assembled frame, so there's nothing to scroll through.
+  const pinned = !prefersReducedMotion;
+  const stepIndex = Math.max(0, CINEMATIC_PHASES.findIndex((p) => p.key === phase.key));
   const phaseLabel = isAr ? phase.ar : phase.en;
   const phaseDesc = isAr ? phase.descAr : phase.descEn;
-  const framePct = !isMobile ? CALLOUT_ANCHORS[phase.key] : undefined;
-  // CALLOUT_ANCHORS is calibrated against the source 16:9 frame, not the
-  // canvas box — the box can be pillar/letterboxed at odd viewport sizes, so
-  // remap through frameRect to keep the dot glued to the printer.
-  const anchor = framePct ? {
-    x: frameRect.xPct + (framePct.x / 100) * frameRect.widthPct,
-    y: frameRect.yPct + (framePct.y / 100) * frameRect.heightPct,
-    side: framePct.side,
-  } : undefined;
-  const labelX = anchor ? (anchor.side === 'right' ? 96 : 4) : 0;
+  const pad2 = (n: number) => String(n).padStart(2, '0');
 
   return (
-    <section id="hero" ref={sectionRef} className="hero-section" style={{ height: isMobile ? '380vh' : '480vh', position: 'relative' }}>
+    <section
+      id="hero"
+      ref={sectionRef}
+      className="hero-section"
+      style={{ position: 'relative', height: pinned ? (isMobile ? '300vh' : '340vh') : 'auto' }}
+    >
       <div className="hero-viewport" style={{
-        position: 'sticky', top: 0, width: '100%', height: '100vh', overflow: 'hidden',
-        backgroundImage: `radial-gradient(120% 90% at 50% 22%, rgba(141,184,51,${0.05 + examineGlow * 0.06}) 0%, transparent 55%), linear-gradient(180deg, #0A0A0A 0%, var(--bg-darker) 55%, #060606 100%)`,
-        transition: 'background-image 400ms linear',
+        position: pinned ? 'sticky' : 'relative', top: 0, height: '100svh', minHeight: '560px', overflow: 'hidden',
+        background: 'linear-gradient(160deg, var(--bg-darker) 0%, var(--primary) 58%, #12301F 100%)',
       }}>
-        <div style={{
-          position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -55%)',
-          width: isMobile ? 'clamp(250px, 80vw, 400px)' : 'clamp(400px, 60vw, 900px)',
-          height: isMobile ? 'clamp(250px, 80vw, 400px)' : 'clamp(400px, 60vw, 900px)',
-          background: `radial-gradient(circle, rgba(141, 184, 51, ${0.05 + examineGlow * 0.10}) 0%, transparent 70%)`,
-          pointerEvents: 'none',
-        }} />
+        <div className="container hero-grid">
+          {/* Entrance is a CSS animation, not JS state: the headline is the LCP
+              element, so it must paint straight from the server HTML rather
+              than wait for hydration to flip an opacity. No manual column/flex
+              flipping for Arabic anywhere below — the document is dir="rtl",
+              which already mirrors grid and flex flow. */}
+          <div className="hero-copy" style={{ textAlign: 'start' }}>
+            <span className="section-tag section-tag--on-dark hero-eyebrow">{t('eyebrow')}</span>
+            <h1 className="hero-title" style={{ fontFamily, letterSpacing: isAr ? '0' : '-0.02em' }}>
+              {t('headlineLine1')}
+              <br />
+              {t('headlineLine2')}
+            </h1>
+            <p className="hero-lede">{t('lede')}</p>
 
-        <div style={{
-          display: 'flex', flexDirection: 'column', alignItems: 'center',
-          justifyContent: 'center', height: '100%',
-          padding: isMobile ? '112px 16px 28px' : '120px 24px 28px',
-          position: 'relative', zIndex: 2,
-        }}>
-          {/* Eyebrow + compact headline — fades in on mount, then fades out early on scroll so the cinematic sequence becomes the whole scene. */}
-          <div style={{
-            opacity: headlineVisible ? 1 : 0, transform: headlineVisible ? 'translateY(0)' : 'translateY(16px)',
-            transition: 'opacity 700ms var(--ease-ink), transform 700ms var(--ease-ink)',
-            display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0,
-          }}>
-            <div ref={eyebrowRef} style={{
-              marginBottom: isMobile ? '10px' : '14px',
-              background: 'rgba(141,184,51,0.10)', border: '1px solid rgba(141,184,51,0.28)',
-              borderRadius: 'var(--radius-pill)', padding: isMobile ? '5px 14px' : '6px 18px',
-              position: 'relative', overflow: 'hidden',
-            }}>
-              <div
-                aria-hidden="true"
+            <div className="hero-ctas">
+              <MagneticButton magneticPull={10}>
+                <a href={`/${locale}#contact`} className="btn-primary hero-cta">{t('ctaQuote')}</a>
+              </MagneticButton>
+              <MagneticButton magneticPull={8}>
+                <a href={`/${locale}/printers`} className="btn-secondary">{t('ctaExplore')}</a>
+              </MagneticButton>
+            </div>
+
+            <ul className="hero-features">
+              {FEATURES.map(({ key, icon }) => (
+                <li key={key}>
+                  <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    {icon}
+                  </svg>
+                  <div className="hero-feature-title">{t(`features.${key}.title`)}</div>
+                  <div className="hero-feature-desc">{t(`features.${key}.desc`)}</div>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="hero-stage">
+            <div className="hero-canvas-box">
+              {/* Studio integration for the alpha-cut frames: a soft key-light
+                  pool behind the printer and a contact shadow under it. The
+                  background remover strips the original floor shadow, so
+                  without this the printer reads as pasted on. */}
+              <div aria-hidden="true" style={{
+                position: 'absolute', inset: '6% 4% 10%', pointerEvents: 'none',
+                background: 'radial-gradient(closest-side, rgba(141,184,51,0.14), rgba(141,184,51,0.04) 60%, transparent)',
+              }} />
+              <div aria-hidden="true" style={{
+                position: 'absolute', left: '20%', right: '20%', bottom: '3%', height: '9%', pointerEvents: 'none',
+                background: 'radial-gradient(closest-side, rgba(0,0,0,0.5), transparent)', filter: 'blur(4px)',
+              }} />
+              <canvas
+                ref={canvasRef}
+                role="img"
+                aria-label={t('stageAlt')}
                 style={{
-                  position: 'absolute', inset: 0,
-                  background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)',
-                  animation: prefersReducedMotion ? 'none' : 'badge-shimmer 4s ease-in-out infinite',
-                  pointerEvents: 'none',
+                  position: 'absolute', inset: 0, width: '100%', height: '100%',
+                  opacity: firstFrameReady ? 1 : 0, transition: 'opacity 600ms var(--ease-ink)',
+                  // The explode shot lifts the scanner past the top of the source
+                  // frame; feather that edge so the cut never reads as a hard line.
+                  maskImage: 'linear-gradient(to bottom, transparent 0, #000 7%)',
+                  WebkitMaskImage: 'linear-gradient(to bottom, transparent 0, #000 7%)',
                 }}
               />
-              <span style={{ color: 'var(--accent)', fontSize: isMobile ? 'var(--text-2xs)' : 'var(--text-xs)', fontWeight: 600, letterSpacing: isAr ? '0' : '0.14em', textTransform: isAr ? 'none' : 'uppercase', position: 'relative', zIndex: 1 }}>
-                {isAr ? 'مصممة للأداء والدقة' : 'Engineered for performance'}
-              </span>
             </div>
 
-            <h1 ref={headlineRef} style={{
-              fontSize: isMobile ? 'clamp(1.4rem, 5.5vw, 1.9rem)' : 'clamp(1.9rem, 4vw, 3.2rem)',
-              fontWeight: 800, color: '#FFFFFF', textAlign: 'center',
-              lineHeight: 1.1, letterSpacing: isAr ? '0' : '-1px',
-              fontFamily: isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif',
-              margin: '0 0 8px',
-            }}>
-              {t('headline')}
-            </h1>
-            <p ref={subtitleRef} style={{
-              fontSize: isMobile ? 'var(--text-sm)' : 'var(--text-base)',
-              color: 'rgba(255,255,255,0.72)', maxWidth: isMobile ? '92%' : '520px', margin: '0 auto', lineHeight: 1.5,
-              textAlign: 'center',
-            }}>
-              {t('subtitle')}
-            </p>
-          </div>
-
-          {/* Cinematic scroll sequence — occupies most of the viewport, the printer is the scene. */}
-          <div style={{
-            position: 'relative', margin: isMobile ? '16px 0 0' : '18px 0 0', width: '100%',
-            maxWidth: isMobile ? '100%' : '1180px', flex: '1 1 auto', minHeight: '80px',
-            maxHeight: isMobile ? '40vh' : '62vh', overflow: 'hidden',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
-            {/* No aspect-ratio here on purpose — the wrapper's real height is the hard
-                constraint (flex + maxHeight above), and drawFrame already letterboxes
-                any source frame to fit whatever box shape the canvas actually gets. An
-                aspect-ratio on the canvas would instead derive height from width and
-                silently overflow the wrapper on short viewports. */}
-            {!firstFrameReady && (
-              <div style={{
-                width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                background: 'rgba(255,255,255,0.04)', borderRadius: 'var(--radius-lg)', border: '1px solid rgba(141,184,51,0.15)',
-              }}>
-                <div style={{
-                  width: '40px', height: '40px', border: '3px solid rgba(141,184,51,0.2)', borderTopColor: 'var(--accent)',
-                  borderRadius: '50%', animation: 'ui-loading-spin 800ms linear infinite',
-                }} />
-              </div>
-            )}
-            <canvas ref={canvasRef} style={{
-              width: '100%', height: '100%', display: firstFrameReady ? 'block' : 'none',
-              filter: `drop-shadow(0 20px 60px rgba(0, 0, 0, 0.5)) drop-shadow(0 8px 24px rgba(141, 184, 51, ${0.08 + examineGlow * 0.16}))`,
-            }} />
-
-            {/* Component leader-line callout (desktop only) — anchor dot + thin line to an edge-docked label card. */}
-            {firstFrameReady && anchor && phaseLabel && (
-              <>
-                <svg viewBox="0 0 100 100" preserveAspectRatio="none" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', overflow: 'visible' }}>
-                  <line
-                    x1={anchor.x} y1={anchor.y} x2={labelX} y2={anchor.y}
-                    stroke="rgba(255,255,255,0.35)" strokeWidth={1} vectorEffect="non-scaling-stroke"
-                  />
-                </svg>
-                <div style={{
-                  position: 'absolute', left: `${anchor.x}%`, top: `${anchor.y}%`, transform: 'translate(-50%, -50%)',
-                  width: '9px', height: '9px', borderRadius: '50%', background: 'var(--accent)',
-                  boxShadow: '0 0 10px rgba(141,184,51,0.7)', animation: prefersReducedMotion ? 'none' : 'calloutPulse 1.8s ease-in-out infinite',
-                }} />
-                <div key={phase.key} style={{
-                  position: 'absolute', top: `${anchor.y}%`, left: `${labelX}%`,
-                  transform: `translate(${anchor.side === 'right' ? '-100%' : '0%'}, -50%)`,
-                  maxWidth: isMobile ? '160px' : '230px', textAlign: anchor.side === 'right' ? 'right' : 'left',
-                  background: 'rgba(10,10,10,0.55)', backdropFilter: 'blur(16px)',
-                  border: '1px solid rgba(141,184,51,0.25)', borderRadius: 'var(--radius-md)',
-                  padding: '8px 14px', animation: prefersReducedMotion ? 'none' : 'calloutIn 350ms var(--ease-ink)',
-                }}>
-                  <div style={{
-                    color: 'var(--accent)', fontSize: 'var(--text-xs)', fontWeight: 700,
-                    letterSpacing: isAr ? '0' : '0.1em', textTransform: isAr ? 'none' : 'uppercase',
-                    fontFamily: isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif',
-                  }}>{phaseLabel}</div>
-                  {phaseDesc && (
-                    <div style={{ color: 'rgba(255,255,255,0.65)', fontSize: 'var(--text-2xs)', lineHeight: 1.4, marginTop: '3px' }}>
-                      {phaseDesc}
-                    </div>
-                  )}
+            <div className="hero-stage-footer">
+              <div aria-live="polite" style={{ textAlign: 'start', minWidth: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px' }}>
+                  <span style={{ fontFamily: 'var(--font-ibm-plex-mono), monospace', fontSize: 'var(--text-xs)', color: 'var(--accent)', fontWeight: 600 }}>
+                    {pad2(stepIndex + 1)}<span style={{ color: 'rgba(255,255,255,0.4)' }}> / {pad2(CINEMATIC_PHASES.length)}</span>
+                  </span>
+                  <span key={phase.key} style={{
+                    color: '#fff', fontSize: 'var(--text-sm)', fontWeight: 700, fontFamily,
+                    letterSpacing: isAr ? '0' : '0.08em', textTransform: isAr ? 'none' : 'uppercase',
+                    animation: prefersReducedMotion ? 'none' : 'heroStepIn 350ms var(--ease-ink)',
+                  }}>
+                    {phaseLabel}
+                  </span>
                 </div>
-              </>
-            )}
+                <div className="hero-step-desc">{phaseDesc}</div>
+              </div>
 
-            {/* Broad story-beat pill (mobile always; desktop only when no component anchor is active).
-                Docked just inside the box, not below it — the wrapper clips overflow (needed so a
-                pillar/letterboxed frame never spills past its bounds), so a negative offset here
-                would render the pill invisible instead of floating below the canvas. */}
-            {firstFrameReady && phaseLabel && !anchor && (
-              <div style={{
-                position: 'absolute', bottom: isMobile ? '10px' : '14px', left: '50%', transform: 'translateX(-50%)',
-                pointerEvents: 'none', textAlign: 'center',
-              }}>
-                <div key={phase.key} style={{
-                  background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(16px)',
-                  border: '1px solid rgba(141,184,51,0.25)', borderRadius: 'var(--radius-md)',
-                  padding: isMobile ? '4px 12px' : '6px 18px', whiteSpace: 'nowrap',
-                  display: 'inline-flex', alignItems: 'center', gap: '8px',
-                  animation: prefersReducedMotion ? 'none' : 'calloutIn 350ms var(--ease-ink)',
-                }}>
-                  <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent)', boxShadow: '0 0 8px rgba(141,184,51,0.6)' }} />
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px', flexShrink: 0 }}>
+                {pinned && (
                   <span style={{
-                    color: 'rgba(255,255,255,0.8)', fontSize: isMobile ? 'var(--text-2xs)' : 'var(--text-xs)', fontWeight: 600,
-                    fontFamily: isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif',
-                    letterSpacing: isAr ? '0' : '0.12em', textTransform: isAr ? 'none' : 'uppercase',
-                  }}>{phaseLabel}</span>
-                </div>
-                {isMobile && phaseDesc && (
-                  <div style={{ color: 'rgba(255,255,255,0.55)', fontSize: 'var(--text-2xs)', marginTop: '6px', maxWidth: '260px' }}>
-                    {phaseDesc}
-                  </div>
+                    color: 'rgba(255,255,255,0.6)', fontSize: 'var(--text-2xs)', letterSpacing: isAr ? '0' : '0.08em', fontWeight: 500,
+                    opacity: scrollProgress < 0.03 ? 1 : 0, transition: 'opacity 300ms ease',
+                  }}>
+                    {t('stageHint')}
+                  </span>
                 )}
+                <div aria-hidden="true" className="hero-rail">
+                  {CINEMATIC_PHASES.map((p) => {
+                    const fill = Math.max(0, Math.min(1, (scrollProgress - p.start) / (p.end - p.start)));
+                    return (
+                      <span key={p.key} className="hero-rail-seg">
+                        <span style={{
+                          position: 'absolute', inset: 0, background: 'var(--accent)', transformOrigin: isAr ? 'right' : 'left',
+                          transform: `scaleX(${fill})`,
+                        }} />
+                      </span>
+                    );
+                  })}
+                </div>
               </div>
-            )}
-          </div>
-
-          <div ref={ctaContainerRef} style={{
-            opacity: headlineVisible ? 1 : 0, transform: headlineVisible ? 'translateY(0)' : 'translateY(16px)',
-            transition: 'opacity 700ms var(--ease-ink) 150ms, transform 700ms var(--ease-ink) 150ms', flexShrink: 0,
-            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: isMobile ? '10px' : '14px',
-            marginTop: isMobile ? '16px' : '22px',
-          }}>
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: '12px',
-              flexDirection: isMobile ? 'column' : (isAr ? 'row-reverse' : 'row'),
-              width: isMobile ? '100%' : 'auto', justifyContent: 'center',
-            }}>
-              <MagneticButton magneticPull={10}>
-                <a ref={ctaRef} href={`/${locale}#contact`} className="btn-primary hero-cta" style={{
-                  fontSize: isMobile ? 'var(--text-sm)' : 'var(--text-base)',
-                  padding: isMobile ? '12px 24px' : '14px 34px',
-                  height: 'auto',
-                  boxShadow: 'var(--shadow-lg)', width: isMobile ? '100%' : 'auto', maxWidth: isMobile ? '280px' : 'none', display: 'inline-flex',
-                  alignItems: 'center', justifyContent: 'center',
-                }}>
-                  {t('cta')}
-                </a>
-              </MagneticButton>
-
-              <MagneticButton magneticPull={8}>
-                <a href={`/${locale}/printers`} className="btn-secondary" style={{
-                  fontSize: isMobile ? 'var(--text-sm)' : 'var(--text-base)',
-                  padding: isMobile ? '11px 22px' : '13px 28px',
-                  height: 'auto',
-                  background: 'rgba(255, 255, 255, 0.08)',
-                  backdropFilter: 'blur(8px)',
-                  border: '1px solid rgba(255, 255, 255, 0.18)',
-                  color: '#FFFFFF',
-                  borderRadius: 'var(--radius-pill)',
-                  fontWeight: 600,
-                  textDecoration: 'none',
-                  width: isMobile ? '100%' : 'auto', maxWidth: isMobile ? '280px' : 'none', display: 'inline-flex',
-                  alignItems: 'center', justifyContent: 'center', gap: '8px',
-                  transition: 'all 0.25s ease',
-                  flexDirection: isAr ? 'row-reverse' : 'row',
-                }}>
-                  {isAr ? 'استعراض أسطول الطابعات' : 'Browse Fleet Inventory'}
-                  <span style={{ fontSize: '1.1em', transform: isAr ? 'rotate(180deg)' : 'none' }}>→</span>
-                </a>
-              </MagneticButton>
             </div>
-
-            {/* Verified B2B trust signals strip */}
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: isMobile ? '8px' : '14px',
-              color: 'rgba(255,255,255,0.68)', fontSize: isMobile ? '0.72rem' : '0.8rem',
-              fontWeight: 500, flexWrap: 'wrap', justifyContent: 'center',
-              letterSpacing: isAr ? '0' : '0.02em',
-              flexDirection: isAr ? 'row-reverse' : 'row',
-            }}>
-              <span>{isAr ? '✓ ضمان FNG لمدة ١٢ شهراً' : '✓ 12-Month FNG Warranty'}</span>
-              <span style={{ opacity: 0.35 }}>•</span>
-              <span>{isAr ? '✓ فحص تقني من ٤٠ نقطة' : '✓ 40-Point Diagnostic'}</span>
-              <span style={{ opacity: 0.35 }}>•</span>
-              <span>{isAr ? '✓ تسليم مباشر في دول الخليج' : '✓ GCC Direct Delivery'}</span>
-            </div>
-          </div>
-
-          {/* Scroll indicator — always occupies real flex space (never position:absolute
-              pinned to the viewport bottom) so it can never overlap the CTA above it on
-              shorter viewports; it only fades via opacity as the visitor starts scrolling. */}
-          <div style={{
-            marginTop: isMobile ? '12px' : '16px', flexShrink: 0,
-            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px',
-            opacity: scrollProgress < 0.05 ? 1 : 0,
-            transition: 'opacity 300ms ease',
-            pointerEvents: 'none',
-          }}>
-            {/* Sleek 21st.dev mouse scroll wheel */}
-            <div style={{
-              width: '18px', height: '28px', borderRadius: '10px',
-              border: '1.5px solid rgba(141, 184, 51, 0.5)',
-              display: 'flex', justifyContent: 'center', padding: '3px 0',
-              boxShadow: '0 0 10px rgba(141,184,51,0.15)',
-            }}>
-              <div style={{
-                width: '3px', height: '6px', borderRadius: '2px', background: 'var(--accent)',
-                animation: prefersReducedMotion ? 'none' : 'mouseScroll 1.8s ease-in-out infinite',
-              }} />
-            </div>
-            <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: isMobile ? 'var(--text-2xs)' : 'var(--text-xs)', letterSpacing: isAr ? '0' : '0.08em', fontWeight: 500 }}>
-              {t('scrollHint')}
-            </span>
           </div>
         </div>
       </div>
 
       <style>{`
-        @keyframes mouseScroll {
-          0% { transform: translateY(0); opacity: 1; }
-          60% { transform: translateY(8px); opacity: 0; }
-          61% { transform: translateY(0); opacity: 0; }
-          100% { transform: translateY(0); opacity: 1; }
+        .hero-grid {
+          height: 100%;
+          display: grid;
+          grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+          align-items: center;
+          gap: clamp(24px, 4vw, 64px);
+          padding-top: clamp(96px, 13vh, 132px);
+          padding-bottom: clamp(24px, 5vh, 56px);
         }
-        @keyframes heroHint { 0%, 100% { transform: translateY(0); opacity: 0.7; } 50% { transform: translateY(6px); opacity: 1; } }
-        @keyframes calloutIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes calloutPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .hero-copy { animation: heroCopyIn 700ms var(--ease-ink) both; }
+        @keyframes heroCopyIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+        @media (prefers-reduced-motion: reduce) { .hero-copy { animation: none; } }
+        .hero-eyebrow { margin-bottom: 20px; }
+        .hero-title {
+          font-size: clamp(2.1rem, 4.4vw, 3.9rem);
+          font-weight: 800;
+          line-height: 1.06;
+          color: #fff;
+          margin: 0 0 20px;
+          text-wrap: balance;
+        }
+        .hero-lede {
+          color: rgba(255,255,255,0.72);
+          font-size: clamp(1rem, 1.35vw, 1.2rem);
+          line-height: 1.6;
+          max-width: 34rem;
+          margin: 0 0 32px;
+        }
+        .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+        .hero-features {
+          list-style: none;
+          padding: 0;
+          margin: clamp(32px, 6vh, 56px) 0 0;
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 24px;
+          max-width: 36rem;
+          color: var(--accent);
+        }
+        .hero-feature-title { color: #fff; font-weight: 700; font-size: var(--text-sm); margin-top: 12px; }
+        .hero-feature-desc { color: rgba(255,255,255,0.6); font-size: var(--text-xs); margin-top: 2px; }
+        .hero-stage {
+          height: min(76vh, 720px);
+          display: flex;
+          flex-direction: column;
+          min-height: 0;
+        }
+        .hero-canvas-box { position: relative; flex: 1 1 auto; min-height: 0; }
+        .hero-stage-footer {
+          display: flex;
+          align-items: flex-end;
+          justify-content: space-between;
+          gap: 24px;
+          padding-top: 16px;
+          border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .hero-step-desc {
+          color: rgba(255,255,255,0.6);
+          font-size: var(--text-xs);
+          line-height: 1.45;
+          margin-top: 4px;
+          min-height: 1.45em;
+        }
+        .hero-rail { display: flex; gap: 4px; }
+        .hero-rail-seg {
+          position: relative;
+          width: 26px;
+          height: 2px;
+          overflow: hidden;
+          border-radius: 1px;
+          background: rgba(255,255,255,0.16);
+        }
+        @keyframes heroStepIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+        @media (max-width: 900px) {
+          .hero-grid {
+            grid-template-columns: 1fr;
+            grid-template-rows: auto minmax(0, 1fr);
+            align-items: stretch;
+            gap: 12px;
+            padding-top: 96px;
+            padding-bottom: 16px;
+          }
+          .hero-eyebrow { margin-bottom: 10px; }
+          .hero-title { font-size: clamp(1.7rem, 7vw, 2.4rem); margin-bottom: 10px; }
+          .hero-lede { font-size: var(--text-sm); margin-bottom: 16px; }
+          .hero-features { display: none; }
+          .hero-stage { height: auto; }
+          .hero-rail-seg { width: 18px; }
+        }
+        @media (max-width: 480px) {
+          .hero-ctas > * { flex: 1 1 0; }
+          .hero-ctas a { width: 100%; padding-inline: 16px; }
+        }
       `}</style>
     </section>
   );
