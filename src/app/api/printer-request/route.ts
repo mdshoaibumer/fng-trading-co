@@ -55,8 +55,11 @@ export async function POST(request: Request) {
     });
 
     if (dbError) {
-      console.error('Supabase insert error:', dbError);
-      return NextResponse.json({ error: `Database error: ${dbError.message}` }, { status: 500 });
+      console.error('[API printer-request] Supabase insert error:', dbError);
+      return NextResponse.json(
+        { error: 'Unable to process your request at this time. Please try again or contact our team on WhatsApp.' },
+        { status: 500 }
+      );
     }
 
     // Forward to Web3Forms for email notification

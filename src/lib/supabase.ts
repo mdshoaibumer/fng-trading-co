@@ -87,23 +87,44 @@ export interface Product {
 // Shared by both the printer and office-equipment catalogs — both live in
 // the same `printers` table, distinguished only by an `eq-` id prefix.
 //
-// Returns `error: true` when the fetch itself failed, distinct from a
-// successful fetch that simply found zero matching rows — callers need to
-// tell "nothing to show" apart from "something broke" instead of collapsing
-// both into an empty array.
+// In production:
+// - Query failure -> returns `{ products: [], error: true }` and logs technical error.
+// - Empty catalog -> returns `{ products: [], error: false }` (renders EmptyState).
+// - Active catalog -> returns `{ products, error: false }`.
+//
+// In development:
+// - Falls back to DEV_FALLBACK_PRODUCTS if local Supabase is offline/empty.
 export const getProducts = cache(async (kind: 'printer' | 'equipment'): Promise<{ products: Product[]; error: boolean }> => {
+  const isDev = process.env.NODE_ENV === 'development';
+
   try {
     const { data, error } = await supabaseAdmin
       .from('printers')
       .select('*')
       .order('created_at', { ascending: true });
 
-    if (error || !data || data.length === 0) {
-      const { DEV_FALLBACK_PRODUCTS } = await import('./devFallbackProducts');
-      const products = DEV_FALLBACK_PRODUCTS.filter((p) =>
-        kind === 'equipment' ? p.id.startsWith('eq-') : !p.id.startsWith('eq-')
-      );
-      return { products, error: false };
+    if (error) {
+      console.error(`[getProducts] Supabase query failed for kind="${kind}":`, error);
+      if (isDev) {
+        console.warn('[getProducts] Dev mode: falling back to devFallbackProducts due to DB error');
+        const { DEV_FALLBACK_PRODUCTS } = await import('./devFallbackProducts');
+        const products = DEV_FALLBACK_PRODUCTS.filter((p) =>
+          kind === 'equipment' ? p.id.startsWith('eq-') : !p.id.startsWith('eq-')
+        );
+        return { products, error: false };
+      }
+      return { products: [], error: true };
+    }
+
+    if (!data) {
+      if (isDev) {
+        const { DEV_FALLBACK_PRODUCTS } = await import('./devFallbackProducts');
+        const products = DEV_FALLBACK_PRODUCTS.filter((p) =>
+          kind === 'equipment' ? p.id.startsWith('eq-') : !p.id.startsWith('eq-')
+        );
+        return { products, error: false };
+      }
+      return { products: [], error: false };
     }
 
     const products = data
@@ -121,7 +142,8 @@ export const getProducts = cache(async (kind: 'printer' | 'equipment'): Promise<
         available: p.available,
       }));
 
-    if (products.length === 0) {
+    // In development mode only, if the database table is completely empty, populate fallback
+    if (products.length === 0 && isDev) {
       const { DEV_FALLBACK_PRODUCTS } = await import('./devFallbackProducts');
       const fallback = DEV_FALLBACK_PRODUCTS.filter((p) =>
         kind === 'equipment' ? p.id.startsWith('eq-') : !p.id.startsWith('eq-')
@@ -131,12 +153,16 @@ export const getProducts = cache(async (kind: 'printer' | 'equipment'): Promise<
 
     return { products, error: false };
   } catch (err) {
-    console.warn('getProducts error, returning fallback products:', err);
-    const { DEV_FALLBACK_PRODUCTS } = await import('./devFallbackProducts');
-    const products = DEV_FALLBACK_PRODUCTS.filter((p) =>
-      kind === 'equipment' ? p.id.startsWith('eq-') : !p.id.startsWith('eq-')
-    );
-    return { products, error: false };
+    console.error(`[getProducts] Unexpected exception for kind="${kind}":`, err);
+    if (isDev) {
+      console.warn('[getProducts] Dev mode: falling back to devFallbackProducts due to exception');
+      const { DEV_FALLBACK_PRODUCTS } = await import('./devFallbackProducts');
+      const products = DEV_FALLBACK_PRODUCTS.filter((p) =>
+        kind === 'equipment' ? p.id.startsWith('eq-') : !p.id.startsWith('eq-')
+      );
+      return { products, error: false };
+    }
+    return { products: [], error: true };
   }
 });
 
@@ -157,8 +183,12 @@ export interface ProductRow {
   available: boolean;
 }
 
-// Single-product lookup for printers/[id] and equipment/[id], with fallback
+// Single-product lookup for printers/[id] and equipment/[id]
+// In production: returns null on query failure or missing product.
+// In development: falls back to DEV_FALLBACK_PRODUCTS for offline local testing.
 export const getProductById = cache(async (id: string): Promise<ProductRow | null> => {
+  const isDev = process.env.NODE_ENV === 'development';
+
   try {
     const { data, error } = await supabaseAdmin
       .from('printers')
@@ -167,16 +197,23 @@ export const getProductById = cache(async (id: string): Promise<ProductRow | nul
       .single();
 
     if (!error && data) return data as ProductRow;
+    if (error && error.code !== 'PGRST116') {
+      console.error(`[getProductById] Supabase error for id="${id}":`, error);
+    }
   } catch (err) {
-    console.warn('getProductById query error, falling back to static product:', err);
+    console.error(`[getProductById] Query exception for id="${id}":`, err);
   }
 
-  const { DEV_FALLBACK_PRODUCTS } = await import('./devFallbackProducts');
-  const p = DEV_FALLBACK_PRODUCTS.find((product) => product.id === id);
-  if (!p) return null;
-  return {
-    id: p.id, name: p.name, desc_en: p.descEn, desc_ar: p.descAr,
-    images: p.images, features_en: p.featuresEn, features_ar: p.featuresAr,
-    specs_en: p.specsEn, specs_ar: p.specsAr, available: p.available,
-  };
+  if (isDev) {
+    const { DEV_FALLBACK_PRODUCTS } = await import('./devFallbackProducts');
+    const p = DEV_FALLBACK_PRODUCTS.find((product) => product.id === id);
+    if (!p) return null;
+    return {
+      id: p.id, name: p.name, desc_en: p.descEn, desc_ar: p.descAr,
+      images: p.images, features_en: p.featuresEn, features_ar: p.featuresAr,
+      specs_en: p.specsEn, specs_ar: p.specsAr, available: p.available,
+    };
+  }
+
+  return null;
 });

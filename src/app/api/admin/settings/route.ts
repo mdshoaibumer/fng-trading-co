@@ -95,6 +95,11 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    const isAdmin = await isAdminRequest();
+    if (!isAdmin) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const parsed = settingsSchema.safeParse(await request.json());
     if (!parsed.success) {
       return NextResponse.json({ error: 'Invalid settings payload', issues: parsed.error.issues.map((i) => i.path.join('.')) }, { status: 400 });
