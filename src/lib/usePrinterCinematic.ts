@@ -140,6 +140,37 @@ interface UsePrinterCinematicResult {
   phase: CinematicPhaseLabel;
 }
 
+/** Pure + testable: generate sparse keyframe indices for skeleton scrubbing. */
+export function getSparseKeyframeIndices(totalFrames: number, stride = 10): number[] {
+  if (totalFrames <= 0) return [];
+  const indices: number[] = [];
+  for (let i = 0; i < totalFrames; i += stride) {
+    indices.push(i);
+  }
+  if (indices[indices.length - 1] !== totalFrames - 1) {
+    indices.push(totalFrames - 1);
+  }
+  return indices;
+}
+
+/** Pure + testable: calculate active lookahead window around current scroll frame. */
+export function getLookaheadWindowIndices(
+  currentFrame: number,
+  totalFrames: number,
+  forwardRadius = 30,
+  backwardRadius = 10
+): number[] {
+  if (totalFrames <= 0) return [];
+  const clampedCurrent = Math.max(0, Math.min(totalFrames - 1, currentFrame));
+  const start = Math.max(0, clampedCurrent - backwardRadius);
+  const end = Math.min(totalFrames - 1, clampedCurrent + forwardRadius);
+  const indices: number[] = [];
+  for (let i = start; i <= end; i++) {
+    indices.push(i);
+  }
+  return indices;
+}
+
 export function usePrinterCinematic({
   desktopTotalFrames,
   mobileTotalFrames,
@@ -149,8 +180,9 @@ export function usePrinterCinematic({
 }: UsePrinterCinematicOptions): UsePrinterCinematicResult {
   const sectionRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const imagesRef = useRef<HTMLImageElement[]>([]);
+  const imagesRef = useRef<(HTMLImageElement | null)[]>([]);
   const loadedRef = useRef<boolean[]>([]);
+  const requestedRef = useRef<boolean[]>([]);
   const lastDrawnIndexRef = useRef(-1);
   const currentFrameRef = useRef(0);
   const drawRafRef = useRef<number | null>(null);
@@ -164,16 +196,18 @@ export function usePrinterCinematic({
   const [loadProgress, setLoadProgress] = useState(0);
   const [firstFrameReady, setFirstFrameReady] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  // Where the 16:9 frame actually lands inside the canvas box, as a percent
-  // rect — the box itself isn't guaranteed to be 16:9 (it's flex/maxHeight
-  // bound), so drawFrame letterboxes/pillarboxes. Overlay anchors (leader
-  // lines) need this to stay correct instead of assuming the box == the frame.
   const [frameRect, setFrameRect] = useState({ xPct: 0, yPct: 0, widthPct: 100, heightPct: 100 });
   const frameRectRef = useRef(frameRect);
   const [phase, setPhase] = useState<CinematicPhaseLabel>(PHASES[0].label);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(
     () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
   );
+
+  // Queue and concurrency management for progressive loading
+  const queueRef = useRef<number[]>([]);
+  const inFlightCountRef = useRef(0);
+  const isVisibleRef = useRef(true);
+  const isCancelledRef = useRef(false);
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth <= 768);
@@ -192,9 +226,6 @@ export function usePrinterCinematic({
   const totalFrames = isMobile ? mobileTotalFrames : desktopTotalFrames;
 
   // Nearest already-loaded frame to `target`, searching outward both ways.
-  // Scrubbing ahead of what's loaded so far freezes on the closest available
-  // frame instead of flashing blank — the sequence still finishes streaming
-  // in behind the scenes.
   const nearestLoadedIndex = useCallback((target: number) => {
     const loaded = loadedRef.current;
     if (loaded[target]) return target;
@@ -258,6 +289,152 @@ export function usePrinterCinematic({
     }
   }, [nearestLoadedIndex]);
 
+  // Concurrency-capped progressive frame loader
+  const MAX_CONCURRENT = 4;
+  const processQueueRef = useRef<() => void>(() => {});
+
+  const processQueue = useCallback(() => {
+    if (isCancelledRef.current || !isVisibleRef.current) return;
+    const framePath = isMobile ? mobileFramePath : desktopFramePath;
+
+    while (inFlightCountRef.current < MAX_CONCURRENT && queueRef.current.length > 0) {
+      const index = queueRef.current.shift();
+      if (index === undefined) break;
+      if (requestedRef.current[index]) continue;
+
+      requestedRef.current[index] = true;
+      inFlightCountRef.current++;
+
+      const img = new Image();
+      img.decoding = 'async';
+      img.src = framePath(index);
+
+      const onSettled = () => {
+        inFlightCountRef.current--;
+        if (isCancelledRef.current) return;
+
+        loadedRef.current[index] = true;
+        const totalLoaded = loadedRef.current.filter(Boolean).length;
+        setLoadProgress(totalLoaded / totalFrames);
+
+        if (index === 0) {
+          setFirstFrameReady(true);
+          drawFrame(currentFrameRef.current);
+        } else if (
+          currentFrameRef.current === index ||
+          lastDrawnIndexRef.current === -1 ||
+          Math.abs(currentFrameRef.current - index) <= 2
+        ) {
+          drawFrame(currentFrameRef.current);
+        }
+
+        processQueueRef.current();
+      };
+
+      img.onload = onSettled;
+      img.onerror = onSettled;
+      imagesRef.current[index] = img;
+    }
+  }, [isMobile, mobileFramePath, desktopFramePath, totalFrames, drawFrame]);
+
+  useEffect(() => {
+    processQueueRef.current = processQueue;
+  }, [processQueue]);
+
+
+  const enqueueFrames = useCallback((indices: number[], highPriority = false) => {
+    if (isCancelledRef.current) return;
+    const toAdd: number[] = [];
+    for (const idx of indices) {
+      if (idx >= 0 && idx < totalFrames && !requestedRef.current[idx]) {
+        toAdd.push(idx);
+      }
+    }
+    if (toAdd.length === 0) return;
+
+    if (highPriority) {
+      // Prepend to front of queue
+      queueRef.current = [...toAdd, ...queueRef.current.filter((i) => !toAdd.includes(i))];
+    } else {
+      // Append to back
+      const existing = new Set(queueRef.current);
+      for (const idx of toAdd) {
+        if (!existing.has(idx)) {
+          queueRef.current.push(idx);
+          existing.add(idx);
+        }
+      }
+    }
+    processQueue();
+  }, [totalFrames, processQueue]);
+
+  // On mount: load Frame 0 immediately.
+  // If prefersReducedMotion: STOP. Zero additional network downloads.
+  // Otherwise: enqueue initial primer buffer (1..25) and sparse skeleton.
+  useEffect(() => {
+    isCancelledRef.current = false;
+    imagesRef.current = new Array(totalFrames).fill(null);
+    loadedRef.current = new Array(totalFrames).fill(false);
+    requestedRef.current = new Array(totalFrames).fill(false);
+    queueRef.current = [];
+    inFlightCountRef.current = 0;
+
+    // Stage 0: Instant poster frame (Frame 0)
+    enqueueFrames([0], true);
+
+    if (prefersReducedMotion) {
+      return () => { isCancelledRef.current = true; };
+    }
+
+    // Stage 1 & 2: Staged background loader using requestIdleCallback / setTimeout
+    let timerId: ReturnType<typeof setTimeout> | null = null;
+    const scheduleBackgroundLoading = () => {
+      // Interaction primer buffer: frames 1..25
+      const primerIndices: number[] = [];
+      for (let i = 1; i <= Math.min(25, totalFrames - 1); i++) {
+        primerIndices.push(i);
+      }
+      enqueueFrames(primerIndices, false);
+
+      // Sparse skeleton keyframes across the whole sequence (stride 10 desktop, 8 mobile)
+      const stride = isMobile ? 8 : 10;
+      const sparseIndices = getSparseKeyframeIndices(totalFrames, stride).filter((i) => i > 25);
+      enqueueFrames(sparseIndices, false);
+    };
+
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      const idleHandle = window.requestIdleCallback(scheduleBackgroundLoading, { timeout: 1200 });
+      return () => {
+        isCancelledRef.current = true;
+        window.cancelIdleCallback?.(idleHandle);
+      };
+    } else {
+      timerId = setTimeout(scheduleBackgroundLoading, 250);
+      return () => {
+        isCancelledRef.current = true;
+        if (timerId) clearTimeout(timerId);
+      };
+    }
+  }, [totalFrames, prefersReducedMotion, isMobile, enqueueFrames]);
+
+  // Visibility gating: pause queue when section is scrolled out of viewport
+  useEffect(() => {
+    const node = sectionRef.current;
+    if (!node || typeof IntersectionObserver === 'undefined') return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisibleRef.current = entry.isIntersecting;
+        if (entry.isIntersecting) {
+          processQueue();
+        }
+      },
+      { rootMargin: '200px 0px' }
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [processQueue]);
+
   const computeProgress = useCallback(() => {
     scrollTickingRef.current = false;
     if (!sectionRef.current) return;
@@ -276,10 +453,17 @@ export function usePrinterCinematic({
     const frameIndex = frameIndexForProgress(progress, totalFrames);
     if (frameIndex !== currentFrameRef.current) {
       currentFrameRef.current = frameIndex;
+
+      // Active Lookahead Window: stream surrounding frames with high priority
+      if (!prefersReducedMotion) {
+        const lookaheadIndices = getLookaheadWindowIndices(frameIndex, totalFrames, 30, 8);
+        enqueueFrames(lookaheadIndices, true);
+      }
+
       if (drawRafRef.current) cancelAnimationFrame(drawRafRef.current);
       drawRafRef.current = requestAnimationFrame(() => drawFrame(frameIndex));
     }
-  }, [totalFrames, drawFrame]);
+  }, [totalFrames, drawFrame, prefersReducedMotion, enqueueFrames]);
 
   const handleScroll = useCallback(() => {
     if (scrollTickingRef.current) return;
@@ -287,54 +471,9 @@ export function usePrinterCinematic({
     scrollRafRef.current = requestAnimationFrame(computeProgress);
   }, [computeProgress]);
 
-  // The canvas is `display: none` until the first frame is ready, so drawing
-  // synchronously inside that frame's load handler reads a stale clientWidth
-  // of 0 (the DOM hasn't reflected `display: block` yet) and silently no-ops.
-  // Redrawing from an effect keyed on `firstFrameReady` runs after that
-  // commit (same fix as `useScrollFrameSequence`'s `imagesLoaded` effect).
   useEffect(() => {
     if (firstFrameReady) drawFrame(currentFrameRef.current);
   }, [firstFrameReady, drawFrame]);
-
-  // Progressive load: every frame's Image starts fetching immediately (the
-  // browser/HTTP2 queues them), but we don't gate anything on "all done" —
-  // firstFrameReady flips as soon as frame 0 paints, and loadProgress climbs
-  // in the background so the rest of the sequence is ready well before the
-  // visitor scrolls that far.
-  useEffect(() => {
-    let cancelled = false;
-    const framePath = isMobile ? mobileFramePath : desktopFramePath;
-    const images: HTMLImageElement[] = [];
-    const loaded: boolean[] = new Array(totalFrames).fill(false);
-    let loadedCount = 0;
-    imagesRef.current = images;
-    loadedRef.current = loaded;
-
-    for (let index = 0; index < totalFrames; index++) {
-      const img = new Image();
-      img.decoding = 'async';
-      img.src = framePath(index);
-      const onSettled = () => {
-        if (cancelled) return;
-        loaded[index] = true;
-        loadedCount++;
-        setLoadProgress(loadedCount / totalFrames);
-        if (index === 0) {
-          setFirstFrameReady(true);
-          drawFrame(currentFrameRef.current);
-        } else if (currentFrameRef.current === index || lastDrawnIndexRef.current === -1) {
-          drawFrame(currentFrameRef.current);
-        }
-      };
-      img.onload = onSettled;
-      img.onerror = onSettled;
-      images[index] = img;
-    }
-    return () => { cancelled = true; };
-    // isMobile is read once per mount (matches useScrollFrameSequence/usePrinterStory) —
-    // an orientation change shouldn't reload the whole sequence under a different set.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [totalFrames]);
 
   useEffect(() => {
     const onResize = () => drawFrame(currentFrameRef.current);
@@ -345,6 +484,7 @@ export function usePrinterCinematic({
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setScrollProgress(0);
       setPhase(PHASES[0].label);
+
       onProgressRef.current?.(0);
       drawFrame(0);
     } else {
@@ -361,3 +501,4 @@ export function usePrinterCinematic({
 
   return { sectionRef, canvasRef, scrollProgress, loadProgress, firstFrameReady, frameRect, isMobile, prefersReducedMotion, phase };
 }
+
