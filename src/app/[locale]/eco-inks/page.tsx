@@ -9,7 +9,7 @@ import EcoInksSection from '@/components/sections/EcoInksSection';
 import EcoInksSustainabilitySection from '@/components/sections/EcoInksSustainabilitySection';
 import TonerProductsSection from '@/components/sections/TonerProductsSection';
 import ContactSection from '@/components/sections/ContactSection';
-import { buildAlternates } from '@/lib/metadata';
+import { buildPageMetadata } from '@/lib/metadata';
 import PageTransition from '@/components/ui/PageTransition';
 
 export async function generateMetadata({
@@ -20,13 +20,13 @@ export async function generateMetadata({
   const { locale } = await params;
   const seo = await getTranslations({ locale, namespace: 'seo.ecoInks' });
 
-  return {
-    title: {
-      absolute: seo('title'),
-    },
+  return buildPageMetadata({
+    locale,
+    path: '/eco-inks',
+    title: seo('title'),
     description: seo('description'),
-    alternates: buildAlternates(locale, '/eco-inks'),
-  };
+    image: '/eco-inks-logo.png',
+  });
 }
 
 export default async function EcoInksPage({

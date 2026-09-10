@@ -2,7 +2,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { SITE_URL } from '@/lib/siteContact';
 import type { Metadata } from 'next';
 import { safeJsonLd } from '@/lib/safeJsonLd';
-import { buildAlternates } from '@/lib/metadata';
+import { buildPageMetadata } from '@/lib/metadata';
 import PageTransition from '@/components/ui/PageTransition';
 
 export async function generateMetadata({
@@ -13,13 +13,12 @@ export async function generateMetadata({
   const { locale } = await params;
   const seo = await getTranslations({ locale, namespace: 'seo.terms' });
 
-  return {
-    title: {
-      absolute: seo('title'),
-    },
+  return buildPageMetadata({
+    locale,
+    path: '/terms',
+    title: seo('title'),
     description: seo('description'),
-    alternates: buildAlternates(locale, '/terms'),
-  };
+  });
 }
 
 export default async function TermsPage({

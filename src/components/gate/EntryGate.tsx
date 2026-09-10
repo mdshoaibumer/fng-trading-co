@@ -116,7 +116,7 @@ export default function EntryGate() {
       ref={dialogRef}
       role="dialog"
       aria-modal="true"
-      aria-label={t('eyebrow')}
+      aria-labelledby="entry-gate-heading"
       tabIndex={-1}
       style={{
         position: 'fixed', inset: 0, zIndex: 2000,
@@ -180,15 +180,18 @@ export default function EntryGate() {
           }}>
             {t('eyebrow')}
           </span>
-          <h1 style={{
-            fontSize: 'clamp(1.6rem, 4vw, 2.75rem)', fontWeight: 800, color: '#fff', margin: 0,
-            fontFamily: isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif',
-            opacity: entered ? 1 : 0,
-            transform: entered ? 'translateY(0)' : 'translateY(10px)',
-            transition: 'opacity 450ms var(--ease-ink) 80ms, transform 450ms var(--ease-ink) 80ms',
-          }}>
+          <h2
+            id="entry-gate-heading"
+            style={{
+              fontSize: 'clamp(1.6rem, 4vw, 2.75rem)', fontWeight: 800, color: '#fff', margin: 0,
+              fontFamily: isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif',
+              opacity: entered ? 1 : 0,
+              transform: entered ? 'translateY(0)' : 'translateY(10px)',
+              transition: 'opacity 450ms var(--ease-ink) 80ms, transform 450ms var(--ease-ink) 80ms',
+            }}
+          >
             {t('title')}
-          </h1>
+          </h2>
         </div>
 
         <div className="gate-grid" style={{

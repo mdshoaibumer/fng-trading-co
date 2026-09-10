@@ -1,7 +1,7 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { safeJsonLd } from '@/lib/safeJsonLd';
-import { buildAlternates } from '@/lib/metadata';
+import { buildPageMetadata } from '@/lib/metadata';
 import { SITE_EMAIL, SITE_URL } from '@/lib/siteContact';
 import { getSettings } from '@/lib/supabase';
 import PageTransition from '@/components/ui/PageTransition';
@@ -14,13 +14,12 @@ export async function generateMetadata({
   const { locale } = await params;
   const seo = await getTranslations({ locale, namespace: 'seo.privacy' });
 
-  return {
-    title: {
-      absolute: seo('title'),
-    },
+  return buildPageMetadata({
+    locale,
+    path: '/privacy-policy',
+    title: seo('title'),
     description: seo('description'),
-    alternates: buildAlternates(locale, '/privacy-policy'),
-  };
+  });
 }
 
 export default async function PrivacyPolicyPage({

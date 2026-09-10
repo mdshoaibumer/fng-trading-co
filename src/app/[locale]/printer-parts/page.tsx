@@ -6,7 +6,7 @@ import PrinterPartsHeroSection from '@/components/sections/PrinterPartsHeroSecti
 import PrinterPartsCatalogSection from '@/components/sections/PrinterPartsCatalogSection';
 import MaintenanceTeaser from '@/components/sections/MaintenanceTeaser';
 import ContactSection from '@/components/sections/ContactSection';
-import { buildAlternates } from '@/lib/metadata';
+import { buildPageMetadata } from '@/lib/metadata';
 import PageTransition from '@/components/ui/PageTransition';
 
 export async function generateMetadata({
@@ -17,13 +17,13 @@ export async function generateMetadata({
   const { locale } = await params;
   const seo = await getTranslations({ locale, namespace: 'seo.printerParts' });
 
-  return {
-    title: {
-      absolute: seo('title'),
-    },
+  return buildPageMetadata({
+    locale,
+    path: '/printer-parts',
+    title: seo('title'),
     description: seo('description'),
-    alternates: buildAlternates(locale, '/printer-parts'),
-  };
+    image: '/printer-parts-hero.jpeg',
+  });
 }
 
 export default async function PrinterPartsPage({

@@ -4,7 +4,7 @@ import { SITE_URL } from '@/lib/siteContact';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { safeJsonLd } from '@/lib/safeJsonLd';
-import { buildAlternates } from '@/lib/metadata';
+import { buildPageMetadata } from '@/lib/metadata';
 
 export async function generateMetadata({
   params,
@@ -14,13 +14,12 @@ export async function generateMetadata({
   const { locale } = await params;
   const seo = await getTranslations({ locale, namespace: 'seo.about' });
 
-  return {
-    title: {
-      absolute: seo('title'),
-    },
+  return buildPageMetadata({
+    locale,
+    path: '/about',
+    title: seo('title'),
     description: seo('description'),
-    alternates: buildAlternates(locale, '/about'),
-  };
+  });
 }
 
 export default async function AboutPage({

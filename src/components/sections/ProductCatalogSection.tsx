@@ -14,7 +14,7 @@ import Reveal from '@/components/ui/Reveal';
  * copy of the card markup to maintain.
  */
 export default function ProductCatalogSection({
-  products, error, isAr, basePath, tag, title, subtitle,
+  products, error, isAr, basePath, tag, title, subtitle, asH1 = false,
 }: {
   products: Product[];
   /** True when the catalog fetch itself failed — distinct from a successful fetch that found zero rows. */
@@ -24,7 +24,10 @@ export default function ProductCatalogSection({
   tag: string;
   title: string;
   subtitle: string;
+  asH1?: boolean;
 }) {
+  const HeadingTag = asH1 ? 'h1' : 'h2';
+
   return (
     <section className="catalog-section" style={{
       padding: 'clamp(60px, 10vw, 120px) 0', background: 'linear-gradient(180deg, #FFFFFF 0%, #F4F7F2 100%)',
@@ -44,13 +47,13 @@ export default function ProductCatalogSection({
           }}>
             {tag}
           </span>
-          <h2 style={{
+          <HeadingTag style={{
             fontSize: 'clamp(1.8rem, 5vw, 4rem)', fontWeight: 800, color: 'var(--primary)', marginBottom: '24px',
             fontFamily: isAr ? 'var(--font-ibm-plex-arabic), sans-serif' : 'var(--font-inter), sans-serif',
             letterSpacing: isAr ? '0' : '-1px',
           }}>
             {title}
-          </h2>
+          </HeadingTag>
           <p style={{ fontSize: 'clamp(0.9rem, 2vw, 1.15rem)', color: 'var(--text-secondary)', maxWidth: '700px', margin: '0 auto', lineHeight: 1.6 }}>
             {subtitle}
           </p>

@@ -40,7 +40,7 @@ export default function ProductCard({ product, isAr, productUrl }: { product: Pr
           interactive content inside a link). So the link wraps only the image
           and badge; the controls are siblings stacked above it. */}
       <div style={{ position: 'relative', width: '100%', height: '320px' }}>
-        <Link href={productUrl} transitionTypes={['nav-forward']} aria-label={product.name} aria-disabled={product.available === false} tabIndex={product.available === false ? -1 : undefined} style={{ display: 'block', position: 'relative', width: '100%', height: '100%', pointerEvents: product.available === false ? 'none' : 'auto' }}>
+        <Link href={productUrl} transitionTypes={['nav-forward']} aria-label={product.name} style={{ display: 'block', position: 'relative', width: '100%', height: '100%' }}>
           {/* Named so it pairs with the same container on the detail page and
               morphs across the navigation — one object moving rather than two
               swapping. default="none" stops it cross-fading on unrelated
@@ -50,7 +50,6 @@ export default function ProductCard({ product, isAr, productUrl }: { product: Pr
             position: 'relative', width: '100%', height: '100%',
             background: 'radial-gradient(circle, rgba(141, 184, 51, 0.05) 0%, transparent 70%)',
             display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px',
-            filter: product.available === false ? 'grayscale(1) opacity(0.6)' : 'none'
           }}>
             {images.map((img: string, idx: number) => isLoaded(idx) && (
               <div key={idx} style={{
@@ -72,19 +71,20 @@ export default function ProductCard({ product, isAr, productUrl }: { product: Pr
             ))}
             <div style={{
               position: 'absolute', top: '16px', right: isAr ? '16px' : 'auto', left: isAr ? 'auto' : '16px',
-              background: product.available === false ? '#6B7280' : 'linear-gradient(135deg, var(--olive-green), var(--deep-forest))', color: 'white',
+              background: product.available === false ? 'rgba(30, 41, 59, 0.85)' : 'linear-gradient(135deg, var(--olive-green), var(--deep-forest))', color: 'white',
+              backdropFilter: 'blur(8px)',
               padding: '6px 14px', borderRadius: 'var(--radius-2xl)', fontWeight: 700, fontSize: '0.8rem',
-              boxShadow: product.available === false ? 'none' : '0 4px 12px rgba(141, 184, 51, 0.4)', zIndex: 2,
+              boxShadow: product.available === false ? '0 4px 12px rgba(0,0,0,0.15)' : '0 4px 12px rgba(141, 184, 51, 0.4)', zIndex: 2,
             }}>
               {product.available === false
-                ? (isAr ? 'غير متوفر' : 'OUT OF STOCK')
+                ? (isAr ? 'متوفر عند الطلب' : 'AVAILABLE ON REQUEST')
                 : (isAr ? 'مُجددة معتمدة' : 'CERTIFIED REFURBISHED')
               }
             </div>
           </div>
           </ViewTransition>
         </Link>
-        {product.images.length > 1 && product.available !== false && (
+        {product.images.length > 1 && (
           <>
             {/* Prev/next sit on physically opposite sides in RTL (previous = the
                 side reading continues back toward) with matching arrow direction,
@@ -132,9 +132,8 @@ export default function ProductCard({ product, isAr, productUrl }: { product: Pr
         display: 'flex',
         flexDirection: 'column',
         textAlign: isAr ? 'right' : 'left',
-        opacity: product.available === false ? 0.7 : 1
       }}>
-        <Link href={productUrl} transitionTypes={['nav-forward']} aria-disabled={product.available === false} tabIndex={product.available === false ? -1 : undefined} style={{ textDecoration: 'none', pointerEvents: product.available === false ? 'none' : 'auto' }}>
+        <Link href={productUrl} transitionTypes={['nav-forward']} style={{ textDecoration: 'none' }}>
           <h3 style={{
             color: 'var(--primary)',
             fontSize: 'clamp(1.1rem, 3vw, 1.4rem)',
@@ -184,21 +183,19 @@ export default function ProductCard({ product, isAr, productUrl }: { product: Pr
           href={productUrl}
           transitionTypes={['nav-forward']}
           className="btn-primary"
-          aria-disabled={product.available === false}
-          tabIndex={product.available === false ? -1 : undefined}
           style={{
             width: '100%',
             justifyContent: 'center',
             minHeight: '48px',
             textDecoration: 'none',
-            background: product.available === false ? '#E5E7EB' : 'var(--accent)',
-            color: product.available === false ? '#6B7280' : 'var(--deep-forest)',
-            cursor: product.available === false ? 'not-allowed' : 'pointer',
-            pointerEvents: product.available === false ? 'none' : 'auto'
+            background: product.available === false ? 'var(--deep-forest)' : 'var(--accent)',
+            color: product.available === false ? '#FFFFFF' : 'var(--deep-forest)',
+            cursor: 'pointer',
+            border: product.available === false ? '1px solid rgba(141, 184, 51, 0.4)' : 'none',
           }}>
           {product.available === false
-            ? (isAr ? 'نفدت الكمية' : 'Sold Out')
-            : (isAr ? 'عرض التفاصيل' : 'View Details')
+            ? (isAr ? 'طلب توفير الطراز' : 'Request Availability')
+            : (isAr ? 'عرض التفاصيل والتسعير' : 'View Details & Pricing')
           }
         </Link>
       </div>

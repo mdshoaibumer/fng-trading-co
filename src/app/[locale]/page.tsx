@@ -10,9 +10,10 @@ import ProductCatalogSection from '@/components/sections/ProductCatalogSection';
 import HowItWorksSection from '@/components/sections/HowItWorksSection';
 import IndustriesSection from '@/components/sections/IndustriesSection';
 import TrustSection from '@/components/sections/TrustSection';
+import OperatingCountriesSection from '@/components/sections/OperatingCountriesSection';
 import ContactSection from '@/components/sections/ContactSection';
 import { getSettings, getProducts } from '@/lib/supabase';
-import { buildAlternates } from '@/lib/metadata';
+import { buildPageMetadata } from '@/lib/metadata';
 import { SITE_EMAIL, SITE_URL } from '@/lib/siteContact';
 import { areaServedSchema, serviceRegionsList } from '@/lib/serviceRegions';
 import { getServiceRegions } from '@/lib/getServiceRegions';
@@ -28,13 +29,13 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'meta' });
-  return {
-    title: {
-      absolute: t('title'),
-    },
+  return buildPageMetadata({
+    locale,
+    path: '',
+    title: t('title'),
     description: t('description'),
-    alternates: buildAlternates(locale),
-  };
+    image: '/FNG_LOGO.png',
+  });
 }
 
 export default async function HomePage({
@@ -182,6 +183,7 @@ export default async function HomePage({
         <HowItWorksSection />
         <IndustriesSection />
         <TrustSection />
+        <OperatingCountriesSection />
         <ContactSection />
       </main>
     </PageTransition>

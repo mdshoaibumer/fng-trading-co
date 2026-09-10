@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import BorderBeam from '@/components/ui/BorderBeam';
 import MagneticButton from '@/components/ui/MagneticButton';
+import { DEFAULT_WHATSAPP_NUMBER } from '@/lib/whatsapp';
 
 interface EnterpriseBOQConfiguratorProps {
   isAr?: boolean;
@@ -98,7 +99,7 @@ Please prepare official quotation.`;
 يرجى إرسال عرض الأسعار الرسمي.`;
 
     const msg = isAr ? textAr : textEn;
-    return `https://wa.me/966548105000?text=${encodeURIComponent(msg)}`;
+    return `https://wa.me/${DEFAULT_WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
   }, [workstations, monthlyPages, colorRatio, slaTier, calculation, isAr]);
 
   return (
@@ -189,7 +190,7 @@ Please prepare official quotation.`;
               {/* Slider 1: Workstations */}
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                  <label style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <label htmlFor="boq-workstations" style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <Building size={16} color="var(--accent-text)" />
                     {isAr ? 'عدد الموظفين / محطات العمل:' : 'Active Workstations / Staff:'}
                   </label>
@@ -198,11 +199,17 @@ Please prepare official quotation.`;
                   </span>
                 </div>
                 <input
+                  id="boq-workstations"
+                  name="boq_workstations"
                   type="range"
                   min={10}
                   max={300}
                   step={5}
                   value={workstations}
+                  aria-label={isAr ? 'عدد الموظفين أو محطات العمل' : 'Active workstations or staff'}
+                  aria-valuenow={workstations}
+                  aria-valuemin={10}
+                  aria-valuemax={300}
                   onChange={(e) => setWorkstations(Number(e.target.value))}
                   style={{
                     width: '100%',
@@ -222,7 +229,7 @@ Please prepare official quotation.`;
               {/* Slider 2: Monthly Pages */}
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                  <label style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <label htmlFor="boq-monthly-pages" style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <Printer size={16} color="var(--accent-text)" />
                     {isAr ? 'حجم الطباعة الشهري التقديري:' : 'Estimated Monthly Output:'}
                   </label>
@@ -231,11 +238,17 @@ Please prepare official quotation.`;
                   </span>
                 </div>
                 <input
+                  id="boq-monthly-pages"
+                  name="boq_monthly_pages"
                   type="range"
                   min={2000}
                   max={80000}
                   step={1000}
                   value={monthlyPages}
+                  aria-label={isAr ? 'حجم الطباعة الشهري التقديري' : 'Estimated monthly print output'}
+                  aria-valuenow={monthlyPages}
+                  aria-valuemin={2000}
+                  aria-valuemax={80000}
                   onChange={(e) => setMonthlyPages(Number(e.target.value))}
                   style={{
                     width: '100%',
@@ -255,7 +268,7 @@ Please prepare official quotation.`;
               {/* Slider 3: Color Ratio */}
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                  <label style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--primary)' }}>
+                  <label htmlFor="boq-color-ratio" style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--primary)' }}>
                     {isAr ? 'نسبة الطباعة الملونة إلى الأبيض والأسود:' : 'Color vs Mono Print Ratio:'}
                   </label>
                   <span style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--accent-text)', fontFamily: 'var(--font-mono)' }}>
@@ -263,11 +276,17 @@ Please prepare official quotation.`;
                   </span>
                 </div>
                 <input
+                  id="boq-color-ratio"
+                  name="boq_color_ratio"
                   type="range"
                   min={0}
                   max={70}
                   step={5}
                   value={colorRatio}
+                  aria-label={isAr ? 'نسبة الطباعة الملونة' : 'Color print percentage ratio'}
+                  aria-valuenow={colorRatio}
+                  aria-valuemin={0}
+                  aria-valuemax={70}
                   onChange={(e) => setColorRatio(Number(e.target.value))}
                   style={{
                     width: '100%',

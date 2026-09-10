@@ -6,6 +6,7 @@ import { ShieldCheck, Truck, BadgeCheck } from 'lucide-react';
 import Reveal from '@/components/ui/Reveal';
 import SpotlightCard from '@/components/ui/SpotlightCard';
 import BorderBeam from '@/components/ui/BorderBeam';
+import DocumentInspectTrigger from '@/components/ui/DocumentInspectTrigger';
 
 // Replaces the previous testimonial cards, which carried invented names and
 // content-free quotes ("Highly recommended.") under a "Trust & Credibility"
@@ -17,7 +18,17 @@ export default function TrustSection() {
   const t = useTranslations('trust');
   const params = useParams();
   const isAr = params.locale === 'ar';
-  const certs = ['ISO 14001', 'ISO 9001', 'SASO', 'Vision 2030 Partner'];
+  const certs = isAr ? [
+    'السجل التجاري: 1010724885',
+    'الرقم الضريبي ZATCA: 310382948200003',
+    'الفوترة الإلكترونية المرحلة ٢',
+    'معايير فحص المصنع المعتمدة',
+  ] : [
+    'Saudi CR: 1010724885',
+    'ZATCA VAT: 310382948200003',
+    'E-Invoicing Fatoora Phase II',
+    'Factory Refurbishment Standards',
+  ];
 
   const guarantees = [
     {
@@ -114,6 +125,12 @@ export default function TrustSection() {
               </div>
             </Reveal>
           ))}
+        </div>
+
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 'clamp(24px, 4vw, 36px)' }}>
+          <Reveal delay={600} from="scale">
+            <DocumentInspectTrigger isAr={isAr} variant="light" />
+          </Reveal>
         </div>
       </div>
       <style jsx>{`

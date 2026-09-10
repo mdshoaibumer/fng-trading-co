@@ -9,7 +9,7 @@ import {
   ChevronLeft,
   ChevronRight,
   CheckCircle2,
-  XCircle,
+  Clock,
   ShieldCheck,
   Shield,
   Zap,
@@ -92,7 +92,10 @@ export default function ProductPageClient({ product, whatsapp, locale, itemType 
     if (touch) setZoomOriginFromPoint(touch.clientX, touch.clientY, e.currentTarget);
   };
 
-  const inquiryText = isAr ? INQUIRY_TEXT[itemType].ar(product.name) : INQUIRY_TEXT[itemType].en(product.name);
+  const isAvailable = product.available !== false;
+  const inquiryText = isAvailable
+    ? (isAr ? INQUIRY_TEXT[itemType].ar(product.name) : INQUIRY_TEXT[itemType].en(product.name))
+    : (isAr ? `مرحباً، أود الاستفسار عن موعد توفر طابعة/جهاز: ${product.name}` : `Hello, I'd like to check availability and procurement lead time for: ${product.name}`);
   const whatsappLink = `https://wa.me/${whatsapp}?text=${encodeURIComponent(inquiryText)}`;
   // Pulled out of the features list rather than a dedicated field — every
   // seeded product states its warranty as a feature bullet (e.g. "12-month
@@ -139,12 +142,9 @@ export default function ProductPageClient({ product, whatsapp, locale, itemType 
           </nav>
         </div>
 
-        <div className="product-grid" style={{
-          display: 'grid', gridTemplateColumns: isAr ? '1fr 1.2fr' : '1.2fr 1fr', gap: 'clamp(24px, 5vw, 64px)', alignItems: 'start',
-          direction: isAr ? 'rtl' : 'ltr'
-        }}>
+        <div className="product-detail-grid" style={{ direction: isAr ? 'rtl' : 'ltr' }}>
           {/* Left Column: Image Gallery */}
-          <div className="gallery-column" style={{ order: isAr ? 2 : 1, position: 'sticky', top: '120px', alignSelf: 'start' }}>
+          <div className="gallery-column product-gallery-sticky">
             {/* The other half of the catalog card's morph — same name, so the
                 card's image container animates into this one on the way in and
                 back out again on the way out. */}
@@ -260,23 +260,23 @@ export default function ProductPageClient({ product, whatsapp, locale, itemType 
           </div>
 
           {/* Right Column: Info */}
-          <div className="info-column" style={{ order: isAr ? 1 : 2, textAlign: isAr ? 'right' : 'left' }}>
+          <div className="info-column">
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '20px', flexDirection: isAr ? 'row-reverse' : 'row' }}>
               <div style={{
                 display: 'inline-flex', alignItems: 'center', gap: '8px',
-                background: product.available === false ? 'rgba(107, 114, 128, 0.1)' : 'rgba(141, 184, 51, 0.1)',
-                color: product.available === false ? '#6B7280' : 'var(--accent)',
+                background: isAvailable ? 'rgba(141, 184, 51, 0.1)' : 'rgba(74, 144, 217, 0.1)',
+                color: isAvailable ? 'var(--accent-text)' : 'var(--info-strong)',
                 padding: '6px 16px', borderRadius: 'var(--radius-2xl)', fontWeight: 700, fontSize: '0.85rem',
                 textTransform: 'uppercase',
                 flexDirection: isAr ? 'row-reverse' : 'row'
               }}>
-                {product.available === false ? <XCircle size={16} /> : <ShieldCheck size={16} />}
-                {product.available === false
-                  ? (isAr ? 'نفدت الكمية' : 'Out of Stock')
-                  : (isAr ? 'مُجددة معتمدة' : 'Certified Refurbished')
+                {isAvailable ? <ShieldCheck size={16} /> : <Clock size={16} />}
+                {isAvailable
+                  ? (isAr ? 'مُجددة معتمدة — متوفرة' : 'Certified Refurbished — Ready to Deploy')
+                  : (isAr ? 'متوفر عند الطلب للمؤسسات' : 'Available on Order for Fleets')
                 }
               </div>
-              {product.available !== false && warrantyFeature && (
+              {warrantyFeature && (
                 <div style={{
                   display: 'inline-flex', alignItems: 'center', gap: '8px',
                   background: 'rgba(74, 144, 217, 0.1)', color: '#4A90D9',
@@ -291,23 +291,22 @@ export default function ProductPageClient({ product, whatsapp, locale, itemType 
 
             <h1 style={{
               fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', fontWeight: 800, color: 'var(--primary)',
-              marginBottom: '16px', lineHeight: 1.2,
-              opacity: product.available === false ? 0.6 : 1
+              marginBottom: '16px', lineHeight: 1.2
             }}>
               {product.name}
             </h1>
 
-            <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '32px', opacity: product.available === false ? 0.6 : 1 }}>
+            <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '32px' }}>
               {isAr ? product.descAr : product.descEn}
             </p>
 
             {/* Features */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '40px', opacity: product.available === false ? 0.5 : 1 }}>
+            <div className="product-features-grid">
               {(isAr ? product.featuresAr : product.featuresEn).map((f: string, i: number) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px', flexDirection: isAr ? 'row-reverse' : 'row' }}>
                   <div style={{
                     width: '24px', height: '24px', borderRadius: '50%', background: 'rgba(141, 184, 51, 0.1)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center'
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
                   }}>
                     <CheckCircle2 size={14} color="var(--accent)" />
                   </div>
@@ -319,49 +318,64 @@ export default function ProductPageClient({ product, whatsapp, locale, itemType 
             {/* CTAs */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '40px' }}>
               <a
-                href={product.available === false ? '#' : whatsappLink}
-                target={product.available === false ? '_self' : '_blank'}
+                href={whatsappLink}
+                target="_blank"
                 rel="noopener noreferrer"
-                aria-disabled={product.available === false}
-                tabIndex={product.available === false ? -1 : undefined}
                 className="btn-primary"
                 style={{
-                  background: product.available === false ? '#9CA3AF' : '#25D366', color: 'white', border: 'none',
-                  padding: '18px 32px', fontSize: '1.1rem', borderRadius: 'var(--radius-lg)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px',
-                  textDecoration: 'none', transition: 'all 0.3s',
+                  background: isAvailable ? '#25D366' : 'var(--deep-forest)',
+                  color: 'white',
+                  border: isAvailable ? 'none' : '1px solid var(--accent)',
+                  padding: '18px 32px',
+                  fontSize: '1.1rem',
+                  borderRadius: 'var(--radius-lg)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '12px',
+                  textDecoration: 'none',
+                  transition: 'all 0.3s',
                   flexDirection: isAr ? 'row-reverse' : 'row',
-                  cursor: product.available === false ? 'not-allowed' : 'pointer',
-                  pointerEvents: product.available === false ? 'none' : 'auto'
+                  cursor: 'pointer',
+                  boxShadow: 'var(--shadow-md)'
                 }}
                 onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
                 onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
               >
                 <MessageCircle size={22} />
-                {product.available === false
-                  ? (isAr ? 'غير متوفر حالياً' : 'Currently Unavailable')
-                  : (isAr ? 'استفسار عبر واتساب' : 'Inquire via WhatsApp')
+                {isAvailable
+                  ? (isAr ? 'استفسار عبر واتساب' : 'Inquire via WhatsApp')
+                  : (isAr ? 'طلب توفير عبر واتساب' : 'Request Availability via WhatsApp')
                 }
               </a>
 
               <Link
-                href={product.available === false ? '#' : `/${locale}/contact?${itemType === 'equipment' ? 'category=office_equipment&' : ''}product=${encodeURIComponent(product.name)}`}
-                aria-disabled={product.available === false}
-                tabIndex={product.available === false ? -1 : undefined}
+                href={`/${locale}/contact?${itemType === 'equipment' ? 'category=office_equipment&' : ''}product=${encodeURIComponent(product.name)}`}
                 style={{
-                  background: 'white', color: 'var(--primary)', border: '1px solid #E0E7DE',
-                  padding: '18px 32px', fontSize: '1.1rem', borderRadius: 'var(--radius-lg)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px',
-                  textDecoration: 'none', fontWeight: 700, transition: 'all 0.3s',
+                  background: 'white',
+                  color: 'var(--primary)',
+                  border: '1px solid #E0E7DE',
+                  padding: '18px 32px',
+                  fontSize: '1.1rem',
+                  borderRadius: 'var(--radius-lg)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '12px',
+                  textDecoration: 'none',
+                  fontWeight: 700,
+                  transition: 'all 0.3s',
                   flexDirection: isAr ? 'row-reverse' : 'row',
-                  opacity: product.available === false ? 0.5 : 1,
-                  pointerEvents: product.available === false ? 'none' : 'auto'
+                  cursor: 'pointer'
                 }}
                 onMouseEnter={e => e.currentTarget.style.background = '#F8FAF7'}
                 onMouseLeave={e => e.currentTarget.style.background = 'white'}
               >
                 <Phone size={20} />
-                {isAr ? 'طلب عرض سعر' : 'Request a Quote'}
+                {isAvailable
+                  ? (isAr ? 'طلب عرض سعر' : 'Request a Quote')
+                  : (isAr ? 'طلب بديل / تسعيرة خاصة' : 'Request Quotation / Alternative')
+                }
               </Link>
             </div>
 
@@ -384,16 +398,6 @@ export default function ProductPageClient({ product, whatsapp, locale, itemType 
         </div>
       </div>
 
-      <style jsx>{`
-        @media (max-width: 992px) {
-          .product-grid {
-            grid-template-columns: 1fr !important;
-          }
-          .gallery-column {
-            position: static !important;
-          }
-        }
-      `}</style>
     </main>
   );
 }

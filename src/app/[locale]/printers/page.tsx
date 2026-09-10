@@ -4,7 +4,7 @@ import EnterpriseBOQConfigurator from '@/components/sections/EnterpriseBOQConfig
 import OperatingCountriesSection from '@/components/sections/OperatingCountriesSection';
 import ContactSection from '@/components/sections/ContactSection';
 import type { Metadata } from 'next';
-import { buildAlternates } from '@/lib/metadata';
+import { buildPageMetadata } from '@/lib/metadata';
 import { getProducts } from '@/lib/supabase';
 import PageTransition from '@/components/ui/PageTransition';
 
@@ -20,13 +20,12 @@ export async function generateMetadata({
   const { locale } = await params;
   const seo = await getTranslations({ locale, namespace: 'seo.printers' });
 
-  return {
-    title: {
-      absolute: seo('title'),
-    },
+  return buildPageMetadata({
+    locale,
+    path: '/printers',
+    title: seo('title'),
     description: seo('description'),
-    alternates: buildAlternates(locale, '/printers'),
-  };
+  });
 }
 
 export default async function PrintersPage({
@@ -43,6 +42,7 @@ export default async function PrintersPage({
     <PageTransition>
       <main>
         <ProductCatalogSection
+          asH1={true}
           products={printers}
           error={printersError}
           isAr={isAr}

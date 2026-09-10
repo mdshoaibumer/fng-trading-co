@@ -22,8 +22,6 @@ export const DEV_FALLBACK_PRODUCTS: Product[] = [
       '/printers/HP LaserJet Pro MFP M428fdw/HP LaserJet Pro MFP M428fdw3.png',
       '/printers/HP LaserJet Pro MFP M428fdw/HP LaserJet Pro MFP M428fdw4.png',
       '/printers/HP LaserJet Pro MFP M428fdw/HP LaserJet Pro MFP M428fdw5.png',
-      '/printers/HP LaserJet Pro MFP M428fdw/HP LaserJet Pro MFP M428fdw7.webp',
-      '/printers/HP LaserJet Pro MFP M428fdw/HP LaserJet Pro MFP M428fdw8.webp',
     ],
     featuresEn: ['Up to 40 ppm mono print speed', 'Automatic duplex print, copy & scan', '50-sheet ADF · 250-sheet input tray', 'Wi-Fi, Ethernet & USB · mobile print', '12-month FNG refurbishment warranty'],
     featuresAr: ['سرعة طباعة تصل إلى 40 صفحة/دقيقة', 'طباعة ونسخ ومسح تلقائي على الوجهين', 'وحدة تغذية 50 ورقة · درج إدخال 250 ورقة', 'واي فاي وإيثرنت و USB · طباعة من الجوال', 'ضمان تجديد FNG لمدة 12 شهراً'],

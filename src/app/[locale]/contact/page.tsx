@@ -3,7 +3,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { safeJsonLd } from '@/lib/safeJsonLd';
 import { getSettings } from '@/lib/supabase';
-import { buildAlternates } from '@/lib/metadata';
+import { buildPageMetadata } from '@/lib/metadata';
 import { SITE_EMAIL, SITE_URL } from '@/lib/siteContact';
 import { areaServedSchema } from '@/lib/serviceRegions';
 import { getServiceRegions } from '@/lib/getServiceRegions';
@@ -20,13 +20,12 @@ export async function generateMetadata({
   const { locale } = await params;
   const seo = await getTranslations({ locale, namespace: 'seo.contact' });
 
-  return {
-    title: {
-      absolute: seo('title'),
-    },
+  return buildPageMetadata({
+    locale,
+    path: '/contact',
+    title: seo('title'),
     description: seo('description'),
-    alternates: buildAlternates(locale, '/contact'),
-  };
+  });
 }
 
 export default async function ContactPage({

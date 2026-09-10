@@ -3,7 +3,7 @@ import { SITE_URL } from '@/lib/siteContact';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { safeJsonLd } from '@/lib/safeJsonLd';
-import { buildAlternates } from '@/lib/metadata';
+import { buildPageMetadata } from '@/lib/metadata';
 import PageTransition from '@/components/ui/PageTransition';
 
 export async function generateMetadata({
@@ -14,13 +14,12 @@ export async function generateMetadata({
   const { locale } = await params;
   const seo = await getTranslations({ locale, namespace: 'seo.industries' });
 
-  return {
-    title: {
-      absolute: seo('title'),
-    },
+  return buildPageMetadata({
+    locale,
+    path: '/industries',
+    title: seo('title'),
     description: seo('description'),
-    alternates: buildAlternates(locale, '/industries'),
-  };
+  });
 }
 
 export default async function IndustriesPage({

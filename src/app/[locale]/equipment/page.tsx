@@ -2,7 +2,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import ProductCatalogSection from '@/components/sections/ProductCatalogSection';
 import ContactSection from '@/components/sections/ContactSection';
 import type { Metadata } from 'next';
-import { buildAlternates } from '@/lib/metadata';
+import { buildPageMetadata } from '@/lib/metadata';
 import { getProducts } from '@/lib/supabase';
 import PageTransition from '@/components/ui/PageTransition';
 
@@ -17,13 +17,12 @@ export async function generateMetadata({
   const { locale } = await params;
   const seo = await getTranslations({ locale, namespace: 'seo.equipment' });
 
-  return {
-    title: {
-      absolute: seo('title'),
-    },
+  return buildPageMetadata({
+    locale,
+    path: '/equipment',
+    title: seo('title'),
     description: seo('description'),
-    alternates: buildAlternates(locale, '/equipment'),
-  };
+  });
 }
 
 export default async function EquipmentPage({
@@ -40,6 +39,7 @@ export default async function EquipmentPage({
     <PageTransition>
       <main>
         <ProductCatalogSection
+          asH1={true}
           products={equipment}
           error={equipmentError}
           isAr={isAr}

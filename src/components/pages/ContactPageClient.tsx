@@ -295,7 +295,7 @@ export default function ContactPageClient({ email }: { email?: string }) {
             ) : (
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 {/* Honeypot: hidden from real visitors, tempting to bots that auto-fill every field. */}
-                <input type="text" name="_hp_company_fax" tabIndex={-1} autoComplete="new-password" aria-hidden="true"
+                <input type="text" name="_hp_company_fax" tabIndex={-1} autoComplete="new-password" aria-hidden="true" aria-label="Fax"
                   style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0, opacity: 0 }}
                   value={form._hp_company_fax}
                   onChange={e => setForm(f => ({ ...f, _hp_company_fax: e.target.value }))} />

@@ -10,7 +10,7 @@ import SourcingServicesSection from '@/components/sections/sourcing/SourcingServ
 import SourcingWhySection from '@/components/sections/sourcing/SourcingWhySection';
 import OperatingCountriesSection from '@/components/sections/OperatingCountriesSection';
 import ContactSection from '@/components/sections/ContactSection';
-import { buildAlternates } from '@/lib/metadata';
+import { buildPageMetadata } from '@/lib/metadata';
 import { safeJsonLd } from '@/lib/safeJsonLd';
 import { areaServedSchema } from '@/lib/serviceRegions';
 import { getServiceRegions } from '@/lib/getServiceRegions';
@@ -23,13 +23,13 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const seo = await getTranslations({ locale, namespace: 'seo.sourcing' });
-  return {
-    title: {
-      absolute: seo('title'),
-    },
+  return buildPageMetadata({
+    locale,
+    path: '/sourcing',
+    title: seo('title'),
     description: seo('description'),
-    alternates: buildAlternates(locale, '/sourcing'),
-  };
+    image: '/sourcing-ship.webp',
+  });
 }
 
 export default async function SourcingPage({
