@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useInView, useReducedMotion } from 'framer-motion';
 import {
   Ship,
   Plane,
@@ -17,6 +17,11 @@ import {
 } from 'lucide-react';
 import BorderBeam from '@/components/ui/BorderBeam';
 import SpotlightCard from '@/components/ui/SpotlightCard';
+
+// Time spent on each corridor stage, and the longer hold at the destination
+// before the radar loops back to the factory floor.
+const STAGE_DWELL_MS = 3500;
+const DESTINATION_HOLD_MS = 5000;
 
 interface RouteStage {
   id: string;
@@ -172,59 +177,38 @@ export default function SourcingRouteRadar({
   const [activeStageId, setActiveStageId] = useState<string>('factory');
   const [freightMode, setFreightMode] = useState<'sea' | 'air'>('sea');
   const [isHovered, setIsHovered] = useState<boolean>(false);
-  const [isAutoPlaying, setIsAutoPlaying] = useState<boolean>(true);
+  // 'auto' = cycle whenever the section is on screen (unless the visitor
+  // prefers reduced motion); 'playing' / 'paused' = an explicit choice made
+  // with the radar toggle, which always wins.
+  const [playChoice, setPlayChoice] = useState<'auto' | 'playing' | 'paused'>('auto');
+
+  const sectionRef = useRef<HTMLElement>(null);
+  const inView = useInView(sectionRef, { amount: 0.3 });
+  const prefersReducedMotion = useReducedMotion();
+
+  const isAutoPlaying =
+    inView && (playChoice === 'playing' || (playChoice === 'auto' && !prefersReducedMotion));
 
   const activeIdx = Math.max(0, STAGES.findIndex((s) => s.id === activeStageId));
   const activeStage = STAGES[activeIdx] || STAGES[0];
   const Arrow = isAr ? ArrowLeft : ArrowRight;
 
-  const cycleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const isHoveredRef = useRef<boolean>(false);
-
+  // One timed step per render of a stage: advance to the next stage, and after
+  // the Saudi doorstep hold a little longer, then loop back to the factory.
+  // Hovering the detail panel pauses on the current stage so it can be read;
+  // leaving the viewport stops the timer entirely.
   useEffect(() => {
-    isHoveredRef.current = isHovered;
-  }, [isHovered]);
-
-  const clearCycle = useCallback(() => {
-    if (cycleTimerRef.current) {
-      clearTimeout(cycleTimerRef.current);
-      cycleTimerRef.current = null;
-    }
-  }, []);
-
-  // Auto-cycle through all 5 stages sequentially with comfortable 3.5s pacing
-  const startAutoCycle = useCallback(() => {
-    clearCycle();
-    setIsAutoPlaying(true);
-    let currentIdx = 0;
-    setActiveStageId(STAGES[0].id);
-
-    const advanceStep = () => {
-      if (isHoveredRef.current) {
-        // Paused while user is reading — check again in 500ms
-        cycleTimerRef.current = setTimeout(advanceStep, 500);
-        return;
-      }
-      currentIdx++;
-      if (currentIdx < STAGES.length) {
-        setActiveStageId(STAGES[currentIdx].id);
-        cycleTimerRef.current = setTimeout(advanceStep, 3500);
-      } else {
-        // Stop gracefully at destination
-        setIsAutoPlaying(false);
-        cycleTimerRef.current = null;
-      }
-    };
-
-    cycleTimerRef.current = setTimeout(advanceStep, 3500);
-  }, [clearCycle]);
-
-  // Clean up timer on unmount
-  useEffect(() => () => clearCycle(), [clearCycle]);
+    if (!isAutoPlaying || isHovered) return;
+    const isLast = activeIdx === STAGES.length - 1;
+    const timer = setTimeout(() => {
+      setActiveStageId(STAGES[(activeIdx + 1) % STAGES.length].id);
+    }, isLast ? DESTINATION_HOLD_MS : STAGE_DWELL_MS);
+    return () => clearTimeout(timer);
+  }, [isAutoPlaying, isHovered, activeIdx]);
 
   const handleFreightModeChange = (mode: 'sea' | 'air') => {
     setFreightMode(mode);
-    startAutoCycle();
+    setActiveStageId(STAGES[0].id);
   };
 
   // Position math for 5-node grid: centers are 10%, 30%, 50%, 70%, 90%
@@ -233,6 +217,7 @@ export default function SourcingRouteRadar({
 
   return (
     <section
+      ref={sectionRef}
       id="sourcing-radar"
       className="section"
       style={{
@@ -466,11 +451,7 @@ export default function SourcingRouteRadar({
                 <button
                   key={stage.id}
                   type="button"
-                  onClick={() => {
-                    clearCycle();
-                    setIsAutoPlaying(false);
-                    setActiveStageId(stage.id);
-                  }}
+                  onClick={() => setActiveStageId(stage.id)}
                   style={{
                     background: 'none',
                     border: 'none',
@@ -788,12 +769,11 @@ export default function SourcingRouteRadar({
                 <button
                   type="button"
                   onClick={() => {
-                    if (isAutoPlaying) {
-                      clearCycle();
-                      setIsAutoPlaying(false);
-                    } else {
-                      startAutoCycle();
-                    }
+                    // The toggle sits inside the hover-to-pause panel, so the
+                    // pointer is always "hovering" when it's pressed. Clear
+                    // that pause, or pressing play would appear to do nothing.
+                    setIsHovered(false);
+                    setPlayChoice(isAutoPlaying ? 'paused' : 'playing');
                   }}
                   style={{
                     background: 'rgba(255, 255, 255, 0.08)',
