@@ -7,6 +7,7 @@ import { GATE_COOKIE } from '@/lib/entryGate';
 import HeroSection from '@/components/sections/HeroSection';
 import FreePrinterSection from '@/components/sections/FreePrinterSection';
 import ProductCatalogSection from '@/components/sections/ProductCatalogSection';
+import EcoInksTeaserSection from '@/components/sections/EcoInksTeaserSection';
 import HowItWorksSection from '@/components/sections/HowItWorksSection';
 import IndustriesSection from '@/components/sections/IndustriesSection';
 import TrustSection from '@/components/sections/TrustSection';
@@ -168,6 +169,7 @@ export default async function HomePage({
         />
         {showGate && <EntryGate />}
         <HeroSection />
+        <EcoInksTeaserSection locale={locale} />
         <ProductCatalogSection
           products={printers}
           error={printersError}

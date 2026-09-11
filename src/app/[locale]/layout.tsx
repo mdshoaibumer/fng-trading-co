@@ -17,6 +17,7 @@ import CommandPalette from '@/components/ui/CommandPalette';
 import { getSettings } from '@/lib/supabase';
 import { getServiceRegions } from '@/lib/getServiceRegions';
 import { ServiceRegionsProvider } from '@/components/providers/ServiceRegionsProvider';
+import StyledJsxRegistry from '@/components/providers/StyledJsxRegistry';
 import { inter, ibmPlexSansArabic, ibmPlexMono } from '@/lib/fonts';
 import '../globals.css';
 
@@ -111,6 +112,7 @@ export default async function LocaleLayout({
           <PageNavigationTransition />
         </Suspense>
         <ScrollProgress />
+        <StyledJsxRegistry>
         <NextIntlClientProvider messages={messages}>
           <ServiceRegionsProvider regions={serviceRegions}>
             <TransitionErrorGuard />
@@ -127,6 +129,7 @@ export default async function LocaleLayout({
             <ChatWidgetLoader welcomeMessage={settings.ai_settings?.welcome_message} />
           </ServiceRegionsProvider>
         </NextIntlClientProvider>
+        </StyledJsxRegistry>
       </body>
     </html>
   );

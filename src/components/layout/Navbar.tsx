@@ -211,6 +211,7 @@ export default function Navbar() {
       <nav
         ref={navRef}
         id="main-nav"
+        className={isSourcing ? 'nav-track-sourcing' : undefined}
         style={{
           position: 'fixed',
           top: 0,
@@ -1209,6 +1210,33 @@ export default function Navbar() {
         .nav-primary-cta:hover {
           transform: translateY(-1px) scale(1.02);
           box-shadow: 0 8px 24px rgba(141, 184, 51, 0.45) !important;
+        }
+
+        /* Near the menu's width limit, tighten link spacing and size so the
+           links and the action cluster never touch. */
+        @media (max-width: 1280px) {
+          .nav-links-desktop {
+            gap: 16px !important;
+          }
+          .nav-links-desktop :global(.nav-link-item) {
+            font-size: 0.86rem !important;
+          }
+        }
+
+        /* The sourcing track carries 7 anchors plus 3 actions (~1240px wide),
+           so it hands over to the hamburger earlier than the printers track;
+           between 1025px and 1180px it used to overlap the logo and the
+           language button. */
+        @media (max-width: 1180px) {
+          .nav-track-sourcing .nav-links-desktop,
+          .nav-track-sourcing .nav-lang-btn,
+          .nav-track-sourcing .nav-sourcing-btn,
+          .nav-track-sourcing .nav-primary-cta {
+            display: none !important;
+          }
+          .nav-track-sourcing .mobile-menu-btn {
+            display: flex !important;
+          }
         }
 
         /* Desktop Collapse point: 1024px */

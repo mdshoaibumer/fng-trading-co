@@ -1,4 +1,21 @@
 {
+  "ecoTeaser": {
+    "tag": "Eco Inks",
+    "title": "Keep every printer running on Eco Inks",
+    "subtitle": "Toner and cartridge subscriptions for the HP LaserJet printers we supply — pick the line that fits how much you print.",
+    "green": {
+      "name": "Eco Inks Green",
+      "type": "Remanufactured toner",
+      "desc": "Original HP cartridge shells, cleaned, inspected and refilled."
+    },
+    "premium": {
+      "name": "Eco Inks Premium",
+      "type": "Compatible toner",
+      "desc": "New-build cartridges made for HP LaserJet, sized for high-volume printing."
+    },
+    "cta": "Explore Eco Inks",
+    "imageAlt": "Eco Inks Green toner cartridges in front of their box"
+  },
   "meta": {
     "title": "Future Next Gen — The Future in Every Print | Refurbished HP Printers & Eco-Friendly Ink",
     "description": "Complete refurbished HP office equipment, eco-friendly toners, and printer parts. Sustainable, high-quality printing solutions for businesses in Saudi Arabia."
