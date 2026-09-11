@@ -30,7 +30,12 @@ export default function ProductCatalogSection({
 
   return (
     <section className="catalog-section" style={{
-      padding: 'clamp(60px, 10vw, 120px) 0', background: 'linear-gradient(180deg, #FFFFFF 0%, #F4F7F2 100%)',
+      // As a page's opening section (asH1: /printers, /equipment) the top
+      // padding must clear the fixed header (~64px on phones, ~98px desktop);
+      // 60px let the eyebrow slide under it on mobile. Mid-page (home) keeps
+      // the original rhythm.
+      padding: asH1 ? 'clamp(112px, 12vw, 168px) 0 clamp(60px, 10vw, 120px)' : 'clamp(60px, 10vw, 120px) 0',
+      background: 'linear-gradient(180deg, #FFFFFF 0%, #F4F7F2 100%)',
       position: 'relative', overflow: 'hidden',
     }}>
       <div className="catalog-ambient-blob" style={{

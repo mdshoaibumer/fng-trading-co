@@ -180,7 +180,9 @@ export default function PageNavigationTransition() {
           aria-label="Loading page"
           style={{
             position: 'fixed',
-            top: '76px',
+            // Below the fixed header at every width (desktop bar ends ~98px,
+            // mobile ~64-72px); at 76px it sat on top of the desktop nav.
+            top: '112px',
             left: '50%',
             transform: 'translateX(-50%)',
             zIndex: 99999,
