@@ -52,6 +52,7 @@ export default function Footer({ email }: { email?: string }) {
         { href: `/${locale}/industries`, label: tn('industries') },
         { href: `/${locale}/printer-parts`, label: tn('printerParts') },
         { href: `/${locale}/equipment`, label: tn('officeEquipment') },
+        { href: `/${locale}/sourcing`, label: tn('sourcing') },
         { href: `/${locale}/faq`, label: tn('faq') },
         { href: `/${locale}/contact`, label: tn('contact') },
       ];
@@ -184,7 +185,8 @@ export default function Footer({ email }: { email?: string }) {
                 <Globe size={16} color="var(--accent)" style={{ flexShrink: 0 }} /> www.fngtradingco.com
               </span>
               <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', wordBreak: 'break-all', flexDirection: isAr ? 'row-reverse' : 'row', textAlign: isAr ? 'right' : 'left' }}>
-                <Mail size={16} color="var(--accent)" style={{ flexShrink: 0 }} /> {email || SITE_EMAIL}
+                <Mail size={16} color="var(--accent)" style={{ flexShrink: 0 }} />
+                <a href={`mailto:${email || SITE_EMAIL}`} style={{ color: 'inherit', textDecoration: 'none' }}>{email || SITE_EMAIL}</a>
               </span>
             </div>
           </div>

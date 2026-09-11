@@ -42,9 +42,13 @@ interface PaletteItem {
 
 interface CommandPaletteProps {
   locale: string;
+  /** Digits only, e.g. 966593380390 — from Admin -> Settings. */
+  whatsapp?: string;
+  /** Digits only, used for tel: — from Admin -> Settings. */
+  phone?: string;
 }
 
-export default function CommandPalette({ locale }: CommandPaletteProps) {
+export default function CommandPalette({ locale, whatsapp = '966593380390', phone = '966593380390' }: CommandPaletteProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -83,13 +87,13 @@ export default function CommandPalette({ locale }: CommandPaletteProps) {
 
   const openWhatsApp = useCallback(() => {
     closePalette();
-    window.open('https://wa.me/966593380390', '_blank', 'noopener,noreferrer');
-  }, [closePalette]);
+    window.open(`https://wa.me/${whatsapp}`, '_blank', 'noopener,noreferrer');
+  }, [closePalette, whatsapp]);
 
   const callPhone = useCallback(() => {
     closePalette();
-    window.location.href = 'tel:+966593380390';
-  }, [closePalette]);
+    window.location.href = `tel:+${phone}`;
+  }, [closePalette, phone]);
 
   const switchLanguage = useCallback(() => {
     closePalette();

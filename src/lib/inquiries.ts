@@ -1,7 +1,10 @@
 import { supabaseAdmin } from './supabase';
 
+/** Every lead type the CRM understands — the contact API validates against this. */
+export const LEAD_TYPES = ['contact', 'printer_request', 'printer', 'eco_inks', 'printer_parts', 'office_equipment', 'sourcing', 'general'] as const;
+
 export interface InquiryRow {
-  type: 'contact' | 'printer_request' | 'printer' | 'eco_inks' | 'printer_parts' | 'office_equipment' | 'sourcing' | 'general';
+  type: (typeof LEAD_TYPES)[number];
   name: string;
   company: string;
   phone: string;

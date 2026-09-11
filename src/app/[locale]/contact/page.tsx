@@ -108,7 +108,7 @@ export default async function ContactPage({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
         />
-        <ContactPageClient email={settings.contact?.email || SITE_EMAIL} />
+        <ContactPageClient email={settings.contact?.email || SITE_EMAIL} phone={settings.contact?.phone} />
       </>
     </PageTransition>
   );

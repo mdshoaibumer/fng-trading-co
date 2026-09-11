@@ -7,6 +7,6 @@ import dynamic from 'next/dynamic';
 // before a visitor actually opens the chat.
 const AIChatWidget = dynamic(() => import('./AIChatWidget'), { ssr: false });
 
-export default function ChatWidgetLoader({ welcomeMessage }: { welcomeMessage?: string }) {
-  return <AIChatWidget welcomeMessage={welcomeMessage} />;
+export default function ChatWidgetLoader({ welcomeMessage, welcomeMessageAr }: { welcomeMessage?: string; welcomeMessageAr?: string }) {
+  return <AIChatWidget welcomeMessage={welcomeMessage} welcomeMessageAr={welcomeMessageAr} />;
 }

@@ -1,10 +1,31 @@
 'use client';
 
-import React from 'react';
-import { Printer, Lock } from 'lucide-react';
+import React, { Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { Printer, Lock, Eye, EyeOff } from 'lucide-react';
+import { safeAdminNext } from '@/lib/safeAdminNext';
 
 export default function AdminLoginPage() {
+  // useSearchParams needs a Suspense boundary above it so this page never
+  // opts the whole route out of rendering while the query is resolved.
+  return (
+    <Suspense fallback={null}>
+      <AdminLoginForm />
+    </Suspense>
+  );
+}
+
+function AdminLoginForm() {
+  const searchParams = useSearchParams();
+  // Where to go after signing in. `next` comes from the URL, so it is only
+  // honoured when it is a same-site /admin path (see safeAdminNext); anything
+  // else — an absolute URL, "//evil.com", a path outside /admin — lands on
+  // the dashboard instead.
+  const nextPath = safeAdminNext(searchParams.get('next'));
+  const sessionExpired = searchParams.get('expired') === '1';
+
   const [password, setPassword] = React.useState('');
+  const [showPassword, setShowPassword] = React.useState(false);
   const [error, setError] = React.useState('');
   const [loggingIn, setLoggingIn] = React.useState(false);
 
@@ -21,7 +42,7 @@ export default function AdminLoginPage() {
       });
 
       if (res.ok) {
-        window.location.href = '/admin';
+        window.location.href = nextPath;
       } else {
         setError('Invalid administrative credentials');
         setLoggingIn(false);
@@ -31,6 +52,11 @@ export default function AdminLoginPage() {
       setLoggingIn(false);
     }
   };
+
+  const describedBy = [
+    sessionExpired && !error ? 'admin-session-expired' : null,
+    error ? 'admin-password-error' : null,
+  ].filter(Boolean).join(' ') || undefined;
 
   return (
     <div style={{
@@ -74,6 +100,25 @@ export default function AdminLoginPage() {
           Secure access to platform controls
         </p>
 
+        {sessionExpired && !error && (
+          <p
+            id="admin-session-expired"
+            role="status"
+            style={{
+              color: '#FCD34D',
+              background: 'rgba(252, 211, 77, 0.08)',
+              border: '1px solid rgba(252, 211, 77, 0.25)',
+              borderRadius: '12px',
+              padding: '10px 14px',
+              fontSize: '0.85rem',
+              margin: '-8px 0 24px',
+              textAlign: 'left'
+            }}
+          >
+            Your session expired. Please sign in again.
+          </p>
+        )}
+
         <form onSubmit={handleLogin} style={{ textAlign: 'left' }}>
           {/* Single-password admin — no username field (there is one shared
               admin credential, so a disabled "admin" box only implied a
@@ -83,23 +128,26 @@ export default function AdminLoginPage() {
               Password
             </label>
             <div style={{ position: 'relative' }}>
-              <Lock size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#64748B' }} />
+              <Lock size={18} aria-hidden="true" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#64748B' }} />
               <input
                 id="admin-password"
                 name="password"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
                 autoFocus
                 autoComplete="current-password"
-                aria-describedby={error ? 'admin-password-error' : undefined}
+                autoCapitalize="off"
+                autoCorrect="off"
+                spellCheck={false}
+                aria-describedby={describedBy}
                 onFocus={(e) => (e.currentTarget.style.borderColor = 'var(--admin-accent)')}
                 onBlur={(e) => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)')}
                 style={{
                   width: '100%',
-                  padding: '14px 16px 14px 48px',
+                  padding: '14px 56px 14px 48px',
                   background: '#0F172A',
                   border: '1px solid rgba(255,255,255,0.1)',
                   borderRadius: '16px',
@@ -109,6 +157,39 @@ export default function AdminLoginPage() {
                   transition: 'all var(--admin-duration-fast)'
                 }}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                // Keep focus (and the caret) in the password field when the
+                // toggle is clicked with a mouse; keyboard users can still tab
+                // to the button and press Space/Enter.
+                onMouseDown={(e) => e.preventDefault()}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                aria-pressed={showPassword}
+                aria-controls="admin-password"
+                title={showPassword ? 'Hide password' : 'Show password'}
+                onMouseEnter={(e) => (e.currentTarget.style.color = '#CBD5E1')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = '#64748B')}
+                style={{
+                  position: 'absolute',
+                  right: '6px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  width: '40px',
+                  height: '40px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: 'transparent',
+                  border: 'none',
+                  borderRadius: '12px',
+                  color: '#64748B',
+                  cursor: 'pointer',
+                  transition: 'color var(--admin-duration-fast)'
+                }}
+              >
+                {showPassword ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
+              </button>
             </div>
             {error && <p id="admin-password-error" role="alert" style={{ color: '#F87171', fontSize: '0.8rem', marginTop: '8px', marginLeft: '4px' }}>{error}</p>}
           </div>

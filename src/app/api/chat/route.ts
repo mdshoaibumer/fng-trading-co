@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { getSettings } from '@/lib/supabase';
-import { officeRegions, type ServiceRegion } from '@/lib/serviceRegions';
+import { getSettings, getProducts } from '@/lib/supabase';
 import { getServiceRegions } from '@/lib/getServiceRegions';
+import { buildNexiaSystemPrompt } from './nexiaPrompt';
 import { rateLimit, globalRateLimit, getClientIp, tooManyRequests } from '@/lib/rateLimit';
 
 // Bound the payload forwarded to the paid LLM: whitelist roles, cap message
@@ -24,20 +24,11 @@ const messagesSchema = z
 
 const UPSTREAM_TIMEOUT_MS = 30_000;
 
-// Built per request rather than once at module load: the footprint it recites
-// is editable from Admin -> Regions, and a module constant would keep quoting
-// whatever the list was when the server booted.
-const buildSystemPrompt = (regions: readonly ServiceRegion[]) => `You are Nexia, the official AI assistant for Future Next Gen (FNG).
-FNG specializes in providing premium refurbished HP enterprise printers, high-quality eco-friendly inks, and printer parts to businesses, plus verified electronics sourcing from China.
-FNG is headquartered in Riyadh, Saudi Arabia, with offices in ${officeRegions(regions).map((r) => `${r.hubEn.replace(' (HQ)', '')}, ${r.nameEn}`).join('; ')}. FNG serves customers across ${regions.map((r) => r.nameEn).join(', ')}.
-Your goal is to assist customers, answer questions about our products, and help them find the right office equipment.
-Tone: Professional, helpful, concise, and futuristic.
-Key Information:
-- We offer enterprise-grade refurbished HP printers that save costs and reduce e-waste.
-- We sell eco-friendly, high-yield ink cartridges.
-- We offer comprehensive maintenance and repair services.
-- If a customer wants to buy in bulk, encourage them to fill out the 'Request a Quote' form or contact sales via WhatsApp.
-Keep your responses relatively brief and highly relevant. Do not hallucinate products we do not sell.`;
+// Which OpenRouter model answers. Set OPENROUTER_MODEL (e.g. a specific
+// instruction-following model id from openrouter.ai/models) in production:
+// 'openrouter/free' is only a last-resort fallback — it routes each request to
+// a random free model, so answer quality and language handling vary per call.
+const DEFAULT_MODEL = 'openrouter/free';
 
 export async function POST(req: Request) {
   try {
@@ -64,13 +55,30 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'AI service is not configured.' }, { status: 500 });
     }
 
-    const settings = await getSettings();
-    const configuredPrompt = settings.ai_settings?.system_prompt?.trim();
+    // Built per request (all request-cached): the catalog, regions and admin
+    // instructions are all editable from the admin panel. The admin prompt is
+    // APPENDED to the grounded facts — it used to replace them, which left
+    // Nexia with one generic sentence and nothing true to say (DEF-018).
+    const [settings, regions, printers, equipment] = await Promise.all([
+      getSettings(),
+      getServiceRegions(),
+      getProducts('printer'),
+      getProducts('equipment'),
+    ]);
+    const systemPrompt = buildNexiaSystemPrompt({
+      printers: printers.products,
+      equipment: equipment.products,
+      regions,
+      adminInstructions: settings.ai_settings?.system_prompt,
+      contact: settings.contact,
+    });
 
     const payload = {
-      model: 'openrouter/free', // Dynamically selects the best available free model
+      model: process.env.OPENROUTER_MODEL?.trim() || DEFAULT_MODEL,
+      // Low temperature: this is a factual sales assistant, not a creative one.
+      temperature: 0.3,
       messages: [
-        { role: 'system', content: configuredPrompt || buildSystemPrompt(await getServiceRegions()) },
+        { role: 'system', content: systemPrompt },
         ...messages
       ]
     };

@@ -10,7 +10,7 @@ interface Message {
   content: string;
 }
 
-export default function AIChatWidget({ welcomeMessage }: { welcomeMessage?: string }) {
+export default function AIChatWidget({ welcomeMessage, welcomeMessageAr }: { welcomeMessage?: string; welcomeMessageAr?: string }) {
   const params = useParams();
   const isAr = params?.locale === 'ar';
   const copy = {
@@ -29,10 +29,17 @@ export default function AIChatWidget({ welcomeMessage }: { welcomeMessage?: stri
     netError: isAr ? 'حدث خطأ في الشبكة. يرجى المحاولة مرة أخرى.' : 'I encountered a network error. Please try again.',
   };
 
+  // Each locale has its own admin-editable greeting, falling back to that
+  // locale's built-in default — never the other language's (DEF-003). Derived
+  // at render rather than frozen into state so a locale switch updates it.
+  const greeting: Message = {
+    role: 'assistant',
+    content: (isAr ? welcomeMessageAr : welcomeMessage)?.trim() || copy.welcomeDefault,
+  };
+
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', content: welcomeMessage?.trim() || copy.welcomeDefault }
-  ]);
+  const [conversation, setConversation] = useState<Message[]>([]);
+  const messages: Message[] = [greeting, ...conversation];
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -52,7 +59,7 @@ export default function AIChatWidget({ welcomeMessage }: { welcomeMessage?: stri
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, isLoading]);
+  }, [conversation, isLoading]);
 
   // Move focus into the panel on open, and close on Escape (non-modal dialog
   // semantics — the rest of the page stays interactive).
@@ -72,28 +79,28 @@ export default function AIChatWidget({ welcomeMessage }: { welcomeMessage?: stri
 
     const userMsg = input.trim();
     setInput('');
-    const newMessages: Message[] = [...messages, { role: 'user', content: userMsg }];
-    setMessages(newMessages);
+    const newConversation: Message[] = [...conversation, { role: 'user', content: userMsg }];
+    setConversation(newConversation);
     setIsLoading(true);
 
     try {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: newMessages })
+        body: JSON.stringify({ messages: [greeting, ...newConversation] })
       });
 
       const data = await res.json();
 
       if (res.ok && typeof data.content === 'string') {
-        setMessages(prev => [...prev, { role: 'assistant', content: data.content }]);
+        setConversation(prev => [...prev, { role: 'assistant', content: data.content }]);
       } else {
         console.error('Chat error data:', data);
-        setMessages(prev => [...prev, { role: 'assistant', content: copy.connError }]);
+        setConversation(prev => [...prev, { role: 'assistant', content: copy.connError }]);
       }
     } catch (err) {
       console.error('Chat error:', err);
-      setMessages(prev => [...prev, { role: 'assistant', content: copy.netError }]);
+      setConversation(prev => [...prev, { role: 'assistant', content: copy.netError }]);
     } finally {
       setIsLoading(false);
     }

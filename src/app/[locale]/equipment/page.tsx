@@ -47,8 +47,8 @@ export default async function EquipmentPage({
           tag={isAr ? 'تجهيزات مكتبية مُجددة' : 'Refurbished Office Equipment'}
           title={isAr ? 'تجهيزات مكتبية مُجددة باحترافية' : 'Professionally Refurbished Office Equipment'}
           subtitle={isAr
-            ? 'كل قطعة يتم فحصها وتنظيفها وتجديدها باحترافية واختبارها لتعمل بمعايير المصنع. كراسي ومكاتب وشاشات وحواسيب بحالة الجديد.'
-            : 'Every item is professionally inspected, cleaned, refurbished, and tested to factory standards. Chairs, desks, monitors & computers in like-new condition.'}
+            ? 'تجهيز مكتبي عند الطلب إلى جانب أسطول طابعاتك — كل قطعة مفحوصة ومجددة ومختبرة. أخبرنا بما تحتاجه عبر نموذج الطلب أدناه وسنوفره لك.'
+            : 'Office fit-out on request, alongside your printer fleet — every item inspected, refurbished and tested. Tell us what you need in the form below and we’ll source it.'}
         />
         <ContactSection />
       </main>

@@ -18,6 +18,7 @@ import {
 
 export default function ContactSection() {
   const t = useTranslations('contact');
+  const tCat = useTranslations('sourcingCategories');
   const params = useParams();
   const locale = params.locale as string;
   const isAr = locale === 'ar';
@@ -41,6 +42,11 @@ export default function ContactSection() {
   const [dialCode, setDialCode] = useState(initialDialCode);
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [emailError, setEmailError] = useState<string | null>(null);
+  // Sourcing-only RFP fields. No extra DB columns: they're folded into the
+  // lead message so the CRM and the notification email both show them.
+  const isSourcing = activeCategory === 'sourcing';
+  const sourcingItems = tCat.raw('items') as Record<string, { name: string }>;
+  const [sourcing, setSourcing] = useState({ product: '', targetPrice: '' });
 
   const [form, setForm] = useState({
     name: '',
@@ -106,6 +112,13 @@ export default function ContactSection() {
       return;
     }
 
+    const sourcingSummary = isSourcing
+      ? [
+          sourcing.product && `Product category: ${sourcing.product}`,
+          sourcing.targetPrice.trim() && `Target unit price: ${sourcing.targetPrice.trim()}`,
+        ].filter(Boolean).join('\n')
+      : '';
+
     setStatus('loading');
     setErrorMsg('');
     try {
@@ -116,7 +129,7 @@ export default function ContactSection() {
         body: JSON.stringify({
           ...form,
           phone: fullPhone,
-          message: form.message.trim() || defaultMessage,
+          message: [sourcingSummary, form.message.trim() || defaultMessage].filter(Boolean).join('\n'),
           quantity: form.quantity || defaultQuantity,
           category: activeCategory,
           queryItem: leadContext ? (isAr ? leadContext.badgeAr : leadContext.badgeEn) : undefined,
@@ -234,11 +247,33 @@ export default function ContactSection() {
                   </div>
                 )}
                 <label htmlFor="contact-name" className="sr-only">{t('form.name')}</label>
-                <input id="contact-name" style={inputStyle} placeholder={t('form.name')} required aria-required="true" autoComplete="name" value={form.name}
+                <input id="contact-name" style={inputStyle} placeholder={`${t('form.name')} *`} required aria-required="true" autoComplete="name" value={form.name}
                   onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
                 <label htmlFor="contact-company" className="sr-only">{t('form.company')}</label>
-                <input id="contact-company" style={inputStyle} placeholder={t('form.company')} required aria-required="true" autoComplete="organization" value={form.company}
+                <input id="contact-company" style={inputStyle} placeholder={`${t('form.company')} *`} required aria-required="true" autoComplete="organization" value={form.company}
                   onChange={e => setForm(f => ({ ...f, company: e.target.value }))} />
+                {isSourcing && (
+                  <div className="contact-form-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                    <div>
+                      <label htmlFor="contact-sourcing-product" className="sr-only">{isAr ? 'فئة المنتج' : 'Product category'}</label>
+                      <select id="contact-sourcing-product" style={{ ...inputStyle, cursor: 'pointer' }} value={sourcing.product}
+                        onChange={e => setSourcing(s => ({ ...s, product: e.target.value }))}>
+                        <option value="" style={{ color: '#000' }}>{isAr ? 'فئة المنتج (اختياري)' : 'Product category (optional)'}</option>
+                        {Object.entries(sourcingItems).map(([key, item]) => (
+                          <option key={key} value={item.name} style={{ color: '#000' }}>{item.name}</option>
+                        ))}
+                        <option value={isAr ? 'أخرى' : 'Other'} style={{ color: '#000' }}>{isAr ? 'أخرى' : 'Other'}</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label htmlFor="contact-sourcing-price" className="sr-only">{isAr ? 'السعر المستهدف للوحدة' : 'Target unit price'}</label>
+                      <input id="contact-sourcing-price" style={inputStyle} maxLength={60}
+                        placeholder={isAr ? 'السعر المستهدف للوحدة (اختياري)' : 'Target unit price (optional)'}
+                        value={sourcing.targetPrice}
+                        onChange={e => setSourcing(s => ({ ...s, targetPrice: e.target.value }))} />
+                    </div>
+                  </div>
+                )}
                 <div className="contact-form-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                   <div>
                     <label htmlFor="contact-phone" className="sr-only">{t('form.phone')}</label>
@@ -251,7 +286,7 @@ export default function ContactSection() {
                       value={form.phone}
                       onChange={handlePhoneChange}
                       error={phoneError}
-                      placeholder={t('form.phone')}
+                      placeholder={`${t('form.phone')} *`}
                     />
                   </div>
                   <div>

@@ -69,10 +69,24 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async rewrites() {
+    return [
+      {
+        // The old unconstrained '/:locale/parts' redirect was permanent (308),
+        // so admins' browsers cached /admin/parts -> /admin/printer-parts.
+        // Serve the Parts manager at that address too, so a cached redirect
+        // still lands on a working page.
+        source: '/admin/printer-parts',
+        destination: '/admin/parts',
+      },
+    ];
+  },
   async redirects() {
     return [
       {
-        source: '/:locale/parts',
+        // Constrained to real locales: an unconstrained `:locale` also matched
+        // /admin/parts and bounced the admin Parts manager to a 404.
+        source: '/:locale(en|ar)/parts',
         destination: '/:locale/printer-parts',
         permanent: true,
       },

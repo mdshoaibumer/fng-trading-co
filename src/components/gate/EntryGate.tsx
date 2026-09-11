@@ -117,6 +117,9 @@ export default function EntryGate() {
       aria-labelledby="entry-gate-heading"
       tabIndex={-1}
       className="gate-overlay"
+      // A click on the dark surround (not a card, not the language pill)
+      // dismisses the chooser the same way Escape does.
+      onClick={(e) => { if (!(e.target as HTMLElement).closest('a, button')) dismiss(); }}
       style={{
         // `inset: 0` alone doesn't reliably derive a height for this fixed +
         // flex box — measured live in Chrome, it sized to the underlying

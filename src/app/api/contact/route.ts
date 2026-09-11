@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { insertInquiry } from '@/lib/inquiries';
+import { insertInquiry, LEAD_TYPES } from '@/lib/inquiries';
 import { z } from 'zod';
 import { rateLimit, globalRateLimit, getClientIp, tooManyRequests } from '@/lib/rateLimit';
 
@@ -20,7 +20,9 @@ const contactSchema = z.object({
   message: z.string().trim().max(4000).optional(),
   website: z.string().max(500).optional(),
   _hp_company_fax: z.string().max(500).optional(),
-  category: z.string().trim().max(60).optional(),
+  // Allow-listed: the category becomes the lead's CRM type, so a free-form
+  // value let any client invent types the admin filters don't know about.
+  category: z.enum(LEAD_TYPES).optional(),
   queryItem: z.string().trim().max(200).optional(),
 });
 
@@ -47,7 +49,7 @@ export async function POST(request: Request) {
     }
 
     const { name, company, phone, country, city, quantity, email, industry, message, category, queryItem } = result.data;
-    const leadType = (category || 'contact') as import('@/lib/inquiries').InquiryRow['type'];
+    const leadType = category || 'contact';
 
     let finalMessage = message || '';
     if (queryItem && !finalMessage.includes(queryItem)) {

@@ -19,10 +19,13 @@ import {
 import { useDialogA11y } from '@/lib/useDialogA11y';
 import { homeHref, isCurrentPage, scrollToTop } from '@/lib/navigation';
 import { markGateSeen } from '@/lib/entryGate';
+import { DEFAULT_WHATSAPP_NUMBER } from '@/lib/whatsapp';
 
 export const gateHref = (locale: string) => `/${locale}?gate=1`;
 
-export default function Navbar() {
+// Numbers come from Admin -> Settings via the layout, so changing the sales
+// line there updates the nav too (they used to be hard-coded here).
+export default function Navbar({ whatsapp = DEFAULT_WHATSAPP_NUMBER, whatsappDisplay = '+966 59 338 0390' }: { whatsapp?: string; whatsappDisplay?: string }) {
   const t = useTranslations('nav');
   const tSourcing = useTranslations('navSourcing');
   const params = useParams();
@@ -921,7 +924,7 @@ export default function Navbar() {
           }}
         >
           <a
-            href="https://wa.me/966593380390"
+            href={`https://wa.me/${whatsapp}`}
             target="_blank"
             rel="noopener noreferrer"
             style={{
@@ -936,7 +939,7 @@ export default function Navbar() {
             }}
           >
             <MessageSquare size={16} />
-            <span>+966 59 338 0390</span>
+            <span dir="ltr">{whatsappDisplay}</span>
           </a>
 
           <Link

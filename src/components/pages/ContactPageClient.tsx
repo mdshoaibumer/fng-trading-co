@@ -17,7 +17,9 @@ import {
   findCountryConfig,
 } from '@/lib/formValidation';
 
-export default function ContactPageClient({ email }: { email?: string }) {
+// `phone` is Admin -> Settings -> Phone Number; the translated copy is only
+// the fallback for when that setting is blank.
+export default function ContactPageClient({ email, phone }: { email?: string; phone?: string }) {
   const t = useTranslations('contact');
   const tp = useTranslations('contactPage');
   const params = useParams();
@@ -84,7 +86,7 @@ export default function ContactPageClient({ email }: { email?: string }) {
   const handleEmailChange = (newEmail: string) => {
     setForm(f => ({ ...f, email: newEmail }));
     if (emailError) {
-      setEmailError(validateEmail(newEmail, true, locale));
+      setEmailError(validateEmail(newEmail, false, locale));
     }
   };
 
@@ -93,7 +95,9 @@ export default function ContactPageClient({ email }: { email?: string }) {
 
     // Client-side validation before submission
     const pErr = validatePhone(form.phone, dialCode, locale);
-    const eErr = validateEmail(form.email, true, locale);
+    // Email and city are optional here, matching every other lead form and
+    // the API (which requires only name, company and phone).
+    const eErr = validateEmail(form.email, false, locale);
 
     if (pErr || eErr) {
       setPhoneError(pErr);
@@ -249,7 +253,7 @@ export default function ContactPageClient({ email }: { email?: string }) {
                   </div>
                   <div>
                     <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '4px' }}>{tp('emailLabel')}</p>
-                    <p style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '1.1rem' }}>{email || SITE_EMAIL}</p>
+                    <a href={`mailto:${email || SITE_EMAIL}`} style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '1.1rem', textDecoration: 'none' }}>{email || SITE_EMAIL}</a>
                   </div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -258,7 +262,7 @@ export default function ContactPageClient({ email }: { email?: string }) {
                   </div>
                   <div>
                     <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '4px' }}>{tp('phoneLabel')}</p>
-                    <p style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '1.1rem' }}>{tp('phoneValue')}</p>
+                    <a href={`tel:${(phone?.trim() || tp('phoneValue')).replace(/[^\d+]/g, '')}`} dir="ltr" style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '1.1rem', textDecoration: 'none' }}>{phone?.trim() || tp('phoneValue')}</a>
                   </div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -344,12 +348,12 @@ export default function ContactPageClient({ email }: { email?: string }) {
                 <div className="form-row" style={{ gap: '20px' }}>
                   <div>
                     <label htmlFor="contact-page-name" className="sr-only">{t('form.name')}</label>
-                    <input id="contact-page-name" style={inputStyle} placeholder={t('form.name')} required aria-required="true" autoComplete="name" value={form.name}
+                    <input id="contact-page-name" style={inputStyle} placeholder={`${t('form.name')} *`} required aria-required="true" autoComplete="name" value={form.name}
                       onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
                   </div>
                   <div>
                     <label htmlFor="contact-page-company" className="sr-only">{t('form.company')}</label>
-                    <input id="contact-page-company" style={inputStyle} placeholder={t('form.company')} required aria-required="true" autoComplete="organization" value={form.company}
+                    <input id="contact-page-company" style={inputStyle} placeholder={`${t('form.company')} *`} required aria-required="true" autoComplete="organization" value={form.company}
                       onChange={e => setForm(f => ({ ...f, company: e.target.value }))} />
                   </div>
                 </div>
@@ -365,12 +369,10 @@ export default function ContactPageClient({ email }: { email?: string }) {
                       }}
                       placeholder={t('form.email')}
                       type="email"
-                      required
-                      aria-required="true"
                       autoComplete="email"
                       value={form.email}
                       onChange={e => handleEmailChange(e.target.value)}
-                      onBlur={() => setEmailError(validateEmail(form.email, true, locale))}
+                      onBlur={() => setEmailError(validateEmail(form.email, false, locale))}
                       aria-invalid={Boolean(emailError)}
                     />
                     {emailError && (
@@ -404,7 +406,7 @@ export default function ContactPageClient({ email }: { email?: string }) {
                       value={form.phone}
                       onChange={handlePhoneChange}
                       error={phoneError}
-                      placeholder={t('form.phone')}
+                      placeholder={`${t('form.phone')} *`}
                     />
                   </div>
                 </div>
@@ -421,7 +423,7 @@ export default function ContactPageClient({ email }: { email?: string }) {
                   </div>
                   <div>
                     <label htmlFor="contact-page-city" className="sr-only">{t('form.city')}</label>
-                    <input id="contact-page-city" style={inputStyle} placeholder={t('form.city')} value={form.city} required aria-required="true" autoComplete="address-level2"
+                    <input id="contact-page-city" style={inputStyle} placeholder={t('form.city')} value={form.city} autoComplete="address-level2"
                       onChange={e => setForm(f => ({ ...f, city: e.target.value }))} />
                   </div>
                 </div>

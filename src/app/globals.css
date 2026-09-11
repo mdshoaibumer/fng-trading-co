@@ -1202,3 +1202,14 @@ main {
 @media (max-width: 480px) {
   .eco-teaser-cta { width: 100%; }
 }
+
+/* Lead forms: flag a required/malformed field in red once the visitor has
+   interacted with it (or tried to submit). :user-invalid doesn't fire on
+   page load, so untouched empty fields aren't shouted at. !important because
+   the form inputs set their border inline. */
+form input:user-invalid,
+form textarea:user-invalid,
+form select:user-invalid {
+  border-color: #FF6B6B !important;
+  box-shadow: 0 0 0 1px #FF6B6B;
+}

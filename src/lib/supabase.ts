@@ -48,7 +48,7 @@ export const getSettings = cache(async () => {
 
   return settings as {
     contact?: { whatsapp?: string; phone?: string; email?: string };
-    ai_settings?: { welcome_message?: string; system_prompt?: string };
+    ai_settings?: { welcome_message?: string; welcome_message_ar?: string; system_prompt?: string };
     social_media?: { facebook?: string; instagram?: string; linkedin?: string; twitter?: string };
     seo?: { title?: string; description?: string };
     /**

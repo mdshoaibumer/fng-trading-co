@@ -15,6 +15,7 @@ import ScrollProgress from '@/components/ui/ScrollProgress';
 import PageNavigationTransition from '@/components/ui/PageNavigationTransition';
 import CommandPalette from '@/components/ui/CommandPalette';
 import { getSettings } from '@/lib/supabase';
+import { DEFAULT_WHATSAPP_NUMBER, sanitizeWhatsappNumber } from '@/lib/whatsapp';
 import { getServiceRegions } from '@/lib/getServiceRegions';
 import { ServiceRegionsProvider } from '@/components/providers/ServiceRegionsProvider';
 import StyledJsxRegistry from '@/components/providers/StyledJsxRegistry';
@@ -97,6 +98,7 @@ export default async function LocaleLayout({
   const dir = isRTL(locale) ? 'rtl' : 'ltr';
   const messages = await getMessages();
   const settings = await getSettings();
+  const whatsappDigits = settings.contact?.whatsapp ? sanitizeWhatsappNumber(settings.contact.whatsapp) : DEFAULT_WHATSAPP_NUMBER;
   // Shares getSettings()'s request cache, so this is not a second round trip.
   const serviceRegions = await getServiceRegions();
 
@@ -119,14 +121,14 @@ export default async function LocaleLayout({
             <a href="#main-content" className="skip-link">
               {isRTL(locale) ? 'تخطَّ إلى المحتوى' : 'Skip to content'}
             </a>
-            <Navbar />
-            <CommandPalette locale={locale} />
+            <Navbar whatsapp={whatsappDigits} whatsappDisplay={settings.contact?.whatsapp || undefined} />
+            <CommandPalette locale={locale} whatsapp={whatsappDigits} phone={settings.contact?.phone ? sanitizeWhatsappNumber(settings.contact.phone) : undefined} />
             {/* tabIndex=-1 so the skip link can move focus here even though a
                 div is not focusable by default. */}
             <div id="main-content" className="page-enter-from-top" tabIndex={-1} style={{ outline: 'none' }}>{children}</div>
             <Footer email={settings.contact?.email} />
             <WhatsAppButton whatsapp={settings.contact?.whatsapp} />
-            <ChatWidgetLoader welcomeMessage={settings.ai_settings?.welcome_message} />
+            <ChatWidgetLoader welcomeMessage={settings.ai_settings?.welcome_message} welcomeMessageAr={settings.ai_settings?.welcome_message_ar} />
           </ServiceRegionsProvider>
         </NextIntlClientProvider>
         </StyledJsxRegistry>

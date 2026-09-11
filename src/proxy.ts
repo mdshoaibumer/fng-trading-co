@@ -4,6 +4,7 @@ import { defaultLocale } from '@/i18n/config';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { verifySessionToken } from '@/lib/adminSession';
+import { ADMIN_HOME, safeAdminNext } from '@/lib/safeAdminNext';
 
 const PUBLIC_GET_ROUTES = new Set([
   '/api/admin/printers',
@@ -30,6 +31,16 @@ function publicUrl(pathname: string, request: NextRequest) {
   url.pathname = pathname;
   url.search = '';
   return url;
+}
+
+// Redirect to an admin destination that has already been through
+// safeAdminNext. publicUrl only takes a pathname (and clears the query), so the
+// validated search string is re-applied on the result.
+function redirectToAdminPath(target: string, request: NextRequest) {
+  const parsed = new URL(safeAdminNext(target), 'http://admin-next.invalid');
+  const url = publicUrl(parsed.pathname, request);
+  url.search = parsed.search;
+  return NextResponse.redirect(url);
 }
 
 // Same-origin check for state-changing admin API requests. Browsers always
@@ -97,8 +108,23 @@ export default async function proxy(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid origin' }, { status: 403 });
     }
 
-    // Exclude auth endpoints and login page
-    if (pathname === '/admin/login' || pathname.startsWith('/api/admin/auth')) {
+    // The login page is public — but an admin who is already signed in has no
+    // use for the form, so send them on to where they were going (`?next=`,
+    // validated) or the dashboard.
+    if (pathname === '/admin/login') {
+      const session = request.cookies.get('fng_session')?.value;
+      if (
+        (request.method === 'GET' || request.method === 'HEAD') &&
+        session &&
+        (await verifySessionToken(session))
+      ) {
+        return redirectToAdminPath(request.nextUrl.searchParams.get('next') ?? ADMIN_HOME, request);
+      }
+      return NextResponse.next();
+    }
+
+    // Auth endpoints (login/logout) are reachable without a session.
+    if (pathname.startsWith('/api/admin/auth')) {
       return NextResponse.next();
     }
 
@@ -114,7 +140,17 @@ export default async function proxy(request: NextRequest) {
       if (pathname.startsWith('/api/')) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
       }
-      return NextResponse.redirect(publicUrl('/admin/login', request));
+      // Carry the requested admin page through login as `?next=` so the admin
+      // lands back on it. publicUrl clears the query, so the parameters are
+      // set on the result; the value is re-validated on the way out (login
+      // page and the signed-in bounce above), never trusted as-is.
+      const url = publicUrl('/admin/login', request);
+      const next = safeAdminNext(`${pathname}${request.nextUrl.search}`);
+      if (next !== ADMIN_HOME) url.searchParams.set('next', next);
+      // A cookie that no longer verifies means the session lapsed (or was
+      // invalidated) rather than never existing — say so on the login page.
+      if (sessionCookie?.value) url.searchParams.set('expired', '1');
+      return NextResponse.redirect(url);
     }
 
     // Allowed admin access

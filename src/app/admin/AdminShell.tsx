@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import {
@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { ToastProvider } from '@/components/admin/Toast';
 import { confirmDiscardIfDirty } from '@/lib/adminDirty';
+import { safeAdminNext } from '@/lib/safeAdminNext';
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -37,6 +38,43 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
     setPrevPathname(pathname);
     setIsMobileMenuOpen(false);
   }
+
+  // Session expiry. The proxy answers any admin API call made without a valid
+  // session with 401, and every admin page talks to the API through fetch — so
+  // the first 401 from /api/admin/* (other than the auth endpoints themselves)
+  // means the session has lapsed mid-visit. Send the admin to the login page
+  // with an explanation and a way back to this page, instead of leaving them
+  // on a screen whose saves silently fail. Page navigations after expiry are
+  // handled by the proxy's own redirect.
+  const isLoginPage = pathname === '/admin/login';
+  useEffect(() => {
+    if (isLoginPage) return;
+    const originalFetch = window.fetch;
+    let redirecting = false;
+
+    const fetchWithExpiryCheck: typeof window.fetch = async (input, init) => {
+      const res = await originalFetch(input, init);
+      if (res.status === 401 && !redirecting) {
+        const raw = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
+        const target = new URL(raw, window.location.href);
+        if (
+          target.origin === window.location.origin &&
+          target.pathname.startsWith('/api/admin/') &&
+          !target.pathname.startsWith('/api/admin/auth/')
+        ) {
+          redirecting = true;
+          const next = safeAdminNext(`${window.location.pathname}${window.location.search}`);
+          window.location.href = `/admin/login?expired=1&next=${encodeURIComponent(next)}`;
+        }
+      }
+      return res;
+    };
+
+    window.fetch = fetchWithExpiryCheck;
+    return () => {
+      if (window.fetch === fetchWithExpiryCheck) window.fetch = originalFetch;
+    };
+  }, [isLoginPage]);
 
   const menuItems = [
     { name: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/admin' },

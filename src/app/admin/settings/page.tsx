@@ -7,7 +7,7 @@ import { useUnsavedChanges } from '@/lib/useUnsavedChanges';
 
 interface AdminSettings {
   admin_password?: string;
-  ai_settings: { welcome_message: string; system_prompt: string };
+  ai_settings: { welcome_message: string; welcome_message_ar?: string; system_prompt: string };
   social_media: { facebook: string; instagram: string; linkedin: string; twitter: string };
   seo: { title: string; description: string };
   contact?: { whatsapp?: string; phone?: string; email?: string };
@@ -35,7 +35,7 @@ export default function AdminSettingsPage() {
       .then(data => {
         const loaded = {
           ...data,
-          ai_settings: data.ai_settings || { welcome_message: '', system_prompt: '' },
+          ai_settings: data.ai_settings || { welcome_message: '', welcome_message_ar: '', system_prompt: '' },
           social_media: data.social_media || { facebook: '', instagram: '', linkedin: '', twitter: '' },
           seo: data.seo || { title: '', description: '' }
         };
@@ -211,25 +211,41 @@ export default function AdminSettingsPage() {
           </div>
           <div style={{ display: 'grid', gap: '20px' }}>
             <div>
-              <label className="admin-label">Welcome Message</label>
-              <input 
-                className="admin-input" 
+              <label className="admin-label" htmlFor="ai-welcome-en">Welcome Message (English)</label>
+              <input
+                id="ai-welcome-en"
+                className="admin-input"
                 placeholder="Hi! I am Nexia, your FNG Assistant..."
-                value={settings.ai_settings?.welcome_message || ''} 
-                onChange={(e) => setSettings({ ...settings, ai_settings: { ...settings.ai_settings, welcome_message: e.target.value } })} 
+                value={settings.ai_settings?.welcome_message || ''}
+                onChange={(e) => setSettings({ ...settings, ai_settings: { ...settings.ai_settings, welcome_message: e.target.value } })}
               />
-              <p style={{ fontSize: '0.8rem', color: '#94A3B8', marginTop: '6px' }}>The first message the AI will send when a user opens the chat.</p>
+              <p style={{ fontSize: '0.8rem', color: '#94A3B8', marginTop: '6px' }}>The first message Nexia shows on the English site. Leave blank to use the built-in greeting.</p>
             </div>
             <div>
-              <label className="admin-label">System Prompt / Instructions</label>
-              <textarea 
-                className="admin-input" 
-                style={{ minHeight: '120px', resize: 'vertical' }}
-                placeholder="You are Nexia, an assistant for FNG..."
-                value={settings.ai_settings?.system_prompt || ''} 
-                onChange={(e) => setSettings({ ...settings, ai_settings: { ...settings.ai_settings, system_prompt: e.target.value } })} 
+              <label className="admin-label" htmlFor="ai-welcome-ar">Welcome Message (Arabic)</label>
+              <textarea
+                id="ai-welcome-ar"
+                dir="rtl"
+                lang="ar"
+                className="admin-input"
+                style={{ minHeight: '72px', resize: 'vertical' }}
+                placeholder="مرحباً! أنا نيكسيا، مساعد FNG..."
+                value={settings.ai_settings?.welcome_message_ar || ''}
+                onChange={(e) => setSettings({ ...settings, ai_settings: { ...settings.ai_settings, welcome_message_ar: e.target.value } })}
               />
-              <p style={{ fontSize: '0.8rem', color: '#94A3B8', marginTop: '6px' }}>Instructions on how Nexia should behave, tone of voice, and what it should not say. Takes effect immediately after saving.</p>
+              <p style={{ fontSize: '0.8rem', color: '#94A3B8', marginTop: '6px' }}>The first message Nexia shows on the Arabic site. Leave blank to use the built-in Arabic greeting.</p>
+            </div>
+            <div>
+              <label className="admin-label" htmlFor="ai-system-prompt">Additional Instructions for Nexia</label>
+              <textarea
+                id="ai-system-prompt"
+                className="admin-input"
+                style={{ minHeight: '120px', resize: 'vertical' }}
+                placeholder="e.g. Mention our Ramadan opening hours when asked about delivery."
+                value={settings.ai_settings?.system_prompt || ''}
+                onChange={(e) => setSettings({ ...settings, ai_settings: { ...settings.ai_settings, system_prompt: e.target.value } })}
+              />
+              <p style={{ fontSize: '0.8rem', color: '#94A3B8', marginTop: '6px' }}>Extra guidance on tone or what to say. These are added on top of Nexia&apos;s built-in FNG facts and live printer catalog — they cannot replace them. Takes effect immediately after saving.</p>
             </div>
           </div>
         </div>
@@ -315,6 +331,7 @@ export default function AdminSettingsPage() {
             </div>
             <div>
               <label className="admin-label">Phone Number</label>
+              <p style={{ fontSize: '0.8rem', color: '#64748B', margin: '0 0 8px' }}>Shown as “Call Us” on the Contact page (tap-to-call) and used by the search palette’s call action.</p>
               <div style={{ position: 'relative' }}>
                 <Phone size={16} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#94A3B8' }} />
                 <input 

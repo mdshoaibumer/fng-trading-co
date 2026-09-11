@@ -23,6 +23,23 @@ const httpUrl = z.string().trim().max(2048).refine(
   { message: 'Must be an http(s) URL or a site-relative path' }
 ).optional();
 const shortText = z.string().trim().max(200).optional();
+// A real address, or blank ("no public email") — never 'not-an-email' (DEF-023).
+const emailOrBlank = z.string().trim().max(254).refine(
+  (v) => v === '' || z.email().safeParse(v).success,
+  { message: 'Must be a valid email address' }
+).optional();
+
+const WELCOME_EN = "Hi! I'm Nexia, the FNG assistant. Ask me about refurbished HP printers, eco-toner, parts, or getting a quote.";
+const WELCOME_AR = 'مرحباً! أنا نيكسيا، مساعد FNG. اسألني عن طابعات HP المجددة أو أحبار Eco Inks أو قطع الغيار أو طلب عرض سعر.';
+
+// Returned for any key missing from the database (and wholesale if the
+// database can't be read).
+const DEFAULT_SETTINGS: Record<string, unknown> = {
+  contact: { whatsapp: '+966 59 338 0390', phone: '+966 59 338 0390', email: 'support@fngtradingco.com' },
+  social_media: { facebook: 'https://facebook.com/fngtradingco', instagram: 'https://instagram.com/fngtradingco', linkedin: 'https://www.linkedin.com/company/fngtradingco', twitter: '' },
+  seo: { title: 'Future Next Gen — Refurbished HP Printers & Eco Toner in Saudi Arabia', description: 'FNG supplies professionally refurbished HP printers, eco-friendly toner and genuine printer parts across Saudi Arabia and the Gulf.' },
+  ai_settings: { welcome_message: WELCOME_EN, welcome_message_ar: WELCOME_AR },
+};
 
 // Exactly the top-level keys the Settings UI edits. `.strict()` at the top
 // level rejects anything else, so this endpoint can never be used to
@@ -30,8 +47,12 @@ const shortText = z.string().trim().max(200).optional();
 // Nested objects use zod's default behaviour (unknown keys are dropped), so
 // an older stored shape with an extra field still saves.
 const settingsSchema = z.object({
-  contact: z.object({ whatsapp: shortText, phone: shortText, email: z.string().trim().max(254).optional() }).optional(),
-  ai_settings: z.object({ welcome_message: z.string().trim().max(2000).optional(), system_prompt: z.string().trim().max(8000).optional() }).optional(),
+  contact: z.object({ whatsapp: shortText, phone: shortText, email: emailOrBlank }).optional(),
+  ai_settings: z.object({
+    welcome_message: z.string().trim().max(2000).optional(),
+    welcome_message_ar: z.string().trim().max(2000).optional(),
+    system_prompt: z.string().trim().max(8000).optional(),
+  }).optional(),
   social_media: z.object({ facebook: httpUrl, instagram: httpUrl, linkedin: httpUrl, twitter: httpUrl }).optional(),
   seo: z.object({ title: shortText, description: z.string().trim().max(1000).optional() }).optional(),
   admin_password: z.string().max(200).optional(),
@@ -56,15 +77,8 @@ export async function GET() {
     // Settings UI loads to edit, so it must expose exactly the editable config
     // keys and nothing else — this way any future secret ever stored in
     // `settings` (e.g. a third-party API key) can never auto-leak.
-    const defaultSettings: Record<string, unknown> = {
-      contact: { whatsapp: '+966 59 338 0390', phone: '+966 59 338 0390', email: 'support@fngtradingco.com' },
-      social_media: { facebook: 'https://facebook.com/fngtradingco', instagram: 'https://instagram.com/fngtradingco', linkedin: 'https://www.linkedin.com/company/fngtradingco', twitter: '' },
-      seo: { title: 'Future Next Gen — Refurbished HP Printers & Eco Toner in Saudi Arabia', description: 'FNG supplies professionally refurbished HP printers, eco-friendly toner and genuine printer parts across Saudi Arabia and the Gulf.' },
-      ai_settings: { welcome_message: "Hi! I'm Nexia, the FNG assistant. Ask me about refurbished HP printers, eco-toner, parts, or getting a quote." },
-    };
-
     const PUBLIC_KEYS = new Set(['contact', 'ai_settings', 'social_media', 'seo']);
-    const result: Record<string, unknown> = { ...defaultSettings };
+    const result: Record<string, unknown> = { ...DEFAULT_SETTINGS };
     (data || []).forEach(item => {
       if (PUBLIC_KEYS.has(item.key) && item.value && typeof item.value === 'object') {
         result[item.key] = { ...(result[item.key] as object || {}), ...item.value };
@@ -84,12 +98,7 @@ export async function GET() {
     return NextResponse.json(result);
   } catch (error) {
     console.warn('Settings GET error, falling back to defaults:', error);
-    return NextResponse.json({
-      contact: { whatsapp: '+966 59 338 0390', phone: '+966 59 338 0390', email: 'support@fngtradingco.com' },
-      social_media: { facebook: 'https://facebook.com/fngtradingco', instagram: 'https://instagram.com/fngtradingco', linkedin: 'https://www.linkedin.com/company/fngtradingco', twitter: '' },
-      seo: { title: 'Future Next Gen — Refurbished HP Printers & Eco Toner in Saudi Arabia', description: 'FNG supplies professionally refurbished HP printers, eco-friendly toner and genuine printer parts across Saudi Arabia and the Gulf.' },
-      ai_settings: { welcome_message: "Hi! I'm Nexia, the FNG assistant. Ask me about refurbished HP printers, eco-toner, parts, or getting a quote." },
-    });
+    return NextResponse.json(DEFAULT_SETTINGS);
   }
 }
 
