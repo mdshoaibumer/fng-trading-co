@@ -1056,3 +1056,59 @@ main {
   }
 }
 
+
+/* ─── SOURCING HERO (full-bleed looping port video) ──────────────────────── */
+/* Lives here rather than in a styled-jsx block: component-scoped styles can be
+   briefly absent during page transitions, and without these rules the two
+   <video> layers fall back to their intrinsic ~1080px height in normal flow. */
+.sourcing-hero {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  min-height: min(100svh, 960px);
+  display: flex;
+  background: #0b1116 url('/sourcing-hero/poster.jpg') center / cover no-repeat;
+  padding-top: clamp(140px, 18vw, 200px);
+  padding-bottom: clamp(32px, 5vw, 56px);
+}
+.sourcing-hero-media { position: absolute; inset: 0; z-index: -2; }
+.sourcing-hero-video {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: center 60%;
+  transition: opacity 0.8s linear;
+}
+/* Neutral (not brand-green) scrim: darkest behind the copy, clear over the
+   ship, plus a floor gradient for the stats row. Mirrored for Arabic. */
+.sourcing-hero-scrim {
+  position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    linear-gradient(to top, rgba(6,10,14,0.85) 0%, rgba(6,10,14,0.35) 28%, transparent 50%),
+    linear-gradient(to right, rgba(6,10,14,0.82) 0%, rgba(6,10,14,0.55) 38%, rgba(6,10,14,0.1) 70%, transparent 100%);
+}
+.sourcing-hero.is-rtl .sourcing-hero-scrim {
+  background:
+    linear-gradient(to top, rgba(6,10,14,0.85) 0%, rgba(6,10,14,0.35) 28%, transparent 50%),
+    linear-gradient(to left, rgba(6,10,14,0.82) 0%, rgba(6,10,14,0.55) 38%, rgba(6,10,14,0.1) 70%, transparent 100%);
+}
+.sourcing-hero-inner {
+  position: relative;
+  display: flex; flex-direction: column; justify-content: space-between;
+  gap: clamp(48px, 8vw, 88px);
+  width: 100%;
+}
+.sourcing-hero-copy { max-width: 680px; }
+.sourcing-hero-copy h1,
+.sourcing-hero-copy p { text-shadow: 0 2px 18px rgba(0,0,0,0.35); }
+.sourcing-stats-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: clamp(16px, 3vw, 24px);
+  padding-top: clamp(28px, 5vw, 40px);
+  border-top: 1px solid rgba(255,255,255,0.18);
+}
+@media (max-width: 768px) {
+  .sourcing-hero-scrim,
+  .sourcing-hero.is-rtl .sourcing-hero-scrim {
+    background: linear-gradient(to bottom, rgba(6,10,14,0.55) 0%, rgba(6,10,14,0.7) 45%, rgba(6,10,14,0.88) 100%);
+  }
+  .sourcing-stats-grid { grid-template-columns: repeat(2, 1fr); }
+}

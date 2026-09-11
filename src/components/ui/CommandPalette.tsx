@@ -21,11 +21,9 @@ import {
   Layers,
   HelpCircle,
   Languages,
-  ShieldCheck,
   X,
 } from 'lucide-react';
 import BorderBeam from '@/components/ui/BorderBeam';
-import DocumentVerificationModal from '@/components/ui/DocumentVerificationModal';
 
 interface PaletteItem {
   id: string;
@@ -50,7 +48,6 @@ export default function CommandPalette({ locale }: CommandPaletteProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [docModalOpen, setDocModalOpen] = useState(false);
 
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -102,13 +99,6 @@ export default function CommandPalette({ locale }: CommandPaletteProps) {
     router.push(segments.join('/') + window.location.hash);
   }, [closePalette, otherLocale, router]);
 
-  const openDocVerification = useCallback(() => {
-    closePalette();
-    setTimeout(() => {
-      setDocModalOpen(true);
-    }, 150);
-  }, [closePalette]);
-
   const items: PaletteItem[] = useMemo(
     () => [
       // Interactive Tools
@@ -153,20 +143,6 @@ export default function CommandPalette({ locale }: CommandPaletteProps) {
         keywords: ['calculator', 'roi', 'eco', 'savings', 'cost', 'sustainability', 'حاسبة', 'توفير', 'استدامة', 'تكلفة'],
         badgeEn: 'ROI Simulator',
         badgeAr: 'محاكي العائد',
-      },
-      {
-        id: 'tool-verification',
-        titleEn: 'Cryptographic Document & CR Verification',
-        titleAr: 'التحقق الرقمي من السجل التجاري ورخص الاستيراد',
-        categoryEn: 'Regulatory & Credibility',
-        categoryAr: 'التراخيص والاعتمادات الرسمية',
-        descriptionEn: 'Audit official Saudi CR (1010724885), ZATCA VAT, and MOFCOM China license with 2.5x loupe.',
-        descriptionAr: 'فحص مجهري وتدقيق رقمي للسجل التجاري والشهادة الضريبية ورخص التصدير الصينية.',
-        icon: ShieldCheck,
-        action: openDocVerification,
-        keywords: ['verification', 'cr', 'vat', 'tax', 'license', 'mofcom', 'zatca', 'سجل', 'تجاري', 'ضريبة', 'رخصة', 'تحقق', 'وثائق'],
-        badgeEn: 'CR: 1010724885',
-        badgeAr: 'سجل: ١٠١٠٧٢٤٨٨٥',
       },
 
       // Catalog & Hardware
@@ -311,7 +287,7 @@ export default function CommandPalette({ locale }: CommandPaletteProps) {
         keywords: ['faq', 'questions', 'help', 'answers', 'support', 'أسئلة', 'شائعة', 'مساعدة', 'استفسارات'],
       },
     ],
-    [locale, isAr, navigate, switchLanguage, openWhatsApp, callPhone, openDocVerification]
+    [locale, isAr, navigate, switchLanguage, openWhatsApp, callPhone]
   );
 
   // Filter items by query
@@ -462,8 +438,8 @@ export default function CommandPalette({ locale }: CommandPaletteProps) {
                     onKeyDown={handleInputKeyDown}
                     placeholder={
                       isAr
-                        ? 'ابحث عن طابعات، قطع غيار، رادار التوريد، السجل التجاري، حاسبة التوفير...'
-                        : 'Search printers, parts, sourcing radar, CR verification, ROI calculator...'
+                        ? 'ابحث عن طابعات، قطع غيار، رادار التوريد، حاسبة التوفير...'
+                        : 'Search printers, parts, sourcing radar, ROI calculator...'
                     }
                     style={{
                       flex: 1,
@@ -682,12 +658,6 @@ export default function CommandPalette({ locale }: CommandPaletteProps) {
           )}
         </AnimatePresence>
       </div>
-
-      <DocumentVerificationModal
-        isOpen={docModalOpen}
-        onClose={() => setDocModalOpen(false)}
-        isAr={isAr}
-      />
     </>
   );
 }
